@@ -269,3 +269,29 @@ export async function setGameObjectActive(params) {
 export async function reparentGameObject(params) {
   return sendCommand("prefab/reparent", params);
 }
+
+// ─── Physics ───
+
+export async function physicsRaycast(params) {
+  return sendCommand("physics/raycast", params);
+}
+
+export async function physicsOverlapSphere(params) {
+  return sendCommand("physics/overlap-sphere", params);
+}
+
+export async function physicsOverlapBox(params) {
+  return sendCommand("physics/overlap-box", params);
+}
+
+export async function getCollisionMatrix(params) {
+  return sendCommand("physics/collision-matrix", params);
+}
+
+export async function setCollisionLayer(params) {
+  return sendCommand("physics/set-collision-layer", params);
+}
+
+export async function setGravity(params) {
+  return sendCommand("physics/set-gravity", params);
+}

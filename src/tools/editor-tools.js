@@ -743,4 +743,82 @@ export const editorTools = [
     },
     handler: async (params) => JSON.stringify(await bridge.reparentGameObject(params), null, 2),
   },
+
+  // ─── Physics ───
+  {
+    name: "unity_physics_raycast",
+    description: "Cast a ray in the physics world and return hit information. Supports single or all-hits mode.",
+    inputSchema: {
+      type: "object",
+      properties: {
+        origin: { type: "object", properties: { x: { type: "number" }, y: { type: "number" }, z: { type: "number" } }, description: "Ray origin point" },
+        direction: { type: "object", properties: { x: { type: "number" }, y: { type: "number" }, z: { type: "number" } }, description: "Ray direction" },
+        maxDistance: { type: "number", description: "Maximum ray distance (default: Infinity)" },
+        layerMask: { type: "number", description: "Layer mask for filtering (default: all layers)" },
+        all: { type: "boolean", description: "If true, return all hits instead of just the first" },
+      },
+      required: ["origin", "direction"],
+    },
+    handler: async (params) => JSON.stringify(await bridge.physicsRaycast(params), null, 2),
+  },
+  {
+    name: "unity_physics_overlap_sphere",
+    description: "Find all colliders within a sphere. Useful for area-of-effect queries.",
+    inputSchema: {
+      type: "object",
+      properties: {
+        center: { type: "object", properties: { x: { type: "number" }, y: { type: "number" }, z: { type: "number" } }, description: "Sphere center" },
+        radius: { type: "number", description: "Sphere radius (default: 1)" },
+        layerMask: { type: "number", description: "Layer mask for filtering" },
+      },
+      required: ["center", "radius"],
+    },
+    handler: async (params) => JSON.stringify(await bridge.physicsOverlapSphere(params), null, 2),
+  },
+  {
+    name: "unity_physics_overlap_box",
+    description: "Find all colliders within a box volume.",
+    inputSchema: {
+      type: "object",
+      properties: {
+        center: { type: "object", properties: { x: { type: "number" }, y: { type: "number" }, z: { type: "number" } }, description: "Box center" },
+        halfExtents: { type: "object", properties: { x: { type: "number" }, y: { type: "number" }, z: { type: "number" } }, description: "Box half extents" },
+        layerMask: { type: "number", description: "Layer mask for filtering" },
+      },
+      required: ["center", "halfExtents"],
+    },
+    handler: async (params) => JSON.stringify(await bridge.physicsOverlapBox(params), null, 2),
+  },
+  {
+    name: "unity_physics_collision_matrix",
+    description: "Get the physics collision matrix showing which layers collide with each other.",
+    inputSchema: { type: "object", properties: {} },
+    handler: async (params) => JSON.stringify(await bridge.getCollisionMatrix(params), null, 2),
+  },
+  {
+    name: "unity_physics_set_collision_layer",
+    description: "Set whether two physics layers should collide or ignore each other.",
+    inputSchema: {
+      type: "object",
+      properties: {
+        layer1: { type: "number", description: "First layer index" },
+        layer2: { type: "number", description: "Second layer index" },
+        layer1Name: { type: "string", description: "First layer name (alternative to index)" },
+        layer2Name: { type: "string", description: "Second layer name (alternative to index)" },
+        ignore: { type: "boolean", description: "If true, layers will ignore each other (default: true)" },
+      },
+    },
+    handler: async (params) => JSON.stringify(await bridge.setCollisionLayer(params), null, 2),
+  },
+  {
+    name: "unity_physics_set_gravity",
+    description: "Get or set the global physics gravity vector.",
+    inputSchema: {
+      type: "object",
+      properties: {
+        gravity: { type: "object", properties: { x: { type: "number" }, y: { type: "number" }, z: { type: "number" } }, description: "New gravity vector (omit to just read current)" },
+      },
+    },
+    handler: async (params) => JSON.stringify(await bridge.setGravity(params), null, 2),
+  },
 ];
