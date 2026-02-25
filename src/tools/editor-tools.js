@@ -1989,4 +1989,584 @@ export const editorTools = [
     },
     handler: async (params) => JSON.stringify(await bridge.getAgentLog(params), null, 2),
   },
+
+  // ─── Search & Find ───
+  {
+    name: "unity_search_by_component",
+    description: "Find all GameObjects in the scene that have a specific component type. Returns their paths and instance IDs.",
+    inputSchema: {
+      type: "object",
+      properties: {
+        componentType: { type: "string", description: "Component type name (e.g. 'Rigidbody', 'Camera', 'AudioSource', 'MyScript')" },
+        includeInactive: { type: "boolean", description: "Include inactive GameObjects (default: false)" },
+      },
+      required: ["componentType"],
+    },
+    handler: async (params) => JSON.stringify(await bridge.findByComponent(params), null, 2),
+  },
+  {
+    name: "unity_search_by_tag",
+    description: "Find all GameObjects with a specific tag.",
+    inputSchema: {
+      type: "object",
+      properties: {
+        tag: { type: "string", description: "Tag name (e.g. 'Player', 'Enemy', 'MainCamera')" },
+      },
+      required: ["tag"],
+    },
+    handler: async (params) => JSON.stringify(await bridge.findByTag(params), null, 2),
+  },
+  {
+    name: "unity_search_by_layer",
+    description: "Find all GameObjects on a specific layer.",
+    inputSchema: {
+      type: "object",
+      properties: {
+        layer: { type: "string", description: "Layer name or index (e.g. 'UI', 'Water', '5')" },
+      },
+      required: ["layer"],
+    },
+    handler: async (params) => JSON.stringify(await bridge.findByLayer(params), null, 2),
+  },
+  {
+    name: "unity_search_by_name",
+    description: "Find all GameObjects whose name contains a pattern. Supports substring matching or regex.",
+    inputSchema: {
+      type: "object",
+      properties: {
+        name: { type: "string", description: "Name pattern to search for" },
+        regex: { type: "boolean", description: "Use regex matching instead of substring (default: false)" },
+        includeInactive: { type: "boolean", description: "Include inactive GameObjects (default: false)" },
+      },
+      required: ["name"],
+    },
+    handler: async (params) => JSON.stringify(await bridge.findByName(params), null, 2),
+  },
+  {
+    name: "unity_search_by_shader",
+    description: "Find all renderers using a specific shader.",
+    inputSchema: {
+      type: "object",
+      properties: {
+        shader: { type: "string", description: "Shader name to search for (partial match)" },
+      },
+      required: ["shader"],
+    },
+    handler: async (params) => JSON.stringify(await bridge.findByShader(params), null, 2),
+  },
+  {
+    name: "unity_search_assets",
+    description: "Search for assets in the project by name, type, and folder. Uses Unity's AssetDatabase search.",
+    inputSchema: {
+      type: "object",
+      properties: {
+        query: { type: "string", description: "Search query (asset name)" },
+        type: { type: "string", description: "Asset type filter (e.g. 'Material', 'Texture2D', 'Prefab', 'Scene', 'AnimationClip', 'ScriptableObject')" },
+        folder: { type: "string", description: "Folder to search in (e.g. 'Assets/Prefabs')" },
+        maxResults: { type: "number", description: "Maximum results to return (default: 100)" },
+      },
+    },
+    handler: async (params) => JSON.stringify(await bridge.searchAssets(params), null, 2),
+  },
+  {
+    name: "unity_search_missing_references",
+    description: "Find all missing/broken object references and missing scripts in the scene. Essential for cleanup and debugging.",
+    inputSchema: {
+      type: "object",
+      properties: {
+        scope: { type: "string", description: "'scene' (default) or 'assets'" },
+      },
+    },
+    handler: async (params) => JSON.stringify(await bridge.findMissingReferences(params), null, 2),
+  },
+  {
+    name: "unity_scene_stats",
+    description: "Get comprehensive scene statistics: total objects, vertices, triangles, lights, cameras, colliders, and top component types.",
+    inputSchema: { type: "object", properties: {} },
+    handler: async (params) => JSON.stringify(await bridge.getSceneStats(params), null, 2),
+  },
+
+  // ─── Project Settings ───
+  {
+    name: "unity_settings_quality",
+    description: "Get current quality settings: level, shadows, anti-aliasing, LOD bias, vsync, and all quality levels available.",
+    inputSchema: { type: "object", properties: {} },
+    handler: async (params) => JSON.stringify(await bridge.getQualitySettings(params), null, 2),
+  },
+  {
+    name: "unity_settings_set_quality_level",
+    description: "Set the active quality level by name or index.",
+    inputSchema: {
+      type: "object",
+      properties: {
+        level: { type: "string", description: "Quality level name (e.g. 'Ultra', 'High') or index (e.g. '0', '3')" },
+      },
+      required: ["level"],
+    },
+    handler: async (params) => JSON.stringify(await bridge.setQualityLevel(params), null, 2),
+  },
+  {
+    name: "unity_settings_physics",
+    description: "Get physics settings: gravity, solver iterations, sleep threshold, contact offset, bounce threshold.",
+    inputSchema: { type: "object", properties: {} },
+    handler: async (params) => JSON.stringify(await bridge.getPhysicsSettings(params), null, 2),
+  },
+  {
+    name: "unity_settings_set_physics",
+    description: "Modify physics settings like gravity, solver iterations, sleep threshold, etc.",
+    inputSchema: {
+      type: "object",
+      properties: {
+        gravity: { type: "object", description: "Gravity vector { x, y, z } (default: 0, -9.81, 0)", properties: { x: { type: "number" }, y: { type: "number" }, z: { type: "number" } } },
+        defaultSolverIterations: { type: "number", description: "Physics solver iterations (default: 6)" },
+        sleepThreshold: { type: "number", description: "Energy threshold for sleep" },
+        bounceThreshold: { type: "number", description: "Velocity threshold for bouncing" },
+        defaultContactOffset: { type: "number", description: "Default contact offset" },
+        queriesHitTriggers: { type: "boolean", description: "Whether raycasts hit trigger colliders" },
+      },
+    },
+    handler: async (params) => JSON.stringify(await bridge.setPhysicsSettings(params), null, 2),
+  },
+  {
+    name: "unity_settings_time",
+    description: "Get time settings: fixedDeltaTime, maximumDeltaTime, timeScale.",
+    inputSchema: { type: "object", properties: {} },
+    handler: async (params) => JSON.stringify(await bridge.getTimeSettings(params), null, 2),
+  },
+  {
+    name: "unity_settings_set_time",
+    description: "Modify time settings: fixed timestep, max delta time, time scale (for slow-mo or fast-forward).",
+    inputSchema: {
+      type: "object",
+      properties: {
+        fixedDeltaTime: { type: "number", description: "Fixed timestep (default: 0.02 = 50Hz)" },
+        maximumDeltaTime: { type: "number", description: "Maximum allowed delta time" },
+        timeScale: { type: "number", description: "Time scale (1 = normal, 0.5 = half speed, 2 = double speed)" },
+      },
+    },
+    handler: async (params) => JSON.stringify(await bridge.setTimeSettings(params), null, 2),
+  },
+  {
+    name: "unity_settings_player",
+    description: "Get player settings: company name, product name, version, color space, scripting backend, target architecture.",
+    inputSchema: { type: "object", properties: {} },
+    handler: async (params) => JSON.stringify(await bridge.getPlayerSettings(params), null, 2),
+  },
+  {
+    name: "unity_settings_set_player",
+    description: "Modify player settings like company name, product name, bundle version, run in background.",
+    inputSchema: {
+      type: "object",
+      properties: {
+        companyName: { type: "string", description: "Company name" },
+        productName: { type: "string", description: "Product/game name" },
+        bundleVersion: { type: "string", description: "Version string (e.g. '1.0.0')" },
+        runInBackground: { type: "boolean", description: "Run in background when unfocused" },
+      },
+    },
+    handler: async (params) => JSON.stringify(await bridge.setPlayerSettings(params), null, 2),
+  },
+  {
+    name: "unity_settings_render_pipeline",
+    description: "Get information about the current render pipeline (Built-in, URP, HDRP).",
+    inputSchema: { type: "object", properties: {} },
+    handler: async (params) => JSON.stringify(await bridge.getRenderPipelineInfo(params), null, 2),
+  },
+
+  // ─── Undo ───
+  {
+    name: "unity_undo",
+    description: "Undo the last operation in Unity Editor.",
+    inputSchema: { type: "object", properties: {} },
+    handler: async (params) => JSON.stringify(await bridge.performUndo(params), null, 2),
+  },
+  {
+    name: "unity_redo",
+    description: "Redo the last undone operation in Unity Editor.",
+    inputSchema: { type: "object", properties: {} },
+    handler: async (params) => JSON.stringify(await bridge.performRedo(params), null, 2),
+  },
+  {
+    name: "unity_undo_history",
+    description: "Get information about the current undo group.",
+    inputSchema: { type: "object", properties: {} },
+    handler: async (params) => JSON.stringify(await bridge.getUndoHistory(params), null, 2),
+  },
+  {
+    name: "unity_undo_clear",
+    description: "Clear undo history. Can clear for a specific object or all undo history.",
+    inputSchema: {
+      type: "object",
+      properties: {
+        objectPath: { type: "string", description: "Optional: clear undo only for this GameObject. If omitted, clears all." },
+      },
+    },
+    handler: async (params) => JSON.stringify(await bridge.clearUndo(params), null, 2),
+  },
+
+  // ─── Screenshot / Scene View ───
+  {
+    name: "unity_screenshot_game",
+    description: "Capture a screenshot of the Game View. The screenshot is saved on the next frame render.",
+    inputSchema: {
+      type: "object",
+      properties: {
+        path: { type: "string", description: "Save path (default: Assets/Screenshots/GameView_timestamp.png)" },
+        superSize: { type: "number", description: "Resolution multiplier (1 = normal, 2 = 2x, 4 = 4x)" },
+      },
+    },
+    handler: async (params) => JSON.stringify(await bridge.captureGameView(params), null, 2),
+  },
+  {
+    name: "unity_screenshot_scene",
+    description: "Capture a screenshot of the Scene View camera. Returns immediately with the saved file path.",
+    inputSchema: {
+      type: "object",
+      properties: {
+        path: { type: "string", description: "Save path (default: Assets/Screenshots/SceneView_timestamp.png)" },
+        width: { type: "number", description: "Image width (default: 1920)" },
+        height: { type: "number", description: "Image height (default: 1080)" },
+      },
+    },
+    handler: async (params) => JSON.stringify(await bridge.captureSceneView(params), null, 2),
+  },
+  {
+    name: "unity_sceneview_info",
+    description: "Get Scene View camera info: pivot position, rotation, zoom, orthographic mode, 2D mode.",
+    inputSchema: { type: "object", properties: {} },
+    handler: async (params) => JSON.stringify(await bridge.getSceneViewInfo(params), null, 2),
+  },
+  {
+    name: "unity_sceneview_set_camera",
+    description: "Control the Scene View camera: set pivot, rotation, zoom, orthographic mode, look-at target, or frame selection.",
+    inputSchema: {
+      type: "object",
+      properties: {
+        pivot: { type: "object", description: "Camera pivot position { x, y, z }", properties: { x: { type: "number" }, y: { type: "number" }, z: { type: "number" } } },
+        rotation: { type: "object", description: "Camera rotation (Euler angles) { x, y, z }", properties: { x: { type: "number" }, y: { type: "number" }, z: { type: "number" } } },
+        size: { type: "number", description: "Zoom level / camera size" },
+        orthographic: { type: "boolean", description: "Orthographic projection mode" },
+        is2D: { type: "boolean", description: "2D mode" },
+        lookAt: { type: "object", description: "Point to look at { x, y, z }", properties: { x: { type: "number" }, y: { type: "number" }, z: { type: "number" } } },
+        lookAtSize: { type: "number", description: "Size when using lookAt (default: 10)" },
+        frameSelected: { type: "boolean", description: "Frame the currently selected object" },
+      },
+    },
+    handler: async (params) => JSON.stringify(await bridge.setSceneViewCamera(params), null, 2),
+  },
+
+  // ─── Terrain ───
+  {
+    name: "unity_terrain_create",
+    description: "Create a new Terrain in the scene with configurable size and heightmap resolution.",
+    inputSchema: {
+      type: "object",
+      properties: {
+        name: { type: "string", description: "Terrain name (default: 'Terrain')" },
+        width: { type: "number", description: "Terrain width in units (default: 1000)" },
+        length: { type: "number", description: "Terrain length in units (default: 1000)" },
+        height: { type: "number", description: "Maximum terrain height (default: 600)" },
+        heightmapResolution: { type: "number", description: "Heightmap resolution, must be power of 2 + 1 (default: 513)" },
+        position: { type: "object", description: "World position { x, y, z }", properties: { x: { type: "number" }, y: { type: "number" }, z: { type: "number" } } },
+        dataPath: { type: "string", description: "Path to save terrain data asset (default: Assets/TerrainName_Data.asset)" },
+      },
+    },
+    handler: async (params) => JSON.stringify(await bridge.createTerrain(params), null, 2),
+  },
+  {
+    name: "unity_terrain_info",
+    description: "Get detailed terrain information: size, resolution, layers, tree/detail counts, settings.",
+    inputSchema: {
+      type: "object",
+      properties: {
+        name: { type: "string", description: "Terrain name. If omitted, uses the active terrain." },
+      },
+    },
+    handler: async (params) => JSON.stringify(await bridge.getTerrainInfo(params), null, 2),
+  },
+  {
+    name: "unity_terrain_set_height",
+    description: "Set terrain height at a position with optional radius falloff. Coordinates are normalized (0-1).",
+    inputSchema: {
+      type: "object",
+      properties: {
+        x: { type: "number", description: "Normalized X position (0-1)" },
+        z: { type: "number", description: "Normalized Z position (0-1)" },
+        height: { type: "number", description: "Height value (0-1, where 1 = max terrain height)" },
+        radius: { type: "number", description: "Brush radius in heightmap pixels (default: 1)" },
+        name: { type: "string", description: "Terrain name (optional)" },
+      },
+      required: ["x", "z", "height"],
+    },
+    handler: async (params) => JSON.stringify(await bridge.setTerrainHeight(params), null, 2),
+  },
+  {
+    name: "unity_terrain_flatten",
+    description: "Flatten the entire terrain to a uniform height.",
+    inputSchema: {
+      type: "object",
+      properties: {
+        height: { type: "number", description: "Height value (0-1, default: 0)" },
+        name: { type: "string", description: "Terrain name (optional)" },
+      },
+    },
+    handler: async (params) => JSON.stringify(await bridge.flattenTerrain(params), null, 2),
+  },
+  {
+    name: "unity_terrain_add_layer",
+    description: "Add a texture layer to the terrain for painting.",
+    inputSchema: {
+      type: "object",
+      properties: {
+        texturePath: { type: "string", description: "Asset path of the diffuse texture" },
+        normalMapPath: { type: "string", description: "Asset path of the normal map texture (optional)" },
+        tileSizeX: { type: "number", description: "Tile size X (default: 10)" },
+        tileSizeY: { type: "number", description: "Tile size Y (default: 10)" },
+        name: { type: "string", description: "Terrain name (optional)" },
+      },
+      required: ["texturePath"],
+    },
+    handler: async (params) => JSON.stringify(await bridge.addTerrainLayer(params), null, 2),
+  },
+  {
+    name: "unity_terrain_get_height",
+    description: "Sample the terrain height at a world position.",
+    inputSchema: {
+      type: "object",
+      properties: {
+        worldX: { type: "number", description: "World X coordinate" },
+        worldZ: { type: "number", description: "World Z coordinate" },
+        name: { type: "string", description: "Terrain name (optional)" },
+      },
+      required: ["worldX", "worldZ"],
+    },
+    handler: async (params) => JSON.stringify(await bridge.getTerrainHeight(params), null, 2),
+  },
+
+  // ─── Particle System ───
+  {
+    name: "unity_particle_create",
+    description: "Create a new Particle System with optional initial settings.",
+    inputSchema: {
+      type: "object",
+      properties: {
+        name: { type: "string", description: "GameObject name (default: 'Particle System')" },
+        position: { type: "object", description: "World position { x, y, z }", properties: { x: { type: "number" }, y: { type: "number" }, z: { type: "number" } } },
+        parent: { type: "string", description: "Parent GameObject path" },
+        duration: { type: "number", description: "Effect duration in seconds" },
+        loop: { type: "boolean", description: "Whether the system loops" },
+        startLifetime: { type: "number", description: "Particle lifetime in seconds" },
+        startSpeed: { type: "number", description: "Initial particle speed" },
+        startSize: { type: "number", description: "Initial particle size" },
+        maxParticles: { type: "number", description: "Maximum number of particles" },
+        gravityModifier: { type: "number", description: "Gravity multiplier" },
+      },
+    },
+    handler: async (params) => JSON.stringify(await bridge.createParticleSystem(params), null, 2),
+  },
+  {
+    name: "unity_particle_info",
+    description: "Get detailed Particle System info: main module, emission, shape, and all module enable states.",
+    inputSchema: {
+      type: "object",
+      properties: {
+        path: { type: "string", description: "GameObject path" },
+        instanceId: { type: "number", description: "Instance ID (alternative)" },
+      },
+    },
+    handler: async (params) => JSON.stringify(await bridge.getParticleSystemInfo(params), null, 2),
+  },
+  {
+    name: "unity_particle_set_main",
+    description: "Configure the main module of a Particle System: duration, lifetime, speed, size, gravity, simulation space.",
+    inputSchema: {
+      type: "object",
+      properties: {
+        path: { type: "string", description: "GameObject path" },
+        instanceId: { type: "number", description: "Instance ID (alternative)" },
+        duration: { type: "number" }, loop: { type: "boolean" },
+        startLifetime: { type: "number" }, startSpeed: { type: "number" },
+        startSize: { type: "number" }, startRotation: { type: "number" },
+        maxParticles: { type: "number" }, gravityModifier: { type: "number" },
+        playOnAwake: { type: "boolean" },
+        simulationSpace: { type: "string", description: "Local, World, or Custom" },
+      },
+    },
+    handler: async (params) => JSON.stringify(await bridge.setParticleMainModule(params), null, 2),
+  },
+  {
+    name: "unity_particle_set_emission",
+    description: "Configure particle emission: rate over time, rate over distance.",
+    inputSchema: {
+      type: "object",
+      properties: {
+        path: { type: "string", description: "GameObject path" },
+        instanceId: { type: "number", description: "Instance ID (alternative)" },
+        enabled: { type: "boolean" },
+        rateOverTime: { type: "number", description: "Particles emitted per second" },
+        rateOverDistance: { type: "number", description: "Particles emitted per unit distance" },
+      },
+    },
+    handler: async (params) => JSON.stringify(await bridge.setParticleEmission(params), null, 2),
+  },
+  {
+    name: "unity_particle_set_shape",
+    description: "Configure the emission shape: Sphere, Hemisphere, Cone, Box, Circle, Edge, etc.",
+    inputSchema: {
+      type: "object",
+      properties: {
+        path: { type: "string", description: "GameObject path" },
+        instanceId: { type: "number", description: "Instance ID (alternative)" },
+        enabled: { type: "boolean" },
+        shapeType: { type: "string", description: "Shape type: Sphere, Hemisphere, Cone, Box, Circle, Edge, Rectangle, etc." },
+        radius: { type: "number" }, angle: { type: "number" },
+        arc: { type: "number" }, radiusThickness: { type: "number", description: "0 = emit from surface only, 1 = emit from entire volume" },
+      },
+    },
+    handler: async (params) => JSON.stringify(await bridge.setParticleShape(params), null, 2),
+  },
+  {
+    name: "unity_particle_playback",
+    description: "Control particle system playback: play, stop, pause, restart, or clear.",
+    inputSchema: {
+      type: "object",
+      properties: {
+        path: { type: "string", description: "GameObject path" },
+        instanceId: { type: "number", description: "Instance ID (alternative)" },
+        action: { type: "string", description: "play, stop, pause, restart, or clear" },
+      },
+      required: ["action"],
+    },
+    handler: async (params) => JSON.stringify(await bridge.particlePlayback(params), null, 2),
+  },
+
+  // ─── ScriptableObject ───
+  {
+    name: "unity_scriptableobject_create",
+    description: "Create a new ScriptableObject asset from a C# type. The type must already exist as a compiled script.",
+    inputSchema: {
+      type: "object",
+      properties: {
+        type: { type: "string", description: "Full type name (e.g. 'GameSettings', 'MyNamespace.PlayerData')" },
+        path: { type: "string", description: "Asset path (default: Assets/TypeName.asset)" },
+      },
+      required: ["type"],
+    },
+    handler: async (params) => JSON.stringify(await bridge.createScriptableObject(params), null, 2),
+  },
+  {
+    name: "unity_scriptableobject_info",
+    description: "Get all serialized properties and values of a ScriptableObject asset.",
+    inputSchema: {
+      type: "object",
+      properties: {
+        path: { type: "string", description: "Asset path of the ScriptableObject" },
+      },
+      required: ["path"],
+    },
+    handler: async (params) => JSON.stringify(await bridge.getScriptableObjectInfo(params), null, 2),
+  },
+  {
+    name: "unity_scriptableobject_set_field",
+    description: "Set a field value on a ScriptableObject asset. Supports int, float, bool, string, and enum types.",
+    inputSchema: {
+      type: "object",
+      properties: {
+        path: { type: "string", description: "Asset path of the ScriptableObject" },
+        field: { type: "string", description: "Property/field name" },
+        value: { description: "Value to set (type depends on field)" },
+      },
+      required: ["path", "field", "value"],
+    },
+    handler: async (params) => JSON.stringify(await bridge.setScriptableObjectField(params), null, 2),
+  },
+  {
+    name: "unity_scriptableobject_list_types",
+    description: "List all available ScriptableObject types in the project. Useful for discovering what SO types can be created.",
+    inputSchema: {
+      type: "object",
+      properties: {
+        filter: { type: "string", description: "Filter by type name (optional)" },
+        includeEngine: { type: "boolean", description: "Include Unity engine types (default: false, project types only)" },
+      },
+    },
+    handler: async (params) => JSON.stringify(await bridge.listScriptableObjectTypes(params), null, 2),
+  },
+
+  // ─── Texture ───
+  {
+    name: "unity_texture_info",
+    description: "Get texture info and import settings: size, format, compression, sprite mode, filter, wrap, mip maps, etc.",
+    inputSchema: {
+      type: "object",
+      properties: {
+        path: { type: "string", description: "Asset path of the texture" },
+      },
+      required: ["path"],
+    },
+    handler: async (params) => JSON.stringify(await bridge.getTextureInfo(params), null, 2),
+  },
+  {
+    name: "unity_texture_set_import",
+    description: "Set texture import settings: type, compression, max size, filter mode, wrap mode, mipmaps, etc.",
+    inputSchema: {
+      type: "object",
+      properties: {
+        path: { type: "string", description: "Asset path of the texture" },
+        textureType: { type: "string", description: "Default, NormalMap, Sprite, Cursor, Cookie, Lightmap, SingleChannel" },
+        sRGB: { type: "boolean", description: "sRGB color space" },
+        readable: { type: "boolean", description: "Read/Write enabled (uses more memory)" },
+        mipmapEnabled: { type: "boolean", description: "Generate mipmaps" },
+        filterMode: { type: "string", description: "Point, Bilinear, or Trilinear" },
+        wrapMode: { type: "string", description: "Repeat, Clamp, Mirror, MirrorOnce" },
+        maxTextureSize: { type: "number", description: "Max texture size (32, 64, 128, 256, 512, 1024, 2048, 4096, 8192)" },
+        textureCompression: { type: "string", description: "Uncompressed, Compressed, CompressedHQ, CompressedLQ" },
+        anisoLevel: { type: "number", description: "Anisotropic filtering level (0-16)" },
+        alphaIsTransparency: { type: "boolean", description: "Alpha is transparency" },
+        spritePixelsPerUnit: { type: "number", description: "Pixels per unit for sprites" },
+        spriteMode: { type: "string", description: "Single, Multiple, Polygon (for sprite textures)" },
+        npotScale: { type: "string", description: "Non-power-of-2 handling: None, ToNearest, ToLarger, ToSmaller" },
+      },
+      required: ["path"],
+    },
+    handler: async (params) => JSON.stringify(await bridge.setTextureImportSettings(params), null, 2),
+  },
+  {
+    name: "unity_texture_reimport",
+    description: "Force reimport a texture to apply pending changes.",
+    inputSchema: {
+      type: "object",
+      properties: {
+        path: { type: "string", description: "Asset path of the texture" },
+      },
+      required: ["path"],
+    },
+    handler: async (params) => JSON.stringify(await bridge.reimportTexture(params), null, 2),
+  },
+  {
+    name: "unity_texture_set_sprite",
+    description: "Quick-set a texture as a Sprite with optional pixels-per-unit and single/multiple mode.",
+    inputSchema: {
+      type: "object",
+      properties: {
+        path: { type: "string", description: "Asset path of the texture" },
+        pixelsPerUnit: { type: "number", description: "Pixels per unit (default: 100)" },
+        multiple: { type: "boolean", description: "Use Multiple sprite mode for spritesheets (default: false = Single)" },
+      },
+      required: ["path"],
+    },
+    handler: async (params) => JSON.stringify(await bridge.setTextureAsSprite(params), null, 2),
+  },
+  {
+    name: "unity_texture_set_normalmap",
+    description: "Quick-set a texture as a Normal Map.",
+    inputSchema: {
+      type: "object",
+      properties: {
+        path: { type: "string", description: "Asset path of the texture" },
+      },
+      required: ["path"],
+    },
+    handler: async (params) => JSON.stringify(await bridge.setTextureAsNormalMap(params), null, 2),
+  },
 ];

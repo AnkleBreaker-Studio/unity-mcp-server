@@ -755,3 +755,203 @@ export async function listAgents(params) {
 export async function getAgentLog(params) {
   return sendCommand("agents/log", params);
 }
+
+// ─── Search ───
+
+export async function findByComponent(params) {
+  return sendCommand("search/by-component", params);
+}
+
+export async function findByTag(params) {
+  return sendCommand("search/by-tag", params);
+}
+
+export async function findByLayer(params) {
+  return sendCommand("search/by-layer", params);
+}
+
+export async function findByName(params) {
+  return sendCommand("search/by-name", params);
+}
+
+export async function findByShader(params) {
+  return sendCommand("search/by-shader", params);
+}
+
+export async function searchAssets(params) {
+  return sendCommand("search/assets", params);
+}
+
+export async function findMissingReferences(params) {
+  return sendCommand("search/missing-references", params);
+}
+
+export async function getSceneStats(params) {
+  return sendCommand("search/scene-stats", params);
+}
+
+// ─── Project Settings ───
+
+export async function getQualitySettings(params) {
+  return sendCommand("settings/quality", params);
+}
+
+export async function setQualityLevel(params) {
+  return sendCommand("settings/quality-level", params);
+}
+
+export async function getPhysicsSettings(params) {
+  return sendCommand("settings/physics", params);
+}
+
+export async function setPhysicsSettings(params) {
+  return sendCommand("settings/set-physics", params);
+}
+
+export async function getTimeSettings(params) {
+  return sendCommand("settings/time", params);
+}
+
+export async function setTimeSettings(params) {
+  return sendCommand("settings/set-time", params);
+}
+
+export async function getPlayerSettings(params) {
+  return sendCommand("settings/player", params);
+}
+
+export async function setPlayerSettings(params) {
+  return sendCommand("settings/set-player", params);
+}
+
+export async function getRenderPipelineInfo(params) {
+  return sendCommand("settings/render-pipeline", params);
+}
+
+// ─── Undo ───
+
+export async function performUndo(params) {
+  return sendCommand("undo/perform", params);
+}
+
+export async function performRedo(params) {
+  return sendCommand("undo/redo", params);
+}
+
+export async function getUndoHistory(params) {
+  return sendCommand("undo/history", params);
+}
+
+export async function clearUndo(params) {
+  return sendCommand("undo/clear", params);
+}
+
+// ─── Screenshot / Scene View ───
+
+export async function captureGameView(params) {
+  return sendCommand("screenshot/game", params);
+}
+
+export async function captureSceneView(params) {
+  return sendCommand("screenshot/scene", params);
+}
+
+export async function getSceneViewInfo(params) {
+  return sendCommand("sceneview/info", params);
+}
+
+export async function setSceneViewCamera(params) {
+  return sendCommand("sceneview/set-camera", params);
+}
+
+// ─── Terrain ───
+
+export async function createTerrain(params) {
+  return sendCommand("terrain/create", params);
+}
+
+export async function getTerrainInfo(params) {
+  return sendCommand("terrain/info", params);
+}
+
+export async function setTerrainHeight(params) {
+  return sendCommand("terrain/set-height", params);
+}
+
+export async function flattenTerrain(params) {
+  return sendCommand("terrain/flatten", params);
+}
+
+export async function addTerrainLayer(params) {
+  return sendCommand("terrain/add-layer", params);
+}
+
+export async function getTerrainHeight(params) {
+  return sendCommand("terrain/get-height", params);
+}
+
+// ─── Particle System ───
+
+export async function createParticleSystem(params) {
+  return sendCommand("particle/create", params);
+}
+
+export async function getParticleSystemInfo(params) {
+  return sendCommand("particle/info", params);
+}
+
+export async function setParticleMainModule(params) {
+  return sendCommand("particle/set-main", params);
+}
+
+export async function setParticleEmission(params) {
+  return sendCommand("particle/set-emission", params);
+}
+
+export async function setParticleShape(params) {
+  return sendCommand("particle/set-shape", params);
+}
+
+export async function particlePlayback(params) {
+  return sendCommand("particle/playback", params);
+}
+
+// ─── ScriptableObject ───
+
+export async function createScriptableObject(params) {
+  return sendCommand("scriptableobject/create", params);
+}
+
+export async function getScriptableObjectInfo(params) {
+  return sendCommand("scriptableobject/info", params);
+}
+
+export async function setScriptableObjectField(params) {
+  return sendCommand("scriptableobject/set-field", params);
+}
+
+export async function listScriptableObjectTypes(params) {
+  return sendCommand("scriptableobject/list-types", params);
+}
+
+// ─── Texture ───
+
+export async function getTextureInfo(params) {
+  return sendCommand("texture/info", params);
+}
+
+export async function setTextureImportSettings(params) {
+  return sendCommand("texture/set-import", params);
+}
+
+export async function reimportTexture(params) {
+  return sendCommand("texture/reimport", params);
+}
+
+export async function setTextureAsSprite(params) {
+  return sendCommand("texture/set-sprite", params);
+}
+
+export async function setTextureAsNormalMap(params) {
+  return sendCommand("texture/set-normalmap", params);
+}
