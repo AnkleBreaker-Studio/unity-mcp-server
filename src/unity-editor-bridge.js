@@ -295,3 +295,25 @@ export async function setCollisionLayer(params) {
 export async function setGravity(params) {
   return sendCommand("physics/set-gravity", params);
 }
+
+// ─── Lighting ───
+
+export async function getLightingInfo(params) {
+  return sendCommand("lighting/info", params);
+}
+
+export async function createLight(params) {
+  return sendCommand("lighting/create", params);
+}
+
+export async function setEnvironment(params) {
+  return sendCommand("lighting/set-environment", params);
+}
+
+export async function createReflectionProbe(params) {
+  return sendCommand("lighting/create-reflection-probe", params);
+}
+
+export async function createLightProbeGroup(params) {
+  return sendCommand("lighting/create-light-probe-group", params);
+}

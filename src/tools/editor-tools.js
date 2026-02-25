@@ -821,4 +821,76 @@ export const editorTools = [
     },
     handler: async (params) => JSON.stringify(await bridge.setGravity(params), null, 2),
   },
+
+  // ─── Lighting ───
+  {
+    name: "unity_lighting_info",
+    description: "Get info about all lights in the scene plus environment/fog settings.",
+    inputSchema: { type: "object", properties: {} },
+    handler: async (params) => JSON.stringify(await bridge.getLightingInfo(params), null, 2),
+  },
+  {
+    name: "unity_lighting_create",
+    description: "Create a new light in the scene (Point, Directional, Spot, or Area).",
+    inputSchema: {
+      type: "object",
+      properties: {
+        name: { type: "string", description: "Light name" },
+        lightType: { type: "string", enum: ["Point", "Directional", "Spot", "Area"], description: "Light type" },
+        color: { type: "object", properties: { r: { type: "number" }, g: { type: "number" }, b: { type: "number" }, a: { type: "number" } }, description: "Light color (0-1)" },
+        intensity: { type: "number", description: "Light intensity" },
+        range: { type: "number", description: "Light range (Point/Spot)" },
+        spotAngle: { type: "number", description: "Spot angle in degrees (Spot only)" },
+        shadows: { type: "string", enum: ["None", "Hard", "Soft"], description: "Shadow type" },
+        position: { type: "object", properties: { x: { type: "number" }, y: { type: "number" }, z: { type: "number" } } },
+        rotation: { type: "object", properties: { x: { type: "number" }, y: { type: "number" }, z: { type: "number" } } },
+      },
+    },
+    handler: async (params) => JSON.stringify(await bridge.createLight(params), null, 2),
+  },
+  {
+    name: "unity_lighting_set_environment",
+    description: "Set environment lighting: ambient mode/color, fog, skybox material.",
+    inputSchema: {
+      type: "object",
+      properties: {
+        ambientMode: { type: "string", enum: ["Skybox", "Trilight", "Flat", "Custom"], description: "Ambient lighting mode" },
+        ambientColor: { type: "object", properties: { r: { type: "number" }, g: { type: "number" }, b: { type: "number" }, a: { type: "number" } }, description: "Ambient light color" },
+        ambientIntensity: { type: "number", description: "Ambient intensity multiplier" },
+        fogEnabled: { type: "boolean", description: "Enable/disable fog" },
+        fogColor: { type: "object", properties: { r: { type: "number" }, g: { type: "number" }, b: { type: "number" }, a: { type: "number" } }, description: "Fog color" },
+        fogDensity: { type: "number", description: "Fog density (Exponential mode)" },
+        fogMode: { type: "string", enum: ["Linear", "Exponential", "ExponentialSquared"], description: "Fog mode" },
+        skyboxMaterialPath: { type: "string", description: "Asset path to skybox material" },
+      },
+    },
+    handler: async (params) => JSON.stringify(await bridge.setEnvironment(params), null, 2),
+  },
+  {
+    name: "unity_lighting_create_reflection_probe",
+    description: "Create a reflection probe in the scene.",
+    inputSchema: {
+      type: "object",
+      properties: {
+        name: { type: "string", description: "Probe name" },
+        position: { type: "object", properties: { x: { type: "number" }, y: { type: "number" }, z: { type: "number" } } },
+        size: { type: "object", properties: { x: { type: "number" }, y: { type: "number" }, z: { type: "number" } }, description: "Probe bounds size" },
+        resolution: { type: "integer", description: "Cubemap resolution (128, 256, 512, 1024)" },
+        mode: { type: "string", enum: ["Baked", "Realtime", "Custom"], description: "Probe mode" },
+      },
+    },
+    handler: async (params) => JSON.stringify(await bridge.createReflectionProbe(params), null, 2),
+  },
+  {
+    name: "unity_lighting_create_light_probe_group",
+    description: "Create a light probe group in the scene.",
+    inputSchema: {
+      type: "object",
+      properties: {
+        name: { type: "string", description: "Probe group name" },
+        position: { type: "object", properties: { x: { type: "number" }, y: { type: "number" }, z: { type: "number" } } },
+      },
+    },
+    handler: async (params) => JSON.stringify(await bridge.createLightProbeGroup(params), null, 2),
+  },
 ];
