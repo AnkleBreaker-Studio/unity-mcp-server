@@ -2569,4 +2569,351 @@ export const editorTools = [
     },
     handler: async (params) => JSON.stringify(await bridge.setTextureAsNormalMap(params), null, 2),
   },
+
+  // ─── Navigation ───
+
+  {
+    name: "unity_navmesh_bake",
+    description: "Bake the NavMesh for AI navigation. Optionally configure agent radius, height, slope, and climb.",
+    inputSchema: {
+      type: "object",
+      properties: {
+        agentRadius: { type: "number", description: "Agent radius (default: from NavMesh settings)" },
+        agentHeight: { type: "number", description: "Agent height" },
+        agentSlope: { type: "number", description: "Max slope angle in degrees" },
+        agentClimb: { type: "number", description: "Step height the agent can climb" },
+      },
+    },
+    handler: async (params) => JSON.stringify(await bridge.bakeNavMesh(params), null, 2),
+  },
+  {
+    name: "unity_navmesh_clear",
+    description: "Clear all baked NavMeshes from the scene.",
+    inputSchema: { type: "object", properties: {} },
+    handler: async (params) => JSON.stringify(await bridge.clearNavMesh(params), null, 2),
+  },
+  {
+    name: "unity_navmesh_add_agent",
+    description: "Add a NavMeshAgent component to a GameObject with optional settings (speed, angular speed, acceleration, stopping distance, radius, height).",
+    inputSchema: {
+      type: "object",
+      properties: {
+        path: { type: "string", description: "GameObject path or name" },
+        speed: { type: "number", description: "Movement speed" },
+        angularSpeed: { type: "number", description: "Turning speed in deg/s" },
+        acceleration: { type: "number", description: "Acceleration" },
+        stoppingDistance: { type: "number", description: "Distance to stop before target" },
+        radius: { type: "number", description: "Agent radius" },
+        height: { type: "number", description: "Agent height" },
+      },
+      required: ["path"],
+    },
+    handler: async (params) => JSON.stringify(await bridge.addNavMeshAgent(params), null, 2),
+  },
+  {
+    name: "unity_navmesh_add_obstacle",
+    description: "Add a NavMeshObstacle component to a GameObject.",
+    inputSchema: {
+      type: "object",
+      properties: {
+        path: { type: "string", description: "GameObject path or name" },
+        carve: { type: "boolean", description: "Whether the obstacle carves the NavMesh" },
+        shape: { type: "string", description: "Shape: 'box' or 'capsule'" },
+      },
+      required: ["path"],
+    },
+    handler: async (params) => JSON.stringify(await bridge.addNavMeshObstacle(params), null, 2),
+  },
+  {
+    name: "unity_navmesh_info",
+    description: "Get NavMesh information: vertex/triangle count, agents, obstacles, agent types.",
+    inputSchema: { type: "object", properties: {} },
+    handler: async (params) => JSON.stringify(await bridge.getNavMeshInfo(params), null, 2),
+  },
+  {
+    name: "unity_navmesh_set_destination",
+    description: "Set the destination for a NavMeshAgent (requires Play mode).",
+    inputSchema: {
+      type: "object",
+      properties: {
+        path: { type: "string", description: "GameObject path with NavMeshAgent" },
+        destination: {
+          type: "object",
+          description: "Target position {x, y, z}",
+          properties: { x: { type: "number" }, y: { type: "number" }, z: { type: "number" } },
+        },
+      },
+      required: ["path", "destination"],
+    },
+    handler: async (params) => JSON.stringify(await bridge.setAgentDestination(params), null, 2),
+  },
+
+  // ─── UI ───
+
+  {
+    name: "unity_ui_create_canvas",
+    description: "Create a UI Canvas with an EventSystem. Render modes: 'overlay', 'camera', 'world'.",
+    inputSchema: {
+      type: "object",
+      properties: {
+        name: { type: "string", description: "Canvas name (default: 'Canvas')" },
+        renderMode: { type: "string", description: "Render mode: overlay, camera, or world" },
+      },
+    },
+    handler: async (params) => JSON.stringify(await bridge.createCanvas(params), null, 2),
+  },
+  {
+    name: "unity_ui_create_element",
+    description: "Create a UI element: text, image, button, panel, slider, toggle, or inputfield.",
+    inputSchema: {
+      type: "object",
+      properties: {
+        type: { type: "string", description: "Element type: text, image, button, panel, slider, toggle, inputfield" },
+        name: { type: "string", description: "Element name" },
+        parent: { type: "string", description: "Parent GameObject path (defaults to first Canvas)" },
+        label: { type: "string", description: "Button label text (for button type)" },
+        anchoredPosition: { type: "object", properties: { x: { type: "number" }, y: { type: "number" } } },
+        sizeDelta: { type: "object", properties: { x: { type: "number" }, y: { type: "number" } } },
+      },
+      required: ["type"],
+    },
+    handler: async (params) => JSON.stringify(await bridge.createUIElement(params), null, 2),
+  },
+  {
+    name: "unity_ui_info",
+    description: "Get UI information: canvases, text/image/button counts.",
+    inputSchema: { type: "object", properties: {} },
+    handler: async (params) => JSON.stringify(await bridge.getUIInfo(params), null, 2),
+  },
+  {
+    name: "unity_ui_set_text",
+    description: "Set properties on a UI Text component (text content, fontSize, color, alignment).",
+    inputSchema: {
+      type: "object",
+      properties: {
+        path: { type: "string", description: "GameObject path with Text component" },
+        text: { type: "string", description: "Text content" },
+        fontSize: { type: "number", description: "Font size" },
+        color: { type: "object", properties: { r: { type: "number" }, g: { type: "number" }, b: { type: "number" }, a: { type: "number" } } },
+        alignment: { type: "string", description: "Text alignment (e.g. MiddleCenter, UpperLeft)" },
+      },
+      required: ["path"],
+    },
+    handler: async (params) => JSON.stringify(await bridge.setUIText(params), null, 2),
+  },
+  {
+    name: "unity_ui_set_image",
+    description: "Set properties on a UI Image component (color, sprite, imageType, raycastTarget).",
+    inputSchema: {
+      type: "object",
+      properties: {
+        path: { type: "string", description: "GameObject path with Image component" },
+        color: { type: "object", properties: { r: { type: "number" }, g: { type: "number" }, b: { type: "number" }, a: { type: "number" } } },
+        sprite: { type: "string", description: "Asset path to sprite" },
+        imageType: { type: "string", description: "Image type: simple, sliced, tiled, filled" },
+        raycastTarget: { type: "boolean", description: "Whether image blocks raycasts" },
+      },
+      required: ["path"],
+    },
+    handler: async (params) => JSON.stringify(await bridge.setUIImage(params), null, 2),
+  },
+
+  // ─── Package Manager ───
+
+  {
+    name: "unity_packages_list",
+    description: "List all installed Unity packages with their name, version, source, and status.",
+    inputSchema: { type: "object", properties: {} },
+    handler: async (params) => JSON.stringify(await bridge.listPackages(params), null, 2),
+  },
+  {
+    name: "unity_packages_add",
+    description: "Add/install a Unity package by identifier (e.g. 'com.unity.cinemachine' or 'com.unity.cinemachine@3.0.0').",
+    inputSchema: {
+      type: "object",
+      properties: {
+        identifier: { type: "string", description: "Package identifier, e.g. 'com.unity.cinemachine@3.0.0'" },
+      },
+      required: ["identifier"],
+    },
+    handler: async (params) => JSON.stringify(await bridge.addPackage(params), null, 2),
+  },
+  {
+    name: "unity_packages_remove",
+    description: "Remove/uninstall a Unity package by name.",
+    inputSchema: {
+      type: "object",
+      properties: {
+        name: { type: "string", description: "Package name, e.g. 'com.unity.cinemachine'" },
+      },
+      required: ["name"],
+    },
+    handler: async (params) => JSON.stringify(await bridge.removePackage(params), null, 2),
+  },
+  {
+    name: "unity_packages_search",
+    description: "Search for Unity packages in the registry.",
+    inputSchema: {
+      type: "object",
+      properties: {
+        query: { type: "string", description: "Search query" },
+      },
+      required: ["query"],
+    },
+    handler: async (params) => JSON.stringify(await bridge.searchPackage(params), null, 2),
+  },
+  {
+    name: "unity_packages_info",
+    description: "Get detailed info about an installed package including versions and dependencies.",
+    inputSchema: {
+      type: "object",
+      properties: {
+        name: { type: "string", description: "Package name, e.g. 'com.unity.cinemachine'" },
+      },
+      required: ["name"],
+    },
+    handler: async (params) => JSON.stringify(await bridge.getPackageInfo(params), null, 2),
+  },
+
+  // ─── Constraints & LOD ───
+
+  {
+    name: "unity_constraint_add",
+    description: "Add an animation constraint (position, rotation, scale, aim, parent, lookat) to a GameObject with optional source.",
+    inputSchema: {
+      type: "object",
+      properties: {
+        path: { type: "string", description: "Target GameObject path" },
+        type: { type: "string", description: "Constraint type: position, rotation, scale, aim, parent, lookat" },
+        source: { type: "string", description: "Source GameObject path" },
+        activate: { type: "boolean", description: "Activate the constraint immediately" },
+      },
+      required: ["path", "type"],
+    },
+    handler: async (params) => JSON.stringify(await bridge.addConstraint(params), null, 2),
+  },
+  {
+    name: "unity_constraint_info",
+    description: "Get all constraints on a GameObject with their type, active state, weight, and source count.",
+    inputSchema: {
+      type: "object",
+      properties: {
+        path: { type: "string", description: "GameObject path" },
+      },
+      required: ["path"],
+    },
+    handler: async (params) => JSON.stringify(await bridge.getConstraintInfo(params), null, 2),
+  },
+  {
+    name: "unity_lod_create",
+    description: "Create or configure a LODGroup on a GameObject with specified number of LOD levels.",
+    inputSchema: {
+      type: "object",
+      properties: {
+        path: { type: "string", description: "GameObject path" },
+        levels: { type: "number", description: "Number of LOD levels (1-8, default: 3)" },
+      },
+      required: ["path"],
+    },
+    handler: async (params) => JSON.stringify(await bridge.createLODGroup(params), null, 2),
+  },
+  {
+    name: "unity_lod_info",
+    description: "Get LODGroup info: LOD levels, screen transition heights, renderer counts.",
+    inputSchema: {
+      type: "object",
+      properties: {
+        path: { type: "string", description: "GameObject path with LODGroup" },
+      },
+      required: ["path"],
+    },
+    handler: async (params) => JSON.stringify(await bridge.getLODGroupInfo(params), null, 2),
+  },
+
+  // ─── Prefs ───
+
+  {
+    name: "unity_editorprefs_get",
+    description: "Get an EditorPrefs value by key. Specify type: string (default), int, float, bool.",
+    inputSchema: {
+      type: "object",
+      properties: {
+        key: { type: "string", description: "Preference key" },
+        type: { type: "string", description: "Value type: string, int, float, bool" },
+      },
+      required: ["key"],
+    },
+    handler: async (params) => JSON.stringify(await bridge.getEditorPref(params), null, 2),
+  },
+  {
+    name: "unity_editorprefs_set",
+    description: "Set an EditorPrefs value. Specify type: string (default), int, float, bool.",
+    inputSchema: {
+      type: "object",
+      properties: {
+        key: { type: "string", description: "Preference key" },
+        value: { description: "Value to set" },
+        type: { type: "string", description: "Value type: string, int, float, bool" },
+      },
+      required: ["key", "value"],
+    },
+    handler: async (params) => JSON.stringify(await bridge.setEditorPref(params), null, 2),
+  },
+  {
+    name: "unity_editorprefs_delete",
+    description: "Delete an EditorPrefs key.",
+    inputSchema: {
+      type: "object",
+      properties: {
+        key: { type: "string", description: "Preference key to delete" },
+      },
+      required: ["key"],
+    },
+    handler: async (params) => JSON.stringify(await bridge.deleteEditorPref(params), null, 2),
+  },
+  {
+    name: "unity_playerprefs_get",
+    description: "Get a PlayerPrefs value by key. Specify type: string (default), int, float.",
+    inputSchema: {
+      type: "object",
+      properties: {
+        key: { type: "string", description: "Preference key" },
+        type: { type: "string", description: "Value type: string, int, float" },
+      },
+      required: ["key"],
+    },
+    handler: async (params) => JSON.stringify(await bridge.getPlayerPref(params), null, 2),
+  },
+  {
+    name: "unity_playerprefs_set",
+    description: "Set a PlayerPrefs value. Specify type: string (default), int, float.",
+    inputSchema: {
+      type: "object",
+      properties: {
+        key: { type: "string", description: "Preference key" },
+        value: { description: "Value to set" },
+        type: { type: "string", description: "Value type: string, int, float" },
+      },
+      required: ["key", "value"],
+    },
+    handler: async (params) => JSON.stringify(await bridge.setPlayerPref(params), null, 2),
+  },
+  {
+    name: "unity_playerprefs_delete",
+    description: "Delete a PlayerPrefs key.",
+    inputSchema: {
+      type: "object",
+      properties: {
+        key: { type: "string", description: "Preference key to delete" },
+      },
+      required: ["key"],
+    },
+    handler: async (params) => JSON.stringify(await bridge.deletePlayerPref(params), null, 2),
+  },
+  {
+    name: "unity_playerprefs_delete_all",
+    description: "Delete ALL PlayerPrefs. Use with caution.",
+    inputSchema: { type: "object", properties: {} },
+    handler: async (params) => JSON.stringify(await bridge.deleteAllPlayerPrefs(params), null, 2),
+  },
 ];

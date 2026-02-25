@@ -955,3 +955,121 @@ export async function setTextureAsSprite(params) {
 export async function setTextureAsNormalMap(params) {
   return sendCommand("texture/set-normalmap", params);
 }
+
+// ─── Navigation ───
+
+export async function bakeNavMesh(params) {
+  return sendCommand("navigation/bake", params);
+}
+
+export async function clearNavMesh(params) {
+  return sendCommand("navigation/clear", params);
+}
+
+export async function addNavMeshAgent(params) {
+  return sendCommand("navigation/add-agent", params);
+}
+
+export async function addNavMeshObstacle(params) {
+  return sendCommand("navigation/add-obstacle", params);
+}
+
+export async function getNavMeshInfo(params) {
+  return sendCommand("navigation/info", params);
+}
+
+export async function setAgentDestination(params) {
+  return sendCommand("navigation/set-destination", params);
+}
+
+// ─── UI ───
+
+export async function createCanvas(params) {
+  return sendCommand("ui/create-canvas", params);
+}
+
+export async function createUIElement(params) {
+  return sendCommand("ui/create-element", params);
+}
+
+export async function getUIInfo(params) {
+  return sendCommand("ui/info", params);
+}
+
+export async function setUIText(params) {
+  return sendCommand("ui/set-text", params);
+}
+
+export async function setUIImage(params) {
+  return sendCommand("ui/set-image", params);
+}
+
+// ─── Package Manager ───
+
+export async function listPackages(params) {
+  return sendCommand("packages/list", params);
+}
+
+export async function addPackage(params) {
+  return sendCommand("packages/add", params);
+}
+
+export async function removePackage(params) {
+  return sendCommand("packages/remove", params);
+}
+
+export async function searchPackage(params) {
+  return sendCommand("packages/search", params);
+}
+
+export async function getPackageInfo(params) {
+  return sendCommand("packages/info", params);
+}
+
+// ─── Constraints & LOD ───
+
+export async function addConstraint(params) {
+  return sendCommand("constraint/add", params);
+}
+
+export async function getConstraintInfo(params) {
+  return sendCommand("constraint/info", params);
+}
+
+export async function createLODGroup(params) {
+  return sendCommand("lod/create", params);
+}
+
+export async function getLODGroupInfo(params) {
+  return sendCommand("lod/info", params);
+}
+
+// ─── Prefs ───
+
+export async function getEditorPref(params) {
+  return sendCommand("editorprefs/get", params);
+}
+
+export async function setEditorPref(params) {
+  return sendCommand("editorprefs/set", params);
+}
+
+export async function deleteEditorPref(params) {
+  return sendCommand("editorprefs/delete", params);
+}
+
+export async function getPlayerPref(params) {
+  return sendCommand("playerprefs/get", params);
+}
+
+export async function setPlayerPref(params) {
+  return sendCommand("playerprefs/set", params);
+}
+
+export async function deletePlayerPref(params) {
+  return sendCommand("playerprefs/delete", params);
+}
+
+export async function deleteAllPlayerPrefs(params) {
+  return sendCommand("playerprefs/delete-all", params);
+}
