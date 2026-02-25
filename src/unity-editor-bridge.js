@@ -4,6 +4,16 @@ import { CONFIG } from "./config.js";
 
 const BRIDGE_URL = `http://${CONFIG.editorBridgeHost}:${CONFIG.editorBridgePort}`;
 
+// Agent identity — tracks which AI agent is making requests
+let _currentAgentId = "default";
+
+/**
+ * Set the current agent ID. All subsequent sendCommand calls include this as X-Agent-Id header.
+ */
+export function setAgentId(agentId) {
+  _currentAgentId = agentId || "default";
+}
+
 /**
  * Send a command to the Unity Editor bridge
  */
@@ -15,7 +25,10 @@ export async function sendCommand(command, params = {}) {
   try {
     const response = await fetch(url, {
       method: "POST",
-      headers: { "Content-Type": "application/json" },
+      headers: {
+        "Content-Type": "application/json",
+        "X-Agent-Id": _currentAgentId,
+      },
       body: JSON.stringify(params),
       signal: controller.signal,
     });

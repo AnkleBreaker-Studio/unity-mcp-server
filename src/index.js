@@ -12,6 +12,7 @@ import {
 
 import { hubTools } from "./tools/hub-tools.js";
 import { editorTools } from "./tools/editor-tools.js";
+import { setAgentId } from "./unity-editor-bridge.js";
 
 // ─── Combine all tools ───
 const ALL_TOOLS = [...hubTools, ...editorTools];
@@ -53,6 +54,11 @@ server.setRequestHandler(CallToolRequestSchema, async (request) => {
   }
 
   try {
+    // Extract agent identity from MCP request metadata (if provided by the client)
+    const meta = request.params._meta || {};
+    const agentId = meta.agentId || meta.agent_id || "default";
+    setAgentId(agentId);
+
     const result = await tool.handler(args || {});
     return {
       content: [{ type: "text", text: result }],
