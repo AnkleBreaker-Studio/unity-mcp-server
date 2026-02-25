@@ -998,4 +998,53 @@ export const editorTools = [
     },
     handler: async (params) => JSON.stringify(await bridge.setStatic(params), null, 2),
   },
+
+  // ─── Selection & Scene View ───
+  {
+    name: "unity_selection_get",
+    description: "Get the currently selected GameObjects in the Unity Editor.",
+    inputSchema: { type: "object", properties: {} },
+    handler: async (params) => JSON.stringify(await bridge.getSelection(params), null, 2),
+  },
+  {
+    name: "unity_selection_set",
+    description: "Set the editor selection to specific GameObjects.",
+    inputSchema: {
+      type: "object",
+      properties: {
+        path: { type: "string", description: "Single GameObject path to select" },
+        paths: { type: "array", items: { type: "string" }, description: "Multiple GameObject paths to select" },
+        instanceId: { type: "integer", description: "Instance ID of GameObject to select" },
+      },
+    },
+    handler: async (params) => JSON.stringify(await bridge.setSelection(params), null, 2),
+  },
+  {
+    name: "unity_selection_focus_scene_view",
+    description: "Control the Scene View camera: frame a GameObject, set pivot/rotation/zoom, toggle orthographic.",
+    inputSchema: {
+      type: "object",
+      properties: {
+        path: { type: "string", description: "GameObject to frame in scene view" },
+        instanceId: { type: "integer", description: "Instance ID of GameObject to frame" },
+        position: { type: "object", properties: { x: { type: "number" }, y: { type: "number" }, z: { type: "number" } }, description: "Scene view pivot position" },
+        rotation: { type: "object", properties: { x: { type: "number" }, y: { type: "number" }, z: { type: "number" } }, description: "Scene view rotation (euler angles)" },
+        size: { type: "number", description: "Scene view zoom (camera distance)" },
+        orthographic: { type: "boolean", description: "Toggle orthographic/perspective" },
+      },
+    },
+    handler: async (params) => JSON.stringify(await bridge.focusSceneView(params), null, 2),
+  },
+  {
+    name: "unity_selection_find_by_type",
+    description: "Find all GameObjects in the scene that have a specific component type (e.g. 'Rigidbody', 'Camera', 'Light', 'AudioSource', or custom scripts).",
+    inputSchema: {
+      type: "object",
+      properties: {
+        typeName: { type: "string", description: "Component type name (e.g. 'Rigidbody', 'Camera', 'MyScript')" },
+      },
+      required: ["typeName"],
+    },
+    handler: async (params) => JSON.stringify(await bridge.findObjectsByType(params), null, 2),
+  },
 ];

@@ -353,3 +353,21 @@ export async function setLayer(params) {
 export async function setStatic(params) {
   return sendCommand("taglayer/set-static", params);
 }
+
+// ─── Selection & Scene View ───
+
+export async function getSelection(params) {
+  return sendCommand("selection/get", params);
+}
+
+export async function setSelection(params) {
+  return sendCommand("selection/set", params);
+}
+
+export async function focusSceneView(params) {
+  return sendCommand("selection/focus-scene-view", params);
+}
+
+export async function findObjectsByType(params) {
+  return sendCommand("selection/find-by-type", params);
+}
