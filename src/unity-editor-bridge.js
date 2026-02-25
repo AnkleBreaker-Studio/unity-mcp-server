@@ -317,3 +317,17 @@ export async function createReflectionProbe(params) {
 export async function createLightProbeGroup(params) {
   return sendCommand("lighting/create-light-probe-group", params);
 }
+
+// ─── Audio ───
+
+export async function getAudioInfo(params) {
+  return sendCommand("audio/info", params);
+}
+
+export async function createAudioSource(params) {
+  return sendCommand("audio/create-source", params);
+}
+
+export async function setGlobalAudio(params) {
+  return sendCommand("audio/set-global", params);
+}

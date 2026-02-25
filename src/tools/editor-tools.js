@@ -893,4 +893,46 @@ export const editorTools = [
     },
     handler: async (params) => JSON.stringify(await bridge.createLightProbeGroup(params), null, 2),
   },
+
+  // ─── Audio ───
+  {
+    name: "unity_audio_info",
+    description: "Get info about all AudioSources and AudioListeners in the scene.",
+    inputSchema: { type: "object", properties: {} },
+    handler: async (params) => JSON.stringify(await bridge.getAudioInfo(params), null, 2),
+  },
+  {
+    name: "unity_audio_create_source",
+    description: "Create or configure an AudioSource on a GameObject. Can attach to existing object or create new one.",
+    inputSchema: {
+      type: "object",
+      properties: {
+        name: { type: "string", description: "Name for new GameObject (if not attaching to existing)" },
+        path: { type: "string", description: "Path of existing GameObject to attach AudioSource to" },
+        instanceId: { type: "integer", description: "Instance ID of existing GameObject" },
+        clipPath: { type: "string", description: "Asset path to AudioClip (e.g. 'Assets/Audio/music.wav')" },
+        volume: { type: "number", description: "Volume (0-1)" },
+        pitch: { type: "number", description: "Pitch multiplier" },
+        loop: { type: "boolean", description: "Loop playback" },
+        playOnAwake: { type: "boolean", description: "Play when scene starts" },
+        spatialBlend: { type: "number", description: "0=2D, 1=3D" },
+        minDistance: { type: "number", description: "Min distance for 3D sound" },
+        maxDistance: { type: "number", description: "Max distance for 3D sound" },
+        position: { type: "object", properties: { x: { type: "number" }, y: { type: "number" }, z: { type: "number" } } },
+      },
+    },
+    handler: async (params) => JSON.stringify(await bridge.createAudioSource(params), null, 2),
+  },
+  {
+    name: "unity_audio_set_global",
+    description: "Set global audio settings (master volume, pause).",
+    inputSchema: {
+      type: "object",
+      properties: {
+        volume: { type: "number", description: "Global volume (0-1)" },
+        pause: { type: "boolean", description: "Pause/unpause all audio" },
+      },
+    },
+    handler: async (params) => JSON.stringify(await bridge.setGlobalAudio(params), null, 2),
+  },
 ];
