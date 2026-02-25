@@ -371,3 +371,13 @@ export async function focusSceneView(params) {
 export async function findObjectsByType(params) {
   return sendCommand("selection/find-by-type", params);
 }
+
+// ─── Agent Management ───
+
+export async function listAgents(params) {
+  return sendCommand("agents/list", params);
+}
+
+export async function getAgentLog(params) {
+  return sendCommand("agents/log", params);
+}
