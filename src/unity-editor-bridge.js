@@ -498,6 +498,40 @@ export async function addInputCompositeBinding(params) {
   return sendCommand("input/add-composite-binding", params);
 }
 
+// ─── Assembly Definitions ───
+
+export async function createAssemblyDef(params) {
+  return sendCommand("asmdef/create", params);
+}
+
+export async function getAssemblyDefInfo(params) {
+  return sendCommand("asmdef/info", params);
+}
+
+export async function listAssemblyDefs(params) {
+  return sendCommand("asmdef/list", params);
+}
+
+export async function addAssemblyDefReferences(params) {
+  return sendCommand("asmdef/add-references", params);
+}
+
+export async function removeAssemblyDefReferences(params) {
+  return sendCommand("asmdef/remove-references", params);
+}
+
+export async function setAssemblyDefPlatforms(params) {
+  return sendCommand("asmdef/set-platforms", params);
+}
+
+export async function updateAssemblyDefSettings(params) {
+  return sendCommand("asmdef/update-settings", params);
+}
+
+export async function createAssemblyRef(params) {
+  return sendCommand("asmdef/create-ref", params);
+}
+
 // ─── Agent Management ───
 
 export async function listAgents(params) {

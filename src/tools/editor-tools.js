@@ -1184,6 +1184,173 @@ export const editorTools = [
     },
     handler: async (params) => JSON.stringify(await bridge.addInputCompositeBinding(params), null, 2),
   },
+
+  // ─── Assembly Definitions ───
+  {
+    name: "unity_asmdef_create",
+    description: "Create a new Assembly Definition (.asmdef) file for code containerisation and compilation optimisation. Assembly definitions split your project code into separate assemblies, reducing recompilation time and enforcing clean dependency boundaries.",
+    inputSchema: {
+      type: "object",
+      properties: {
+        path: { type: "string", description: "Asset path for the .asmdef file (e.g. 'Assets/Scripts/Runtime/MyGame.Runtime.asmdef')" },
+        name: { type: "string", description: "Assembly name (defaults to filename). Convention: 'Company.Product.Layer' (e.g. 'MyGame.Runtime', 'MyGame.Editor')" },
+        rootNamespace: { type: "string", description: "Root namespace for scripts in this assembly (e.g. 'MyGame.Runtime')" },
+        references: {
+          type: "array",
+          description: "Assembly references — names (e.g. 'Unity.TextMeshPro') or GUID refs (e.g. 'GUID:xxx')",
+          items: { type: "string" },
+        },
+        includePlatforms: {
+          type: "array",
+          description: "Only compile for these platforms. Common: 'Editor', 'Android', 'iOS', 'StandaloneWindows64', 'StandaloneOSX', 'StandaloneLinux64', 'WebGL'",
+          items: { type: "string" },
+        },
+        excludePlatforms: {
+          type: "array",
+          description: "Compile for all platforms EXCEPT these",
+          items: { type: "string" },
+        },
+        allowUnsafeCode: { type: "boolean", description: "Allow unsafe C# code blocks (default: false)" },
+        autoReferenced: { type: "boolean", description: "Automatically referenced by predefined assemblies (default: true)" },
+        noEngineReferences: { type: "boolean", description: "Don't reference UnityEngine (for pure C# libraries, default: false)" },
+        overrideReferences: { type: "boolean", description: "Override precompiled references (default: false)" },
+        precompiledReferences: {
+          type: "array",
+          description: "Precompiled DLL references (when overrideReferences is true)",
+          items: { type: "string" },
+        },
+        defineConstraints: {
+          type: "array",
+          description: "Define constraints — assembly only compiles when ALL symbols are defined (e.g. 'UNITY_EDITOR', 'ENABLE_INPUT_SYSTEM')",
+          items: { type: "string" },
+        },
+      },
+      required: ["path"],
+    },
+    handler: async (params) => JSON.stringify(await bridge.createAssemblyDef(params), null, 2),
+  },
+  {
+    name: "unity_asmdef_info",
+    description: "Get detailed info about an Assembly Definition file: name, references, platforms, settings.",
+    inputSchema: {
+      type: "object",
+      properties: {
+        path: { type: "string", description: "Asset path of the .asmdef file" },
+      },
+      required: ["path"],
+    },
+    handler: async (params) => JSON.stringify(await bridge.getAssemblyDefInfo(params), null, 2),
+  },
+  {
+    name: "unity_asmdef_list",
+    description: "List all Assembly Definition files in the project. Returns name, path, reference count, and platform info for each.",
+    inputSchema: {
+      type: "object",
+      properties: {
+        folder: { type: "string", description: "Folder to search in (default: 'Assets')" },
+        includePackages: { type: "boolean", description: "Also list assembly definitions from Packages/ (default: false)" },
+      },
+    },
+    handler: async (params) => JSON.stringify(await bridge.listAssemblyDefs(params), null, 2),
+  },
+  {
+    name: "unity_asmdef_add_references",
+    description: "Add assembly references to an existing .asmdef file. Supports assembly names (e.g. 'Unity.TextMeshPro') which are auto-resolved to GUID format, or direct GUID refs.",
+    inputSchema: {
+      type: "object",
+      properties: {
+        path: { type: "string", description: "Asset path of the .asmdef file to modify" },
+        references: {
+          type: "array",
+          description: "Assembly names or GUID references to add (e.g. ['Unity.TextMeshPro', 'MyGame.Core'])",
+          items: { type: "string" },
+        },
+      },
+      required: ["path", "references"],
+    },
+    handler: async (params) => JSON.stringify(await bridge.addAssemblyDefReferences(params), null, 2),
+  },
+  {
+    name: "unity_asmdef_remove_references",
+    description: "Remove assembly references from an existing .asmdef file.",
+    inputSchema: {
+      type: "object",
+      properties: {
+        path: { type: "string", description: "Asset path of the .asmdef file to modify" },
+        references: {
+          type: "array",
+          description: "Assembly names or GUID references to remove",
+          items: { type: "string" },
+        },
+      },
+      required: ["path", "references"],
+    },
+    handler: async (params) => JSON.stringify(await bridge.removeAssemblyDefReferences(params), null, 2),
+  },
+  {
+    name: "unity_asmdef_set_platforms",
+    description: "Set the include/exclude platform lists for an assembly definition. Use includePlatforms to restrict to specific platforms (e.g. ['Editor'] for editor-only code) or excludePlatforms to exclude certain platforms.",
+    inputSchema: {
+      type: "object",
+      properties: {
+        path: { type: "string", description: "Asset path of the .asmdef file" },
+        includePlatforms: {
+          type: "array",
+          description: "Only compile for these platforms (e.g. ['Editor']). Clears excludePlatforms if set.",
+          items: { type: "string" },
+        },
+        excludePlatforms: {
+          type: "array",
+          description: "Compile for all platforms except these",
+          items: { type: "string" },
+        },
+      },
+      required: ["path"],
+    },
+    handler: async (params) => JSON.stringify(await bridge.setAssemblyDefPlatforms(params), null, 2),
+  },
+  {
+    name: "unity_asmdef_update_settings",
+    description: "Update settings on an assembly definition: rootNamespace, allowUnsafeCode, autoReferenced, noEngineReferences, defineConstraints, etc. Only supply the properties you want to change.",
+    inputSchema: {
+      type: "object",
+      properties: {
+        path: { type: "string", description: "Asset path of the .asmdef file" },
+        name: { type: "string", description: "New assembly name" },
+        rootNamespace: { type: "string", description: "New root namespace" },
+        allowUnsafeCode: { type: "boolean", description: "Allow unsafe code" },
+        overrideReferences: { type: "boolean", description: "Override precompiled references" },
+        autoReferenced: { type: "boolean", description: "Auto-referenced by predefined assemblies" },
+        noEngineReferences: { type: "boolean", description: "No UnityEngine references" },
+        defineConstraints: {
+          type: "array",
+          description: "Define constraints (symbols required for compilation)",
+          items: { type: "string" },
+        },
+        precompiledReferences: {
+          type: "array",
+          description: "Precompiled DLL references",
+          items: { type: "string" },
+        },
+      },
+      required: ["path"],
+    },
+    handler: async (params) => JSON.stringify(await bridge.updateAssemblyDefSettings(params), null, 2),
+  },
+  {
+    name: "unity_asmdef_create_ref",
+    description: "Create an Assembly Definition Reference (.asmref) file. This lets you include scripts from a different folder into an existing assembly, useful for extending packages or splitting code across directories while keeping them in the same compilation unit.",
+    inputSchema: {
+      type: "object",
+      properties: {
+        path: { type: "string", description: "Asset path for the .asmref file (e.g. 'Assets/Plugins/Extension/MyGame.Runtime.asmref')" },
+        reference: { type: "string", description: "Name of the target assembly definition to reference (e.g. 'MyGame.Runtime')" },
+      },
+      required: ["path", "reference"],
+    },
+    handler: async (params) => JSON.stringify(await bridge.createAssemblyRef(params), null, 2),
+  },
+
   {
     name: "unity_agents_list",
     description: "List all connected agent sessions with their current action and activity stats.",
