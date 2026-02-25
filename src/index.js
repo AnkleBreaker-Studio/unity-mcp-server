@@ -21,7 +21,7 @@ const ALL_TOOLS = [...hubTools, ...editorTools];
 const server = new Server(
   {
     name: "unity-mcp-server",
-    version: "1.0.0",
+    version: "2.0.0",
   },
   {
     capabilities: {
