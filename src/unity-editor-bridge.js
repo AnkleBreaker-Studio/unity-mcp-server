@@ -181,3 +181,53 @@ export async function setMaterial(params) {
 export async function createMaterial(params) {
   return sendCommand("asset/create-material", params);
 }
+
+// ─── Animation ───
+
+export async function createAnimatorController(params) {
+  return sendCommand("animation/create-controller", params);
+}
+
+export async function getAnimatorControllerInfo(params) {
+  return sendCommand("animation/controller-info", params);
+}
+
+export async function addAnimationParameter(params) {
+  return sendCommand("animation/add-parameter", params);
+}
+
+export async function removeAnimationParameter(params) {
+  return sendCommand("animation/remove-parameter", params);
+}
+
+export async function addAnimationState(params) {
+  return sendCommand("animation/add-state", params);
+}
+
+export async function removeAnimationState(params) {
+  return sendCommand("animation/remove-state", params);
+}
+
+export async function addAnimationTransition(params) {
+  return sendCommand("animation/add-transition", params);
+}
+
+export async function createAnimationClip(params) {
+  return sendCommand("animation/create-clip", params);
+}
+
+export async function getAnimationClipInfo(params) {
+  return sendCommand("animation/clip-info", params);
+}
+
+export async function setAnimationClipCurve(params) {
+  return sendCommand("animation/set-clip-curve", params);
+}
+
+export async function addAnimationLayer(params) {
+  return sendCommand("animation/add-layer", params);
+}
+
+export async function assignAnimatorController(params) {
+  return sendCommand("animation/assign-controller", params);
+}

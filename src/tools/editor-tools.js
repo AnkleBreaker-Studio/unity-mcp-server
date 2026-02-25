@@ -422,4 +422,202 @@ export const editorTools = [
     inputSchema: { type: "object", properties: {} },
     handler: async () => JSON.stringify(await bridge.getProjectInfo(), null, 2),
   },
+
+  // ─── Animation ───
+  {
+    name: "unity_animation_create_controller",
+    description: "Create a new Animator Controller asset at the specified path.",
+    inputSchema: {
+      type: "object",
+      properties: {
+        path: { type: "string", description: "Asset path for the controller (e.g. 'Assets/Animations/PlayerController.controller')" },
+      },
+      required: ["path"],
+    },
+    handler: async (params) => JSON.stringify(await bridge.createAnimatorController(params), null, 2),
+  },
+  {
+    name: "unity_animation_controller_info",
+    description: "Get detailed information about an Animator Controller: layers, states, transitions, parameters.",
+    inputSchema: {
+      type: "object",
+      properties: {
+        path: { type: "string", description: "Asset path of the Animator Controller" },
+      },
+      required: ["path"],
+    },
+    handler: async (params) => JSON.stringify(await bridge.getAnimatorControllerInfo(params), null, 2),
+  },
+  {
+    name: "unity_animation_add_parameter",
+    description: "Add a parameter to an Animator Controller (Float, Int, Bool, or Trigger).",
+    inputSchema: {
+      type: "object",
+      properties: {
+        controllerPath: { type: "string", description: "Asset path of the Animator Controller" },
+        parameterName: { type: "string", description: "Name of the parameter to add" },
+        parameterType: { type: "string", enum: ["Float", "Int", "Bool", "Trigger"], description: "Type of the parameter" },
+        defaultValue: { description: "Default value for the parameter (not applicable to Trigger)" },
+      },
+      required: ["controllerPath", "parameterName", "parameterType"],
+    },
+    handler: async (params) => JSON.stringify(await bridge.addAnimationParameter(params), null, 2),
+  },
+  {
+    name: "unity_animation_remove_parameter",
+    description: "Remove a parameter from an Animator Controller by name.",
+    inputSchema: {
+      type: "object",
+      properties: {
+        controllerPath: { type: "string", description: "Asset path of the Animator Controller" },
+        parameterName: { type: "string", description: "Name of the parameter to remove" },
+      },
+      required: ["controllerPath", "parameterName"],
+    },
+    handler: async (params) => JSON.stringify(await bridge.removeAnimationParameter(params), null, 2),
+  },
+  {
+    name: "unity_animation_add_state",
+    description: "Add a state to an Animator Controller layer. Can optionally assign an animation clip and set as default state.",
+    inputSchema: {
+      type: "object",
+      properties: {
+        controllerPath: { type: "string", description: "Asset path of the Animator Controller" },
+        stateName: { type: "string", description: "Name for the new state" },
+        layerIndex: { type: "number", description: "Layer index (default: 0)" },
+        clipPath: { type: "string", description: "Optional asset path of an AnimationClip to assign" },
+        speed: { type: "number", description: "Playback speed (default: 1)" },
+        isDefault: { type: "boolean", description: "Set as the default state for this layer" },
+      },
+      required: ["controllerPath", "stateName"],
+    },
+    handler: async (params) => JSON.stringify(await bridge.addAnimationState(params), null, 2),
+  },
+  {
+    name: "unity_animation_remove_state",
+    description: "Remove a state from an Animator Controller layer.",
+    inputSchema: {
+      type: "object",
+      properties: {
+        controllerPath: { type: "string", description: "Asset path of the Animator Controller" },
+        stateName: { type: "string", description: "Name of the state to remove" },
+        layerIndex: { type: "number", description: "Layer index (default: 0)" },
+      },
+      required: ["controllerPath", "stateName"],
+    },
+    handler: async (params) => JSON.stringify(await bridge.removeAnimationState(params), null, 2),
+  },
+  {
+    name: "unity_animation_add_transition",
+    description: "Add a transition between states in an Animator Controller. Supports conditions, exit time, and AnyState transitions.",
+    inputSchema: {
+      type: "object",
+      properties: {
+        controllerPath: { type: "string", description: "Asset path of the Animator Controller" },
+        sourceState: { type: "string", description: "Name of the source state (not needed if fromAnyState is true)" },
+        destinationState: { type: "string", description: "Name of the destination state" },
+        layerIndex: { type: "number", description: "Layer index (default: 0)" },
+        fromAnyState: { type: "boolean", description: "Create transition from Any State (default: false)" },
+        hasExitTime: { type: "boolean", description: "Whether the transition uses exit time" },
+        exitTime: { type: "number", description: "Normalized exit time (0-1)" },
+        duration: { type: "number", description: "Transition duration in seconds" },
+        offset: { type: "number", description: "Transition offset" },
+        hasFixedDuration: { type: "boolean", description: "Whether duration is in fixed time" },
+        conditions: {
+          type: "array",
+          description: "Array of transition conditions",
+          items: {
+            type: "object",
+            properties: {
+              parameter: { type: "string", description: "Parameter name" },
+              mode: { type: "string", enum: ["If", "IfNot", "Greater", "Less", "Equals", "NotEqual"], description: "Condition mode" },
+              threshold: { type: "number", description: "Threshold value for comparison" },
+            },
+          },
+        },
+      },
+      required: ["controllerPath", "destinationState"],
+    },
+    handler: async (params) => JSON.stringify(await bridge.addAnimationTransition(params), null, 2),
+  },
+  {
+    name: "unity_animation_create_clip",
+    description: "Create a new empty Animation Clip asset.",
+    inputSchema: {
+      type: "object",
+      properties: {
+        path: { type: "string", description: "Asset path for the clip (e.g. 'Assets/Animations/Walk.anim')" },
+        loop: { type: "boolean", description: "Whether the clip should loop (default: false)" },
+        frameRate: { type: "number", description: "Frame rate (default: 60)" },
+      },
+      required: ["path"],
+    },
+    handler: async (params) => JSON.stringify(await bridge.createAnimationClip(params), null, 2),
+  },
+  {
+    name: "unity_animation_clip_info",
+    description: "Get detailed information about an Animation Clip: curves, length, events, loop settings.",
+    inputSchema: {
+      type: "object",
+      properties: {
+        path: { type: "string", description: "Asset path of the Animation Clip" },
+      },
+      required: ["path"],
+    },
+    handler: async (params) => JSON.stringify(await bridge.getAnimationClipInfo(params), null, 2),
+  },
+  {
+    name: "unity_animation_set_clip_curve",
+    description: "Set an animation curve on a clip. Define keyframes to animate any property (position, rotation, scale, custom).",
+    inputSchema: {
+      type: "object",
+      properties: {
+        clipPath: { type: "string", description: "Asset path of the Animation Clip" },
+        relativePath: { type: "string", description: "Relative path to the animated object (empty for root)" },
+        propertyName: { type: "string", description: "Property to animate (e.g. 'localPosition.x', 'm_LocalScale.y')" },
+        type: { type: "string", description: "Component type (default: 'Transform')" },
+        keyframes: {
+          type: "array",
+          description: "Array of keyframes with time and value",
+          items: {
+            type: "object",
+            properties: {
+              time: { type: "number", description: "Time in seconds" },
+              value: { type: "number", description: "Value at this keyframe" },
+            },
+          },
+        },
+      },
+      required: ["clipPath", "propertyName", "keyframes"],
+    },
+    handler: async (params) => JSON.stringify(await bridge.setAnimationClipCurve(params), null, 2),
+  },
+  {
+    name: "unity_animation_add_layer",
+    description: "Add a new layer to an Animator Controller.",
+    inputSchema: {
+      type: "object",
+      properties: {
+        controllerPath: { type: "string", description: "Asset path of the Animator Controller" },
+        layerName: { type: "string", description: "Name for the new layer" },
+        weight: { type: "number", description: "Layer weight (0-1, default: 1)" },
+      },
+      required: ["controllerPath", "layerName"],
+    },
+    handler: async (params) => JSON.stringify(await bridge.addAnimationLayer(params), null, 2),
+  },
+  {
+    name: "unity_animation_assign_controller",
+    description: "Assign an Animator Controller to a GameObject (adds Animator component if needed).",
+    inputSchema: {
+      type: "object",
+      properties: {
+        path: { type: "string", description: "Hierarchy path or name of the target GameObject" },
+        instanceId: { type: "number", description: "Instance ID (alternative to path)" },
+        controllerPath: { type: "string", description: "Asset path of the Animator Controller to assign" },
+      },
+      required: ["controllerPath"],
+    },
+    handler: async (params) => JSON.stringify(await bridge.assignAnimatorController(params), null, 2),
+  },
 ];
