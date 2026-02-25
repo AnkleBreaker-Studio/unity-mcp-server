@@ -568,6 +568,88 @@ export async function getFrameDebuggerEventDetails(params) {
   return sendCommand("debugger/event-details", params);
 }
 
+// ─── Memory Profiler ───
+
+export async function getMemoryStatus(params) {
+  return sendCommand("profiler/memory-status", params);
+}
+
+export async function getMemoryBreakdown(params) {
+  return sendCommand("profiler/memory-breakdown", params);
+}
+
+export async function getTopMemoryConsumers(params) {
+  return sendCommand("profiler/memory-top-assets", params);
+}
+
+export async function takeMemorySnapshot(params) {
+  return sendCommand("profiler/memory-snapshot", params);
+}
+
+// ─── Shader Graph ───
+
+export async function getShaderGraphStatus(params) {
+  return sendCommand("shadergraph/status", params);
+}
+
+export async function listShaders(params) {
+  return sendCommand("shadergraph/list-shaders", params);
+}
+
+export async function listShaderGraphs(params) {
+  return sendCommand("shadergraph/list", params);
+}
+
+export async function getShaderGraphInfo(params) {
+  return sendCommand("shadergraph/info", params);
+}
+
+export async function getShaderProperties(params) {
+  return sendCommand("shadergraph/get-properties", params);
+}
+
+export async function createShaderGraph(params) {
+  return sendCommand("shadergraph/create", params);
+}
+
+export async function openShaderGraph(params) {
+  return sendCommand("shadergraph/open", params);
+}
+
+export async function listSubGraphs(params) {
+  return sendCommand("shadergraph/list-subgraphs", params);
+}
+
+export async function listVFXGraphs(params) {
+  return sendCommand("shadergraph/list-vfx", params);
+}
+
+export async function openVFXGraph(params) {
+  return sendCommand("shadergraph/open-vfx", params);
+}
+
+// ─── Amplify Shader Editor ───
+
+export async function getAmplifyStatus(params) {
+  return sendCommand("amplify/status", params);
+}
+
+export async function listAmplifyShaders(params) {
+  return sendCommand("amplify/list", params);
+}
+
+export async function getAmplifyShaderInfo(params) {
+  return sendCommand("amplify/info", params);
+}
+
+export async function openAmplifyShader(params) {
+  return sendCommand("amplify/open", params);
+}
+
+export async function listAmplifyFunctions(params) {
+  return sendCommand("amplify/list-functions", params);
+}
+
 // ─── Agent Management ───
 
 export async function listAgents(params) {

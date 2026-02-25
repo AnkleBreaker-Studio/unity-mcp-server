@@ -1430,6 +1430,205 @@ export const editorTools = [
     handler: async (params) => JSON.stringify(await bridge.getFrameDebuggerEventDetails(params), null, 2),
   },
 
+  // ─── Memory Profiler ───
+  {
+    name: "unity_memory_status",
+    description: "Check Memory Profiler status: whether the com.unity.memoryprofiler package is installed, available commands, and a quick memory summary. Always call this first before other memory profiler commands.",
+    inputSchema: { type: "object", properties: {} },
+    handler: async (params) => JSON.stringify(await bridge.getMemoryStatus(params), null, 2),
+  },
+  {
+    name: "unity_memory_breakdown",
+    description: "Get detailed memory breakdown by asset type: textures, meshes, materials, shaders, audio clips, animation clips, fonts, render textures, and scriptable objects. Shows count, total size, and optionally top assets per category. Works without the Memory Profiler package (uses built-in Profiler APIs).",
+    inputSchema: {
+      type: "object",
+      properties: {
+        includeDetails: { type: "boolean", description: "If true, include top assets per category with names, sizes, and asset paths (default: false)" },
+        maxPerCategory: { type: "number", description: "Max assets to list per category when includeDetails=true (default: 5)" },
+      },
+    },
+    handler: async (params) => JSON.stringify(await bridge.getMemoryBreakdown(params), null, 2),
+  },
+  {
+    name: "unity_memory_top_assets",
+    description: "Get the top N memory-consuming assets across all types. Shows asset name, type, size, and asset path. Optionally filter by type (texture, mesh, audio, material, shader, animation, font, rendertexture). Works without the Memory Profiler package.",
+    inputSchema: {
+      type: "object",
+      properties: {
+        count: { type: "number", description: "Number of top assets to return (default: 20)" },
+        type: { type: "string", description: "Filter by asset type: texture, rendertexture, mesh, audio, material, shader, animation, font (default: all)" },
+      },
+    },
+    handler: async (params) => JSON.stringify(await bridge.getTopMemoryConsumers(params), null, 2),
+  },
+  {
+    name: "unity_memory_snapshot",
+    description: "Take a detailed memory snapshot using the Memory Profiler package (com.unity.memoryprofiler). Requires the package to be installed. The snapshot can be inspected in the Memory Profiler window. Returns an error with alternatives if the package is not installed.",
+    inputSchema: {
+      type: "object",
+      properties: {
+        path: { type: "string", description: "Directory to save snapshot in (default: temp cache)" },
+      },
+    },
+    handler: async (params) => JSON.stringify(await bridge.takeMemorySnapshot(params), null, 2),
+  },
+
+  // ─── Shader Graph ───
+  {
+    name: "unity_shadergraph_status",
+    description: "Check which graph packages are installed: Shader Graph (com.unity.shadergraph) and Visual Effect Graph (com.unity.visualeffectgraph). Returns available commands based on installed packages.",
+    inputSchema: { type: "object", properties: {} },
+    handler: async (params) => JSON.stringify(await bridge.getShaderGraphStatus(params), null, 2),
+  },
+  {
+    name: "unity_shader_list",
+    description: "List all shaders in the project (both .shader and .shadergraph files). Works without Shader Graph package. Filter by name, include/exclude built-in shaders.",
+    inputSchema: {
+      type: "object",
+      properties: {
+        filter: { type: "string", description: "Filter shaders by name or path (case-insensitive)" },
+        includeBuiltin: { type: "boolean", description: "Include Unity built-in shaders (default: false)" },
+        maxResults: { type: "number", description: "Maximum results to return (default: 100)" },
+      },
+    },
+    handler: async (params) => JSON.stringify(await bridge.listShaders(params), null, 2),
+  },
+  {
+    name: "unity_shadergraph_list",
+    description: "List all Shader Graph (.shadergraph) assets in the project. Requires Shader Graph package. Shows shader name, path, property count, pass count, and file size.",
+    inputSchema: {
+      type: "object",
+      properties: {
+        filter: { type: "string", description: "Filter by name or path" },
+        maxResults: { type: "number", description: "Maximum results (default: 100)" },
+      },
+    },
+    handler: async (params) => JSON.stringify(await bridge.listShaderGraphs(params), null, 2),
+  },
+  {
+    name: "unity_shadergraph_info",
+    description: "Get detailed info about a specific shader graph: exposed properties (with types, ranges), node count, features used (custom functions, sub-graphs, keywords), file size, pass count.",
+    inputSchema: {
+      type: "object",
+      properties: {
+        path: { type: "string", description: "Asset path of the .shadergraph file" },
+      },
+      required: ["path"],
+    },
+    handler: async (params) => JSON.stringify(await bridge.getShaderGraphInfo(params), null, 2),
+  },
+  {
+    name: "unity_shader_get_properties",
+    description: "Get exposed properties of any shader (.shader or .shadergraph). Shows property name, display name, type (Color, Vector, Float, Range, TexEnv), range limits, texture dimension, visibility.",
+    inputSchema: {
+      type: "object",
+      properties: {
+        path: { type: "string", description: "Asset path of the shader" },
+        shaderName: { type: "string", description: "Shader name (e.g. 'Universal Render Pipeline/Lit'). Alternative to path." },
+      },
+    },
+    handler: async (params) => JSON.stringify(await bridge.getShaderProperties(params), null, 2),
+  },
+  {
+    name: "unity_shadergraph_create",
+    description: "Create a new Shader Graph from a template. Templates: urp_lit, urp_unlit, urp_sprite_lit, urp_sprite_unlit, urp_decal, hdrp_lit, hdrp_unlit, blank. Requires Shader Graph package.",
+    inputSchema: {
+      type: "object",
+      properties: {
+        path: { type: "string", description: "Asset path for the new shader graph (e.g. 'Assets/Shaders/MyShader.shadergraph')" },
+        template: { type: "string", description: "Template type: urp_lit, urp_unlit, urp_sprite_lit, urp_sprite_unlit, urp_decal, hdrp_lit, hdrp_unlit, blank (default: urp_lit)" },
+      },
+      required: ["path"],
+    },
+    handler: async (params) => JSON.stringify(await bridge.createShaderGraph(params), null, 2),
+  },
+  {
+    name: "unity_shadergraph_open",
+    description: "Open a shader graph in the Shader Graph editor window for visual editing. Requires Shader Graph package.",
+    inputSchema: {
+      type: "object",
+      properties: {
+        path: { type: "string", description: "Asset path of the .shadergraph file" },
+      },
+      required: ["path"],
+    },
+    handler: async (params) => JSON.stringify(await bridge.openShaderGraph(params), null, 2),
+  },
+  {
+    name: "unity_shadergraph_list_subgraphs",
+    description: "List all Sub Graph (.shadersubgraph) assets in the project. Sub Graphs are reusable node groups for Shader Graphs. Requires Shader Graph package.",
+    inputSchema: { type: "object", properties: {} },
+    handler: async (params) => JSON.stringify(await bridge.listSubGraphs(params), null, 2),
+  },
+  {
+    name: "unity_vfx_list",
+    description: "List all Visual Effect Graph assets in the project. Requires Visual Effect Graph package (com.unity.visualeffectgraph).",
+    inputSchema: { type: "object", properties: {} },
+    handler: async (params) => JSON.stringify(await bridge.listVFXGraphs(params), null, 2),
+  },
+  {
+    name: "unity_vfx_open",
+    description: "Open a Visual Effect Graph in the VFX Graph editor window. Requires Visual Effect Graph package.",
+    inputSchema: {
+      type: "object",
+      properties: {
+        path: { type: "string", description: "Asset path of the VFX Graph asset" },
+      },
+      required: ["path"],
+    },
+    handler: async (params) => JSON.stringify(await bridge.openVFXGraph(params), null, 2),
+  },
+
+  // ─── Amplify Shader Editor ───
+  {
+    name: "unity_amplify_status",
+    description: "Check if Amplify Shader Editor is installed in the project. Returns available commands, shader count, and function count. Only works when Amplify Shader Editor is imported.",
+    inputSchema: { type: "object", properties: {} },
+    handler: async (params) => JSON.stringify(await bridge.getAmplifyStatus(params), null, 2),
+  },
+  {
+    name: "unity_amplify_list",
+    description: "List all shaders created with Amplify Shader Editor. Detects Amplify shaders by scanning for ASE serialization markers in .shader files. Only available when Amplify is installed.",
+    inputSchema: {
+      type: "object",
+      properties: {
+        filter: { type: "string", description: "Filter by shader name or path" },
+        maxResults: { type: "number", description: "Maximum results (default: 100)" },
+      },
+    },
+    handler: async (params) => JSON.stringify(await bridge.listAmplifyShaders(params), null, 2),
+  },
+  {
+    name: "unity_amplify_info",
+    description: "Get detailed info about an Amplify shader: properties, render queue, pass count, and Amplify metadata (node count, version, features like custom expressions, functions, texture samples).",
+    inputSchema: {
+      type: "object",
+      properties: {
+        path: { type: "string", description: "Asset path of the .shader file" },
+      },
+      required: ["path"],
+    },
+    handler: async (params) => JSON.stringify(await bridge.getAmplifyShaderInfo(params), null, 2),
+  },
+  {
+    name: "unity_amplify_open",
+    description: "Open a shader in the Amplify Shader Editor window for visual editing. Only available when Amplify is installed.",
+    inputSchema: {
+      type: "object",
+      properties: {
+        path: { type: "string", description: "Asset path of the .shader file" },
+      },
+      required: ["path"],
+    },
+    handler: async (params) => JSON.stringify(await bridge.openAmplifyShader(params), null, 2),
+  },
+  {
+    name: "unity_amplify_list_functions",
+    description: "List all Amplify Shader Functions in the project. Functions are reusable node groups (similar to Shader Graph Sub Graphs). Only available when Amplify is installed.",
+    inputSchema: { type: "object", properties: {} },
+    handler: async (params) => JSON.stringify(await bridge.listAmplifyFunctions(params), null, 2),
+  },
+
   {
     name: "unity_agents_list",
     description: "List all connected agent sessions with their current action and activity stats.",
