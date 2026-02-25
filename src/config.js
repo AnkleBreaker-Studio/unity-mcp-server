@@ -1,4 +1,4 @@
-// Unity MCP Server Configuration
+// AnkleBreaker Unity MCP — Configuration
 // Adjust these paths to match your Unity installation
 
 export const CONFIG = {

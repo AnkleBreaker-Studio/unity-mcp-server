@@ -1,4 +1,4 @@
-// MCP Tool definitions for Unity Editor operations (via HTTP bridge)
+// AnkleBreaker Unity MCP — Tool definitions for Unity Editor operations (via HTTP bridge)
 import * as bridge from "../unity-editor-bridge.js";
 
 export const editorTools = [
@@ -2945,7 +2945,7 @@ export const editorTools = [
   {
     name: "unity_agents_list",
     description:
-      "List all active agent sessions connected to the Unity MCP bridge. Shows each agent's ID, connection time, last activity, current action, total actions count, queued/completed request counts, and average response time.",
+      "List all active agent sessions connected to the AB Unity MCP bridge. Shows each agent's ID, connection time, last activity, current action, total actions count, queued/completed request counts, and average response time.",
     inputSchema: { type: "object", properties: {} },
     handler: async () => JSON.stringify(await bridge.listAgents(), null, 2),
   },

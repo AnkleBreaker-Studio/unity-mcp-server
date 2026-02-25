@@ -1,6 +1,6 @@
 #!/usr/bin/env node
 
-// Unity MCP Server — Main entry point
+// AnkleBreaker Unity MCP Server — Main entry point
 // Provides tools for Unity Hub management and Unity Editor control via MCP protocol
 //
 // Multi-agent support:
@@ -32,7 +32,7 @@ const ALL_TOOLS = [...hubTools, ...editorTools];
 // ─── Create MCP Server ───
 const server = new Server(
   {
-    name: "unity-mcp-server",
+    name: "anklebreaker-unity-mcp-server",
     version: "2.8.0",
   },
   {
@@ -89,7 +89,7 @@ server.setRequestHandler(CallToolRequestSchema, async (request) => {
 async function main() {
   const transport = new StdioServerTransport();
   await server.connect(transport);
-  console.error(`Unity MCP Server running on stdio (agent: ${PROCESS_AGENT_ID})`);
+  console.error(`AB Unity MCP Server running on stdio (agent: ${PROCESS_AGENT_ID})`);
 }
 
 main().catch((error) => {

@@ -1,51 +1,67 @@
-# Unity MCP Server
+# AnkleBreaker Unity MCP — Server
 
-A [Model Context Protocol (MCP)](https://modelcontextprotocol.io) server that gives AI assistants like Claude full control over **Unity Hub** and **Unity Editor**. Built by [AnkleBreaker Studio](https://github.com/AnkleBreaker-Studio).
+<p align="center">
+  <strong>Multi-agent MCP server for Unity, designed for Claude Cowork</strong><br>
+  <em>145+ tools across 21 categories — scenes, GameObjects, scripts, builds, profiling, and more</em>
+</p>
 
-## Features
+<p align="center">
+  <a href="https://github.com/AnkleBreaker-Studio/unity-mcp-server/releases"><img alt="Version" src="https://img.shields.io/badge/version-2.8.0-blue"></a>
+  <a href="LICENSE"><img alt="License" src="https://img.shields.io/badge/license-MIT-green"></a>
+  <a href="https://nodejs.org"><img alt="Node" src="https://img.shields.io/badge/Node.js-18%2B-green"></a>
+</p>
 
-**145+ tools** covering the full Unity workflow:
+---
 
-| Category | Tools |
-|----------|-------|
-| **Unity Hub** | List/install editors, manage modules, set install paths |
-| **Scenes** | Open, save, create scenes, get full hierarchy tree |
-| **GameObjects** | Create (primitives/empty), delete, inspect, transform (world/local) |
-| **Components** | Add, remove, get/set any serialized property |
-| **Assets** | List, import, delete, create prefabs, create & assign materials |
-| **Scripts** | Create, read, update C# scripts |
-| **Builds** | Multi-platform builds (Windows, macOS, Linux, Android, iOS, WebGL) |
-| **Console** | Read/clear Unity console logs (errors, warnings, info) |
-| **Play Mode** | Play, pause, stop |
-| **Editor** | Execute menu items, run C# code, get editor state |
-| **Project** | Project info, packages, render pipeline, build settings |
-| **Animation** | List clips & controllers, get parameters, play animations |
-| **Prefab** | Open/close prefab mode, get overrides, apply/revert changes |
-| **Physics** | Raycasts, sphere/box casts, overlap tests, physics settings |
-| **Lighting** | Manage lights, environment, skybox, lightmap baking, reflection probes |
-| **Audio** | AudioSources, AudioListeners, AudioMixers, play/stop, mixer params |
-| **Tags & Layers** | List/add/remove tags, assign tags & layers |
-| **Selection** | Get/set editor selection, find by name/tag/component |
-| **Input Actions** | Action maps, actions, bindings (Input System package) |
-| **Assembly Defs** | List, inspect, create, update .asmdef files |
-| **Profiler** | Start/stop profiling, stats, deep profiles, save profiler data |
-| **Frame Debugger** | Enable/disable, draw call list & details, render targets |
-| **Memory Profiler** | Memory breakdown, top consumers, snapshots (`com.unity.memoryprofiler`) |
-| **Shader Graph** | List, inspect, create, open Shader Graphs & Sub Graphs; VFX Graphs |
-| **Amplify Shader** | List, inspect, open Amplify shaders & functions (if installed) |
-| **Multi-Agent** | List active agents, get agent action logs |
+## How This Is Different From Typical MCP
+
+Standard MCP servers assume **one AI assistant, one tool, request-response.** That works fine for simple tasks.
+
+**AnkleBreaker Unity MCP is built for [Claude Cowork](https://claude.ai)**, where **multiple AI agents collaborate in parallel** on the same Unity project. When you ask Cowork to *"set up the level while writing the player controller and configuring physics"*, it spawns several agents — and they all need to talk to Unity at the same time.
+
+Here's what makes this different:
+
+- **Each MCP server process = one agent.** Claude Cowork spawns a separate `node` process per agent via stdio. Each process gets a unique agent identity automatically (`process.pid` + random hex).
+- **Async queue mode.** Instead of blocking on Unity's single thread, agents submit requests to a ticket queue and poll for results. This means no agent blocks another.
+- **Fair scheduling.** The Unity-side queue uses round-robin across agents so no single agent starves the others. Reads are batched (up to 5/frame), writes are serialized (1/frame).
+- **Automatic fallback.** If the Unity plugin hasn't been updated to v2.8.0 yet, the server falls back to legacy sync mode transparently. No configuration needed.
+
+> **TL;DR:** Multiple AI agents can build your game together without stepping on each other.
+
+---
 
 ## Architecture
 
 ```
-Claude Desktop ←→ MCP Server (this repo) ←→ Unity Editor Plugin (HTTP bridge)
-                         ↕
-                   Unity Hub CLI
+┌──────────────────────────────────────────────────┐
+│                  Claude Cowork                    │
+│                                                   │
+│  ┌─────────┐  ┌─────────┐  ┌─────────┐          │
+│  │ Agent 1 │  │ Agent 2 │  │ Agent 3 │  ...      │
+│  └────┬────┘  └────┬────┘  └────┬────┘          │
+│       │stdio       │stdio       │stdio           │
+└───────┼────────────┼────────────┼────────────────┘
+        ▼            ▼            ▼
+┌──────────┐  ┌──────────┐  ┌──────────┐
+│ MCP srv  │  │ MCP srv  │  │ MCP srv  │  ← separate Node.js processes
+│ (this    │  │ (this    │  │ (this    │     each with unique agent ID
+│  repo)   │  │  repo)   │  │  repo)   │
+└────┬─────┘  └────┬─────┘  └────┬─────┘
+     │ HTTP        │ HTTP        │ HTTP
+     └─────────────┼─────────────┘
+                   ▼
+        ┌─────────────────────┐
+        │   Unity Editor      │
+        │   ┌───────────────┐ │
+        │   │ AB Unity MCP  │ │  ← HTTP bridge + async request queue
+        │   │ Plugin        │ │     fair round-robin scheduling
+        │   └───────────────┘ │
+        └─────────────────────┘
 ```
 
-This server communicates with:
-- **Unity Hub** via its CLI (`--headless` mode)
-- **Unity Editor** via the companion [unity-mcp-plugin](https://github.com/AnkleBreaker-Studio/unity-mcp-plugin) which runs an HTTP API inside the editor
+The server also communicates directly with **Unity Hub** via its CLI for editor installation and management.
+
+---
 
 ## Quick Start
 
@@ -56,7 +72,7 @@ In Unity: **Window > Package Manager > + > Add package from git URL:**
 https://github.com/AnkleBreaker-Studio/unity-mcp-plugin.git
 ```
 
-### 2. Install this MCP Server
+### 2. Install the MCP Server
 
 ```bash
 git clone https://github.com/AnkleBreaker-Studio/unity-mcp-server.git
@@ -64,9 +80,11 @@ cd unity-mcp-server
 npm install
 ```
 
-### 3. Add to Claude Desktop
+### 3. Configure Claude
 
-Open Claude Desktop > Settings > Developer > Edit Config, and add:
+#### For Claude Desktop
+
+Open Claude Desktop > Settings > Developer > Edit Config:
 
 ```json
 {
@@ -83,58 +101,134 @@ Open Claude Desktop > Settings > Developer > Edit Config, and add:
 }
 ```
 
-Restart Claude Desktop. Done!
+#### For Claude Cowork
+
+Claude Cowork will spawn multiple instances of this server automatically — one per agent. Each instance gets its own unique agent ID. No special multi-agent configuration is needed; the queue system handles coordination transparently.
 
 ### 4. Try It
 
 - *"List my installed Unity editors"*
 - *"Show me the scene hierarchy"*
-- *"Create a red cube at position (0, 2, 0) and add a Rigidbody"*
-- *"Profile my scene and show the top memory consumers"*
-- *"List all Shader Graphs in my project"*
+- *"Create a red cube at (0, 2, 0) and add a Rigidbody"*
+- *"Profile my scene and show top memory consumers"*
 - *"Build my project for Windows"*
-- *"Show me the active agent sessions"*
+- *"Show me the active agent sessions and queue state"*
+
+---
+
+## Tools (145+)
+
+| Category | Examples |
+|----------|---------|
+| **Unity Hub** | List/install editors, manage modules, set install paths |
+| **Scenes** | Open, save, create, get hierarchy tree |
+| **GameObjects** | Create, delete, inspect, transform (world/local) |
+| **Components** | Add, remove, get/set serialized properties |
+| **Assets** | List, import, delete, create prefabs & materials |
+| **Scripts** | Create, read, update C# scripts |
+| **Builds** | Multi-platform builds |
+| **Console** | Read/clear logs |
+| **Play Mode** | Play, pause, stop |
+| **Editor** | Menu items, C# execution, state, project info |
+| **Animation** | Clips, controllers, parameters |
+| **Prefab** | Prefab mode, overrides, apply/revert |
+| **Physics** | Raycasts, overlap tests, physics settings |
+| **Lighting** | Lights, environment, lightmaps, reflection probes |
+| **Audio** | Sources, listeners, mixers |
+| **Tags & Layers** | Tag/layer management |
+| **Selection** | Editor selection, find objects |
+| **Input Actions** | Action maps, bindings (Input System) |
+| **Assembly Defs** | .asmdef management |
+| **Profiler** | Profiling, deep profiles |
+| **Memory** | Memory breakdown, snapshots |
+| **Shader Graph** | Create, inspect, open (requires package) |
+| **Amplify** | Amplify shader management (requires asset) |
+| **Queue Management** | Queue info, ticket status, agent list, agent logs |
+
+---
 
 ## Configuration
 
 | Environment Variable | Default | Description |
 |---------------------|---------|-------------|
-| `UNITY_HUB_PATH` | `C:\Program Files\Unity Hub\Unity Hub.exe` | Unity Hub executable path |
+| `UNITY_HUB_PATH` | `C:\Program Files\Unity Hub\Unity Hub.exe` | Unity Hub executable |
 | `UNITY_BRIDGE_HOST` | `127.0.0.1` | Editor bridge host |
 | `UNITY_BRIDGE_PORT` | `7890` | Editor bridge port |
-| `UNITY_BRIDGE_TIMEOUT` | `30000` | Request timeout in ms |
+| `UNITY_BRIDGE_TIMEOUT` | `30000` | Request timeout (ms) — covers compilation waits |
+| `UNITY_QUEUE_POLL_INTERVAL` | `150` | Queue polling start interval (ms) |
+| `UNITY_QUEUE_POLL_MAX` | `1500` | Queue polling max interval (ms) |
 
-The Unity plugin also has its own settings accessible via the Dashboard (`Window > MCP Dashboard`) for port, auto-start, and per-category feature toggles.
+The Unity plugin has its own settings via the Dashboard (**Window > AB Unity MCP**) for port, auto-start, and category toggles.
 
-## Optional Package Support
+---
 
-Some tools activate automatically when their packages are detected in the Unity project:
+## Multi-Agent Queue System
 
-| Package / Asset | Features Unlocked |
-|----------------|-------------------|
-| `com.unity.memoryprofiler` | Memory snapshot capture via MemoryProfiler API |
-| `com.unity.shadergraph` | Shader Graph creation, inspection, opening |
-| `com.unity.visualeffectgraph` | VFX Graph listing and opening |
-| `com.unity.inputsystem` | Input Action map and binding inspection |
-| Amplify Shader Editor (Asset Store) | Amplify shader listing, inspection, opening |
+When running with the v2.8.0+ plugin, the server uses an async ticket-based queue:
 
-Features for uninstalled packages return helpful messages explaining what to install.
+1. **Submit** — Agent POSTs to `/api/queue/submit` with the API path and body. Gets a ticket ID back immediately (HTTP 202).
+2. **Poll** — Agent polls `/api/queue/status?ticketId=X` with exponential backoff (150ms → 1000ms).
+3. **Complete** — When the ticket is processed, the poll returns the result.
 
-## Requirements
+If the plugin doesn't support queue mode (pre-2.8.0), the server falls back to legacy synchronous requests automatically.
 
-- Node.js 18+
-- Unity Hub (for Hub tools)
-- Unity Editor with [unity-mcp-plugin](https://github.com/AnkleBreaker-Studio/unity-mcp-plugin) installed (for Editor tools)
+### Queue Management Tools
+
+| Tool | Description |
+|------|-------------|
+| `unity_queue_info` | Get queue state — total pending, active agents, per-agent depths |
+| `unity_queue_ticket_status` | Check a specific ticket by ID |
+| `unity_agents_list` | List all active agent sessions with stats |
+| `unity_agent_log` | Get action log for a specific agent |
+
+### Stress Testing
+
+A built-in stress test simulates multiple concurrent agents:
+
+```bash
+# With real Unity running
+node tests/multi-agent-stress-test.mjs --agents 5 --requests 8
+
+# Mock mode (no Unity needed)
+node tests/multi-agent-stress-test.mjs --mock --agents 5 --requests 8
+```
+
+---
 
 ## Troubleshooting
 
-**"Connection failed" errors** — Make sure Unity Editor is open and the plugin is installed. Check the Unity Console for `[MCP Bridge] Server started on port 7890`.
+**"Connection failed" errors** — Make sure Unity is open and the plugin is installed. Check the Unity Console for `[AB-UMCP] Server started on port 7890`.
 
-**"Unity Hub not found"** — Update `UNITY_HUB_PATH` in your config to match your installation.
+**"Unity Hub not found"** — Set `UNITY_HUB_PATH` in your config to match your install location.
 
-**"Category disabled" errors** — A feature category may be toggled off. Open `Window > MCP Dashboard` in Unity to check category settings.
+**"Category disabled" errors** — A feature category may be toggled off. Open **Window > AB Unity MCP** in Unity to check.
 
-**Port conflicts** — Change `UNITY_BRIDGE_PORT` in your Claude config and update the port in Unity's MCP Dashboard settings.
+**Port conflicts** — Change `UNITY_BRIDGE_PORT` in your Claude config and update the port in Unity's AB Unity MCP dashboard.
+
+**Queue timeouts** — The default timeout is 30 seconds to accommodate Unity compilation. If you need longer, set `UNITY_BRIDGE_TIMEOUT` to a higher value (in ms).
+
+---
+
+## Requirements
+
+- **Node.js 18+**
+- **Unity Hub** (for Hub tools)
+- **Unity Editor** with [AnkleBreaker Unity MCP Plugin](https://github.com/AnkleBreaker-Studio/unity-mcp-plugin) installed (for Editor tools)
+
+---
+
+## Contributing
+
+Contributions are welcome! This is an open-source project by [AnkleBreaker Studio](https://github.com/AnkleBreaker-Studio).
+
+1. Fork the repo
+2. Create a feature branch
+3. Make your changes
+4. Submit a pull request
+
+Please also check out the companion plugin repo: [unity-mcp-plugin](https://github.com/AnkleBreaker-Studio/unity-mcp-plugin)
+
+---
 
 ## License
 
