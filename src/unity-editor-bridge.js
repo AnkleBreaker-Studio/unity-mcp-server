@@ -14,40 +14,119 @@ export function setAgentId(agentId) {
   _currentAgentId = agentId || "default";
 }
 
+// Retry settings — handles Unity domain reloads (1-3 sec server downtime)
+const MAX_RETRIES = 4;
+const RETRY_BASE_DELAY_MS = 800; // 800ms, 1600ms, 3200ms, 6400ms
+
 /**
- * Send a command to the Unity Editor bridge
+ * Sleep helper for retry backoff
+ */
+function sleep(ms) {
+  return new Promise((resolve) => setTimeout(resolve, ms));
+}
+
+/**
+ * Returns true if the error looks like a transient connection issue
+ * (server temporarily down during Unity domain reload).
+ */
+function isTransientError(error, response) {
+  if (error) {
+    // Connection refused / reset / aborted — server is restarting
+    const msg = error.message || "";
+    return (
+      error.code === "ECONNREFUSED" ||
+      error.code === "ECONNRESET" ||
+      msg.includes("ECONNREFUSED") ||
+      msg.includes("ECONNRESET") ||
+      msg.includes("fetch failed") ||
+      error.name === "AbortError"
+    );
+  }
+  // HTTP 500/503 during domain reload (server half-alive)
+  if (response && (response.status === 503 || response.status === 500)) {
+    return true;
+  }
+  return false;
+}
+
+/**
+ * Send a command to the Unity Editor bridge.
+ * Automatically retries on transient failures (e.g. Unity domain reload)
+ * with exponential backoff so multi-agent workflows stay resilient.
  */
 export async function sendCommand(command, params = {}) {
   const url = `${BRIDGE_URL}/api/${command}`;
-  const controller = new AbortController();
-  const timeout = setTimeout(() => controller.abort(), CONFIG.editorBridgeTimeout);
+  let lastError = null;
 
-  try {
-    const response = await fetch(url, {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-        "X-Agent-Id": _currentAgentId,
-      },
-      body: JSON.stringify(params),
-      signal: controller.signal,
-    });
-    clearTimeout(timeout);
+  for (let attempt = 0; attempt <= MAX_RETRIES; attempt++) {
+    const controller = new AbortController();
+    const timeout = setTimeout(() => controller.abort(), CONFIG.editorBridgeTimeout);
 
-    if (!response.ok) {
-      const text = await response.text();
-      return { success: false, error: `HTTP ${response.status}: ${text}` };
+    try {
+      const response = await fetch(url, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          "X-Agent-Id": _currentAgentId,
+        },
+        body: JSON.stringify(params),
+        signal: controller.signal,
+      });
+      clearTimeout(timeout);
+
+      // Transient server error — retry
+      if (isTransientError(null, response) && attempt < MAX_RETRIES) {
+        const delay = RETRY_BASE_DELAY_MS * Math.pow(2, attempt);
+        console.error(
+          `[MCP Bridge] HTTP ${response.status} on ${command}, retrying in ${delay}ms (${attempt + 1}/${MAX_RETRIES})...`
+        );
+        await sleep(delay);
+        continue;
+      }
+
+      if (!response.ok) {
+        const text = await response.text();
+        return { success: false, error: `HTTP ${response.status}: ${text}` };
+      }
+
+      const data = await response.json();
+
+      // If we retried, log that we recovered
+      if (attempt > 0) {
+        console.error(
+          `[MCP Bridge] Recovered after ${attempt} retries for ${command}`
+        );
+      }
+
+      return { success: true, data };
+    } catch (error) {
+      clearTimeout(timeout);
+      lastError = error;
+
+      // Transient connection error — retry with backoff
+      if (isTransientError(error, null) && attempt < MAX_RETRIES) {
+        const delay = RETRY_BASE_DELAY_MS * Math.pow(2, attempt);
+        console.error(
+          `[MCP Bridge] ${error.code || error.name || "Error"} on ${command}, retrying in ${delay}ms (${attempt + 1}/${MAX_RETRIES})...`
+        );
+        await sleep(delay);
+        continue;
+      }
     }
-
-    const data = await response.json();
-    return { success: true, data };
-  } catch (error) {
-    clearTimeout(timeout);
-    if (error.name === "AbortError") {
-      return { success: false, error: "Request timed out. Is Unity Editor running with the MCP Bridge plugin?" };
-    }
-    return { success: false, error: `Connection failed: ${error.message}. Is Unity Editor running with the MCP Bridge plugin?` };
   }
+
+  // All retries exhausted
+  if (lastError?.name === "AbortError") {
+    return {
+      success: false,
+      error:
+        "Request timed out after retries. Unity Editor may be in a long domain reload or not running.",
+    };
+  }
+  return {
+    success: false,
+    error: `Connection failed after ${MAX_RETRIES} retries: ${lastError?.message}. Unity Editor may be reloading or not running.`,
+  };
 }
 
 /**
