@@ -2916,4 +2916,54 @@ export const editorTools = [
     inputSchema: { type: "object", properties: {} },
     handler: async (params) => JSON.stringify(await bridge.deleteAllPlayerPrefs(params), null, 2),
   },
+
+  // ─── Queue Management (Multi-Agent) ───
+  {
+    name: "unity_queue_info",
+    description:
+      "Get the current state of the multi-agent request queue: total queued requests, active agents, per-agent queue depths, and completed cache size. Useful for monitoring when multiple agents are working on the same Unity project.",
+    inputSchema: { type: "object", properties: {} },
+    handler: async () => JSON.stringify(await bridge.getQueueInfo(), null, 2),
+  },
+  {
+    name: "unity_queue_ticket_status",
+    description:
+      "Check the status of a specific queue ticket by ID. Returns the ticket's current status (Queued, Executing, Completed, Failed, TimedOut), result data if completed, and timing information.",
+    inputSchema: {
+      type: "object",
+      properties: {
+        ticketId: {
+          type: "number",
+          description: "The ticket ID returned from a queue submission",
+        },
+      },
+      required: ["ticketId"],
+    },
+    handler: async ({ ticketId }) =>
+      JSON.stringify(await bridge.getTicketStatus(ticketId), null, 2),
+  },
+  {
+    name: "unity_agents_list",
+    description:
+      "List all active agent sessions connected to the Unity MCP bridge. Shows each agent's ID, connection time, last activity, current action, total actions count, queued/completed request counts, and average response time.",
+    inputSchema: { type: "object", properties: {} },
+    handler: async () => JSON.stringify(await bridge.listAgents(), null, 2),
+  },
+  {
+    name: "unity_agent_log",
+    description:
+      "Get the action log for a specific agent, showing the last 100 actions with timestamps.",
+    inputSchema: {
+      type: "object",
+      properties: {
+        agentId: {
+          type: "string",
+          description: "The agent ID to get logs for",
+        },
+      },
+      required: ["agentId"],
+    },
+    handler: async (params) =>
+      JSON.stringify(await bridge.getAgentLog(params), null, 2),
+  },
 ];

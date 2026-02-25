@@ -2,7 +2,13 @@
 
 // Unity MCP Server — Main entry point
 // Provides tools for Unity Hub management and Unity Editor control via MCP protocol
+//
+// Multi-agent support:
+//   Each MCP stdio process gets a unique agent ID (pid-based + random suffix).
+//   This lets the Unity plugin's queue system differentiate between agents for
+//   fair round-robin scheduling and session tracking.
 
+import { randomBytes } from "crypto";
 import { Server } from "@modelcontextprotocol/sdk/server/index.js";
 import { StdioServerTransport } from "@modelcontextprotocol/sdk/server/stdio.js";
 import {
@@ -14,6 +20,12 @@ import { hubTools } from "./tools/hub-tools.js";
 import { editorTools } from "./tools/editor-tools.js";
 import { setAgentId } from "./unity-editor-bridge.js";
 
+// ─── Per-process agent identity ───
+// Each MCP stdio process = one Cowork agent.
+// Generate a unique ID so the Unity plugin can track and schedule fairly.
+const PROCESS_AGENT_ID = `agent-${process.pid}-${randomBytes(3).toString("hex")}`;
+setAgentId(PROCESS_AGENT_ID);
+
 // ─── Combine all tools ───
 const ALL_TOOLS = [...hubTools, ...editorTools];
 
@@ -21,7 +33,7 @@ const ALL_TOOLS = [...hubTools, ...editorTools];
 const server = new Server(
   {
     name: "unity-mcp-server",
-    version: "2.0.0",
+    version: "2.8.0",
   },
   {
     capabilities: {
@@ -54,10 +66,12 @@ server.setRequestHandler(CallToolRequestSchema, async (request) => {
   }
 
   try {
-    // Extract agent identity from MCP request metadata (if provided by the client)
+    // Allow per-request agent ID override from MCP metadata, but default to
+    // the process-level ID which is more reliable for multi-agent scheduling.
     const meta = request.params._meta || {};
-    const agentId = meta.agentId || meta.agent_id || "default";
-    setAgentId(agentId);
+    if (meta.agentId || meta.agent_id) {
+      setAgentId(meta.agentId || meta.agent_id);
+    }
 
     const result = await tool.handler(args || {});
     return {
@@ -75,7 +89,7 @@ server.setRequestHandler(CallToolRequestSchema, async (request) => {
 async function main() {
   const transport = new StdioServerTransport();
   await server.connect(transport);
-  console.error("Unity MCP Server running on stdio");
+  console.error(`Unity MCP Server running on stdio (agent: ${PROCESS_AGENT_ID})`);
 }
 
 main().catch((error) => {

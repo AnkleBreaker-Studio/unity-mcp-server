@@ -1,11 +1,16 @@
 // Unity Editor HTTP Bridge Client
 // Communicates with the C# plugin running inside Unity Editor
+// Supports both queue mode (async ticket-based) and legacy sync mode
 import { CONFIG } from "./config.js";
 
 const BRIDGE_URL = `http://${CONFIG.editorBridgeHost}:${CONFIG.editorBridgePort}`;
 
 // Agent identity — tracks which AI agent is making requests
 let _currentAgentId = "default";
+
+// Mode detection — cached to avoid repeated 404 checks
+let _useQueueMode = true;
+let _queueModeDetermined = false;
 
 /**
  * Set the current agent ID. All subsequent sendCommand calls include this as X-Agent-Id header.
@@ -50,11 +55,112 @@ function isTransientError(error, response) {
 }
 
 /**
- * Send a command to the Unity Editor bridge.
- * Automatically retries on transient failures (e.g. Unity domain reload)
- * with exponential backoff so multi-agent workflows stay resilient.
+ * Submit a command to the queue and get a ticket ID.
+ * POST /api/queue/submit with {apiPath, method, body, agentId}
  */
-export async function sendCommand(command, params = {}) {
+async function submitToQueue(apiPath, bodyString) {
+  const url = `${BRIDGE_URL}/api/queue/submit`;
+
+  const response = await fetch(url, {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+      "X-Agent-Id": _currentAgentId,
+    },
+    body: JSON.stringify({
+      apiPath,
+      method: "POST",
+      body: bodyString,
+      agentId: _currentAgentId,
+    }),
+    signal: AbortSignal.timeout(CONFIG.editorBridgeTimeout),
+  });
+
+  if (!response.ok) {
+    const text = await response.text();
+    throw new Error(`HTTP ${response.status}: ${text}`);
+  }
+
+  const data = await response.json();
+  return data; // { ticketId, queuePosition, ... }
+}
+
+/**
+ * Poll the queue status for a ticket until completion.
+ * GET /api/queue/status?ticketId=X
+ */
+async function pollQueueStatus(ticketId) {
+  let pollIntervalMs = CONFIG.queuePollIntervalMs;
+  const maxIntervalMs = Math.min(1000, CONFIG.queuePollMaxMs);
+  const startTime = Date.now();
+  const timeoutMs = CONFIG.editorBridgeTimeout;
+
+  while (true) {
+    // Check timeout
+    if (Date.now() - startTime > timeoutMs) {
+      return {
+        success: false,
+        error: `Queue polling timed out after ${timeoutMs}ms for ticket ${ticketId}`,
+      };
+    }
+
+    // Poll status
+    try {
+      const url = `${BRIDGE_URL}/api/queue/status?ticketId=${ticketId}`;
+      const response = await fetch(url, {
+        method: "GET",
+        headers: {
+          "X-Agent-Id": _currentAgentId,
+        },
+        signal: AbortSignal.timeout(CONFIG.editorBridgeTimeout),
+      });
+
+      if (!response.ok) {
+        const text = await response.text();
+        return {
+          success: false,
+          error: `Failed to poll queue status: HTTP ${response.status}: ${text}`,
+        };
+      }
+
+      const statusData = await response.json();
+
+      // Check completion status
+      if (statusData.status === "Completed") {
+        // Extract result from the response
+        return {
+          success: true,
+          data: statusData.result || statusData,
+        };
+      } else if (statusData.status === "Failed") {
+        return {
+          success: false,
+          error: statusData.error || "Queue processing failed",
+        };
+      }
+
+      // Still processing — wait before polling again
+      await sleep(pollIntervalMs);
+
+      // Increase poll interval up to max
+      pollIntervalMs = Math.min(
+        Math.ceil(pollIntervalMs * 1.5),
+        maxIntervalMs
+      );
+    } catch (error) {
+      return {
+        success: false,
+        error: `Error polling queue: ${error.message}`,
+      };
+    }
+  }
+}
+
+/**
+ * Send command via legacy sync mode (direct POST).
+ * Falls back to the original implementation.
+ */
+async function sendCommandLegacyMode(command, params = {}) {
   const url = `${BRIDGE_URL}/api/${command}`;
   let lastError = null;
 
@@ -127,6 +233,156 @@ export async function sendCommand(command, params = {}) {
     success: false,
     error: `Connection failed after ${MAX_RETRIES} retries: ${lastError?.message}. Unity Editor may be reloading or not running.`,
   };
+}
+
+/**
+ * Send a command to the Unity Editor bridge.
+ * Tries queue mode first (async ticket-based), falls back to legacy sync mode if 404.
+ * Automatically retries on transient failures (e.g. Unity domain reload)
+ * with exponential backoff so multi-agent workflows stay resilient.
+ */
+export async function sendCommand(command, params = {}) {
+  const bodyString = JSON.stringify(params);
+
+  // If we've determined the plugin doesn't support queue mode, use legacy
+  if (_queueModeDetermined && !_useQueueMode) {
+    return sendCommandLegacyMode(command, params);
+  }
+
+  // Try queue mode (if not yet determined it's unavailable)
+  if (!_queueModeDetermined || _useQueueMode) {
+    try {
+      // Submit to queue with retry logic
+      let submitLastError = null;
+      for (let attempt = 0; attempt <= MAX_RETRIES; attempt++) {
+        try {
+          const ticketData = await submitToQueue(command, bodyString);
+          const ticketId = ticketData.ticketId;
+
+          console.debug(`[MCP Bridge] Submitted ${command} to queue, ticket: ${ticketId}`);
+
+          // Poll for completion
+          const result = await pollQueueStatus(ticketId);
+
+          if (result.success) {
+            _queueModeDetermined = true;
+            _useQueueMode = true;
+            return result;
+          } else {
+            // Polling failed
+            _queueModeDetermined = true;
+            _useQueueMode = true;
+            return result;
+          }
+        } catch (submitError) {
+          submitLastError = submitError;
+
+          // Check if it's a transient error worth retrying
+          if (isTransientError(submitError, null) && attempt < MAX_RETRIES) {
+            const delay = RETRY_BASE_DELAY_MS * Math.pow(2, attempt);
+            console.error(
+              `[MCP Bridge] Error submitting to queue: ${submitError.message}, retrying in ${delay}ms (${attempt + 1}/${MAX_RETRIES})...`
+            );
+            await sleep(delay);
+            continue;
+          }
+
+          // Check if it's a 404 (queue not supported)
+          if (submitError.message && submitError.message.includes("HTTP 404")) {
+            console.warn(
+              `[MCP Bridge] Queue mode not supported (HTTP 404), falling back to legacy sync mode`
+            );
+            _queueModeDetermined = true;
+            _useQueueMode = false;
+            return sendCommandLegacyMode(command, params);
+          }
+
+          // Other errors — don't retry, mark mode as undetermined and try legacy
+          break;
+        }
+      }
+
+      // If we get here, queue submit failed after retries
+      if (submitLastError) {
+        console.warn(
+          `[MCP Bridge] Queue mode failed after retries, falling back to legacy sync mode: ${submitLastError.message}`
+        );
+        _queueModeDetermined = true;
+        _useQueueMode = false;
+        return sendCommandLegacyMode(command, params);
+      }
+    } catch (error) {
+      console.warn(
+        `[MCP Bridge] Unexpected error in queue mode, falling back to legacy: ${error.message}`
+      );
+      _queueModeDetermined = true;
+      _useQueueMode = false;
+      return sendCommandLegacyMode(command, params);
+    }
+  }
+
+  // Fallback (should not reach here, but just in case)
+  return sendCommandLegacyMode(command, params);
+}
+
+/**
+ * Get queue information and stats.
+ * GET /api/queue/info
+ */
+export async function getQueueInfo() {
+  try {
+    const url = `${BRIDGE_URL}/api/queue/info`;
+    const response = await fetch(url, {
+      method: "GET",
+      headers: {
+        "X-Agent-Id": _currentAgentId,
+      },
+      signal: AbortSignal.timeout(CONFIG.editorBridgeTimeout),
+    });
+
+    if (!response.ok) {
+      const text = await response.text();
+      return { success: false, error: `HTTP ${response.status}: ${text}` };
+    }
+
+    const data = await response.json();
+    return { success: true, data };
+  } catch (error) {
+    return {
+      success: false,
+      error: `Failed to get queue info: ${error.message}`,
+    };
+  }
+}
+
+/**
+ * Get status of a specific queue ticket.
+ * GET /api/queue/status?ticketId=X
+ */
+export async function getTicketStatus(ticketId) {
+  try {
+    const url = `${BRIDGE_URL}/api/queue/status?ticketId=${ticketId}`;
+    const response = await fetch(url, {
+      method: "GET",
+      headers: {
+        "X-Agent-Id": _currentAgentId,
+      },
+      signal: AbortSignal.timeout(CONFIG.editorBridgeTimeout),
+    });
+
+    if (!response.ok) {
+      const text = await response.text();
+      return { success: false, error: `HTTP ${response.status}: ${text}` };
+    }
+
+    const data = await response.json();
+    return { success: true, data };
+  } catch (error) {
+    return {
+      success: false,
+      error: `Failed to get ticket status: ${error.message}`,
+    };
+  }
 }
 
 /**
