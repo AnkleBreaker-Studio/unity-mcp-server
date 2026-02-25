@@ -935,4 +935,67 @@ export const editorTools = [
     },
     handler: async (params) => JSON.stringify(await bridge.setGlobalAudio(params), null, 2),
   },
+
+  // ─── Tags & Layers ───
+  {
+    name: "unity_taglayer_info",
+    description: "Get all tags, layers, and sorting layers in the project.",
+    inputSchema: { type: "object", properties: {} },
+    handler: async (params) => JSON.stringify(await bridge.getTagsAndLayers(params), null, 2),
+  },
+  {
+    name: "unity_taglayer_add_tag",
+    description: "Add a new tag to the project.",
+    inputSchema: {
+      type: "object",
+      properties: {
+        tag: { type: "string", description: "Tag name to add" },
+      },
+      required: ["tag"],
+    },
+    handler: async (params) => JSON.stringify(await bridge.addTag(params), null, 2),
+  },
+  {
+    name: "unity_taglayer_set_tag",
+    description: "Assign a tag to a GameObject.",
+    inputSchema: {
+      type: "object",
+      properties: {
+        path: { type: "string", description: "GameObject path" },
+        instanceId: { type: "integer", description: "GameObject instance ID" },
+        tag: { type: "string", description: "Tag to assign" },
+      },
+      required: ["tag"],
+    },
+    handler: async (params) => JSON.stringify(await bridge.setTag(params), null, 2),
+  },
+  {
+    name: "unity_taglayer_set_layer",
+    description: "Assign a layer to a GameObject, optionally including children.",
+    inputSchema: {
+      type: "object",
+      properties: {
+        path: { type: "string", description: "GameObject path" },
+        instanceId: { type: "integer", description: "GameObject instance ID" },
+        layer: { type: "integer", description: "Layer index (0-31)" },
+        layerName: { type: "string", description: "Layer name (alternative to index)" },
+        includeChildren: { type: "boolean", description: "Apply to all children recursively" },
+      },
+    },
+    handler: async (params) => JSON.stringify(await bridge.setLayer(params), null, 2),
+  },
+  {
+    name: "unity_taglayer_set_static",
+    description: "Set a GameObject as static or not, optionally including children.",
+    inputSchema: {
+      type: "object",
+      properties: {
+        path: { type: "string", description: "GameObject path" },
+        instanceId: { type: "integer", description: "GameObject instance ID" },
+        isStatic: { type: "boolean", description: "True to mark static" },
+        includeChildren: { type: "boolean", description: "Apply to all children recursively" },
+      },
+    },
+    handler: async (params) => JSON.stringify(await bridge.setStatic(params), null, 2),
+  },
 ];

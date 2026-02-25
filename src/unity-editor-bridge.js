@@ -331,3 +331,25 @@ export async function createAudioSource(params) {
 export async function setGlobalAudio(params) {
   return sendCommand("audio/set-global", params);
 }
+
+// ─── Tags & Layers ───
+
+export async function getTagsAndLayers(params) {
+  return sendCommand("taglayer/info", params);
+}
+
+export async function addTag(params) {
+  return sendCommand("taglayer/add-tag", params);
+}
+
+export async function setTag(params) {
+  return sendCommand("taglayer/set-tag", params);
+}
+
+export async function setLayer(params) {
+  return sendCommand("taglayer/set-layer", params);
+}
+
+export async function setStatic(params) {
+  return sendCommand("taglayer/set-static", params);
+}
