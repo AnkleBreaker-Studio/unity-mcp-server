@@ -1351,6 +1351,85 @@ export const editorTools = [
     handler: async (params) => JSON.stringify(await bridge.createAssemblyRef(params), null, 2),
   },
 
+  // ─── Profiler ───
+  {
+    name: "unity_profiler_enable",
+    description: "Enable or disable the Unity Profiler. Optionally enable deep profiling for detailed call stacks (has significant performance overhead).",
+    inputSchema: {
+      type: "object",
+      properties: {
+        enabled: { type: "boolean", description: "true to start profiling, false to stop" },
+        deepProfile: { type: "boolean", description: "Enable deep profiling for full call stacks (high overhead, default: false)" },
+      },
+      required: ["enabled"],
+    },
+    handler: async (params) => JSON.stringify(await bridge.enableProfiler(params), null, 2),
+  },
+  {
+    name: "unity_profiler_stats",
+    description: "Get current rendering statistics: draw calls, batches, triangles, vertices, set-pass calls, frame time, render time, shadow casters, and more. The profiler does NOT need to be enabled for this — stats come from UnityStats which is always available.",
+    inputSchema: { type: "object", properties: {} },
+    handler: async (params) => JSON.stringify(await bridge.getRenderingStats(params), null, 2),
+  },
+  {
+    name: "unity_profiler_memory",
+    description: "Get detailed memory usage breakdown: total allocated, reserved, Mono heap used/size, graphics driver memory, temp allocator size, and GC info. Values are returned in both bytes and human-readable MB.",
+    inputSchema: { type: "object", properties: {} },
+    handler: async (params) => JSON.stringify(await bridge.getMemoryInfo(params), null, 2),
+  },
+  {
+    name: "unity_profiler_frame_data",
+    description: "Get CPU profiler frame data as a hierarchical timing breakdown. Shows function names, total/self time, call counts, and GC allocations. The profiler must be enabled and have captured at least one frame.",
+    inputSchema: {
+      type: "object",
+      properties: {
+        frameIndex: { type: "number", description: "Frame index to read (-1 for latest, default: -1)" },
+        threadIndex: { type: "number", description: "Thread index (0 = main thread, default: 0)" },
+        maxDepth: { type: "number", description: "Maximum hierarchy depth to traverse (default: 5)" },
+        minTimeMs: { type: "number", description: "Minimum total time in ms to include an item (default: 0.1)" },
+      },
+    },
+    handler: async (params) => JSON.stringify(await bridge.getProfilerFrameData(params), null, 2),
+  },
+  {
+    name: "unity_profiler_analyze",
+    description: "Run a comprehensive performance analysis combining memory, rendering stats, profiler frame data, and scene complexity. Returns optimization suggestions based on configurable thresholds (e.g. too many batches, high triangle count, excessive set-pass calls, GPU memory usage, shadow casters).",
+    inputSchema: { type: "object", properties: {} },
+    handler: async (params) => JSON.stringify(await bridge.analyzePerformance(params), null, 2),
+  },
+
+  // ─── Frame Debugger ───
+  {
+    name: "unity_debugger_enable",
+    description: "Enable or disable the Frame Debugger. When enabled, Unity pauses rendering after a specific draw call so you can inspect the GPU state. Uses reflection to access internal Unity APIs (Unity 6+).",
+    inputSchema: {
+      type: "object",
+      properties: {
+        enabled: { type: "boolean", description: "true to enable, false to disable the Frame Debugger" },
+      },
+      required: ["enabled"],
+    },
+    handler: async (params) => JSON.stringify(await bridge.enableFrameDebugger(params), null, 2),
+  },
+  {
+    name: "unity_debugger_events",
+    description: "List all rendering events (draw calls) captured by the Frame Debugger. The Frame Debugger must be enabled first. Returns event index, type, and name for each draw call.",
+    inputSchema: { type: "object", properties: {} },
+    handler: async (params) => JSON.stringify(await bridge.getFrameDebuggerEvents(params), null, 2),
+  },
+  {
+    name: "unity_debugger_event_details",
+    description: "Get detailed information about a specific Frame Debugger event: shader name, pass, keywords, vertex/index/instance counts, render target, batch break cause, and mesh info. The Frame Debugger must be enabled first.",
+    inputSchema: {
+      type: "object",
+      properties: {
+        eventIndex: { type: "number", description: "The event index to inspect (from unity_debugger_events list)" },
+      },
+      required: ["eventIndex"],
+    },
+    handler: async (params) => JSON.stringify(await bridge.getFrameDebuggerEventDetails(params), null, 2),
+  },
+
   {
     name: "unity_agents_list",
     description: "List all connected agent sessions with their current action and activity stats.",

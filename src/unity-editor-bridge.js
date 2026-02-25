@@ -532,6 +532,42 @@ export async function createAssemblyRef(params) {
   return sendCommand("asmdef/create-ref", params);
 }
 
+// ─── Profiler ───
+
+export async function enableProfiler(params) {
+  return sendCommand("profiler/enable", params);
+}
+
+export async function getRenderingStats(params) {
+  return sendCommand("profiler/stats", params);
+}
+
+export async function getMemoryInfo(params) {
+  return sendCommand("profiler/memory", params);
+}
+
+export async function getProfilerFrameData(params) {
+  return sendCommand("profiler/frame-data", params);
+}
+
+export async function analyzePerformance(params) {
+  return sendCommand("profiler/analyze", params);
+}
+
+// ─── Frame Debugger ───
+
+export async function enableFrameDebugger(params) {
+  return sendCommand("debugger/enable", params);
+}
+
+export async function getFrameDebuggerEvents(params) {
+  return sendCommand("debugger/events", params);
+}
+
+export async function getFrameDebuggerEventDetails(params) {
+  return sendCommand("debugger/event-details", params);
+}
+
 // ─── Agent Management ───
 
 export async function listAgents(params) {
