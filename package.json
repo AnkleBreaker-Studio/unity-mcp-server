@@ -1,0 +1,20 @@
+{
+  "name": "unity-mcp-server",
+  "version": "1.0.0",
+  "description": "MCP Server for Unity Hub and Unity Editor integration",
+  "type": "module",
+  "main": "src/index.js",
+  "bin": {
+    "unity-mcp": "./src/index.js"
+  },
+  "scripts": {
+    "start": "node src/index.js",
+    "dev": "node --watch src/index.js"
+  },
+  "dependencies": {
+    "@modelcontextprotocol/sdk": "^1.0.0"
+  },
+  "engines": {
+    "node": ">=18.0.0"
+  }
+}
