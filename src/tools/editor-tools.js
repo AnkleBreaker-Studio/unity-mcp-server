@@ -620,4 +620,127 @@ export const editorTools = [
     },
     handler: async (params) => JSON.stringify(await bridge.assignAnimatorController(params), null, 2),
   },
+
+  // ─── Prefab (Advanced) ───
+  {
+    name: "unity_prefab_info",
+    description: "Get detailed prefab information: overrides, variant status, added/removed components. Works on both prefab assets and scene instances.",
+    inputSchema: {
+      type: "object",
+      properties: {
+        assetPath: { type: "string", description: "Asset path of the prefab (e.g. 'Assets/Prefabs/Player.prefab')" },
+        path: { type: "string", description: "Hierarchy path of a prefab instance in the scene" },
+        instanceId: { type: "number", description: "Instance ID of a prefab instance" },
+      },
+    },
+    handler: async (params) => JSON.stringify(await bridge.getPrefabInfo(params), null, 2),
+  },
+  {
+    name: "unity_prefab_create_variant",
+    description: "Create a prefab variant from an existing base prefab. Variants inherit from the base and can override specific properties.",
+    inputSchema: {
+      type: "object",
+      properties: {
+        basePrefabPath: { type: "string", description: "Asset path of the base prefab" },
+        variantPath: { type: "string", description: "Asset path for the new variant" },
+      },
+      required: ["basePrefabPath", "variantPath"],
+    },
+    handler: async (params) => JSON.stringify(await bridge.createPrefabVariant(params), null, 2),
+  },
+  {
+    name: "unity_prefab_apply_overrides",
+    description: "Apply all overrides from a prefab instance in the scene back to the source prefab asset.",
+    inputSchema: {
+      type: "object",
+      properties: {
+        path: { type: "string", description: "Hierarchy path of the prefab instance" },
+        instanceId: { type: "number", description: "Instance ID (alternative to path)" },
+      },
+    },
+    handler: async (params) => JSON.stringify(await bridge.applyPrefabOverrides(params), null, 2),
+  },
+  {
+    name: "unity_prefab_revert_overrides",
+    description: "Revert all overrides on a prefab instance, restoring it to match the source prefab.",
+    inputSchema: {
+      type: "object",
+      properties: {
+        path: { type: "string", description: "Hierarchy path of the prefab instance" },
+        instanceId: { type: "number", description: "Instance ID (alternative to path)" },
+      },
+    },
+    handler: async (params) => JSON.stringify(await bridge.revertPrefabOverrides(params), null, 2),
+  },
+  {
+    name: "unity_prefab_unpack",
+    description: "Unpack a prefab instance, converting it to regular GameObjects.",
+    inputSchema: {
+      type: "object",
+      properties: {
+        path: { type: "string", description: "Hierarchy path of the prefab instance" },
+        instanceId: { type: "number", description: "Instance ID (alternative to path)" },
+        completely: { type: "boolean", description: "If true, unpack completely including nested prefabs (default: false)" },
+      },
+    },
+    handler: async (params) => JSON.stringify(await bridge.unpackPrefab(params), null, 2),
+  },
+  {
+    name: "unity_set_object_reference",
+    description: "Set an object reference property on a component. Use this to wire up references between objects (assign prefabs, materials, sprites, GameObjects to component fields).",
+    inputSchema: {
+      type: "object",
+      properties: {
+        path: { type: "string", description: "Hierarchy path of the target GameObject" },
+        instanceId: { type: "number", description: "Instance ID (alternative to path)" },
+        componentType: { type: "string", description: "Component type name (optional - will search all components)" },
+        propertyName: { type: "string", description: "Name of the ObjectReference property to set" },
+        referencePath: { type: "string", description: "Asset path of the reference (for assets like prefabs, materials, textures)" },
+        referenceGameObject: { type: "string", description: "Name/path of a GameObject in the scene (for scene references)" },
+      },
+      required: ["propertyName"],
+    },
+    handler: async (params) => JSON.stringify(await bridge.setObjectReference(params), null, 2),
+  },
+  {
+    name: "unity_gameobject_duplicate",
+    description: "Duplicate a GameObject with all its children and components.",
+    inputSchema: {
+      type: "object",
+      properties: {
+        path: { type: "string", description: "Hierarchy path or name of the GameObject to duplicate" },
+        instanceId: { type: "number", description: "Instance ID (alternative to path)" },
+        newName: { type: "string", description: "Name for the duplicate (default: original name + ' (Copy)')" },
+      },
+    },
+    handler: async (params) => JSON.stringify(await bridge.duplicateGameObject(params), null, 2),
+  },
+  {
+    name: "unity_gameobject_set_active",
+    description: "Set a GameObject active or inactive.",
+    inputSchema: {
+      type: "object",
+      properties: {
+        path: { type: "string", description: "Hierarchy path or name of the GameObject" },
+        instanceId: { type: "number", description: "Instance ID (alternative to path)" },
+        active: { type: "boolean", description: "Whether the GameObject should be active" },
+      },
+      required: ["active"],
+    },
+    handler: async (params) => JSON.stringify(await bridge.setGameObjectActive(params), null, 2),
+  },
+  {
+    name: "unity_gameobject_reparent",
+    description: "Move a GameObject under a new parent in the hierarchy.",
+    inputSchema: {
+      type: "object",
+      properties: {
+        path: { type: "string", description: "Hierarchy path or name of the GameObject to move" },
+        instanceId: { type: "number", description: "Instance ID (alternative to path)" },
+        newParent: { type: "string", description: "Path of the new parent (empty string for scene root)" },
+        worldPositionStays: { type: "boolean", description: "Maintain world position after reparenting (default: true)" },
+      },
+    },
+    handler: async (params) => JSON.stringify(await bridge.reparentGameObject(params), null, 2),
+  },
 ];

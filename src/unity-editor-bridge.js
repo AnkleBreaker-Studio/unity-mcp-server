@@ -231,3 +231,41 @@ export async function addAnimationLayer(params) {
 export async function assignAnimatorController(params) {
   return sendCommand("animation/assign-controller", params);
 }
+
+// ─── Prefab (Advanced) ───
+
+export async function getPrefabInfo(params) {
+  return sendCommand("prefab/info", params);
+}
+
+export async function createPrefabVariant(params) {
+  return sendCommand("prefab/create-variant", params);
+}
+
+export async function applyPrefabOverrides(params) {
+  return sendCommand("prefab/apply-overrides", params);
+}
+
+export async function revertPrefabOverrides(params) {
+  return sendCommand("prefab/revert-overrides", params);
+}
+
+export async function unpackPrefab(params) {
+  return sendCommand("prefab/unpack", params);
+}
+
+export async function setObjectReference(params) {
+  return sendCommand("prefab/set-object-reference", params);
+}
+
+export async function duplicateGameObject(params) {
+  return sendCommand("prefab/duplicate", params);
+}
+
+export async function setGameObjectActive(params) {
+  return sendCommand("prefab/set-active", params);
+}
+
+export async function reparentGameObject(params) {
+  return sendCommand("prefab/reparent", params);
+}
