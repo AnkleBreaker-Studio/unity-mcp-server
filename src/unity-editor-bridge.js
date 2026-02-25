@@ -324,6 +324,54 @@ export async function assignAnimatorController(params) {
   return sendCommand("animation/assign-controller", params);
 }
 
+export async function getCurveKeyframes(params) {
+  return sendCommand("animation/get-curve-keyframes", params);
+}
+
+export async function removeCurve(params) {
+  return sendCommand("animation/remove-curve", params);
+}
+
+export async function addKeyframe(params) {
+  return sendCommand("animation/add-keyframe", params);
+}
+
+export async function removeKeyframe(params) {
+  return sendCommand("animation/remove-keyframe", params);
+}
+
+export async function addAnimationEvent(params) {
+  return sendCommand("animation/add-event", params);
+}
+
+export async function removeAnimationEvent(params) {
+  return sendCommand("animation/remove-event", params);
+}
+
+export async function getAnimationEvents(params) {
+  return sendCommand("animation/get-events", params);
+}
+
+export async function setClipSettings(params) {
+  return sendCommand("animation/set-clip-settings", params);
+}
+
+export async function removeAnimationTransition(params) {
+  return sendCommand("animation/remove-transition", params);
+}
+
+export async function removeAnimationLayer(params) {
+  return sendCommand("animation/remove-layer", params);
+}
+
+export async function createBlendTree(params) {
+  return sendCommand("animation/create-blend-tree", params);
+}
+
+export async function getBlendTreeInfo(params) {
+  return sendCommand("animation/get-blend-tree", params);
+}
+
 // ─── Prefab (Advanced) ───
 
 export async function getPrefabInfo(params) {
@@ -628,6 +676,38 @@ export async function openVFXGraph(params) {
   return sendCommand("shadergraph/open-vfx", params);
 }
 
+export async function getShaderGraphNodes(params) {
+  return sendCommand("shadergraph/get-nodes", params);
+}
+
+export async function getShaderGraphEdges(params) {
+  return sendCommand("shadergraph/get-edges", params);
+}
+
+export async function addShaderGraphNode(params) {
+  return sendCommand("shadergraph/add-node", params);
+}
+
+export async function removeShaderGraphNode(params) {
+  return sendCommand("shadergraph/remove-node", params);
+}
+
+export async function connectShaderGraphNodes(params) {
+  return sendCommand("shadergraph/connect", params);
+}
+
+export async function disconnectShaderGraphNodes(params) {
+  return sendCommand("shadergraph/disconnect", params);
+}
+
+export async function setShaderGraphNodeProperty(params) {
+  return sendCommand("shadergraph/set-node-property", params);
+}
+
+export async function getShaderGraphNodeTypes(params) {
+  return sendCommand("shadergraph/get-node-types", params);
+}
+
 // ─── Amplify Shader Editor ───
 
 export async function getAmplifyStatus(params) {
@@ -648,6 +728,22 @@ export async function openAmplifyShader(params) {
 
 export async function listAmplifyFunctions(params) {
   return sendCommand("amplify/list-functions", params);
+}
+
+export async function getAmplifyNodeTypes(params) {
+  return sendCommand("amplify/get-node-types", params);
+}
+
+export async function getAmplifyGraphNodes(params) {
+  return sendCommand("amplify/get-nodes", params);
+}
+
+export async function getAmplifyGraphConnections(params) {
+  return sendCommand("amplify/get-connections", params);
+}
+
+export async function createAmplifyShader(params) {
+  return sendCommand("amplify/create-shader", params);
 }
 
 // ─── Agent Management ───

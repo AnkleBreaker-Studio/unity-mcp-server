@@ -4,7 +4,7 @@ A [Model Context Protocol (MCP)](https://modelcontextprotocol.io) server that gi
 
 ## Features
 
-**95+ tools** covering the full Unity workflow:
+**145+ tools** covering the full Unity workflow:
 
 | Category | Tools |
 |----------|-------|

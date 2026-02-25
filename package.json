@@ -1,6 +1,6 @@
 {
   "name": "unity-mcp-server",
-  "version": "2.4.0",
+  "version": "2.5.0",
   "description": "MCP Server for Unity Hub and Unity Editor integration",
   "type": "module",
   "main": "src/index.js",

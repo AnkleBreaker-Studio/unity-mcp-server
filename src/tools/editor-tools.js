@@ -620,6 +620,212 @@ export const editorTools = [
     },
     handler: async (params) => JSON.stringify(await bridge.assignAnimatorController(params), null, 2),
   },
+  {
+    name: "unity_animation_get_curve_keyframes",
+    description: "Get all keyframes from an animation curve binding with full tangent data (inTangent, outTangent, inWeight, outWeight, weightedMode). Essential for precise animation editing.",
+    inputSchema: {
+      type: "object",
+      properties: {
+        clipPath: { type: "string", description: "Asset path of the AnimationClip" },
+        relativePath: { type: "string", description: "Relative path of the animated object (empty for root)" },
+        propertyName: { type: "string", description: "Property name (e.g., 'localPosition.x', 'm_LocalRotation.x')" },
+        typeName: { type: "string", description: "Component type name (e.g., 'Transform', 'SpriteRenderer')" },
+      },
+      required: ["clipPath", "propertyName", "typeName"],
+    },
+    handler: async (params) => JSON.stringify(await bridge.getCurveKeyframes(params), null, 2),
+  },
+  {
+    name: "unity_animation_remove_curve",
+    description: "Remove an entire animation curve binding from a clip. Useful for cleaning up or restructuring animations.",
+    inputSchema: {
+      type: "object",
+      properties: {
+        clipPath: { type: "string", description: "Asset path of the AnimationClip" },
+        relativePath: { type: "string", description: "Relative path of the animated object (empty for root)" },
+        propertyName: { type: "string", description: "Property name to remove" },
+        typeName: { type: "string", description: "Component type name" },
+      },
+      required: ["clipPath", "propertyName", "typeName"],
+    },
+    handler: async (params) => JSON.stringify(await bridge.removeCurve(params), null, 2),
+  },
+  {
+    name: "unity_animation_add_keyframe",
+    description: "Add a keyframe to an animation curve with full tangent and weight control. Creates the curve if it doesn't exist yet. Supports all weighted tangent modes.",
+    inputSchema: {
+      type: "object",
+      properties: {
+        clipPath: { type: "string", description: "Asset path of the AnimationClip" },
+        relativePath: { type: "string", description: "Relative path of the animated object (empty for root)" },
+        propertyName: { type: "string", description: "Property name (e.g., 'localPosition.x')" },
+        typeName: { type: "string", description: "Component type name (e.g., 'Transform')" },
+        time: { type: "number", description: "Time in seconds for the keyframe" },
+        value: { type: "number", description: "Value at this keyframe" },
+        inTangent: { type: "number", description: "Incoming tangent slope (optional, default 0)" },
+        outTangent: { type: "number", description: "Outgoing tangent slope (optional, default 0)" },
+        inWeight: { type: "number", description: "Incoming tangent weight 0-1 (optional)" },
+        outWeight: { type: "number", description: "Outgoing tangent weight 0-1 (optional)" },
+        weightedMode: { type: "string", description: "Weighted mode: None, In, Out, Both (optional)" },
+      },
+      required: ["clipPath", "propertyName", "typeName", "time", "value"],
+    },
+    handler: async (params) => JSON.stringify(await bridge.addKeyframe(params), null, 2),
+  },
+  {
+    name: "unity_animation_remove_keyframe",
+    description: "Remove a keyframe from an animation curve by its index. Use get_curve_keyframes first to find the index.",
+    inputSchema: {
+      type: "object",
+      properties: {
+        clipPath: { type: "string", description: "Asset path of the AnimationClip" },
+        relativePath: { type: "string", description: "Relative path of the animated object" },
+        propertyName: { type: "string", description: "Property name" },
+        typeName: { type: "string", description: "Component type name" },
+        keyIndex: { type: "number", description: "Zero-based index of the keyframe to remove" },
+      },
+      required: ["clipPath", "propertyName", "typeName", "keyIndex"],
+    },
+    handler: async (params) => JSON.stringify(await bridge.removeKeyframe(params), null, 2),
+  },
+  {
+    name: "unity_animation_add_event",
+    description: "Add an animation event that calls a function at a specific time during playback. Can pass string, int, or float parameters.",
+    inputSchema: {
+      type: "object",
+      properties: {
+        clipPath: { type: "string", description: "Asset path of the AnimationClip" },
+        functionName: { type: "string", description: "Name of the function to call on the animated GameObject" },
+        time: { type: "number", description: "Time in seconds when the event fires" },
+        stringParameter: { type: "string", description: "String parameter to pass (optional)" },
+        intParameter: { type: "number", description: "Integer parameter to pass (optional)" },
+        floatParameter: { type: "number", description: "Float parameter to pass (optional)" },
+      },
+      required: ["clipPath", "functionName", "time"],
+    },
+    handler: async (params) => JSON.stringify(await bridge.addAnimationEvent(params), null, 2),
+  },
+  {
+    name: "unity_animation_remove_event",
+    description: "Remove an animation event by its index. Use get_animation_events first to find the index.",
+    inputSchema: {
+      type: "object",
+      properties: {
+        clipPath: { type: "string", description: "Asset path of the AnimationClip" },
+        eventIndex: { type: "number", description: "Zero-based index of the event to remove" },
+      },
+      required: ["clipPath", "eventIndex"],
+    },
+    handler: async (params) => JSON.stringify(await bridge.removeAnimationEvent(params), null, 2),
+  },
+  {
+    name: "unity_animation_get_events",
+    description: "List all animation events on a clip with their function names, times, and parameters.",
+    inputSchema: {
+      type: "object",
+      properties: {
+        clipPath: { type: "string", description: "Asset path of the AnimationClip" },
+      },
+      required: ["clipPath"],
+    },
+    handler: async (params) => JSON.stringify(await bridge.getAnimationEvents(params), null, 2),
+  },
+  {
+    name: "unity_animation_set_clip_settings",
+    description: "Set animation clip settings: looping, root motion, mirroring, speed, frame rate, and more.",
+    inputSchema: {
+      type: "object",
+      properties: {
+        clipPath: { type: "string", description: "Asset path of the AnimationClip" },
+        loopTime: { type: "boolean", description: "Whether the animation loops" },
+        loopBlend: { type: "boolean", description: "Loop blend for seamless looping" },
+        loopBlendOrientation: { type: "boolean", description: "Loop blend orientation" },
+        keepOriginalOrientation: { type: "boolean", description: "Keep original orientation" },
+        keepOriginalPositionY: { type: "boolean", description: "Keep original Y position" },
+        keepOriginalPositionXZ: { type: "boolean", description: "Keep original XZ position" },
+        mirror: { type: "boolean", description: "Mirror the animation" },
+        startTime: { type: "number", description: "Clip start time" },
+        stopTime: { type: "number", description: "Clip stop time" },
+        level: { type: "number", description: "Height offset level" },
+        frameRate: { type: "number", description: "Frame rate (e.g., 30, 60)" },
+      },
+      required: ["clipPath"],
+    },
+    handler: async (params) => JSON.stringify(await bridge.setClipSettings(params), null, 2),
+  },
+  {
+    name: "unity_animation_remove_transition",
+    description: "Remove a transition from an Animator Controller state. Can target by source/destination names or by index.",
+    inputSchema: {
+      type: "object",
+      properties: {
+        controllerPath: { type: "string", description: "Asset path of the Animator Controller" },
+        layerIndex: { type: "number", description: "Layer index (default 0)" },
+        sourceStateName: { type: "string", description: "Name of the source state (use 'AnyState' for any-state transitions)" },
+        destinationStateName: { type: "string", description: "Name of the destination state (helps identify which transition)" },
+        transitionIndex: { type: "number", description: "Index of the transition on the source state (alternative to destinationStateName)" },
+      },
+      required: ["controllerPath", "sourceStateName"],
+    },
+    handler: async (params) => JSON.stringify(await bridge.removeAnimationTransition(params), null, 2),
+  },
+  {
+    name: "unity_animation_remove_layer",
+    description: "Remove a layer from an Animator Controller by index. Cannot remove the base layer (index 0).",
+    inputSchema: {
+      type: "object",
+      properties: {
+        controllerPath: { type: "string", description: "Asset path of the Animator Controller" },
+        layerIndex: { type: "number", description: "Index of the layer to remove (must be > 0)" },
+      },
+      required: ["controllerPath", "layerIndex"],
+    },
+    handler: async (params) => JSON.stringify(await bridge.removeAnimationLayer(params), null, 2),
+  },
+  {
+    name: "unity_animation_create_blend_tree",
+    description: "Create a blend tree in an Animator Controller for smooth blending between animations. Supports 1D, 2D (FreeformDirectional, FreeformCartesian, SimpleDirectional), and Direct blend types.",
+    inputSchema: {
+      type: "object",
+      properties: {
+        controllerPath: { type: "string", description: "Asset path of the Animator Controller" },
+        layerIndex: { type: "number", description: "Layer index (default 0)" },
+        blendTreeName: { type: "string", description: "Name for the blend tree state" },
+        blendType: { type: "string", description: "Blend type: Simple1D, FreeformDirectional2D, FreeformCartesian2D, SimpleDirectional2D, Direct (default Simple1D)" },
+        blendParameter: { type: "string", description: "Name of the blend parameter" },
+        blendParameterY: { type: "string", description: "Y-axis blend parameter for 2D types" },
+        motions: {
+          type: "array",
+          description: "Array of motion entries with clipPath, threshold (1D), position (2D {x,y}), timeScale",
+          items: {
+            type: "object",
+            properties: {
+              clipPath: { type: "string" },
+              threshold: { type: "number" },
+              position: { type: "object", properties: { x: { type: "number" }, y: { type: "number" } } },
+              timeScale: { type: "number" },
+            },
+          },
+        },
+      },
+      required: ["controllerPath", "blendTreeName", "blendParameter"],
+    },
+    handler: async (params) => JSON.stringify(await bridge.createBlendTree(params), null, 2),
+  },
+  {
+    name: "unity_animation_get_blend_tree",
+    description: "Get the structure and configuration of a blend tree including all child motions, thresholds, positions, and time scales.",
+    inputSchema: {
+      type: "object",
+      properties: {
+        controllerPath: { type: "string", description: "Asset path of the Animator Controller" },
+        layerIndex: { type: "number", description: "Layer index (default 0)" },
+        stateName: { type: "string", description: "Name of the blend tree state" },
+      },
+      required: ["controllerPath", "stateName"],
+    },
+    handler: async (params) => JSON.stringify(await bridge.getBlendTreeInfo(params), null, 2),
+  },
 
   // ─── Prefab (Advanced) ───
   {
@@ -1578,6 +1784,111 @@ export const editorTools = [
     },
     handler: async (params) => JSON.stringify(await bridge.openVFXGraph(params), null, 2),
   },
+  {
+    name: "unity_shadergraph_get_nodes",
+    description: "Get all nodes in a Shader Graph file. Returns node IDs, types, positions, and basic property data by parsing the .shadergraph JSON. Essential for understanding graph structure before editing.",
+    inputSchema: {
+      type: "object",
+      properties: {
+        path: { type: "string", description: "Asset path of the .shadergraph file" },
+      },
+      required: ["path"],
+    },
+    handler: async (params) => JSON.stringify(await bridge.getShaderGraphNodes(params), null, 2),
+  },
+  {
+    name: "unity_shadergraph_get_edges",
+    description: "Get all edges (connections) in a Shader Graph. Returns source and target node IDs with slot IDs, showing how nodes are wired together.",
+    inputSchema: {
+      type: "object",
+      properties: {
+        path: { type: "string", description: "Asset path of the .shadergraph file" },
+      },
+      required: ["path"],
+    },
+    handler: async (params) => JSON.stringify(await bridge.getShaderGraphEdges(params), null, 2),
+  },
+  {
+    name: "unity_shadergraph_add_node",
+    description: "Add a new node to a Shader Graph. Supports common types: Add, Multiply, Subtract, Divide, Lerp, Color, Float, Vector2, Vector3, Vector4, Time, UV, Position, Normal, SampleTexture2D, Fresnel, Saturate, OneMinus, Power, Split, Combine. Also supports any type by full class name.",
+    inputSchema: {
+      type: "object",
+      properties: {
+        path: { type: "string", description: "Asset path of the .shadergraph file" },
+        nodeType: { type: "string", description: "Node type name (e.g., 'Add', 'Multiply', 'Color', 'SampleTexture2D') or full class name" },
+        positionX: { type: "number", description: "X position in the graph (default 0)" },
+        positionY: { type: "number", description: "Y position in the graph (default 0)" },
+      },
+      required: ["path", "nodeType"],
+    },
+    handler: async (params) => JSON.stringify(await bridge.addShaderGraphNode(params), null, 2),
+  },
+  {
+    name: "unity_shadergraph_remove_node",
+    description: "Remove a node from a Shader Graph by its ID. Also removes all edges connected to the node.",
+    inputSchema: {
+      type: "object",
+      properties: {
+        path: { type: "string", description: "Asset path of the .shadergraph file" },
+        nodeId: { type: "string", description: "The node's objectId (GUID) to remove — get from get_nodes" },
+      },
+      required: ["path", "nodeId"],
+    },
+    handler: async (params) => JSON.stringify(await bridge.removeShaderGraphNode(params), null, 2),
+  },
+  {
+    name: "unity_shadergraph_connect",
+    description: "Connect two nodes in a Shader Graph by creating an edge between an output slot and an input slot.",
+    inputSchema: {
+      type: "object",
+      properties: {
+        path: { type: "string", description: "Asset path of the .shadergraph file" },
+        outputNodeId: { type: "string", description: "Source node objectId" },
+        outputSlotId: { type: "number", description: "Output slot ID on the source node" },
+        inputNodeId: { type: "string", description: "Target node objectId" },
+        inputSlotId: { type: "number", description: "Input slot ID on the target node" },
+      },
+      required: ["path", "outputNodeId", "outputSlotId", "inputNodeId", "inputSlotId"],
+    },
+    handler: async (params) => JSON.stringify(await bridge.connectShaderGraphNodes(params), null, 2),
+  },
+  {
+    name: "unity_shadergraph_disconnect",
+    description: "Disconnect two nodes in a Shader Graph by removing the edge between them.",
+    inputSchema: {
+      type: "object",
+      properties: {
+        path: { type: "string", description: "Asset path of the .shadergraph file" },
+        outputNodeId: { type: "string", description: "Source node objectId" },
+        outputSlotId: { type: "number", description: "Output slot ID" },
+        inputNodeId: { type: "string", description: "Target node objectId" },
+        inputSlotId: { type: "number", description: "Input slot ID" },
+      },
+      required: ["path", "outputNodeId", "outputSlotId", "inputNodeId", "inputSlotId"],
+    },
+    handler: async (params) => JSON.stringify(await bridge.disconnectShaderGraphNodes(params), null, 2),
+  },
+  {
+    name: "unity_shadergraph_set_node_property",
+    description: "Set a property value on a Shader Graph node. Can modify any serialized property like color values, float inputs, vector components, etc.",
+    inputSchema: {
+      type: "object",
+      properties: {
+        path: { type: "string", description: "Asset path of the .shadergraph file" },
+        nodeId: { type: "string", description: "Target node objectId" },
+        propertyName: { type: "string", description: "Property name in the serialized JSON (e.g., 'm_Value', 'm_DefaultValue')" },
+        value: { description: "New value — string, number, or boolean depending on the property" },
+      },
+      required: ["path", "nodeId", "propertyName", "value"],
+    },
+    handler: async (params) => JSON.stringify(await bridge.setShaderGraphNodeProperty(params), null, 2),
+  },
+  {
+    name: "unity_shadergraph_get_node_types",
+    description: "List all available Shader Graph node types by reflecting over the ShaderGraph assembly. Returns type names, categories, and full class names. Useful for discovering available nodes before adding them.",
+    inputSchema: { type: "object", properties: {} },
+    handler: async (params) => JSON.stringify(await bridge.getShaderGraphNodeTypes(params), null, 2),
+  },
 
   // ─── Amplify Shader Editor ───
   {
@@ -1627,6 +1938,37 @@ export const editorTools = [
     description: "List all Amplify Shader Functions in the project. Functions are reusable node groups (similar to Shader Graph Sub Graphs). Only available when Amplify is installed.",
     inputSchema: { type: "object", properties: {} },
     handler: async (params) => JSON.stringify(await bridge.listAmplifyFunctions(params), null, 2),
+  },
+  {
+    name: "unity_amplify_get_node_types",
+    description: "List all available Amplify Shader Editor node types by reflecting over the ASE assembly. Returns type names, categories, and descriptions. Requires Amplify to be installed.",
+    inputSchema: { type: "object", properties: {} },
+    handler: async (params) => JSON.stringify(await bridge.getAmplifyNodeTypes(params), null, 2),
+  },
+  {
+    name: "unity_amplify_get_nodes",
+    description: "Get all nodes in the currently open Amplify Shader Editor graph. Returns node IDs, types, positions, and port counts. The ASE window must be open with a shader loaded.",
+    inputSchema: { type: "object", properties: {} },
+    handler: async (params) => JSON.stringify(await bridge.getAmplifyGraphNodes(params), null, 2),
+  },
+  {
+    name: "unity_amplify_get_connections",
+    description: "Get all connections between nodes in the currently open Amplify Shader Editor graph. Shows which output ports connect to which input ports.",
+    inputSchema: { type: "object", properties: {} },
+    handler: async (params) => JSON.stringify(await bridge.getAmplifyGraphConnections(params), null, 2),
+  },
+  {
+    name: "unity_amplify_create_shader",
+    description: "Create a new Amplify Shader Editor shader file with proper ASE serialization markers. The shader can then be opened in ASE for visual editing.",
+    inputSchema: {
+      type: "object",
+      properties: {
+        path: { type: "string", description: "Asset path for the new shader (e.g., 'Assets/Shaders/MyShader.shader')" },
+        shaderName: { type: "string", description: "Shader name in the shader dropdown (e.g., 'Custom/MyShader')" },
+      },
+      required: ["path", "shaderName"],
+    },
+    handler: async (params) => JSON.stringify(await bridge.createAmplifyShader(params), null, 2),
   },
 
   {
