@@ -464,6 +464,40 @@ export async function findObjectsByType(params) {
   return sendCommand("selection/find-by-type", params);
 }
 
+// ─── Input Actions ───
+
+export async function createInputActions(params) {
+  return sendCommand("input/create", params);
+}
+
+export async function getInputActionsInfo(params) {
+  return sendCommand("input/info", params);
+}
+
+export async function addInputActionMap(params) {
+  return sendCommand("input/add-map", params);
+}
+
+export async function removeInputActionMap(params) {
+  return sendCommand("input/remove-map", params);
+}
+
+export async function addInputAction(params) {
+  return sendCommand("input/add-action", params);
+}
+
+export async function removeInputAction(params) {
+  return sendCommand("input/remove-action", params);
+}
+
+export async function addInputBinding(params) {
+  return sendCommand("input/add-binding", params);
+}
+
+export async function addInputCompositeBinding(params) {
+  return sendCommand("input/add-composite-binding", params);
+}
+
 // ─── Agent Management ───
 
 export async function listAgents(params) {

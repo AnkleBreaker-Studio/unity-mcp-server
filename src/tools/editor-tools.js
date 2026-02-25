@@ -1050,6 +1050,141 @@ export const editorTools = [
 
   // ─── Agent Management ───
   {
+    // ─── Input Actions ───
+    name: "unity_input_create",
+    description: "Create a new Input Action Asset (.inputactions file) for Unity's Input System. Supports optional initial action maps.",
+    inputSchema: {
+      type: "object",
+      properties: {
+        path: { type: "string", description: "Asset path (e.g. 'Assets/Settings/Controls.inputactions')" },
+        name: { type: "string", description: "Asset name (defaults to filename)" },
+        maps: {
+          type: "array",
+          description: "Optional initial action maps to create",
+          items: {
+            type: "object",
+            properties: {
+              name: { type: "string", description: "Action map name (e.g. 'Gameplay', 'UI')" },
+            },
+          },
+        },
+      },
+      required: ["path"],
+    },
+    handler: async (params) => JSON.stringify(await bridge.createInputActions(params), null, 2),
+  },
+  {
+    name: "unity_input_info",
+    description: "Get detailed info about an Input Action Asset: maps, actions, bindings, and control schemes.",
+    inputSchema: {
+      type: "object",
+      properties: {
+        path: { type: "string", description: "Asset path of the .inputactions file" },
+      },
+      required: ["path"],
+    },
+    handler: async (params) => JSON.stringify(await bridge.getInputActionsInfo(params), null, 2),
+  },
+  {
+    name: "unity_input_add_map",
+    description: "Add a new action map to an Input Action Asset.",
+    inputSchema: {
+      type: "object",
+      properties: {
+        path: { type: "string", description: "Asset path of the .inputactions file" },
+        mapName: { type: "string", description: "Name of the action map to add (e.g. 'Gameplay', 'UI')" },
+      },
+      required: ["path", "mapName"],
+    },
+    handler: async (params) => JSON.stringify(await bridge.addInputActionMap(params), null, 2),
+  },
+  {
+    name: "unity_input_remove_map",
+    description: "Remove an action map from an Input Action Asset.",
+    inputSchema: {
+      type: "object",
+      properties: {
+        path: { type: "string", description: "Asset path of the .inputactions file" },
+        mapName: { type: "string", description: "Name of the action map to remove" },
+      },
+      required: ["path", "mapName"],
+    },
+    handler: async (params) => JSON.stringify(await bridge.removeInputActionMap(params), null, 2),
+  },
+  {
+    name: "unity_input_add_action",
+    description: "Add an action to an action map in an Input Action Asset.",
+    inputSchema: {
+      type: "object",
+      properties: {
+        path: { type: "string", description: "Asset path of the .inputactions file" },
+        mapName: { type: "string", description: "Name of the action map" },
+        actionName: { type: "string", description: "Name of the action (e.g. 'Move', 'Jump', 'Fire')" },
+        actionType: { type: "string", enum: ["Value", "Button", "PassThrough"], description: "Action type (default: Value)" },
+        expectedControlType: { type: "string", description: "Expected control type (e.g. 'Vector2', 'Axis', 'Button')" },
+      },
+      required: ["path", "mapName", "actionName"],
+    },
+    handler: async (params) => JSON.stringify(await bridge.addInputAction(params), null, 2),
+  },
+  {
+    name: "unity_input_remove_action",
+    description: "Remove an action (and its bindings) from an action map.",
+    inputSchema: {
+      type: "object",
+      properties: {
+        path: { type: "string", description: "Asset path of the .inputactions file" },
+        mapName: { type: "string", description: "Name of the action map" },
+        actionName: { type: "string", description: "Name of the action to remove" },
+      },
+      required: ["path", "mapName", "actionName"],
+    },
+    handler: async (params) => JSON.stringify(await bridge.removeInputAction(params), null, 2),
+  },
+  {
+    name: "unity_input_add_binding",
+    description: "Add a simple (non-composite) binding to an action. Use for single-key bindings like '<Keyboard>/space' or '<Gamepad>/buttonSouth'.",
+    inputSchema: {
+      type: "object",
+      properties: {
+        path: { type: "string", description: "Asset path of the .inputactions file" },
+        mapName: { type: "string", description: "Name of the action map" },
+        actionName: { type: "string", description: "Name of the action to bind to" },
+        bindingPath: { type: "string", description: "Input binding path (e.g. '<Keyboard>/space', '<Gamepad>/leftStick')" },
+      },
+      required: ["path", "mapName", "actionName", "bindingPath"],
+    },
+    handler: async (params) => JSON.stringify(await bridge.addInputBinding(params), null, 2),
+  },
+  {
+    name: "unity_input_add_composite_binding",
+    description: "Add a composite binding (e.g. WASD, arrows) to an action. Composites combine multiple keys into a single value (1DAxis for up/down, 2DVector for WASD).",
+    inputSchema: {
+      type: "object",
+      properties: {
+        path: { type: "string", description: "Asset path of the .inputactions file" },
+        mapName: { type: "string", description: "Name of the action map" },
+        actionName: { type: "string", description: "Name of the action to bind to" },
+        compositeName: { type: "string", description: "Display name for the composite (e.g. 'WASD', 'Arrows')" },
+        compositeType: { type: "string", description: "Composite type path: '1DAxis' for pos/neg axis, '2DVector' for 4-directional (default: '1DAxis')" },
+        parts: {
+          type: "array",
+          description: "Composite parts — each has a 'name' (e.g. 'positive','negative','up','down','left','right') and 'path' (e.g. '<Keyboard>/w')",
+          items: {
+            type: "object",
+            properties: {
+              name: { type: "string", description: "Part name: 'positive'/'negative' for 1DAxis, 'up'/'down'/'left'/'right' for 2DVector" },
+              path: { type: "string", description: "Input binding path for this part (e.g. '<Keyboard>/w')" },
+            },
+            required: ["name", "path"],
+          },
+        },
+      },
+      required: ["path", "mapName", "actionName", "compositeName", "parts"],
+    },
+    handler: async (params) => JSON.stringify(await bridge.addInputCompositeBinding(params), null, 2),
+  },
+  {
     name: "unity_agents_list",
     description: "List all connected agent sessions with their current action and activity stats.",
     inputSchema: { type: "object", properties: {} },
