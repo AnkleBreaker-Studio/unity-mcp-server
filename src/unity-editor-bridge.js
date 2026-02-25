@@ -1,0 +1,183 @@
+// Unity Editor HTTP Bridge Client
+// Communicates with the C# plugin running inside Unity Editor
+import { CONFIG } from "./config.js";
+
+const BRIDGE_URL = `http://${CONFIG.editorBridgeHost}:${CONFIG.editorBridgePort}`;
+
+/**
+ * Send a command to the Unity Editor bridge
+ */
+export async function sendCommand(command, params = {}) {
+  const url = `${BRIDGE_URL}/api/${command}`;
+  const controller = new AbortController();
+  const timeout = setTimeout(() => controller.abort(), CONFIG.editorBridgeTimeout);
+
+  try {
+    const response = await fetch(url, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(params),
+      signal: controller.signal,
+    });
+    clearTimeout(timeout);
+
+    if (!response.ok) {
+      const text = await response.text();
+      return { success: false, error: `HTTP ${response.status}: ${text}` };
+    }
+
+    const data = await response.json();
+    return { success: true, data };
+  } catch (error) {
+    clearTimeout(timeout);
+    if (error.name === "AbortError") {
+      return { success: false, error: "Request timed out. Is Unity Editor running with the MCP Bridge plugin?" };
+    }
+    return { success: false, error: `Connection failed: ${error.message}. Is Unity Editor running with the MCP Bridge plugin?` };
+  }
+}
+
+/**
+ * Check if the Unity Editor bridge is reachable
+ */
+export async function ping() {
+  try {
+    const response = await fetch(`${BRIDGE_URL}/api/ping`, {
+      method: "GET",
+      signal: AbortSignal.timeout(3000),
+    });
+    if (response.ok) {
+      const data = await response.json();
+      return { connected: true, ...data };
+    }
+    return { connected: false, error: `HTTP ${response.status}` };
+  } catch {
+    return { connected: false, error: "Unity Editor bridge not reachable" };
+  }
+}
+
+// ─── Convenience wrappers for common Editor operations ───
+
+export async function getSceneInfo() {
+  return sendCommand("scene/info");
+}
+
+export async function openScene(scenePath) {
+  return sendCommand("scene/open", { path: scenePath });
+}
+
+export async function saveScene() {
+  return sendCommand("scene/save");
+}
+
+export async function newScene() {
+  return sendCommand("scene/new");
+}
+
+export async function getHierarchy() {
+  return sendCommand("scene/hierarchy");
+}
+
+export async function createGameObject(params) {
+  return sendCommand("gameobject/create", params);
+}
+
+export async function deleteGameObject(params) {
+  return sendCommand("gameobject/delete", params);
+}
+
+export async function getGameObjectInfo(params) {
+  return sendCommand("gameobject/info", params);
+}
+
+export async function setTransform(params) {
+  return sendCommand("gameobject/set-transform", params);
+}
+
+export async function addComponent(params) {
+  return sendCommand("component/add", params);
+}
+
+export async function removeComponent(params) {
+  return sendCommand("component/remove", params);
+}
+
+export async function setComponentProperty(params) {
+  return sendCommand("component/set-property", params);
+}
+
+export async function getComponentProperties(params) {
+  return sendCommand("component/get-properties", params);
+}
+
+export async function executeMenuItem(menuPath) {
+  return sendCommand("editor/execute-menu-item", { menuPath });
+}
+
+export async function getProjectInfo() {
+  return sendCommand("project/info");
+}
+
+export async function getAssetList(params) {
+  return sendCommand("asset/list", params);
+}
+
+export async function importAsset(params) {
+  return sendCommand("asset/import", params);
+}
+
+export async function deleteAsset(params) {
+  return sendCommand("asset/delete", params);
+}
+
+export async function createScript(params) {
+  return sendCommand("script/create", params);
+}
+
+export async function readScript(params) {
+  return sendCommand("script/read", params);
+}
+
+export async function updateScript(params) {
+  return sendCommand("script/update", params);
+}
+
+export async function buildProject(params) {
+  return sendCommand("build/start", params);
+}
+
+export async function getConsoleLog(params) {
+  return sendCommand("console/log", params);
+}
+
+export async function clearConsoleLog() {
+  return sendCommand("console/clear");
+}
+
+export async function playMode(action) {
+  return sendCommand("editor/play-mode", { action }); // "play", "pause", "stop"
+}
+
+export async function getEditorState() {
+  return sendCommand("editor/state");
+}
+
+export async function executeCode(code) {
+  return sendCommand("editor/execute-code", { code });
+}
+
+export async function createPrefab(params) {
+  return sendCommand("asset/create-prefab", params);
+}
+
+export async function instantiatePrefab(params) {
+  return sendCommand("asset/instantiate-prefab", params);
+}
+
+export async function setMaterial(params) {
+  return sendCommand("renderer/set-material", params);
+}
+
+export async function createMaterial(params) {
+  return sendCommand("asset/create-material", params);
+}
