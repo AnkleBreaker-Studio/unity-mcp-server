@@ -127,10 +127,10 @@ async function pollQueueStatus(ticketId) {
 
       // Check completion status
       if (statusData.status === "Completed") {
-        // Extract result from the response
+        // Extract result — use explicit undefined check so falsy values (null, 0, false, "") pass through
         return {
           success: true,
-          data: statusData.result || statusData,
+          data: statusData.result !== undefined ? statusData.result : statusData,
         };
       } else if (statusData.status === "Failed") {
         return {
@@ -264,16 +264,10 @@ export async function sendCommand(command, params = {}) {
           // Poll for completion
           const result = await pollQueueStatus(ticketId);
 
-          if (result.success) {
-            _queueModeDetermined = true;
-            _useQueueMode = true;
-            return result;
-          } else {
-            // Polling failed
-            _queueModeDetermined = true;
-            _useQueueMode = true;
-            return result;
-          }
+          // Queue submission succeeded (we got a ticket), so queue mode is confirmed
+          _queueModeDetermined = true;
+          _useQueueMode = true;
+          return result;
         } catch (submitError) {
           submitLastError = submitError;
 
@@ -287,8 +281,8 @@ export async function sendCommand(command, params = {}) {
             continue;
           }
 
-          // Check if it's a 404 (queue not supported)
-          if (submitError.message && submitError.message.includes("HTTP 404")) {
+          // Check if it's a 404 (queue not supported) — match "HTTP 404" or raw status code
+          if (submitError.status === 404 || (submitError.message && /HTTP\s*404/.test(submitError.message))) {
             console.warn(
               `[MCP Bridge] Queue mode not supported (HTTP 404), falling back to legacy sync mode`
             );
