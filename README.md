@@ -1,4 +1,4 @@
-# Unity MCP — Server
+# AnkleBreaker Unity MCP — Server
 
 <p align="center">
   <strong>Multi-agent MCP server for Unity, designed for Claude Cowork</strong><br>
@@ -21,7 +21,7 @@
 
 Standard MCP servers assume **one AI assistant, one tool, request-response.** That works fine for simple tasks.
 
-**Unity MCP is built for [Claude Cowork](https://claude.ai)**, where **multiple AI agents collaborate in parallel** on the same Unity project. When you ask Cowork to *"set up the level while writing the player controller and configuring physics"*, it spawns several agents — and they all need to talk to Unity at the same time.
+**AnkleBreaker Unity MCP is built for [Claude Cowork](https://claude.ai)**, where **multiple AI agents collaborate in parallel** on the same Unity project. When you ask Cowork to *"set up the level while writing the player controller and configuring physics"*, it spawns several agents — and they all need to talk to Unity at the same time.
 
 Here's what makes this different:
 
@@ -57,7 +57,7 @@ Here's what makes this different:
         ┌─────────────────────┐
         │   Unity Editor      │
         │   ┌───────────────┐ │
-        │   │ Unity MCP     │ │  ← HTTP bridge + async request queue
+        │   │ AB Unity MCP  │ │  ← HTTP bridge + async request queue
         │   │ Plugin        │ │     fair round-robin scheduling
         │   └───────────────┘ │
         └─────────────────────┘
@@ -82,7 +82,7 @@ In Unity: **Window > Package Manager > + > Add package from git URL:**
 https://github.com/AnkleBreaker-Studio/unity-mcp-plugin.git
 ```
 
-After installation, open **Window > Unity MCP** in Unity and verify the bridge server shows `Started on port 7890`.
+After installation, open **Window > AB Unity MCP** in Unity and verify the bridge server shows `Started on port 7890`.
 
 ### 2. Install the MCP Server
 
@@ -191,7 +191,7 @@ If it fails, check the [Troubleshooting](#troubleshooting) section below.
 | `UNITY_QUEUE_POLL_INTERVAL` | `150` | Queue polling start interval (ms) |
 | `UNITY_QUEUE_POLL_MAX` | `1500` | Queue polling max interval (ms) |
 
-The Unity plugin has its own settings via the Dashboard (**Window > Unity MCP**) for port, auto-start, and category toggles.
+The Unity plugin has its own settings via the Dashboard (**Window > AB Unity MCP**) for port, auto-start, and category toggles.
 
 ---
 
@@ -228,13 +228,32 @@ node tests/multi-agent-stress-test.mjs --mock --agents 5 --requests 8
 
 ---
 
+## Important: Use the MCP Connector, Not the Bridge
+
+> **Do NOT call the Unity HTTP bridge directly** (e.g. `http://127.0.0.1:7890/api/...`).
+
+The HTTP bridge on port 7890 is an **internal communication layer** between this MCP server and the Unity Editor plugin. It is not meant to be called directly by AI agents or scripts.
+
+**Always use the `unity_*` MCP tools** provided by this connector. They handle:
+
+- Multi-agent queuing and fair scheduling
+- Agent identity and session tracking
+- Automatic retries and timeout management
+- Read batching and write serialization
+
+Direct HTTP calls bypass all of these safety mechanisms and will cause issues in multi-agent scenarios.
+
+The MCP server includes built-in instructions that tell agents to use the connector tools. If an agent still tries to call the bridge directly, it's likely a misconfiguration — make sure the `unity-mcp` connector is properly registered and visible in Claude's MCP server list.
+
+---
+
 ## Troubleshooting
 
-**"Connection failed" errors** — Make sure Unity is open and the plugin is installed. Check the Unity Console for `[Unity MCP] Server started on port 7890`.
+**"Connection failed" errors** — Make sure Unity is open and the plugin is installed. Check the Unity Console for `[AB-UMCP] Server started on port 7890`.
 
 **"Unity Hub not found"** — Set `UNITY_HUB_PATH` in your config to match your install location.
 
-**"Category disabled" errors** — A feature category may be toggled off. Open **Window > Unity MCP** in Unity to check.
+**"Category disabled" errors** — A feature category may be toggled off. Open **Window > AB Unity MCP** in Unity to check.
 
 **Port conflicts** — Change `UNITY_BRIDGE_PORT` in your Claude config and update the port in Unity's MCP dashboard.
 
@@ -268,7 +287,7 @@ Contributions are welcome! This is an open-source project by [AnkleBreaker Consu
 3. Make your changes
 4. Submit a pull request
 
-Please also check out the companion plugin repo: [Unity MCP — Plugin](https://github.com/AnkleBreaker-Studio/unity-mcp-plugin)
+Please also check out the companion plugin repo: [AnkleBreaker Unity MCP — Plugin](https://github.com/AnkleBreaker-Studio/unity-mcp-plugin)
 
 ---
 

@@ -63,7 +63,7 @@ async function getContextSummaryOnce() {
     }
 
     let summary =
-      "=== PROJECT CONTEXT (auto-provided by Unity MCP) ===\n\n";
+      "=== PROJECT CONTEXT (auto-provided by AB Unity MCP) ===\n\n";
     for (const entry of _contextCache.categories) {
       summary += `--- ${entry.category} ---\n`;
       // Truncate very long files for auto-inject
@@ -94,6 +94,13 @@ const server = new Server(
       tools: {},
       resources: {},
     },
+    instructions: [
+      "IMPORTANT: Always use the MCP tools provided by this server (unity_*) to interact with Unity.",
+      "NEVER call the Unity HTTP bridge directly (e.g. http://127.0.0.1:7890/api/...).",
+      "The bridge is an internal communication layer between this MCP server and the Unity Editor plugin.",
+      "Direct HTTP calls bypass the multi-agent queue, agent tracking, and safety mechanisms.",
+      "Use the unity_* MCP tools for all Unity operations — they handle queuing, retries, and agent identity automatically.",
+    ].join(" "),
   }
 );
 
