@@ -1,0 +1,138 @@
+{
+  "manifest_version": "0.3",
+  "name": "unity-mcp",
+  "display_name": "AnkleBreaker Unity MCP",
+  "version": "2.9.1",
+  "description": "Multi-agent MCP server for Unity Editor — scenes, GameObjects, scripts, builds, profiling, and more. Designed for Claude Cowork with async queue and fair scheduling across agents.",
+  "long_description": "AnkleBreaker Unity MCP connects Claude to your Unity Editor with 229 tools across 21 categories. Built for Claude Cowork's multi-agent architecture, where multiple AI agents collaborate on the same Unity project in parallel.\n\n**Key features:**\n- 229 tools: scenes, GameObjects, components, assets, scripts, animation, physics, lighting, audio, profiling, builds, and more\n- Multi-agent async queue with fair round-robin scheduling\n- Read batching (up to 5/frame) and write serialization (1/frame)\n- Agent session tracking and action logging\n- Project Context auto-injection for project-aware AI assistance\n- Automatic fallback to legacy sync mode for older plugin versions\n\n**Requires the companion Unity Editor plugin:** Install via Unity Package Manager → Add package from git URL → `https://github.com/AnkleBreaker-Studio/unity-mcp-plugin.git`\n\nAfter installing the plugin, open Window → AB Unity MCP in Unity and verify the bridge shows 'Started on port 7890'.",
+  "author": {
+    "name": "AnkleBreaker Studio",
+    "email": "francois@anklebreaker-studio.com",
+    "url": "https://anklebreaker-studio.com"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/AnkleBreaker-Studio/unity-mcp-server.git"
+  },
+  "homepage": "https://github.com/AnkleBreaker-Studio/unity-mcp-server",
+  "documentation": "https://github.com/AnkleBreaker-Studio/unity-mcp-server/blob/main/README.md",
+  "support": "https://github.com/AnkleBreaker-Studio/unity-mcp-server/issues",
+  "icon": "icon.png",
+  "license": "MIT",
+  "keywords": [
+    "unity",
+    "unity3d",
+    "game-development",
+    "editor",
+    "scenes",
+    "gameobjects",
+    "scripts",
+    "builds",
+    "profiling",
+    "multi-agent",
+    "cowork"
+  ],
+  "privacy_policies": [],
+  "compatibility": {
+    "claude_desktop": ">=1.0.0",
+    "platforms": [
+      "win32",
+      "darwin"
+    ],
+    "runtimes": {
+      "node": ">=18.0.0"
+    }
+  },
+  "server": {
+    "type": "node",
+    "entry_point": "src/index.js",
+    "mcp_config": {
+      "command": "node",
+      "args": [
+        "${__dirname}/src/index.js"
+      ],
+      "env": {
+        "UNITY_HUB_PATH": "${user_config.unity_hub_path}",
+        "UNITY_BRIDGE_PORT": "${user_config.bridge_port}"
+      },
+      "platform_overrides": {
+        "darwin": {
+          "env": {
+            "UNITY_HUB_PATH": "${user_config.unity_hub_path}"
+          }
+        }
+      }
+    }
+  },
+  "user_config": {
+    "unity_hub_path": {
+      "type": "file",
+      "title": "Unity Hub Path",
+      "description": "Path to Unity Hub executable. On Windows: C:\\Program Files\\Unity Hub\\Unity Hub.exe — On macOS: /Applications/Unity Hub.app/Contents/MacOS/Unity Hub",
+      "required": false,
+      "default": "C:\\Program Files\\Unity Hub\\Unity Hub.exe"
+    },
+    "bridge_port": {
+      "type": "string",
+      "title": "Bridge Port",
+      "description": "Port the Unity Editor plugin listens on (must match the port shown in Window > AB Unity MCP in Unity). Default: 7890",
+      "required": false,
+      "default": "7890"
+    }
+  },
+  "tools_generated": true,
+  "tools": [
+    { "name": "unity_editor_ping", "description": "Ping the Unity Editor to check connection status" },
+    { "name": "unity_editor_state", "description": "Get current Unity Editor state (play mode, scene, project)" },
+    { "name": "unity_project_info", "description": "Get project information (name, version, packages, settings)" },
+    { "name": "unity_hub_list_editors", "description": "List installed Unity Editor versions" },
+    { "name": "unity_hub_install_editor", "description": "Install a Unity Editor version via Unity Hub" },
+    { "name": "unity_scene_info", "description": "Get information about the current scene" },
+    { "name": "unity_scene_hierarchy", "description": "Get the full scene hierarchy tree" },
+    { "name": "unity_scene_open", "description": "Open a scene by asset path" },
+    { "name": "unity_scene_save", "description": "Save the current scene" },
+    { "name": "unity_gameobject_create", "description": "Create a new GameObject in the scene" },
+    { "name": "unity_gameobject_delete", "description": "Delete a GameObject from the scene" },
+    { "name": "unity_gameobject_info", "description": "Get detailed info about a GameObject" },
+    { "name": "unity_gameobject_set_transform", "description": "Set position, rotation, scale of a GameObject" },
+    { "name": "unity_component_add", "description": "Add a component to a GameObject" },
+    { "name": "unity_component_remove", "description": "Remove a component from a GameObject" },
+    { "name": "unity_component_get_properties", "description": "Get serialized properties of a component" },
+    { "name": "unity_component_set_property", "description": "Set a property value on a component" },
+    { "name": "unity_asset_list", "description": "List assets in the project" },
+    { "name": "unity_asset_import", "description": "Import a file as an asset" },
+    { "name": "unity_asset_create_prefab", "description": "Create a prefab from a GameObject" },
+    { "name": "unity_asset_instantiate_prefab", "description": "Instantiate a prefab in the scene" },
+    { "name": "unity_script_create", "description": "Create a new C# script" },
+    { "name": "unity_script_read", "description": "Read a C# script's contents" },
+    { "name": "unity_script_update", "description": "Update a C# script's contents" },
+    { "name": "unity_material_create", "description": "Create a new material" },
+    { "name": "unity_renderer_set_material", "description": "Assign a material to a renderer" },
+    { "name": "unity_execute_code", "description": "Execute C# code in the Unity Editor" },
+    { "name": "unity_build", "description": "Build the project for a target platform" },
+    { "name": "unity_console_log", "description": "Get recent Unity console messages" },
+    { "name": "unity_play_mode", "description": "Control play mode (play, pause, stop)" },
+    { "name": "unity_execute_menu_item", "description": "Execute a Unity Editor menu command" },
+    { "name": "unity_animation_create_clip", "description": "Create an animation clip" },
+    { "name": "unity_physics_raycast", "description": "Perform a physics raycast" },
+    { "name": "unity_lighting_set", "description": "Configure a light component" },
+    { "name": "unity_audio_set_source", "description": "Configure an audio source" },
+    { "name": "unity_profiler_start", "description": "Start Unity profiler capture" },
+    { "name": "unity_memory_snapshot", "description": "Take a memory snapshot" },
+    { "name": "unity_queue_info", "description": "Get multi-agent queue state" },
+    { "name": "unity_agents_list", "description": "List active agent sessions" },
+    { "name": "unity_get_project_context", "description": "Get project-specific documentation context" }
+  ],
+  "prompts": [
+    {
+      "name": "setup_scene",
+      "description": "Set up a basic Unity scene with common elements",
+      "text": "Help me set up a Unity scene. Start by checking the connection to Unity, then show me the current hierarchy. Ask what kind of scene I want to create (e.g., 3D platformer, FPS, puzzle game) and set up appropriate GameObjects, lighting, and a camera."
+    },
+    {
+      "name": "profile_and_optimize",
+      "description": "Profile the project and suggest optimizations",
+      "text": "Profile my Unity project and help me optimize it. Start the profiler, take a memory snapshot, check the console for warnings, and analyze the results. Give me specific, actionable recommendations for improving performance."
+    }
+  ]
+}

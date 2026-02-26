@@ -1,5 +1,6 @@
 node_modules/
 .env
 *.log
+*.mcpb
 .DS_Store
 Thumbs.db

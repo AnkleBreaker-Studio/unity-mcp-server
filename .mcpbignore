@@ -1,0 +1,9 @@
+.git
+.gitignore
+.mcpbignore
+tests
+*.mcpb
+claude-desktop-config.json
+README.md
+CHANGELOG.md
+package-lock.json

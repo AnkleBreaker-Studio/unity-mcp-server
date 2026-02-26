@@ -2,7 +2,7 @@
 
 <p align="center">
   <strong>Multi-agent MCP server for Unity, designed for Claude Cowork</strong><br>
-  <em>145+ tools across 21 categories — scenes, GameObjects, scripts, builds, profiling, and more</em>
+  <em>229 tools across 21 categories — scenes, GameObjects, scripts, builds, profiling, and more</em>
 </p>
 
 <p align="center">
@@ -71,7 +71,7 @@ The server also communicates directly with **Unity Hub** via its CLI for editor 
 
 > **Important:** This system has TWO parts that BOTH need to be installed:
 > 1. **Unity Plugin** — installed in Unity Editor (provides the HTTP bridge)
-> 2. **MCP Server** — installed on your machine (connects Claude to Unity)
+> 2. **MCP Server** — installed as a Desktop Extension or configured manually (connects Claude to Unity)
 >
 > If either piece is missing, the connection won't work.
 
@@ -86,17 +86,30 @@ After installation, open **Window > AB Unity MCP** in Unity and verify the bridg
 
 ### 2. Install the MCP Server
 
+#### Option A: Desktop Extension (Recommended)
+
+The easiest way to install — no git clone, no npm, no JSON config editing.
+
+1. Download `unity-mcp.mcpb` from the [latest release](https://github.com/AnkleBreaker-Studio/unity-mcp-server/releases)
+2. **Double-click** the `.mcpb` file (or drag it into Claude Desktop)
+3. Review the extension details and click **Install**
+4. Optionally configure the Unity Hub path and bridge port in the extension settings
+
+That's it. Claude Desktop uses its built-in Node.js runtime to run the server — no separate Node.js installation required.
+
+> **What's a `.mcpb`?** It's a [Desktop Extension](https://www.anthropic.com/engineering/desktop-extensions) — a packaged MCP server that installs in Claude with one click, similar to browser extensions. It bundles the server code and all dependencies.
+
+#### Option B: Manual Setup (Advanced)
+
+If you prefer manual configuration or need to modify the source:
+
 ```bash
 git clone https://github.com/AnkleBreaker-Studio/unity-mcp-server.git
 cd unity-mcp-server
 npm install
 ```
 
-### 3. Configure Claude
-
-#### For Claude Desktop
-
-Open **Claude Desktop > Settings > Developer > Edit Config** and add:
+Then add to your Claude config (**Settings > Developer > Edit Config**):
 
 ```json
 {
@@ -115,23 +128,9 @@ Open **Claude Desktop > Settings > Developer > Edit Config** and add:
 
 > **Replace `C:/path/to/unity-mcp-server`** with the actual path where you cloned the repo. Use forward slashes.
 
-#### For Claude Cowork
+### 3. Verify It Works
 
-Cowork uses the **same configuration format** as Claude Desktop. Add the MCP server config in your Cowork settings:
-
-1. Open **Claude Cowork** desktop app
-2. Go to **Settings > Extensions / MCP Servers**
-3. Add a new MCP server with these settings:
-   - **Name:** `unity-mcp`
-   - **Command:** `node`
-   - **Args:** `["C:/path/to/unity-mcp-server/src/index.js"]`
-   - **Env:** `UNITY_BRIDGE_PORT=7890`, `UNITY_HUB_PATH=C:\Program Files\Unity Hub\Unity Hub.exe`
-
-Claude Cowork will spawn multiple instances of this server automatically — one per agent. Each instance gets its own unique agent ID. No special multi-agent configuration is needed; the queue system handles coordination transparently.
-
-#### Verify It Works
-
-After configuring, restart Claude (Desktop or Cowork). You should see `unity-mcp` listed as a connected MCP server. Then try asking:
+After installing (either method), restart Claude. You should see `unity-mcp` listed as a connected extension. Then try asking:
 
 *"Ping Unity and tell me the project name"*
 
@@ -148,7 +147,7 @@ If it fails, check the [Troubleshooting](#troubleshooting) section below.
 
 ---
 
-## Tools (145+)
+## Tools (229)
 
 | Category | Examples |
 |----------|---------|
@@ -259,11 +258,11 @@ The MCP server includes built-in instructions that tell agents to use the connec
 
 **Queue timeouts** — The default timeout is 30 seconds to accommodate Unity compilation. If you need longer, set `UNITY_BRIDGE_TIMEOUT` to a higher value (in ms).
 
-**Cowork says "not seen" but extension is installed** — This usually means the MCP server config is missing or has the wrong path. Double-check:
+**Extension not appearing after install** — Restart Claude Desktop after installing the `.mcpb` file. If using manual setup (Option B), double-check:
 1. The `args` path points to the actual `src/index.js` file on your machine
 2. You used forward slashes in the path (even on Windows)
 3. You ran `npm install` in the server directory
-4. You restarted Claude Cowork after adding the config
+4. You restarted Claude after adding the config
 5. Unity is open with the plugin installed and showing "Server started" in the console
 
 **execute_code fails with "filename too long"** — This is a known issue on Windows where the Mono compiler's command line exceeds the OS limit when many assemblies are loaded. We're working on a fix.
@@ -272,9 +271,19 @@ The MCP server includes built-in instructions that tell agents to use the connec
 
 ## Requirements
 
-- **Node.js 18+**
+- **Unity Editor** with [AnkleBreaker Unity MCP — Plugin](https://github.com/AnkleBreaker-Studio/unity-mcp-plugin) installed (for Editor tools)
 - **Unity Hub** (for Hub tools)
-- **Unity Editor** with [Unity MCP Plugin](https://github.com/AnkleBreaker-Studio/unity-mcp-plugin) installed (for Editor tools)
+- **Node.js 18+** — only needed for manual setup (Option B). The Desktop Extension (Option A) uses Claude's built-in Node.js.
+
+### Building the Desktop Extension
+
+To build the `.mcpb` bundle from source:
+
+```bash
+npm run pack
+```
+
+This requires `@anthropic-ai/mcpb` (fetched automatically via npx).
 
 ---
 
