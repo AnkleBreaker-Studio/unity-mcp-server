@@ -1,11 +1,11 @@
 {
-  "name": "anklebreaker-unity-mcp-server",
-  "version": "2.9.0",
-  "description": "AnkleBreaker Unity MCP Server — Multi-agent MCP server for Unity, designed for Claude Cowork",
+  "name": "unity-mcp-server",
+  "version": "2.9.1",
+  "description": "Unity MCP Server — Multi-agent MCP server for Unity Editor, designed for Claude Cowork. By AnkleBreaker Studio.",
   "type": "module",
   "main": "src/index.js",
   "bin": {
-    "ab-unity-mcp": "./src/index.js"
+    "unity-mcp": "./src/index.js"
   },
   "scripts": {
     "start": "node src/index.js",

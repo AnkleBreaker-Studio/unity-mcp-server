@@ -63,7 +63,7 @@ async function getContextSummaryOnce() {
     }
 
     let summary =
-      "=== PROJECT CONTEXT (auto-provided by AB Unity MCP) ===\n\n";
+      "=== PROJECT CONTEXT (auto-provided by Unity MCP) ===\n\n";
     for (const entry of _contextCache.categories) {
       summary += `--- ${entry.category} ---\n`;
       // Truncate very long files for auto-inject
@@ -86,8 +86,8 @@ async function getContextSummaryOnce() {
 // ─── Create MCP Server ───
 const server = new Server(
   {
-    name: "anklebreaker-unity-mcp-server",
-    version: "2.9.0",
+    name: "unity-mcp",
+    version: "2.9.1",
   },
   {
     capabilities: {
@@ -215,7 +215,7 @@ async function main() {
   const transport = new StdioServerTransport();
   await server.connect(transport);
   console.error(
-    `AB Unity MCP Server running on stdio (agent: ${PROCESS_AGENT_ID})`
+    `Unity MCP Server running on stdio (agent: ${PROCESS_AGENT_ID})`
   );
 }
 

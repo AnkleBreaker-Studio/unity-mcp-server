@@ -1,6 +1,6 @@
 {
   "mcpServers": {
-    "unity": {
+    "unity-mcp": {
       "command": "node",
       "args": ["C:/PATH_TO/unity-mcp-server/src/index.js"],
       "env": {
