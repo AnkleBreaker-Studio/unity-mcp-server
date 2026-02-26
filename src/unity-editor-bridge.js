@@ -1323,3 +1323,28 @@ export async function deletePlayerPref(params) {
 export async function deleteAllPlayerPrefs(params) {
   return sendCommand("playerprefs/delete-all", params);
 }
+
+// ─── Project Context (direct HTTP, no queue) ───
+
+/**
+ * Get project context files. Bypasses the command queue since it's read-only file I/O.
+ * @param {string} [category] - Optional specific category to fetch. Omit for all.
+ * @returns {object} Context data with categories and content.
+ */
+export async function getProjectContext(category = null) {
+  const url = category
+    ? `${BRIDGE_URL}/api/context/${encodeURIComponent(category)}`
+    : `${BRIDGE_URL}/api/context`;
+
+  const response = await fetch(url, {
+    method: "GET",
+    headers: { "X-Agent-Id": _agentId },
+    signal: AbortSignal.timeout(5000),
+  });
+
+  if (!response.ok) {
+    throw new Error(`Context request failed: HTTP ${response.status}`);
+  }
+
+  return response.json();
+}
