@@ -87,7 +87,7 @@ async function getContextSummaryOnce() {
 const server = new Server(
   {
     name: "unity-mcp",
-    version: "2.13.1",
+    version: "2.13.2",
   },
   {
     capabilities: {
