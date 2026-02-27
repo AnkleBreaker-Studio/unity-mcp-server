@@ -2326,17 +2326,22 @@ export const editorTools = [
   },
   {
     name: "unity_amplify_save",
-    description: "Save the currently open Amplify Shader Editor graph to disk.",
-    inputSchema: { type: "object", properties: {} },
+    description: "Save the currently open Amplify Shader Editor graph to disk. If the shader has never been saved, auto-determines a save path from the shader name or uses the provided path.",
+    inputSchema: {
+      type: "object",
+      properties: {
+        path: { type: "string", description: "Optional asset path to save to (e.g. 'Assets/Shaders/MyShader.shader'). Only needed if the shader has never been saved before." },
+      },
+    },
     handler: async (params) => JSON.stringify(await bridge.saveAmplifyGraph(params), null, 2),
   },
   {
     name: "unity_amplify_close",
-    description: "Close the Amplify Shader Editor window. Optionally save before closing.",
+    description: "Close the Amplify Shader Editor window. By default saves the graph before closing to prevent save dialogs.",
     inputSchema: {
       type: "object",
       properties: {
-        save: { type: "boolean", description: "Save the graph before closing (default: false)" },
+        save: { type: "boolean", description: "Save the graph before closing (default: true)" },
       },
     },
     handler: async (params) => JSON.stringify(await bridge.closeAmplifyEditor(params), null, 2),
