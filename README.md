@@ -6,7 +6,7 @@
 </p>
 
 <p align="center">
-  <a href="https://github.com/AnkleBreaker-Studio/unity-mcp-server/releases"><img alt="Version" src="https://img.shields.io/badge/version-2.16.3-blue"></a>
+  <a href="https://github.com/AnkleBreaker-Studio/unity-mcp-server/releases"><img alt="Version" src="https://img.shields.io/badge/version-2.17.0-blue"></a>
   <a href="LICENSE"><img alt="License" src="https://img.shields.io/badge/license-MIT-green"></a>
   <a href="https://nodejs.org"><img alt="Node" src="https://img.shields.io/badge/Node.js-18%2B-green"></a>
 </p>
@@ -197,12 +197,13 @@ The server uses a **two-tier tool system** to stay within MCP client limits whil
 | `UNITY_HUB_PATH` | `C:\Program Files\Unity Hub\Unity Hub.exe` | Unity Hub executable |
 | `UNITY_BRIDGE_HOST` | `127.0.0.1` | Editor bridge host |
 | `UNITY_BRIDGE_PORT` | `7890` | Default/fallback editor bridge port |
-| `UNITY_BRIDGE_TIMEOUT` | `30000` | Request timeout (ms) — covers compilation waits |
+| `UNITY_BRIDGE_TIMEOUT` | `60000` | Request timeout (ms) — covers compilation waits |
 | `UNITY_PORT_RANGE_START` | `7890` | Start of multi-instance port scan range |
 | `UNITY_PORT_RANGE_END` | `7899` | End of multi-instance port scan range |
 | `UNITY_INSTANCE_REGISTRY` | Platform-specific\* | Path to the shared instance registry JSON |
 | `UNITY_QUEUE_POLL_INTERVAL` | `150` | Queue polling start interval (ms) |
 | `UNITY_QUEUE_POLL_MAX` | `1500` | Queue polling max interval (ms) |
+| `UNITY_QUEUE_POLL_TIMEOUT` | `120000` | Max total poll time (ms) for async ticket completion |
 
 \* Registry default: `%LOCALAPPDATA%/UnityMCP/instances.json` on Windows, `~/.local/share/UnityMCP/instances.json` on macOS/Linux.
 
@@ -299,7 +300,7 @@ The MCP server includes built-in instructions that tell agents to use the connec
 
 **Port conflicts** — With v2.15.0+, ports are auto-selected from the range 7890-7899 so conflicts are rare. If you need a specific port, enable "Use Manual Port" in the Unity MCP dashboard and set `UNITY_BRIDGE_PORT` in your Claude config to match.
 
-**Queue timeouts** — The default timeout is 30 seconds to accommodate Unity compilation. If you need longer, set `UNITY_BRIDGE_TIMEOUT` to a higher value (in ms).
+**Queue timeouts** — The default bridge timeout is 60 seconds to accommodate Unity compilation on slower machines. For very long operations, increase `UNITY_BRIDGE_TIMEOUT` (per-request timeout in ms) or `UNITY_QUEUE_POLL_TIMEOUT` (total poll time for async operations, default 120 seconds).
 
 **Instance selection lost after a few tool calls** — Prior to v2.16.3, the MCP host (Claude Desktop / Cowork) could restart the server process between tool calls, wiping all in-memory state including the selected instance. v2.16.3 fixes this with file-based state persistence. If you're on an older version, update to v2.16.3+. Debug logs are written to `%LOCALAPPDATA%/UnityMCP/mcp-debug.log` (Windows) or `~/.local/share/UnityMCP/mcp-debug.log` (macOS/Linux).
 
@@ -348,6 +349,14 @@ Please also check out the companion plugin repo: [AnkleBreaker Unity MCP — Plu
 ---
 
 ## Changelog
+
+### v2.17.0
+
+- **Default bridge timeout increased to 60s** — `UNITY_BRIDGE_TIMEOUT` now defaults to `60000` (was `30000`). Compilation time can be long on some machines, so this avoids premature timeouts during script reloads, builds, and other slow operations.
+- **Dedicated queue poll timeout** — New `UNITY_QUEUE_POLL_TIMEOUT` config (default `120000` / 2 minutes) controls how long the server polls for async ticket completion, independently of the per-request `UNITY_BRIDGE_TIMEOUT`. This ensures slow operations like `execute_code` (Roslyn compilation) have enough time to complete.
+- **404 grace period for queue polling** — When polling a ticket status, the server now tolerates up to 5 consecutive 404 responses before failing. This covers the brief race window between ticket dequeue and completion on the Unity side.
+- **Reduced per-poll timeout** — Individual status poll requests use a 10-second `AbortSignal` (was 30s), since status checks are fast and should not consume the full bridge timeout budget.
+- Requires plugin v2.16.0+.
 
 ### v2.16.3
 
