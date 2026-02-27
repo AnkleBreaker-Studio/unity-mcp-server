@@ -87,7 +87,7 @@ async function getContextSummaryOnce() {
 const server = new Server(
   {
     name: "unity-mcp",
-    version: "2.9.1",
+    version: "2.13.0",
   },
   {
     capabilities: {
@@ -139,6 +139,18 @@ server.setRequestHandler(CallToolRequestSchema, async (request) => {
 
     // Auto-inject project context on the first successful tool call
     const contextSummary = await getContextSummaryOnce();
+
+    // Support content block arrays (for image-returning tools like graphics/*)
+    if (Array.isArray(result)) {
+      if (contextSummary) {
+        return {
+          content: [{ type: "text", text: contextSummary }, ...result],
+        };
+      }
+      return { content: result };
+    }
+
+    // Existing string path
     if (contextSummary) {
       return {
         content: [

@@ -2514,6 +2514,284 @@ export const editorTools = [
     handler: async (params) => JSON.stringify(await bridge.setSceneViewCamera(params), null, 2),
   },
 
+  // ─── Graphics & Visuals ───
+  {
+    name: "unity_graphics_asset_preview",
+    description:
+      "Get a visual preview thumbnail of any Unity asset (prefab, material, texture, mesh, etc.) as an inline image. Returns base64 PNG image that Claude can see directly.",
+    inputSchema: {
+      type: "object",
+      properties: {
+        assetPath: {
+          type: "string",
+          description:
+            "Asset path (e.g. 'Assets/Models/Character.fbx', 'Assets/Materials/Wood.mat')",
+        },
+        width: {
+          type: "number",
+          description: "Preview width in pixels (default: 256)",
+        },
+        height: {
+          type: "number",
+          description: "Preview height in pixels (default: 256)",
+        },
+      },
+      required: ["assetPath"],
+    },
+    handler: async (params) => {
+      const result = await bridge.captureAssetPreview(params);
+      if (result.error) return JSON.stringify(result, null, 2);
+      const metadata = { ...result };
+      delete metadata.base64;
+      return [
+        { type: "image", data: result.base64, mimeType: "image/png" },
+        { type: "text", text: JSON.stringify(metadata, null, 2) },
+      ];
+    },
+  },
+  {
+    name: "unity_graphics_scene_capture",
+    description:
+      "Capture the current Scene View as an inline image. Returns base64 PNG that Claude can see directly. Use to visually inspect the scene layout.",
+    inputSchema: {
+      type: "object",
+      properties: {
+        width: {
+          type: "number",
+          description: "Image width in pixels (default: 512)",
+        },
+        height: {
+          type: "number",
+          description: "Image height in pixels (default: 512)",
+        },
+      },
+    },
+    handler: async (params) => {
+      const result = await bridge.captureSceneViewGraphics(params);
+      if (result.error) return JSON.stringify(result, null, 2);
+      const metadata = { ...result };
+      delete metadata.base64;
+      return [
+        { type: "image", data: result.base64, mimeType: "image/png" },
+        { type: "text", text: JSON.stringify(metadata, null, 2) },
+      ];
+    },
+  },
+  {
+    name: "unity_graphics_game_capture",
+    description:
+      "Capture the Game View camera as an inline image. Returns base64 PNG that Claude can see directly. Use to see what the player sees.",
+    inputSchema: {
+      type: "object",
+      properties: {
+        width: {
+          type: "number",
+          description: "Image width in pixels (default: 512)",
+        },
+        height: {
+          type: "number",
+          description: "Image height in pixels (default: 512)",
+        },
+        cameraName: {
+          type: "string",
+          description:
+            "Name of camera to use (default: Camera.main / MainCamera tag)",
+        },
+      },
+    },
+    handler: async (params) => {
+      const result = await bridge.captureGameViewGraphics(params);
+      if (result.error) return JSON.stringify(result, null, 2);
+      const metadata = { ...result };
+      delete metadata.base64;
+      return [
+        { type: "image", data: result.base64, mimeType: "image/png" },
+        { type: "text", text: JSON.stringify(metadata, null, 2) },
+      ];
+    },
+  },
+  {
+    name: "unity_graphics_prefab_render",
+    description:
+      "Render a prefab from a configurable angle as an inline image. Returns base64 PNG that Claude can see directly. Great for previewing 3D models and prefabs.",
+    inputSchema: {
+      type: "object",
+      properties: {
+        assetPath: {
+          type: "string",
+          description: "Prefab asset path (e.g. 'Assets/Prefabs/Enemy.prefab')",
+        },
+        width: {
+          type: "number",
+          description: "Image width in pixels (default: 512)",
+        },
+        height: {
+          type: "number",
+          description: "Image height in pixels (default: 512)",
+        },
+        rotationY: {
+          type: "number",
+          description:
+            "Horizontal rotation angle in degrees (default: 30). Controls left-right viewing angle.",
+        },
+        rotationX: {
+          type: "number",
+          description:
+            "Vertical rotation angle in degrees (default: 20). Controls up-down viewing angle.",
+        },
+        padding: {
+          type: "number",
+          description:
+            "Padding multiplier around the object (default: 1.2). Higher = more space around object.",
+        },
+      },
+      required: ["assetPath"],
+    },
+    handler: async (params) => {
+      const result = await bridge.renderPrefabPreview(params);
+      if (result.error) return JSON.stringify(result, null, 2);
+      const metadata = { ...result };
+      delete metadata.base64;
+      return [
+        { type: "image", data: result.base64, mimeType: "image/png" },
+        { type: "text", text: JSON.stringify(metadata, null, 2) },
+      ];
+    },
+  },
+  {
+    name: "unity_graphics_mesh_info",
+    description:
+      "Get detailed mesh geometry information: vertex count, triangle count, submeshes, UV channels, blend shapes, bone count, bounds. Works on mesh assets or scene GameObjects with MeshFilter/SkinnedMeshRenderer.",
+    inputSchema: {
+      type: "object",
+      properties: {
+        assetPath: {
+          type: "string",
+          description:
+            "Mesh asset path (e.g. 'Assets/Models/Character.fbx'). Use this OR objectPath.",
+        },
+        objectPath: {
+          type: "string",
+          description:
+            "Scene GameObject path to get mesh from its MeshFilter or SkinnedMeshRenderer. Use this OR assetPath.",
+        },
+      },
+    },
+    handler: async (params) =>
+      JSON.stringify(await bridge.getMeshInfo(params), null, 2),
+  },
+  {
+    name: "unity_graphics_material_info",
+    description:
+      "Get detailed material information: shader name, render queue, all properties (colors, floats, vectors, textures), keywords, and a visual preview thumbnail. Works on material assets or scene GameObjects.",
+    inputSchema: {
+      type: "object",
+      properties: {
+        assetPath: {
+          type: "string",
+          description:
+            "Material asset path (e.g. 'Assets/Materials/Wood.mat'). Use this OR objectPath.",
+        },
+        objectPath: {
+          type: "string",
+          description:
+            "Scene GameObject path to get material from its Renderer. Use this OR assetPath.",
+        },
+        materialIndex: {
+          type: "number",
+          description:
+            "Material index on the Renderer (default: 0). Only used with objectPath.",
+        },
+        includePreview: {
+          type: "boolean",
+          description:
+            "Include a base64 PNG preview thumbnail (default: true)",
+        },
+      },
+    },
+    handler: async (params) => {
+      const result = await bridge.getMaterialInfo(params);
+      if (result.error) return JSON.stringify(result, null, 2);
+      if (result.base64) {
+        const metadata = { ...result };
+        delete metadata.base64;
+        return [
+          { type: "image", data: result.base64, mimeType: "image/png" },
+          { type: "text", text: JSON.stringify(metadata, null, 2) },
+        ];
+      }
+      return JSON.stringify(result, null, 2);
+    },
+  },
+  {
+    name: "unity_graphics_texture_info",
+    description:
+      "Get detailed texture information: dimensions, format, compression, mipmaps, memory estimate, import settings, and a visual preview thumbnail. Use for texture analysis and optimization.",
+    inputSchema: {
+      type: "object",
+      properties: {
+        assetPath: {
+          type: "string",
+          description:
+            "Texture asset path (e.g. 'Assets/Textures/Wood_Diffuse.png')",
+        },
+        previewSize: {
+          type: "number",
+          description:
+            "Preview thumbnail size in pixels (default: 128). Set 0 to skip preview.",
+        },
+      },
+      required: ["assetPath"],
+    },
+    handler: async (params) => {
+      const result = await bridge.getTextureInfoGraphics(params);
+      if (result.error) return JSON.stringify(result, null, 2);
+      if (result.base64) {
+        const metadata = { ...result };
+        delete metadata.base64;
+        return [
+          { type: "image", data: result.base64, mimeType: "image/png" },
+          { type: "text", text: JSON.stringify(metadata, null, 2) },
+        ];
+      }
+      return JSON.stringify(result, null, 2);
+    },
+  },
+  {
+    name: "unity_graphics_renderer_info",
+    description:
+      "Get detailed Renderer component information: renderer type, materials list, mesh reference, bounds, shadow settings, sorting layer, lightmap index. Use for rendering analysis.",
+    inputSchema: {
+      type: "object",
+      properties: {
+        objectPath: {
+          type: "string",
+          description: "Scene GameObject path with a Renderer component",
+        },
+      },
+      required: ["objectPath"],
+    },
+    handler: async (params) =>
+      JSON.stringify(await bridge.getRendererInfo(params), null, 2),
+  },
+  {
+    name: "unity_graphics_lighting_summary",
+    description:
+      "Get a summary of all lights in the scene, or details about a specific light. Returns type, color, intensity, range, spot angle, shadow settings, and render mode.",
+    inputSchema: {
+      type: "object",
+      properties: {
+        lightName: {
+          type: "string",
+          description:
+            "Optional: name of a specific light to get details for. If omitted, returns all lights.",
+        },
+      },
+    },
+    handler: async (params) =>
+      JSON.stringify(await bridge.getLightingSummary(params), null, 2),
+  },
+
   // ─── Terrain ───
   {
     name: "unity_terrain_create",

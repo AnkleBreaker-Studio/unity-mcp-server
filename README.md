@@ -2,7 +2,7 @@
 
 <p align="center">
   <strong>Multi-agent MCP server for Unity, designed for Claude Cowork</strong><br>
-  <em>245 tools across 23 categories — scenes, GameObjects, prefab assets, prefab variants, scripts, builds, profiling, and more</em>
+  <em>254 tools across 24 categories — scenes, GameObjects, prefab assets, prefab variants, graphics & visuals, scripts, builds, profiling, and more</em>
 </p>
 
 <p align="center">
@@ -303,6 +303,12 @@ Please also check out the companion plugin repo: [AnkleBreaker Unity MCP — Plu
 ---
 
 ## Changelog
+
+### v2.13.0
+
+- **9 new graphics & visual intelligence tools** — `unity_graphics_asset_preview`, `unity_graphics_scene_capture`, `unity_graphics_game_capture`, `unity_graphics_prefab_render`, `unity_graphics_mesh_info`, `unity_graphics_material_info`, `unity_graphics_texture_info`, `unity_graphics_renderer_info`, `unity_graphics_lighting_summary`. Get inline base64 PNG previews of assets, scenes, game view, and prefabs that Claude can see directly. Deep graphical metadata: mesh geometry stats, material shader properties, texture analysis, renderer settings, and lighting summaries.
+- **MCP image content block support** — Tools that return images now use MCP `{ type: "image" }` content blocks for inline viewing instead of file paths.
+- Requires plugin v2.13.0+.
 
 ### v2.12.0
 

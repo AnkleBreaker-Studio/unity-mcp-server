@@ -1182,6 +1182,44 @@ export async function setSceneViewCamera(params) {
   return sendCommand("sceneview/set-camera", params);
 }
 
+// ─── Graphics & Visuals ───
+
+export async function captureAssetPreview(params) {
+  return sendCommand("graphics/asset-preview", params);
+}
+
+export async function captureSceneViewGraphics(params) {
+  return sendCommand("graphics/scene-capture", params);
+}
+
+export async function captureGameViewGraphics(params) {
+  return sendCommand("graphics/game-capture", params);
+}
+
+export async function renderPrefabPreview(params) {
+  return sendCommand("graphics/prefab-render", params);
+}
+
+export async function getMeshInfo(params) {
+  return sendCommand("graphics/mesh-info", params);
+}
+
+export async function getMaterialInfo(params) {
+  return sendCommand("graphics/material-info", params);
+}
+
+export async function getTextureInfoGraphics(params) {
+  return sendCommand("graphics/texture-info", params);
+}
+
+export async function getRendererInfo(params) {
+  return sendCommand("graphics/renderer-info", params);
+}
+
+export async function getLightingSummary(params) {
+  return sendCommand("graphics/lighting-summary", params);
+}
+
 // ─── Terrain ───
 
 export async function createTerrain(params) {
