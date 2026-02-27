@@ -2407,25 +2407,6 @@ export const editorTools = [
     handler: async (params) => JSON.stringify(await bridge.duplicateAmplifyNode(params), null, 2),
   },
 
-  {
-    name: "unity_agents_list",
-    description: "List all connected agent sessions with their current action and activity stats.",
-    inputSchema: { type: "object", properties: {} },
-    handler: async (params) => JSON.stringify(await bridge.listAgents(params), null, 2),
-  },
-  {
-    name: "unity_agents_log",
-    description: "Get the action log for a specific agent session.",
-    inputSchema: {
-      type: "object",
-      properties: {
-        agentId: { type: "string", description: "The agent ID to get logs for" },
-      },
-      required: ["agentId"],
-    },
-    handler: async (params) => JSON.stringify(await bridge.getAgentLog(params), null, 2),
-  },
-
   // ─── Search & Find ───
   {
     name: "unity_search_by_component",
