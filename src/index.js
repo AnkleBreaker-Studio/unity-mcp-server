@@ -32,6 +32,7 @@ import { hubTools } from "./tools/hub-tools.js";
 import { editorTools } from "./tools/editor-tools.js";
 import { contextTools } from "./tools/context-tools.js";
 import { instanceTools } from "./tools/instance-tools.js";
+import { splitToolTiers } from "./tool-tiers.js";
 import { setAgentId, getProjectContext } from "./unity-editor-bridge.js";
 import {
   autoSelectInstance,
@@ -45,9 +46,22 @@ import {
 const PROCESS_AGENT_ID = `agent-${process.pid}-${randomBytes(3).toString("hex")}`;
 setAgentId(PROCESS_AGENT_ID);
 
-// ─── Combine all tools ───
-// Instance tools come first so they appear at the top of the tool list
-const ALL_TOOLS = [...instanceTools, ...hubTools, ...editorTools, ...contextTools];
+// ─── Combine all tools (two-tier system) ───
+// Split editor tools into core (always exposed) and advanced (on-demand via meta-tool).
+// This keeps the tool count under ~70, preventing MCP client rejection caused by
+// oversized tool lists (268 tools / 125KB was ~5x beyond what clients handle).
+const { coreTools, metaTools, advancedCount, coreCount } =
+  splitToolTiers(editorTools);
+const ALL_TOOLS = [
+  ...instanceTools,
+  ...hubTools,
+  ...coreTools,
+  ...metaTools,
+  ...contextTools,
+];
+console.error(
+  `[MCP] Tool tiers: ${coreCount} core + ${advancedCount} advanced (via unity_advanced_tool) = ${coreCount + advancedCount} total, ${ALL_TOOLS.length} exposed`
+);
 
 // ─── Context auto-inject state ───
 // On the first tool call per session, we prepend project context into the response.
@@ -165,7 +179,7 @@ async function ensureInstanceDiscovery() {
 const server = new Server(
   {
     name: "unity-mcp",
-    version: "2.15.0",
+    version: "2.16.0",
   },
   {
     capabilities: {
