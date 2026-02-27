@@ -174,18 +174,84 @@ export const editorTools = [
   },
   {
     name: "unity_component_set_property",
-    description: "Set a property value on a component. Supports floats, ints, strings, bools, vectors, colors, and object references.",
+    description: "Set a property value on a component. Supports floats, ints, strings, bools, vectors, colors, and object references. For ObjectReference properties, pass value as: an asset path string, a scene object name string, null to clear, or an object with {assetPath}, {instanceId}, or {gameObject, componentType}.",
     inputSchema: {
       type: "object",
       properties: {
         gameObjectPath: { type: "string", description: "Path or name of target GameObject" },
         componentType: { type: "string", description: "Component type name" },
         propertyName: { type: "string", description: "Name of the property to set" },
-        value: { description: "Value to set (type depends on property)" },
+        value: { description: "Value to set (type depends on property). For ObjectReference: string asset path, string scene object name, null, or {assetPath?, instanceId?, gameObject?, componentType?}" },
       },
       required: ["gameObjectPath", "componentType", "propertyName", "value"],
     },
     handler: async (params) => JSON.stringify(await bridge.setComponentProperty(params), null, 2),
+  },
+  {
+    name: "unity_component_set_reference",
+    description: "Set an object reference on a component property. Dedicated tool for wiring references between GameObjects, components, and assets. More powerful than set_property for ObjectReference fields — supports resolution by asset path, scene GameObject name, component type, or instance ID.",
+    inputSchema: {
+      type: "object",
+      properties: {
+        path: { type: "string", description: "Hierarchy path or name of the target GameObject" },
+        instanceId: { type: "number", description: "Instance ID of the target GameObject (alternative to path)" },
+        componentType: { type: "string", description: "Component type containing the property (optional — will auto-search all components)" },
+        propertyName: { type: "string", description: "Name of the ObjectReference property to set" },
+        assetPath: { type: "string", description: "Asset path to assign (e.g. 'Assets/Materials/MyMat.mat', 'Assets/Prefabs/Enemy.prefab')" },
+        referenceGameObject: { type: "string", description: "Name or hierarchy path of a scene GameObject to assign" },
+        referenceComponentType: { type: "string", description: "When referencing a scene object, get a specific component instead of the GameObject itself (e.g. 'Camera', 'AudioSource')" },
+        referenceInstanceId: { type: "number", description: "Instance ID of the object to assign" },
+        clear: { type: "boolean", description: "Set to true to clear/null the reference" },
+      },
+      required: ["propertyName"],
+    },
+    handler: async (params) => JSON.stringify(await bridge.setComponentReference(params), null, 2),
+  },
+  {
+    name: "unity_component_batch_wire",
+    description: "Wire multiple object references in a single call. Efficient for setting up many references at once (e.g. wiring a UI manager to all its panels, connecting enemy AI to patrol waypoints). Each entry specifies a target GameObject, property, and reference to assign.",
+    inputSchema: {
+      type: "object",
+      properties: {
+        references: {
+          type: "array",
+          description: "Array of reference assignments to perform",
+          items: {
+            type: "object",
+            properties: {
+              path: { type: "string", description: "Target GameObject path or name" },
+              instanceId: { type: "number", description: "Target GameObject instance ID" },
+              componentType: { type: "string", description: "Component type (optional)" },
+              propertyName: { type: "string", description: "Property name to set" },
+              assetPath: { type: "string", description: "Asset path to assign" },
+              referenceGameObject: { type: "string", description: "Scene GameObject to assign" },
+              referenceComponentType: { type: "string", description: "Component type on the referenced GameObject" },
+              referenceInstanceId: { type: "number", description: "Instance ID to assign" },
+              clear: { type: "boolean", description: "Clear the reference" },
+            },
+            required: ["propertyName"],
+          },
+        },
+      },
+      required: ["references"],
+    },
+    handler: async (params) => JSON.stringify(await bridge.batchWireReferences(params), null, 2),
+  },
+  {
+    name: "unity_component_get_referenceable",
+    description: "Discover what objects can be assigned to an ObjectReference property. Returns matching scene objects and project assets filtered by the expected type. Useful before wiring references to know what's available.",
+    inputSchema: {
+      type: "object",
+      properties: {
+        path: { type: "string", description: "Target GameObject path or name" },
+        instanceId: { type: "number", description: "Target GameObject instance ID" },
+        componentType: { type: "string", description: "Component type containing the property" },
+        propertyName: { type: "string", description: "ObjectReference property name to inspect" },
+        maxResults: { type: "number", description: "Maximum results to return (default: 50)" },
+      },
+      required: ["propertyName"],
+    },
+    handler: async (params) => JSON.stringify(await bridge.getReferenceableObjects(params), null, 2),
   },
 
   // ─── Asset Management ───
@@ -893,7 +959,7 @@ export const editorTools = [
   },
   {
     name: "unity_set_object_reference",
-    description: "Set an object reference property on a component. Use this to wire up references between objects (assign prefabs, materials, sprites, GameObjects to component fields).",
+    description: "[LEGACY — prefer unity_component_set_reference] Set an object reference property on a component via the prefab system. Use unity_component_set_reference instead for richer resolution options.",
     inputSchema: {
       type: "object",
       properties: {
