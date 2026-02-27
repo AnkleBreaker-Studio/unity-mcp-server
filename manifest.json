@@ -2,9 +2,9 @@
   "manifest_version": "0.3",
   "name": "unity-mcp",
   "display_name": "AnkleBreaker Unity MCP",
-  "version": "2.9.1",
-  "description": "Multi-agent MCP server for Unity Editor — scenes, GameObjects, scripts, builds, profiling, and more. Designed for Claude Cowork with async queue and fair scheduling across agents.",
-  "long_description": "AnkleBreaker Unity MCP connects Claude to your Unity Editor with 229 tools across 21 categories. Built for Claude Cowork's multi-agent architecture, where multiple AI agents collaborate on the same Unity project in parallel.\n\n**Key features:**\n- 229 tools: scenes, GameObjects, components, assets, scripts, animation, physics, lighting, audio, profiling, builds, and more\n- Multi-agent async queue with fair round-robin scheduling\n- Read batching (up to 5/frame) and write serialization (1/frame)\n- Agent session tracking and action logging\n- Project Context auto-injection for project-aware AI assistance\n- Automatic fallback to legacy sync mode for older plugin versions\n\n**Requires the companion Unity Editor plugin:** Install via Unity Package Manager → Add package from git URL → `https://github.com/AnkleBreaker-Studio/unity-mcp-plugin.git`\n\nAfter installing the plugin, open Window → AB Unity MCP in Unity and verify the bridge shows 'Started on port 7890'.",
+  "version": "2.15.0",
+  "description": "Multi-agent MCP server for Unity Editor — 268 tools across 24 categories with multi-instance support. Designed for Claude Cowork with async queue and fair scheduling across agents.",
+  "long_description": "AnkleBreaker Unity MCP connects Claude to your Unity Editor with 268 tools across 24 categories. Built for Claude Cowork's multi-agent architecture, where multiple AI agents collaborate on the same Unity project in parallel.\n\n**Key features:**\n- 268 tools: scenes, GameObjects, components, assets, scripts, animation, physics, lighting, audio, profiling, builds, and more\n- Multi-instance support: run multiple Unity Editors simultaneously, auto-port selection (7890–7899), shared instance registry\n- ParrelSync clone detection for multiplayer development workflows\n- Multi-agent async queue with fair round-robin scheduling\n- Read batching (up to 5/frame) and write serialization (1/frame)\n- Agent session tracking and action logging\n- Project Context auto-injection for project-aware AI assistance\n- Automatic fallback to legacy sync mode for older plugin versions\n\n**Requires the companion Unity Editor plugin:** Install via Unity Package Manager → Add package from git URL → `https://github.com/AnkleBreaker-Studio/unity-mcp-plugin.git`\n\nAfter installing the plugin, open Window → AB Unity MCP in Unity and verify the bridge is running.",
   "author": {
     "name": "AnkleBreaker Studio",
     "email": "francois@anklebreaker-studio.com",
@@ -30,6 +30,8 @@
     "builds",
     "profiling",
     "multi-agent",
+    "multi-instance",
+    "parrelsync",
     "cowork"
   ],
   "privacy_policies": [],
@@ -75,13 +77,15 @@
     "bridge_port": {
       "type": "string",
       "title": "Bridge Port",
-      "description": "Port the Unity Editor plugin listens on (must match the port shown in Window > AB Unity MCP in Unity). Default: 7890",
+      "description": "Default port for the Unity Editor plugin. With multi-instance support (v2.15.0+), ports are auto-discovered from the instance registry. Only used as fallback. Default: 7890",
       "required": false,
       "default": "7890"
     }
   },
   "tools_generated": true,
   "tools": [
+    { "name": "unity_list_instances", "description": "List all running Unity Editor instances with project info" },
+    { "name": "unity_select_instance", "description": "Select which Unity Editor instance to target" },
     { "name": "unity_editor_ping", "description": "Ping the Unity Editor to check connection status" },
     { "name": "unity_editor_state", "description": "Get current Unity Editor state (play mode, scene, project)" },
     { "name": "unity_project_info", "description": "Get project information (name, version, packages, settings)" },
