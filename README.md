@@ -9,6 +9,7 @@
   <a href="https://github.com/AnkleBreaker-Studio/unity-mcp-server/releases"><img alt="Version" src="https://img.shields.io/badge/version-2.17.0-blue"></a>
   <a href="LICENSE"><img alt="License" src="https://img.shields.io/badge/license-MIT-green"></a>
   <a href="https://nodejs.org"><img alt="Node" src="https://img.shields.io/badge/Node.js-18%2B-green"></a>
+  <a href="https://discord.gg/Q2XmedUctz"><img alt="Discord" src="https://img.shields.io/badge/Discord-Join%20Community-5865F2?logo=discord&logoColor=white"></a>
 </p>
 
 <p align="center">
@@ -335,6 +336,20 @@ This requires `@anthropic-ai/mcpb` (fetched automatically via npx).
 
 ---
 
+## Community & Support
+
+Join the **[AnkleBreaker Discord](https://discord.gg/Q2XmedUctz)** to connect with the Unity MCP community:
+
+- **#mcp-help-support** — Get help with setup and usage
+- **#mcp-bug-reports** — Report issues with full context
+- **#mcp-feature-requests** — Suggest and vote on new features
+- **#mcp-showcase** — Share your AI-powered Unity workflows
+- **#mcp-contributions** — Discuss PRs and development
+
+Community roles: **@MCP Community** for all members, **@MCP Contributor** for PR authors, **@MCP Helper** for active community helpers, **@MCP Beta Tester** for pre-release testers.
+
+---
+
 ## Contributing
 
 Contributions are welcome! This is an open-source project by [AnkleBreaker Consulting](https://anklebreaker-consulting.com) & [AnkleBreaker Studio](https://anklebreaker-studio.com).
@@ -343,6 +358,7 @@ Contributions are welcome! This is an open-source project by [AnkleBreaker Consu
 2. Create a feature branch
 3. Make your changes
 4. Submit a pull request
+5. Join the [Discord](https://discord.gg/Q2XmedUctz) to discuss your contribution
 
 Please also check out the companion plugin repo: [AnkleBreaker Unity MCP — Plugin](https://github.com/AnkleBreaker-Studio/unity-mcp-plugin)
 
