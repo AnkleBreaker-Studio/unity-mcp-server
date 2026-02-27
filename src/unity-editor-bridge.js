@@ -438,8 +438,8 @@ export async function newScene() {
   return sendCommand("scene/new");
 }
 
-export async function getHierarchy() {
-  return sendCommand("scene/hierarchy");
+export async function getHierarchy(params) {
+  return sendCommand("scene/hierarchy", params);
 }
 
 export async function createGameObject(params) {
