@@ -6,7 +6,7 @@
 </p>
 
 <p align="center">
-  <a href="https://github.com/AnkleBreaker-Studio/unity-mcp-server/releases"><img alt="Version" src="https://img.shields.io/badge/version-2.11.0-blue"></a>
+  <a href="https://github.com/AnkleBreaker-Studio/unity-mcp-server/releases"><img alt="Version" src="https://img.shields.io/badge/version-2.14.5-blue"></a>
   <a href="LICENSE"><img alt="License" src="https://img.shields.io/badge/license-MIT-green"></a>
   <a href="https://nodejs.org"><img alt="Node" src="https://img.shields.io/badge/Node.js-18%2B-green"></a>
 </p>
@@ -147,7 +147,7 @@ If it fails, check the [Troubleshooting](#troubleshooting) section below.
 
 ---
 
-## Tools (245)
+## Tools (268)
 
 | Category | Examples |
 |----------|---------|
@@ -303,6 +303,26 @@ Please also check out the companion plugin repo: [AnkleBreaker Unity MCP — Plu
 ---
 
 ## Changelog
+
+### v2.14.5
+
+- **Non-Amplify project optimization** — Cached assembly scanning to prevent repeated reflection scans in projects without Amplify Shader Editor.
+- Requires plugin v2.14.5+.
+
+### v2.14.3
+
+- **CloseAmplifyEditor save fix** — Default changed to `save=true` to prevent unsaved changes dialog. Smart path detection for `SaveAmplifyGraph` (auto-generates path from shader name, accepts optional `path` parameter).
+- Requires plugin v2.14.3+.
+
+### v2.14.2
+
+- **Reflection type initialization fix** — Fixed "Object reference not set" errors when calling graph-dependent Amplify tools.
+- Requires plugin v2.14.2+.
+
+### v2.14.1
+
+- **GetCurrentGraph rewrite** — Fixed graph retrieval to use correct ASE field names, resolving graph access failures.
+- Requires plugin v2.14.1+.
 
 ### v2.14.0
 
