@@ -2,11 +2,11 @@
 
 <p align="center">
   <strong>Multi-agent MCP server for Unity, designed for Claude Cowork</strong><br>
-  <em>229 tools across 21 categories — scenes, GameObjects, scripts, builds, profiling, and more</em>
+  <em>232 tools across 21 categories — scenes, GameObjects, scripts, builds, profiling, and more</em>
 </p>
 
 <p align="center">
-  <a href="https://github.com/AnkleBreaker-Studio/unity-mcp-server/releases"><img alt="Version" src="https://img.shields.io/badge/version-2.9.1-blue"></a>
+  <a href="https://github.com/AnkleBreaker-Studio/unity-mcp-server/releases"><img alt="Version" src="https://img.shields.io/badge/version-2.10.6-blue"></a>
   <a href="LICENSE"><img alt="License" src="https://img.shields.io/badge/license-MIT-green"></a>
   <a href="https://nodejs.org"><img alt="Node" src="https://img.shields.io/badge/Node.js-18%2B-green"></a>
 </p>
@@ -147,20 +147,20 @@ If it fails, check the [Troubleshooting](#troubleshooting) section below.
 
 ---
 
-## Tools (229)
+## Tools (232)
 
 | Category | Examples |
 |----------|---------|
 | **Unity Hub** | List/install editors, manage modules, set install paths |
 | **Scenes** | Open, save, create, get hierarchy tree |
 | **GameObjects** | Create, delete, inspect, transform (world/local) |
-| **Components** | Add, remove, get/set serialized properties |
+| **Components** | Add, remove, get/set serialized properties, wire ObjectReferences |
 | **Assets** | List, import, delete, create prefabs & materials |
 | **Scripts** | Create, read, update C# scripts |
 | **Builds** | Multi-platform builds |
 | **Console** | Read/clear logs |
 | **Play Mode** | Play, pause, stop |
-| **Editor** | Menu items, C# execution, state, project info |
+| **Editor** | Menu items, C# execution (Roslyn compiler), state, project info |
 | **Animation** | Clips, controllers, parameters |
 | **Prefab** | Prefab mode, overrides, apply/revert |
 | **Physics** | Raycasts, overlap tests, physics settings |
@@ -265,7 +265,7 @@ The MCP server includes built-in instructions that tell agents to use the connec
 4. You restarted Claude after adding the config
 5. Unity is open with the plugin installed and showing "Server started" in the console
 
-**execute_code fails with "filename too long"** — This is a known issue on Windows where the Mono compiler's command line exceeds the OS limit when many assemblies are loaded. We're working on a fix.
+**execute_code fails with compilation errors on Unity 6000+** — Make sure you're running plugin v2.10.3+, which uses the Roslyn compiler instead of CodeDom/mcs. Roslyn handles .NET Standard type-forwarding natively and eliminates facade assembly conflicts on CoreCLR.
 
 ---
 
@@ -297,6 +297,23 @@ Contributions are welcome! This is an open-source project by [AnkleBreaker Consu
 4. Submit a pull request
 
 Please also check out the companion plugin repo: [AnkleBreaker Unity MCP — Plugin](https://github.com/AnkleBreaker-Studio/unity-mcp-plugin)
+
+---
+
+## Changelog
+
+### v2.10.6
+
+- **3 new reference wiring tools** — `unity_component_set_reference`, `unity_component_batch_wire`, `unity_component_get_referenceable` for wiring ObjectReference properties between components, GameObjects, and assets without writing custom scripts.
+- **`execute_code` now uses Roslyn** — Requires plugin v2.10.3+. Fixes Windows path-length errors and .NET Standard facade conflicts on Unity 6000+ (CoreCLR).
+- **`set_property` supports ObjectReference** — Pass `{"instanceId": ...}`, `{"assetPath": ...}`, `{"gameObject": ..., "componentType": ...}`, a plain asset path, or a scene object name.
+
+### v2.9.1
+
+- Multi-agent async queue system with ticket-based scheduling
+- Agent identity tracking and session management
+- Desktop Extension (.mcpb) packaging support
+- 229 tools across 21 categories
 
 ---
 
