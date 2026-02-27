@@ -1140,6 +1140,75 @@ export const editorTools = [
     handler: async (params) => JSON.stringify(await bridge.removePrefabAssetGameObject(params), null, 2),
   },
 
+  // ─── Prefab Variant Management ───
+  {
+    name: "unity_prefab_variant_info",
+    description: "Get variant information for a prefab asset: whether it's a variant, its base prefab path, and list all variants derived from a base prefab. Works on both base prefabs and variants.",
+    inputSchema: {
+      type: "object",
+      properties: {
+        assetPath: { type: "string", description: "Asset path of the prefab (base or variant), e.g. 'Assets/Prefabs/Player.prefab'" },
+      },
+      required: ["assetPath"],
+    },
+    handler: async (params) => JSON.stringify(await bridge.getPrefabVariantInfo(params), null, 2),
+  },
+  {
+    name: "unity_prefab_compare_variant",
+    description: "Compare a prefab variant to its base prefab. Returns all overrides: modified properties, added/removed components, and added/removed GameObjects. The variant must be a Prefab Variant asset.",
+    inputSchema: {
+      type: "object",
+      properties: {
+        assetPath: { type: "string", description: "Asset path of the prefab variant to compare, e.g. 'Assets/Prefabs/PlayerVariant.prefab'" },
+      },
+      required: ["assetPath"],
+    },
+    handler: async (params) => JSON.stringify(await bridge.comparePrefabVariantToBase(params), null, 2),
+  },
+  {
+    name: "unity_prefab_apply_variant_override",
+    description: "Apply overrides from a prefab variant back to its base prefab. Can apply all overrides or filter by componentType and/or gameObject path. This pushes the variant's changes into the base so all variants see them.",
+    inputSchema: {
+      type: "object",
+      properties: {
+        assetPath: { type: "string", description: "Asset path of the prefab variant whose overrides to apply" },
+        componentType: { type: "string", description: "Optional: only apply overrides for this component type (e.g. 'MeshRenderer')" },
+        gameObject: { type: "string", description: "Optional: only apply overrides on this GameObject path within the prefab (e.g. 'Body/Head')" },
+        applyAll: { type: "boolean", description: "If true, apply ALL overrides to the base. Default false." },
+      },
+      required: ["assetPath"],
+    },
+    handler: async (params) => JSON.stringify(await bridge.applyPrefabVariantOverride(params), null, 2),
+  },
+  {
+    name: "unity_prefab_revert_variant_override",
+    description: "Revert overrides on a prefab variant so it matches its base prefab again. Can revert all overrides or filter by componentType and/or gameObject path.",
+    inputSchema: {
+      type: "object",
+      properties: {
+        assetPath: { type: "string", description: "Asset path of the prefab variant to revert" },
+        componentType: { type: "string", description: "Optional: only revert overrides for this component type" },
+        gameObject: { type: "string", description: "Optional: only revert overrides on this GameObject path within the prefab" },
+        revertAll: { type: "boolean", description: "If true, revert ALL overrides. Default false." },
+      },
+      required: ["assetPath"],
+    },
+    handler: async (params) => JSON.stringify(await bridge.revertPrefabVariantOverride(params), null, 2),
+  },
+  {
+    name: "unity_prefab_transfer_variant_overrides",
+    description: "Transfer (copy) overrides from one prefab variant to another variant of the same base. Reads the property modifications from the source variant and applies them to the target variant.",
+    inputSchema: {
+      type: "object",
+      properties: {
+        sourceAssetPath: { type: "string", description: "Asset path of the source prefab variant to copy overrides from" },
+        targetAssetPath: { type: "string", description: "Asset path of the target prefab variant to apply overrides to" },
+      },
+      required: ["sourceAssetPath", "targetAssetPath"],
+    },
+    handler: async (params) => JSON.stringify(await bridge.transferPrefabVariantOverrides(params), null, 2),
+  },
+
   // ─── Physics ───
   {
     name: "unity_physics_raycast",

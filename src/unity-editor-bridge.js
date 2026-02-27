@@ -706,6 +706,28 @@ export async function removePrefabAssetGameObject(params) {
   return sendCommand("prefab-asset/remove-gameobject", params);
 }
 
+// ─── Prefab Variant Management ───
+
+export async function getPrefabVariantInfo(params) {
+  return sendCommand("prefab-asset/variant-info", params);
+}
+
+export async function comparePrefabVariantToBase(params) {
+  return sendCommand("prefab-asset/compare-variant", params);
+}
+
+export async function applyPrefabVariantOverride(params) {
+  return sendCommand("prefab-asset/apply-variant-override", params);
+}
+
+export async function revertPrefabVariantOverride(params) {
+  return sendCommand("prefab-asset/revert-variant-override", params);
+}
+
+export async function transferPrefabVariantOverrides(params) {
+  return sendCommand("prefab-asset/transfer-variant-overrides", params);
+}
+
 // ─── Physics ───
 
 export async function physicsRaycast(params) {

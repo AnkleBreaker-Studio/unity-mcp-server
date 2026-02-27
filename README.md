@@ -2,7 +2,7 @@
 
 <p align="center">
   <strong>Multi-agent MCP server for Unity, designed for Claude Cowork</strong><br>
-  <em>240 tools across 22 categories — scenes, GameObjects, prefab assets, scripts, builds, profiling, and more</em>
+  <em>245 tools across 23 categories — scenes, GameObjects, prefab assets, prefab variants, scripts, builds, profiling, and more</em>
 </p>
 
 <p align="center">
@@ -147,7 +147,7 @@ If it fails, check the [Troubleshooting](#troubleshooting) section below.
 
 ---
 
-## Tools (240)
+## Tools (245)
 
 | Category | Examples |
 |----------|---------|
@@ -164,6 +164,7 @@ If it fails, check the [Troubleshooting](#troubleshooting) section below.
 | **Animation** | Clips, controllers, parameters |
 | **Prefab** | Prefab mode, overrides, apply/revert |
 | **Prefab Asset** | Direct editing: hierarchy, properties, components, references — no scene needed |
+| **Prefab Variant** | Variant info, compare to base, apply/revert/transfer overrides |
 | **Physics** | Raycasts, overlap tests, physics settings |
 | **Lighting** | Lights, environment, lightmaps, reflection probes |
 | **Audio** | Sources, listeners, mixers |
@@ -302,6 +303,11 @@ Please also check out the companion plugin repo: [AnkleBreaker Unity MCP — Plu
 ---
 
 ## Changelog
+
+### v2.12.0
+
+- **5 new prefab variant management tools** — `unity_prefab_variant_info`, `unity_prefab_compare_variant`, `unity_prefab_apply_variant_override`, `unity_prefab_revert_variant_override`, `unity_prefab_transfer_variant_overrides`. Inspect variant/base relationships, compare overrides, apply overrides to base, revert variant to base, and transfer overrides between variants.
+- Requires plugin v2.12.0+.
 
 ### v2.11.0
 
