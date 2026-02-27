@@ -2,11 +2,11 @@
 
 <p align="center">
   <strong>Multi-agent MCP server for Unity, designed for Claude Cowork</strong><br>
-  <em>268 tools across 24 categories — scenes, GameObjects, prefab assets, prefab variants, graphics & visuals, scripts, builds, profiling, and more</em>
+  <em>259 tools across 24 categories — 66 core + 193 advanced via two-tier system — scenes, GameObjects, prefab assets, prefab variants, graphics & visuals, scripts, builds, profiling, and more</em>
 </p>
 
 <p align="center">
-  <a href="https://github.com/AnkleBreaker-Studio/unity-mcp-server/releases"><img alt="Version" src="https://img.shields.io/badge/version-2.15.0-blue"></a>
+  <a href="https://github.com/AnkleBreaker-Studio/unity-mcp-server/releases"><img alt="Version" src="https://img.shields.io/badge/version-2.16.0-blue"></a>
   <a href="LICENSE"><img alt="License" src="https://img.shields.io/badge/license-MIT-green"></a>
   <a href="https://nodejs.org"><img alt="Node" src="https://img.shields.io/badge/Node.js-18%2B-green"></a>
 </p>
@@ -152,37 +152,39 @@ If it fails, check the [Troubleshooting](#troubleshooting) section below.
 
 ---
 
-## Tools (268)
+## Tools (259 total — 66 core + 193 advanced)
 
-| Category | Examples |
-|----------|---------|
-| **Unity Hub** | List/install editors, manage modules, set install paths |
-| **Scenes** | Open, save, create, get hierarchy tree |
-| **GameObjects** | Create, delete, inspect, transform (world/local) |
-| **Components** | Add, remove, get/set serialized properties, wire ObjectReferences |
-| **Assets** | List, import, delete, create prefabs & materials |
-| **Scripts** | Create, read, update C# scripts |
-| **Builds** | Multi-platform builds |
-| **Console** | Read/clear logs |
-| **Play Mode** | Play, pause, stop |
-| **Editor** | Menu items, C# execution (Roslyn compiler), state, project info |
-| **Animation** | Clips, controllers, parameters |
-| **Prefab** | Prefab mode, overrides, apply/revert |
-| **Prefab Asset** | Direct editing: hierarchy, properties, components, references — no scene needed |
-| **Prefab Variant** | Variant info, compare to base, apply/revert/transfer overrides |
-| **Physics** | Raycasts, overlap tests, physics settings |
-| **Lighting** | Lights, environment, lightmaps, reflection probes |
-| **Audio** | Sources, listeners, mixers |
-| **Tags & Layers** | Tag/layer management |
-| **Selection** | Editor selection, find objects |
-| **Input Actions** | Action maps, bindings (Input System) |
-| **Assembly Defs** | .asmdef management |
-| **Profiler** | Profiling, deep profiles |
-| **Memory** | Memory breakdown, snapshots |
-| **Shader Graph** | Create, inspect, open (requires package) |
-| **Amplify** | Full Amplify Shader Editor integration — create, inspect, graph manipulation: add/remove/connect/disconnect/duplicate nodes, set properties, templates (requires asset) |
-| **Queue Management** | Queue info, ticket status, agent list, agent logs |
-| **Project Context** | Auto-injected project docs, MCP resources |
+The server uses a **two-tier tool system** to stay within MCP client limits while still providing full access to all 259 tools.
+
+**Core tools** (~66) are always exposed as individual MCP tools — these cover the most common Unity operations. **Advanced tools** (~193) are accessed on-demand via the `unity_advanced_tool` meta-tool, which routes calls to any specialized tool by name. Use `unity_list_advanced_tools` to browse the full catalog.
+
+| Category | Core | Advanced | Total |
+|----------|------|----------|-------|
+| **Unity Hub** | — | List/install editors, manage modules, set install paths | 6 |
+| **Scenes** | Open, save, create, hierarchy, stats | New scene | 6 |
+| **GameObjects** | Create, delete, inspect, transform, duplicate, active, reparent | — | 7 |
+| **Components** | Add, remove, get/set properties, set reference, batch wire, get referenceable | — | 7 |
+| **Assets** | List, import, delete, create prefab, instantiate prefab | — | 5 |
+| **Scripts** | Create, read, update, execute code | — | 4 |
+| **Materials** | Create, assign | — | 2 |
+| **Builds & Play** | Build, play mode | — | 2 |
+| **Console** | Read, clear | — | 2 |
+| **Editor Actions** | Menu items, undo, redo, undo history | — | 4 |
+| **Selection & Search** | Get/set selection, focus scene view, find by type/component/tag/layer/name, search assets, missing refs | — | 11 |
+| **Screenshots** | Game capture, scene capture, screenshot game, screenshot scene | — | 4 |
+| **Prefab** | Prefab info, set object reference | Hierarchy, properties, add/remove components, variants | 10+ |
+| **Packages** | List, add, remove, search, info | — | 5 |
+| **Queue & Agents** | Queue info, agents list, agent log | — | 3 |
+| **Animation** | — | Clips, controllers, parameters | 8+ |
+| **Physics** | — | Raycasts, overlap tests, settings | 6+ |
+| **Lighting** | — | Lights, environment, lightmaps, probes | 8+ |
+| **Audio** | — | Sources, listeners, mixers | 6+ |
+| **Shader Graph** | — | Create, inspect, open | 5+ |
+| **Amplify** | — | Full graph manipulation (23 tools) | 23 |
+| **Graphics** | Scene/game capture | Asset preview, mesh/material/texture/renderer/lighting info | 9 |
+| **Profiler & Memory** | — | Profiling, deep profiles, memory snapshots | 6+ |
+| **Other** | — | Tags, layers, input actions, assembly defs, terrain, particles, navmesh, UI, LOD, constraints, ScriptableObjects, EditorPrefs, PlayerPrefs, VFX | 50+ |
+| **Project Context** | Get project context | — | 1 |
 
 ---
 
@@ -297,6 +299,8 @@ The MCP server includes built-in instructions that tell agents to use the connec
 
 **Queue timeouts** — The default timeout is 30 seconds to accommodate Unity compilation. If you need longer, set `UNITY_BRIDGE_TIMEOUT` to a higher value (in ms).
 
+**Unity tools not visible in Claude / Cowork** — If you're running an older server version (<2.16.0) that exposes all 268+ tools as individual MCP tools, the response payload (~125KB) exceeds what MCP clients can handle and they silently drop the entire tool list. Update to v2.16.0+ which uses the two-tier system to keep the payload under ~32KB.
+
 **Extension not appearing after install** — Restart Claude Desktop after installing the `.mcpb` file. If using manual setup (Option B), double-check:
 1. The `args` path points to the actual `src/index.js` file on your machine
 2. You used forward slashes in the path (even on Windows)
@@ -340,6 +344,13 @@ Please also check out the companion plugin repo: [AnkleBreaker Unity MCP — Plu
 ---
 
 ## Changelog
+
+### v2.16.0
+
+- **Two-tier tool system** — Splits 259 tools into 66 core (always exposed) + 193 advanced (accessed via `unity_advanced_tool`). This reduces the MCP response payload from ~125KB to ~32KB, fixing silent tool registration failures in Claude Desktop and Cowork. Core tools cover the most common Unity operations; advanced tools for animation, physics, lighting, shaders, profiling, etc. are all still accessible on-demand.
+- **New meta-tools**: `unity_list_advanced_tools` (browse the full catalog by category) and `unity_advanced_tool` (execute any advanced tool by name + params).
+- **Fixed duplicate tool name** — Removed duplicate `unity_agents_list` definition that could cause MCP client rejection.
+- **Cowork compatibility** — The server now works reliably in Claude Cowork mode, matching the response size profile of other working MCP servers (~30KB, ~70 tools).
 
 ### v2.15.0
 
