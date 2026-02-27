@@ -149,7 +149,23 @@ async function ensureInstanceDiscovery() {
       );
     }
 
-    // Multiple instances found — prompt user to select
+    // Multiple instances found — check if one is already selected
+    const alreadySelected = getSelectedInstance();
+    if (alreadySelected) {
+      // User already selected an instance before discovery ran — just confirm
+      const cloneInfo = alreadySelected.isClone ? ` (ParrelSync clone #${alreadySelected.cloneIndex})` : "";
+      return (
+        `=== UNITY INSTANCE (user-selected) ===\n` +
+        `Project: ${alreadySelected.projectName}${cloneInfo}\n` +
+        `Port: ${alreadySelected.port}\n` +
+        `Unity: ${alreadySelected.unityVersion || "unknown"}\n` +
+        `Path: ${alreadySelected.projectPath || "unknown"}\n` +
+        `(${result.instances.length} instances available — use unity_select_instance to switch)\n` +
+        `=== END INSTANCE INFO ===`
+      );
+    }
+
+    // No instance selected yet — prompt user to select
     let prompt =
       `=== MULTIPLE UNITY INSTANCES DETECTED ===\n` +
       `Found ${result.instances.length} running Unity Editor instances.\n` +
@@ -179,7 +195,7 @@ async function ensureInstanceDiscovery() {
 const server = new Server(
   {
     name: "unity-mcp",
-    version: "2.16.1",
+    version: "2.16.2",
   },
   {
     capabilities: {
