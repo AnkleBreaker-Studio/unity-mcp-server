@@ -119,6 +119,7 @@ async function getContextSummaryOnce() {
  * Returns a prompt string if user needs to select an instance, or null.
  */
 async function ensureInstanceDiscovery() {
+  console.error(`[MCP DEBUG] ensureInstanceDiscovery called. _instanceDiscoveryDone=${_instanceDiscoveryDone}, selectedInstance=${getSelectedInstance()?.port || 'null'}, selectionRequired=${isInstanceSelectionRequired()}`);
   if (_instanceDiscoveryDone) return null;
   _instanceDiscoveryDone = true;
 
@@ -255,13 +256,17 @@ server.setRequestHandler(CallToolRequestSchema, async (request) => {
     }
 
     // If instance selection is required and this isn't an instance/hub tool, warn
+    const _selReq = isInstanceSelectionRequired();
+    const _selInst = getSelectedInstance();
+    console.error(`[MCP DEBUG] Tool=${name}, selectionRequired=${_selReq}, selectedPort=${_selInst?.port || 'null'}, instancePrompt=${instancePrompt ? 'SET' : 'null'}, discoveryDone=${_instanceDiscoveryDone}`);
     if (
-      isInstanceSelectionRequired() &&
+      _selReq &&
       !name.startsWith("unity_hub_") &&
       name !== "unity_list_instances" &&
       name !== "unity_select_instance" &&
       name !== "unity_get_project_context"
     ) {
+      console.error(`[MCP DEBUG] BLOCKING tool ${name} due to selectionRequired=true`);
       return {
         content: [
           {
