@@ -215,8 +215,10 @@ export async function autoSelectInstance() {
     };
   }
 
-  // Multiple instances — require user selection
-  _instanceSelectionRequired = true;
+  // Multiple instances — require user selection (but only if none already selected manually)
+  if (!_selectedInstance) {
+    _instanceSelectionRequired = true;
+  }
   return {
     autoSelected: false,
     instances,

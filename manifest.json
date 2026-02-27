@@ -2,7 +2,7 @@
   "manifest_version": "0.3",
   "name": "unity-mcp",
   "display_name": "AnkleBreaker Unity MCP",
-  "version": "2.16.0",
+  "version": "2.16.1",
   "description": "Multi-agent MCP server for Unity Editor — 259 tools (66 core + 193 advanced via two-tier system) across 24 categories with multi-instance support. Designed for Claude Cowork with async queue and fair scheduling across agents.",
   "long_description": "AnkleBreaker Unity MCP connects Claude to your Unity Editor with 259 tools across 24 categories. Built for Claude Cowork's multi-agent architecture, where multiple AI agents collaborate on the same Unity project in parallel.\n\n**Key features:**\n- 259 tools via two-tier system: 66 core tools always available + 193 advanced tools on-demand via unity_advanced_tool\n- Two-tier architecture keeps MCP payload under 32KB for reliable client registration\n- Multi-instance support: run multiple Unity Editors simultaneously, auto-port selection (7890–7899), shared instance registry\n- ParrelSync clone detection for multiplayer development workflows\n- Multi-agent async queue with fair round-robin scheduling\n- Read batching (up to 5/frame) and write serialization (1/frame)\n- Agent session tracking and action logging\n- Project Context auto-injection for project-aware AI assistance\n- Automatic fallback to legacy sync mode for older plugin versions\n\n**Requires the companion Unity Editor plugin:** Install via Unity Package Manager → Add package from git URL → `https://github.com/AnkleBreaker-Studio/unity-mcp-plugin.git`\n\nAfter installing the plugin, open Window → AB Unity MCP in Unity and verify the bridge is running.",
   "author": {
