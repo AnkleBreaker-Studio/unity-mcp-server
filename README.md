@@ -6,7 +6,7 @@
 </p>
 
 <p align="center">
-  <a href="https://github.com/AnkleBreaker-Studio/unity-mcp-server/releases"><img alt="Version" src="https://img.shields.io/badge/version-2.14.5-blue"></a>
+  <a href="https://github.com/AnkleBreaker-Studio/unity-mcp-server/releases"><img alt="Version" src="https://img.shields.io/badge/version-2.15.0-blue"></a>
   <a href="LICENSE"><img alt="License" src="https://img.shields.io/badge/license-MIT-green"></a>
   <a href="https://nodejs.org"><img alt="Node" src="https://img.shields.io/badge/Node.js-18%2B-green"></a>
 </p>
@@ -53,15 +53,20 @@ Here's what makes this different:
 └────┬─────┘  └────┬─────┘  └────┬─────┘
      │ HTTP        │ HTTP        │ HTTP
      └─────────────┼─────────────┘
-                   ▼
-        ┌─────────────────────┐
-        │   Unity Editor      │
-        │   ┌───────────────┐ │
-        │   │ AB Unity MCP  │ │  ← HTTP bridge + async request queue
-        │   │ Plugin        │ │     fair round-robin scheduling
-        │   └───────────────┘ │
-        └─────────────────────┘
+                   ▼  (routed to selected instance)
+     ┌─────────────────────────────────────────┐
+     │          Instance Registry               │
+     │   %LOCALAPPDATA%/UnityMCP/instances.json │
+     └────┬──────────────┬──────────────┬──────┘
+          ▼              ▼              ▼
+  ┌──────────────┐ ┌──────────────┐ ┌──────────────┐
+  │ Unity Editor │ │ Unity Editor │ │ Unity Editor │
+  │ Project A    │ │ Project B    │ │ Clone #0     │
+  │ :7890        │ │ :7891        │ │ :7892        │
+  └──────────────┘ └──────────────┘ └──────────────┘
 ```
+
+The server discovers all running Unity instances via a shared registry file and port scanning. On first tool call, it auto-selects if only one instance is found, or prompts the agent to ask the user which project to target.
 
 The server also communicates directly with **Unity Hub** via its CLI for editor installation and management.
 
@@ -82,7 +87,7 @@ In Unity: **Window > Package Manager > + > Add package from git URL:**
 https://github.com/AnkleBreaker-Studio/unity-mcp-plugin.git
 ```
 
-After installation, open **Window > AB Unity MCP** in Unity and verify the bridge server shows `Started on port 7890`.
+After installation, open **Window > AB Unity MCP** in Unity and verify the bridge server shows as running. The port is auto-selected from the range 7890-7899 (shown in the dashboard).
 
 ### 2. Install the MCP Server
 
@@ -187,12 +192,44 @@ If it fails, check the [Troubleshooting](#troubleshooting) section below.
 |---------------------|---------|-------------|
 | `UNITY_HUB_PATH` | `C:\Program Files\Unity Hub\Unity Hub.exe` | Unity Hub executable |
 | `UNITY_BRIDGE_HOST` | `127.0.0.1` | Editor bridge host |
-| `UNITY_BRIDGE_PORT` | `7890` | Editor bridge port |
+| `UNITY_BRIDGE_PORT` | `7890` | Default/fallback editor bridge port |
 | `UNITY_BRIDGE_TIMEOUT` | `30000` | Request timeout (ms) — covers compilation waits |
+| `UNITY_PORT_RANGE_START` | `7890` | Start of multi-instance port scan range |
+| `UNITY_PORT_RANGE_END` | `7899` | End of multi-instance port scan range |
+| `UNITY_INSTANCE_REGISTRY` | Platform-specific\* | Path to the shared instance registry JSON |
 | `UNITY_QUEUE_POLL_INTERVAL` | `150` | Queue polling start interval (ms) |
 | `UNITY_QUEUE_POLL_MAX` | `1500` | Queue polling max interval (ms) |
 
-The Unity plugin has its own settings via the Dashboard (**Window > AB Unity MCP**) for port, auto-start, and category toggles.
+\* Registry default: `%LOCALAPPDATA%/UnityMCP/instances.json` on Windows, `~/.local/share/UnityMCP/instances.json` on macOS/Linux.
+
+The Unity plugin has its own settings via the Dashboard (**Window > AB Unity MCP**) for port mode (auto/manual), auto-start, and category toggles.
+
+---
+
+## Multi-Instance Support
+
+v2.15.0 adds support for **multiple Unity Editor instances running simultaneously**. This covers two main use cases:
+
+1. **Multiple projects** — Working on different Unity projects at the same time
+2. **ParrelSync clones** — Multiplayer game development with symlinked Unity instances (e.g., `ProjectName_clone_0`)
+
+### How It Works
+
+Each Unity Editor instance with the MCP plugin registers itself in a **shared instance registry** file on disk. Instances auto-select a port from the range 7890-7899.
+
+On the first tool call, the MCP server:
+- **1 instance found** → Auto-connects and proceeds normally
+- **0 instances found** → Warns that no Unity is running (Hub tools still work)
+- **Multiple instances found** → Asks the agent to prompt the user which project to target
+
+### Instance Management Tools
+
+| Tool | Description |
+|------|-------------|
+| `unity_list_instances` | List all running Unity instances with project name, port, Unity version, and ParrelSync clone status |
+| `unity_select_instance` | Select which instance to target for this session (by port number) |
+
+Once an instance is selected, all `unity_*` commands are automatically routed to that instance's port.
 
 ---
 
@@ -256,7 +293,7 @@ The MCP server includes built-in instructions that tell agents to use the connec
 
 **"Category disabled" errors** — A feature category may be toggled off. Open **Window > AB Unity MCP** in Unity to check.
 
-**Port conflicts** — Change `UNITY_BRIDGE_PORT` in your Claude config and update the port in Unity's MCP dashboard.
+**Port conflicts** — With v2.15.0+, ports are auto-selected from the range 7890-7899 so conflicts are rare. If you need a specific port, enable "Use Manual Port" in the Unity MCP dashboard and set `UNITY_BRIDGE_PORT` in your Claude config to match.
 
 **Queue timeouts** — The default timeout is 30 seconds to accommodate Unity compilation. If you need longer, set `UNITY_BRIDGE_TIMEOUT` to a higher value (in ms).
 
@@ -303,6 +340,14 @@ Please also check out the companion plugin repo: [AnkleBreaker Unity MCP — Plu
 ---
 
 ## Changelog
+
+### v2.15.0
+
+- **Multi-instance support** — Discovers and connects to multiple Unity Editor instances running simultaneously. Auto-selects when only one instance is found; prompts for selection when multiple are detected. Supports any multi-instance workflow including ParrelSync clones for multiplayer development.
+- **New tools**: `unity_list_instances` (discover running instances) and `unity_select_instance` (choose which project to target).
+- **Dynamic port routing** — All bridge commands are routed through the selected instance's port instead of a hardcoded default.
+- **Instance registry discovery** — Reads from a shared JSON registry written by each Unity instance, with fallback port scanning for robustness.
+- Requires plugin v2.10.0+.
 
 ### v2.14.5
 

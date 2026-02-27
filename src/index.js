@@ -8,6 +8,11 @@
 //   This lets the Unity plugin's queue system differentiate between agents for
 //   fair round-robin scheduling and session tracking.
 //
+// Multi-instance support:
+//   Discovers all running Unity Editor instances (via shared registry + port scanning).
+//   On first tool call, auto-selects if only one instance is found.
+//   If multiple instances are running, prompts the user to select one.
+//
 // Project Context:
 //   Exposes project-specific documentation via MCP Resources and a dedicated tool.
 //   Auto-injects context summary on the first tool call per session so agents
@@ -26,7 +31,13 @@ import {
 import { hubTools } from "./tools/hub-tools.js";
 import { editorTools } from "./tools/editor-tools.js";
 import { contextTools } from "./tools/context-tools.js";
+import { instanceTools } from "./tools/instance-tools.js";
 import { setAgentId, getProjectContext } from "./unity-editor-bridge.js";
+import {
+  autoSelectInstance,
+  getSelectedInstance,
+  isInstanceSelectionRequired,
+} from "./instance-discovery.js";
 
 // ─── Per-process agent identity ───
 // Each MCP stdio process = one Cowork agent.
@@ -35,13 +46,19 @@ const PROCESS_AGENT_ID = `agent-${process.pid}-${randomBytes(3).toString("hex")}
 setAgentId(PROCESS_AGENT_ID);
 
 // ─── Combine all tools ───
-const ALL_TOOLS = [...hubTools, ...editorTools, ...contextTools];
+// Instance tools come first so they appear at the top of the tool list
+const ALL_TOOLS = [...instanceTools, ...hubTools, ...editorTools, ...contextTools];
 
 // ─── Context auto-inject state ───
 // On the first tool call per session, we prepend project context into the response.
 // This ensures agents receive project knowledge without explicitly calling the context tool.
 let _contextInjected = false;
 let _contextCache = null;
+
+// ─── Instance auto-discovery state ───
+// On the very first tool call, we discover instances and auto-select if possible.
+// If multiple are found, we inject a prompt asking the user to select one.
+let _instanceDiscoveryDone = false;
 
 async function getContextSummaryOnce() {
   if (_contextInjected) return null;
@@ -83,11 +100,72 @@ async function getContextSummaryOnce() {
   }
 }
 
+/**
+ * Perform instance discovery on first tool call.
+ * Returns a prompt string if user needs to select an instance, or null.
+ */
+async function ensureInstanceDiscovery() {
+  if (_instanceDiscoveryDone) return null;
+  _instanceDiscoveryDone = true;
+
+  try {
+    const result = await autoSelectInstance();
+
+    if (result.autoSelected) {
+      // Single instance found and auto-selected
+      const inst = result.instance;
+      const cloneInfo = inst.isClone ? ` (ParrelSync clone #${inst.cloneIndex})` : "";
+      return (
+        `=== UNITY INSTANCE (auto-connected) ===\n` +
+        `Project: ${inst.projectName}${cloneInfo}\n` +
+        `Port: ${inst.port}\n` +
+        `Unity: ${inst.unityVersion || "unknown"}\n` +
+        `Path: ${inst.projectPath || "unknown"}\n` +
+        `=== END INSTANCE INFO ===`
+      );
+    }
+
+    if (result.instances.length === 0) {
+      return (
+        `=== UNITY MCP WARNING ===\n` +
+        `No Unity Editor instances were detected.\n` +
+        `Make sure Unity is running with the MCP plugin enabled.\n` +
+        `You can still use Unity Hub tools (unity_hub_*).\n` +
+        `=== END WARNING ===`
+      );
+    }
+
+    // Multiple instances found — prompt user to select
+    let prompt =
+      `=== MULTIPLE UNITY INSTANCES DETECTED ===\n` +
+      `Found ${result.instances.length} running Unity Editor instances.\n` +
+      `You MUST ask the user which instance to work with before proceeding.\n\n` +
+      `Available instances:\n`;
+
+    for (const inst of result.instances) {
+      const cloneInfo = inst.isClone ? ` [ParrelSync clone #${inst.cloneIndex}]` : "";
+      prompt += `  • Port ${inst.port}: ${inst.projectName}${cloneInfo} (Unity ${inst.unityVersion || "?"})\n`;
+      if (inst.projectPath) {
+        prompt += `    Path: ${inst.projectPath}\n`;
+      }
+    }
+
+    prompt +=
+      `\nCall unity_select_instance with the port number once the user has chosen.\n` +
+      `=== END INSTANCE SELECTION REQUIRED ===`;
+
+    return prompt;
+  } catch (err) {
+    console.error(`[MCP] Instance discovery failed: ${err.message}`);
+    return null;
+  }
+}
+
 // ─── Create MCP Server ───
 const server = new Server(
   {
     name: "unity-mcp",
-    version: "2.14.4",
+    version: "2.15.0",
   },
   {
     capabilities: {
@@ -100,6 +178,11 @@ const server = new Server(
       "The bridge is an internal communication layer between this MCP server and the Unity Editor plugin.",
       "Direct HTTP calls bypass the multi-agent queue, agent tracking, and safety mechanisms.",
       "Use the unity_* MCP tools for all Unity operations — they handle queuing, retries, and agent identity automatically.",
+      "",
+      "MULTI-INSTANCE: This MCP server supports multiple Unity Editor instances running simultaneously.",
+      "On your first tool call, instances are auto-discovered. If multiple instances are found,",
+      "you MUST ask the user which instance to work with and call unity_select_instance before proceeding.",
+      "Use unity_list_instances to see all available instances at any time.",
     ].join(" "),
   }
 );
@@ -135,34 +218,57 @@ server.setRequestHandler(CallToolRequestSchema, async (request) => {
       setAgentId(meta.agentId || meta.agent_id);
     }
 
-    const result = await tool.handler(args || {});
-
-    // Auto-inject project context on the first successful tool call
-    const contextSummary = await getContextSummaryOnce();
-
-    // Support content block arrays (for image-returning tools like graphics/*)
-    if (Array.isArray(result)) {
-      if (contextSummary) {
-        return {
-          content: [{ type: "text", text: contextSummary }, ...result],
-        };
-      }
-      return { content: result };
+    // Auto-discover instances on first tool call (unless it's an instance tool itself)
+    let instancePrompt = null;
+    if (name !== "unity_list_instances" && name !== "unity_select_instance") {
+      instancePrompt = await ensureInstanceDiscovery();
     }
 
-    // Existing string path
-    if (contextSummary) {
+    // If instance selection is required and this isn't an instance/hub tool, warn
+    if (
+      isInstanceSelectionRequired() &&
+      !name.startsWith("unity_hub_") &&
+      name !== "unity_list_instances" &&
+      name !== "unity_select_instance" &&
+      name !== "unity_get_project_context"
+    ) {
       return {
         content: [
-          { type: "text", text: contextSummary },
-          { type: "text", text: result },
+          {
+            type: "text",
+            text:
+              instancePrompt ||
+              "Multiple Unity instances are running. You must call unity_list_instances and then unity_select_instance before using other Unity tools.",
+          },
         ],
+        isError: true,
       };
     }
 
-    return {
-      content: [{ type: "text", text: result }],
-    };
+    const result = await tool.handler(args || {});
+
+    // Build response content blocks
+    const contentBlocks = [];
+
+    // Instance info (first call only)
+    if (instancePrompt) {
+      contentBlocks.push({ type: "text", text: instancePrompt });
+    }
+
+    // Auto-inject project context on the first successful tool call
+    const contextSummary = await getContextSummaryOnce();
+    if (contextSummary) {
+      contentBlocks.push({ type: "text", text: contextSummary });
+    }
+
+    // Support content block arrays (for image-returning tools like graphics/*)
+    if (Array.isArray(result)) {
+      contentBlocks.push(...result);
+    } else {
+      contentBlocks.push({ type: "text", text: result });
+    }
+
+    return { content: contentBlocks };
   } catch (error) {
     return {
       content: [

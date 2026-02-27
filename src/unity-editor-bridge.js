@@ -2,7 +2,14 @@
 // Communicates with the C# plugin running inside Unity Editor
 // Supports both queue mode (async ticket-based) and legacy sync mode
 import { CONFIG } from "./config.js";
+import { getActiveBridgeUrl } from "./instance-discovery.js";
 
+// Dynamic bridge URL — resolved per-call based on selected instance
+function getBridgeUrl() {
+  return getActiveBridgeUrl();
+}
+
+// Legacy constant kept for backward compat in places that don't need dynamic routing
 const BRIDGE_URL = `http://${CONFIG.editorBridgeHost}:${CONFIG.editorBridgePort}`;
 
 // Agent identity — tracks which AI agent is making requests
@@ -59,7 +66,7 @@ function isTransientError(error, response) {
  * POST /api/queue/submit with {apiPath, method, body, agentId}
  */
 async function submitToQueue(apiPath, bodyString) {
-  const url = `${BRIDGE_URL}/api/queue/submit`;
+  const url = `${getBridgeUrl()}/api/queue/submit`;
 
   const response = await fetch(url, {
     method: "POST",
@@ -106,7 +113,7 @@ async function pollQueueStatus(ticketId) {
 
     // Poll status
     try {
-      const url = `${BRIDGE_URL}/api/queue/status?ticketId=${ticketId}`;
+      const url = `${getBridgeUrl()}/api/queue/status?ticketId=${ticketId}`;
       const response = await fetch(url, {
         method: "GET",
         headers: {
@@ -161,7 +168,7 @@ async function pollQueueStatus(ticketId) {
  * Falls back to the original implementation.
  */
 async function sendCommandLegacyMode(command, params = {}) {
-  const url = `${BRIDGE_URL}/api/${command}`;
+  const url = `${getBridgeUrl()}/api/${command}`;
   let lastError = null;
 
   for (let attempt = 0; attempt <= MAX_RETRIES; attempt++) {
@@ -325,7 +332,7 @@ export async function sendCommand(command, params = {}) {
  */
 export async function getQueueInfo() {
   try {
-    const url = `${BRIDGE_URL}/api/queue/info`;
+    const url = `${getBridgeUrl()}/api/queue/info`;
     const response = await fetch(url, {
       method: "GET",
       headers: {
@@ -355,7 +362,7 @@ export async function getQueueInfo() {
  */
 export async function getTicketStatus(ticketId) {
   try {
-    const url = `${BRIDGE_URL}/api/queue/status?ticketId=${ticketId}`;
+    const url = `${getBridgeUrl()}/api/queue/status?ticketId=${ticketId}`;
     const response = await fetch(url, {
       method: "GET",
       headers: {
@@ -384,7 +391,7 @@ export async function getTicketStatus(ticketId) {
  */
 export async function ping() {
   try {
-    const response = await fetch(`${BRIDGE_URL}/api/ping`, {
+    const response = await fetch(`${getBridgeUrl()}/api/ping`, {
       method: "GET",
       signal: AbortSignal.timeout(3000),
     });
@@ -1495,12 +1502,12 @@ export async function deleteAllPlayerPrefs(params) {
  */
 export async function getProjectContext(category = null) {
   const url = category
-    ? `${BRIDGE_URL}/api/context/${encodeURIComponent(category)}`
-    : `${BRIDGE_URL}/api/context`;
+    ? `${getBridgeUrl()}/api/context/${encodeURIComponent(category)}`
+    : `${getBridgeUrl()}/api/context`;
 
   const response = await fetch(url, {
     method: "GET",
-    headers: { "X-Agent-Id": _agentId },
+    headers: { "X-Agent-Id": _currentAgentId },
     signal: AbortSignal.timeout(5000),
   });
 
