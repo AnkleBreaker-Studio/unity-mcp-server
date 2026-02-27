@@ -36,6 +36,12 @@ export const CONFIG = {
   // Default Unity Editor path pattern (version will be interpolated)
   editorPathPattern: process.env.UNITY_EDITOR_PATH || "C:\\Program Files\\Unity\\Hub\\Editor\\{version}\\Editor\\Unity.exe",
 
+  // Response size limits (bytes) — protects against Write EOF errors on large projects
+  // Soft limit: log a warning but still return the response
+  responseSoftLimitBytes: parseInt(process.env.UNITY_RESPONSE_SOFT_LIMIT || String(2 * 1024 * 1024)),   // 2 MB
+  // Hard limit: truncate the response and return pagination guidance instead
+  responseHardLimitBytes: parseInt(process.env.UNITY_RESPONSE_HARD_LIMIT || String(4 * 1024 * 1024)),   // 4 MB
+
   // Logging
   logLevel: process.env.LOG_LEVEL || "info",
 };

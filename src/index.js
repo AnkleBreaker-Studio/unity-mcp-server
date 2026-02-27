@@ -40,6 +40,58 @@ import {
   isInstanceSelectionRequired,
 } from "./instance-discovery.js";
 import { persistState, loadState, debugLog } from "./state-persistence.js";
+import { CONFIG } from "./config.js";
+
+// ─── Response size protection ───
+// Prevents "Write EOF" errors when tool responses exceed stdio transport limits.
+// Large Unity projects (79K+ objects) can generate multi-MB responses that crash the pipe.
+function truncateResponseIfNeeded(contentBlocks) {
+  // Estimate total size across all text blocks
+  let totalSize = 0;
+  for (const block of contentBlocks) {
+    if (block.type === "text") {
+      totalSize += (block.text || "").length;
+    } else if (block.type === "image") {
+      totalSize += (block.data || "").length;
+    }
+  }
+
+  const softLimit = CONFIG.responseSoftLimitBytes;
+  const hardLimit = CONFIG.responseHardLimitBytes;
+
+  if (totalSize > hardLimit) {
+    const sizeMB = (totalSize / (1024 * 1024)).toFixed(1);
+    const limitMB = (hardLimit / (1024 * 1024)).toFixed(1);
+    console.error(`[MCP] Response truncated: ${sizeMB}MB exceeds hard limit of ${limitMB}MB`);
+    return [
+      {
+        type: "text",
+        text:
+          `⚠️ Response too large (${sizeMB} MB, limit: ${limitMB} MB) — truncated to prevent Write EOF error.\n\n` +
+          `The requested data was too large to return in a single response. ` +
+          `Use pagination parameters to request smaller chunks:\n` +
+          `• unity_scene_hierarchy: use maxNodes (default 5000) and/or lower maxDepth\n` +
+          `• unity_search_by_name/component/tag/layer: use limit parameter\n` +
+          `• unity_asset_list: use maxResults parameter\n` +
+          `• unity_console_log: use count parameter\n\n` +
+          `Tip: For very large scenes, start with unity_scene_stats to get an overview, ` +
+          `then use targeted searches (unity_search_by_name, unity_search_by_tag) instead of loading the full hierarchy.`,
+      },
+    ];
+  }
+
+  if (totalSize > softLimit) {
+    const sizeMB = (totalSize / (1024 * 1024)).toFixed(1);
+    console.error(`[MCP] Large response warning: ${sizeMB}MB exceeds soft limit`);
+    // Still return the data but add a warning
+    contentBlocks.push({
+      type: "text",
+      text: `\n⚠️ Large response (${sizeMB} MB). Consider using pagination parameters for better performance.`,
+    });
+  }
+
+  return contentBlocks;
+}
 
 // ─── Per-process agent identity ───
 // Each MCP stdio process = one Cowork agent.
@@ -316,7 +368,7 @@ server.setRequestHandler(CallToolRequestSchema, async (request) => {
       contentBlocks.push({ type: "text", text: result });
     }
 
-    return { content: contentBlocks };
+    return { content: truncateResponseIfNeeded(contentBlocks) };
   } catch (error) {
     return {
       content: [

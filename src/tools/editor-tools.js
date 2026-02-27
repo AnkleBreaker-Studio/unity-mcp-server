@@ -54,6 +54,8 @@ export const editorTools = [
       type: "object",
       properties: {
         maxDepth: { type: "number", description: "Maximum depth to traverse (default: 10)" },
+        maxNodes: { type: "number", description: "Maximum total nodes to return (default: 5000). Use lower values for very large scenes to avoid timeouts." },
+        parentPath: { type: "string", description: "Only return hierarchy under this GameObject path (e.g. 'Canvas/Panel'). Useful for exploring specific subtrees in large scenes." },
       },
     },
     handler: async (params) => JSON.stringify(await bridge.getHierarchy(params), null, 2),
@@ -2416,6 +2418,7 @@ export const editorTools = [
       properties: {
         componentType: { type: "string", description: "Component type name (e.g. 'Rigidbody', 'Camera', 'AudioSource', 'MyScript')" },
         includeInactive: { type: "boolean", description: "Include inactive GameObjects (default: false)" },
+        limit: { type: "number", description: "Maximum results to return (default: 500). Use lower values on large scenes." },
       },
       required: ["componentType"],
     },
@@ -2428,6 +2431,7 @@ export const editorTools = [
       type: "object",
       properties: {
         tag: { type: "string", description: "Tag name (e.g. 'Player', 'Enemy', 'MainCamera')" },
+        limit: { type: "number", description: "Maximum results to return (default: 500)." },
       },
       required: ["tag"],
     },
@@ -2440,6 +2444,7 @@ export const editorTools = [
       type: "object",
       properties: {
         layer: { type: "string", description: "Layer name or index (e.g. 'UI', 'Water', '5')" },
+        limit: { type: "number", description: "Maximum results to return (default: 500)." },
       },
       required: ["layer"],
     },
@@ -2454,6 +2459,7 @@ export const editorTools = [
         name: { type: "string", description: "Name pattern to search for" },
         regex: { type: "boolean", description: "Use regex matching instead of substring (default: false)" },
         includeInactive: { type: "boolean", description: "Include inactive GameObjects (default: false)" },
+        limit: { type: "number", description: "Maximum results to return (default: 500)." },
       },
       required: ["name"],
     },
@@ -2466,6 +2472,7 @@ export const editorTools = [
       type: "object",
       properties: {
         shader: { type: "string", description: "Shader name to search for (partial match)" },
+        limit: { type: "number", description: "Maximum results to return (default: 500)." },
       },
       required: ["shader"],
     },
@@ -2492,6 +2499,7 @@ export const editorTools = [
       type: "object",
       properties: {
         scope: { type: "string", description: "'scene' (default) or 'assets'" },
+        limit: { type: "number", description: "Maximum results to return (default: 500)." },
       },
     },
     handler: async (params) => JSON.stringify(await bridge.findMissingReferences(params), null, 2),
