@@ -39,6 +39,7 @@ import {
   getSelectedInstance,
   isInstanceSelectionRequired,
 } from "./instance-discovery.js";
+import { persistState, loadState, debugLog } from "./state-persistence.js";
 
 // ─── Per-process agent identity ───
 // Each MCP stdio process = one Cowork agent.
@@ -72,7 +73,18 @@ let _contextCache = null;
 // ─── Instance auto-discovery state ───
 // On the very first tool call, we discover instances and auto-select if possible.
 // If multiple are found, we inject a prompt asking the user to select one.
+// State is persisted to disk because the MCP host may restart this process between tool calls.
 let _instanceDiscoveryDone = false;
+
+// Restore persisted discovery state on module load
+(function restoreDiscoveryState() {
+  const persistedDone = loadState("instanceDiscoveryDone");
+  const hasSelectedInstance = getSelectedInstance();
+  if (persistedDone && hasSelectedInstance) {
+    _instanceDiscoveryDone = true;
+    debugLog(`Restored _instanceDiscoveryDone=true (selected port=${hasSelectedInstance.port})`);
+  }
+})();
 
 async function getContextSummaryOnce() {
   if (_contextInjected) return null;
@@ -119,9 +131,10 @@ async function getContextSummaryOnce() {
  * Returns a prompt string if user needs to select an instance, or null.
  */
 async function ensureInstanceDiscovery() {
-  console.error(`[MCP DEBUG] ensureInstanceDiscovery called. _instanceDiscoveryDone=${_instanceDiscoveryDone}, selectedInstance=${getSelectedInstance()?.port || 'null'}, selectionRequired=${isInstanceSelectionRequired()}`);
+  debugLog(`ensureInstanceDiscovery: _instanceDiscoveryDone=${_instanceDiscoveryDone}, selectedPort=${getSelectedInstance()?.port || 'null'}, selectionRequired=${isInstanceSelectionRequired()}`);
   if (_instanceDiscoveryDone) return null;
   _instanceDiscoveryDone = true;
+  persistState("instanceDiscoveryDone", true);
 
   try {
     const result = await autoSelectInstance();
@@ -196,7 +209,7 @@ async function ensureInstanceDiscovery() {
 const server = new Server(
   {
     name: "unity-mcp",
-    version: "2.16.2",
+    version: "2.16.3",
   },
   {
     capabilities: {
@@ -258,7 +271,7 @@ server.setRequestHandler(CallToolRequestSchema, async (request) => {
     // If instance selection is required and this isn't an instance/hub tool, warn
     const _selReq = isInstanceSelectionRequired();
     const _selInst = getSelectedInstance();
-    console.error(`[MCP DEBUG] Tool=${name}, selectionRequired=${_selReq}, selectedPort=${_selInst?.port || 'null'}, instancePrompt=${instancePrompt ? 'SET' : 'null'}, discoveryDone=${_instanceDiscoveryDone}`);
+    debugLog(`Tool=${name}, selectionRequired=${_selReq}, selectedPort=${_selInst?.port || 'null'}, instancePrompt=${instancePrompt ? 'SET' : 'null'}, discoveryDone=${_instanceDiscoveryDone}`);
     if (
       _selReq &&
       !name.startsWith("unity_hub_") &&
@@ -266,7 +279,7 @@ server.setRequestHandler(CallToolRequestSchema, async (request) => {
       name !== "unity_select_instance" &&
       name !== "unity_get_project_context"
     ) {
-      console.error(`[MCP DEBUG] BLOCKING tool ${name} due to selectionRequired=true`);
+      debugLog(`BLOCKING tool ${name} due to selectionRequired=true`);
       return {
         content: [
           {
@@ -374,6 +387,7 @@ server.setRequestHandler(ReadResourceRequestSchema, async (request) => {
 async function main() {
   const transport = new StdioServerTransport();
   await server.connect(transport);
+  debugLog(`=== SERVER START === v2.16.3, agent=${PROCESS_AGENT_ID}, discoveryDone=${_instanceDiscoveryDone}, selectedPort=${getSelectedInstance()?.port || 'null'}`);
   console.error(
     `Unity MCP Server running on stdio (agent: ${PROCESS_AGENT_ID})`
   );

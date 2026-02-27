@@ -7,18 +7,46 @@
 
 import { readFileSync } from "fs";
 import { CONFIG } from "./config.js";
+import { persistState, loadState, debugLog } from "./state-persistence.js";
 
 // ─── Session State ───
 // Tracks which Unity instance this MCP session is targeting.
+// State is also persisted to disk so it survives process restarts.
 let _selectedInstance = null; // { port, projectName, projectPath, ... }
 let _instanceSelectionRequired = false;
 
+// On module load, restore persisted state (the process may have been restarted)
+(function restorePersistedState() {
+  try {
+    const persisted = loadState("selectedInstance");
+    if (persisted && persisted.port) {
+      _selectedInstance = persisted;
+      _instanceSelectionRequired = false;
+      debugLog(`Restored persisted instance: ${persisted.projectName} (port ${persisted.port})`);
+    }
+  } catch {
+    // Ignore — fresh start
+  }
+})();
+
 /**
  * Get the currently selected Unity instance for this session.
+ * Falls through to persisted state if in-memory state was lost (process restart).
  * @returns {object|null} Selected instance info, or null if none selected.
  */
 export function getSelectedInstance() {
-  return _selectedInstance;
+  if (_selectedInstance) return _selectedInstance;
+
+  // Check persisted state (survives process restarts)
+  const persisted = loadState("selectedInstance");
+  if (persisted && persisted.port) {
+    _selectedInstance = persisted;
+    _instanceSelectionRequired = false;
+    debugLog(`getSelectedInstance: restored from persistence — port ${persisted.port}`);
+    return _selectedInstance;
+  }
+
+  return null;
 }
 
 /**
@@ -63,6 +91,11 @@ export async function selectInstance(port) {
 
   _selectedInstance = match;
   _instanceSelectionRequired = false;
+
+  // Persist to disk so the selection survives process restarts
+  persistState("selectedInstance", match);
+  persistState("instanceSelectionRequired", false);
+  debugLog(`selectInstance: saved port ${port} (${match.projectName})`);
 
   return {
     success: true,
@@ -187,6 +220,9 @@ export async function autoSelectInstance() {
         source: "default",
       };
       _instanceSelectionRequired = false;
+      persistState("selectedInstance", _selectedInstance);
+      persistState("instanceSelectionRequired", false);
+      debugLog(`autoSelect: single default instance on port ${CONFIG.editorBridgePort}`);
       return {
         autoSelected: true,
         instance: _selectedInstance,
@@ -207,6 +243,9 @@ export async function autoSelectInstance() {
     // Exactly one instance — auto-select it
     _selectedInstance = instances[0];
     _instanceSelectionRequired = false;
+    persistState("selectedInstance", _selectedInstance);
+    persistState("instanceSelectionRequired", false);
+    debugLog(`autoSelect: single instance on port ${_selectedInstance.port}`);
     return {
       autoSelected: true,
       instance: _selectedInstance,
@@ -218,6 +257,8 @@ export async function autoSelectInstance() {
   // Multiple instances — require user selection (but only if none already selected manually)
   if (!_selectedInstance) {
     _instanceSelectionRequired = true;
+    persistState("instanceSelectionRequired", true);
+    debugLog(`autoSelect: ${instances.length} instances found, selection required`);
   }
   return {
     autoSelected: false,
