@@ -304,6 +304,11 @@ Please also check out the companion plugin repo: [AnkleBreaker Unity MCP — Plu
 
 ## Changelog
 
+### v2.13.2
+
+- **Prefab render stability fix** — `unity_graphics_prefab_render` now safely uses Unity's built-in AssetPreview system, preventing editor crashes on complex prefabs with runtime scripts.
+- Requires plugin v2.13.2+.
+
 ### v2.13.0
 
 - **9 new graphics & visual intelligence tools** — `unity_graphics_asset_preview`, `unity_graphics_scene_capture`, `unity_graphics_game_capture`, `unity_graphics_prefab_render`, `unity_graphics_mesh_info`, `unity_graphics_material_info`, `unity_graphics_texture_info`, `unity_graphics_renderer_info`, `unity_graphics_lighting_summary`. Get inline base64 PNG previews of assets, scenes, game view, and prefabs that Claude can see directly. Deep graphical metadata: mesh geometry stats, material shader properties, texture analysis, renderer settings, and lighting summaries.
