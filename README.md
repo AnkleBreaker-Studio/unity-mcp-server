@@ -6,7 +6,7 @@
 </p>
 
 <p align="center">
-  <a href="https://github.com/AnkleBreaker-Studio/unity-mcp-server/releases"><img alt="Version" src="https://img.shields.io/badge/version-2.16.0-blue"></a>
+  <a href="https://github.com/AnkleBreaker-Studio/unity-mcp-server/releases"><img alt="Version" src="https://img.shields.io/badge/version-2.16.3-blue"></a>
   <a href="LICENSE"><img alt="License" src="https://img.shields.io/badge/license-MIT-green"></a>
   <a href="https://nodejs.org"><img alt="Node" src="https://img.shields.io/badge/Node.js-18%2B-green"></a>
 </p>
@@ -67,6 +67,8 @@ Here's what makes this different:
 ```
 
 The server discovers all running Unity instances via a shared registry file and port scanning. On first tool call, it auto-selects if only one instance is found, or prompts the agent to ask the user which project to target.
+
+Critical session state (selected instance, discovery flags) is **persisted to disk** so it survives the MCP host restarting the server process between tool calls. Debug logs are written to `%LOCALAPPDATA%/UnityMCP/mcp-debug.log` for troubleshooting.
 
 The server also communicates directly with **Unity Hub** via its CLI for editor installation and management.
 
@@ -299,6 +301,8 @@ The MCP server includes built-in instructions that tell agents to use the connec
 
 **Queue timeouts** — The default timeout is 30 seconds to accommodate Unity compilation. If you need longer, set `UNITY_BRIDGE_TIMEOUT` to a higher value (in ms).
 
+**Instance selection lost after a few tool calls** — Prior to v2.16.3, the MCP host (Claude Desktop / Cowork) could restart the server process between tool calls, wiping all in-memory state including the selected instance. v2.16.3 fixes this with file-based state persistence. If you're on an older version, update to v2.16.3+. Debug logs are written to `%LOCALAPPDATA%/UnityMCP/mcp-debug.log` (Windows) or `~/.local/share/UnityMCP/mcp-debug.log` (macOS/Linux).
+
 **Unity tools not visible in Claude / Cowork** — If you're running an older server version (<2.16.0) that exposes all 268+ tools as individual MCP tools, the response payload (~125KB) exceeds what MCP clients can handle and they silently drop the entire tool list. Update to v2.16.0+ which uses the two-tier system to keep the payload under ~32KB.
 
 **Extension not appearing after install** — Restart Claude Desktop after installing the `.mcpb` file. If using manual setup (Option B), double-check:
@@ -344,6 +348,20 @@ Please also check out the companion plugin repo: [AnkleBreaker Unity MCP — Plu
 ---
 
 ## Changelog
+
+### v2.16.3
+
+- **File-based state persistence** — Critical session state (selected instance, discovery flags) is now persisted to `%LOCALAPPDATA%/UnityMCP/mcp-session-state.json` (Windows) or `~/.local/share/UnityMCP/mcp-session-state.json` (macOS/Linux). This fixes the long-standing bug where instance selection was lost after ~2 tool calls because the MCP host spawns a new Node.js process for nearly every tool call, wiping all in-memory module-level state. State is restored on module load with a 2-hour TTL to prevent cross-session bleed.
+- **File-based debug logging** — `debugLog()` writes to `%LOCALAPPDATA%/UnityMCP/mcp-debug.log` with timestamps and PIDs, providing visibility into the MCP server lifecycle even when `console.error` output is not captured by the host.
+- **Startup diagnostics** — The server logs its version, agent ID, and restored state on every startup, making it easy to trace process restarts.
+
+### v2.16.2
+
+- **Discovery prompt fix** — `ensureInstanceDiscovery()` now returns a clean "user-selected" message when an instance was already manually selected, instead of re-running discovery and potentially resetting the selection.
+
+### v2.16.1
+
+- **Instance selection guard** — `autoSelectInstance()` no longer unconditionally sets `_instanceSelectionRequired = true` when multiple instances are found, preserving existing manual selections.
 
 ### v2.16.0
 
