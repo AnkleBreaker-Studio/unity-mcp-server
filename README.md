@@ -6,7 +6,7 @@
 </p>
 
 <p align="center">
-  <a href="https://github.com/AnkleBreaker-Studio/unity-mcp-server/releases"><img alt="Version" src="https://img.shields.io/badge/version-2.17.0-blue"></a>
+  <a href="https://github.com/AnkleBreaker-Studio/unity-mcp-server/releases"><img alt="Version" src="https://img.shields.io/badge/version-2.18.0-blue"></a>
   <a href="LICENSE"><img alt="License" src="https://img.shields.io/badge/license-MIT-green"></a>
   <a href="https://nodejs.org"><img alt="Node" src="https://img.shields.io/badge/Node.js-18%2B-green"></a>
   <a href="https://discord.gg/Q2XmedUctz"><img alt="Discord" src="https://img.shields.io/badge/Discord-Join%20Community-5865F2?logo=discord&logoColor=white"></a>
@@ -205,6 +205,8 @@ The server uses a **two-tier tool system** to stay within MCP client limits whil
 | `UNITY_QUEUE_POLL_INTERVAL` | `150` | Queue polling start interval (ms) |
 | `UNITY_QUEUE_POLL_MAX` | `1500` | Queue polling max interval (ms) |
 | `UNITY_QUEUE_POLL_TIMEOUT` | `120000` | Max total poll time (ms) for async ticket completion |
+| `UNITY_RESPONSE_SOFT_LIMIT` | `2097152` | Response size soft limit in bytes (2 MB) — logs a warning |
+| `UNITY_RESPONSE_HARD_LIMIT` | `4194304` | Response size hard limit in bytes (4 MB) — truncates response |
 
 \* Registry default: `%LOCALAPPDATA%/UnityMCP/instances.json` on Windows, `~/.local/share/UnityMCP/instances.json` on macOS/Linux.
 
@@ -365,6 +367,15 @@ Please also check out the companion plugin repo: [AnkleBreaker Unity MCP — Plu
 ---
 
 ## Changelog
+
+### v2.18.0
+
+- **Large-scene "Write EOF" fix** — Responses from hierarchy, search, and asset-list tools could exceed the MCP stdio transport limit (~64 KB `highWaterMark`), crashing the connection on large projects (79 K+ objects). Fixed with a 3-layer defense:
+  - **Global response safety net** — `truncateResponseIfNeeded()` in the server core caps every tool response at a configurable hard limit (default 4 MB) and adds a warning at the soft limit (default 2 MB). Controlled via `UNITY_RESPONSE_SOFT_LIMIT` / `UNITY_RESPONSE_HARD_LIMIT`.
+  - **Hierarchy pagination** — `unity_scene_hierarchy` now accepts `maxNodes` (default 5 000) and `parentPath` parameters. Returns pagination metadata (`totalSceneObjects`, `returnedNodes`, `truncated`) so agents can paginate large scenes.
+  - **Search result limits** — All search tools (`unity_search_by_component`, `unity_search_by_tag`, `unity_search_by_layer`, `unity_search_by_name`, `unity_search_by_shader`, `unity_search_missing_references`) accept a `limit` parameter (default 500) with truncation metadata.
+- **Bridge param passthrough fix** — `getHierarchy()` in the bridge layer was not forwarding parameters to the plugin; all pagination params were silently dropped.
+- Requires plugin v2.17.0+.
 
 ### v2.17.0
 
