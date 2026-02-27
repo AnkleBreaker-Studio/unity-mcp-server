@@ -100,7 +100,10 @@ async function pollQueueStatus(ticketId) {
   let pollIntervalMs = CONFIG.queuePollIntervalMs;
   const maxIntervalMs = Math.min(1000, CONFIG.queuePollMaxMs);
   const startTime = Date.now();
-  const timeoutMs = CONFIG.editorBridgeTimeout;
+  // Use dedicated poll timeout (longer than bridge timeout to handle slow operations like execute_code)
+  const timeoutMs = CONFIG.queuePollTimeoutMs || CONFIG.editorBridgeTimeout;
+  let consecutive404s = 0;
+  const max404Grace = 5; // Allow a few 404s during the dequeue→execute race window
 
   while (true) {
     // Check timeout
@@ -119,16 +122,28 @@ async function pollQueueStatus(ticketId) {
         headers: {
           "X-Agent-Id": _currentAgentId,
         },
-        signal: AbortSignal.timeout(CONFIG.editorBridgeTimeout),
+        signal: AbortSignal.timeout(10000), // 10s per individual poll request
       });
 
       if (!response.ok) {
+        // Grace period for 404 — ticket may be between dequeue and execution tracking
+        if (response.status === 404) {
+          consecutive404s++;
+          if (consecutive404s < max404Grace) {
+            await sleep(pollIntervalMs);
+            pollIntervalMs = Math.min(Math.ceil(pollIntervalMs * 1.5), maxIntervalMs);
+            continue;
+          }
+        }
         const text = await response.text();
         return {
           success: false,
           error: `Failed to poll queue status: HTTP ${response.status}: ${text}`,
         };
       }
+
+      // Reset 404 counter on successful poll
+      consecutive404s = 0;
 
       const statusData = await response.json();
 

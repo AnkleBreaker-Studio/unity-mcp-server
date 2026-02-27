@@ -31,6 +31,7 @@ export const CONFIG = {
   // Queue mode polling (for async ticket-based requests)
   queuePollIntervalMs: parseInt(process.env.UNITY_QUEUE_POLL_INTERVAL || "150"),
   queuePollMaxMs: parseInt(process.env.UNITY_QUEUE_POLL_MAX || "1500"),
+  queuePollTimeoutMs: parseInt(process.env.UNITY_QUEUE_POLL_TIMEOUT || "120000"), // Max total poll time (2 min)
 
   // Default Unity Editor path pattern (version will be interpolated)
   editorPathPattern: process.env.UNITY_EDITOR_PATH || "C:\\Program Files\\Unity\\Hub\\Editor\\{version}\\Editor\\Unity.exe",
