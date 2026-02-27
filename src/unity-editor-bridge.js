@@ -1324,6 +1324,110 @@ export async function getTerrainHeight(params) {
   return sendCommand("terrain/get-height", params);
 }
 
+export async function listTerrains(params) {
+  return sendCommand("terrain/list", params);
+}
+
+export async function raiseLowerTerrainHeight(params) {
+  return sendCommand("terrain/raise-lower", params);
+}
+
+export async function smoothTerrainHeight(params) {
+  return sendCommand("terrain/smooth", params);
+}
+
+export async function setTerrainNoise(params) {
+  return sendCommand("terrain/noise", params);
+}
+
+export async function setTerrainHeightsRegion(params) {
+  return sendCommand("terrain/set-heights-region", params);
+}
+
+export async function getTerrainHeightsRegion(params) {
+  return sendCommand("terrain/get-heights-region", params);
+}
+
+export async function removeTerrainLayer(params) {
+  return sendCommand("terrain/remove-layer", params);
+}
+
+export async function paintTerrainLayer(params) {
+  return sendCommand("terrain/paint-layer", params);
+}
+
+export async function fillTerrainLayer(params) {
+  return sendCommand("terrain/fill-layer", params);
+}
+
+export async function addTerrainTreePrototype(params) {
+  return sendCommand("terrain/add-tree-prototype", params);
+}
+
+export async function removeTerrainTreePrototype(params) {
+  return sendCommand("terrain/remove-tree-prototype", params);
+}
+
+export async function placeTerrainTrees(params) {
+  return sendCommand("terrain/place-trees", params);
+}
+
+export async function clearTerrainTrees(params) {
+  return sendCommand("terrain/clear-trees", params);
+}
+
+export async function getTerrainTreeInstances(params) {
+  return sendCommand("terrain/get-tree-instances", params);
+}
+
+export async function addTerrainDetailPrototype(params) {
+  return sendCommand("terrain/add-detail-prototype", params);
+}
+
+export async function paintTerrainDetail(params) {
+  return sendCommand("terrain/paint-detail", params);
+}
+
+export async function scatterTerrainDetail(params) {
+  return sendCommand("terrain/scatter-detail", params);
+}
+
+export async function clearTerrainDetail(params) {
+  return sendCommand("terrain/clear-detail", params);
+}
+
+export async function setTerrainHoles(params) {
+  return sendCommand("terrain/set-holes", params);
+}
+
+export async function setTerrainSettings(params) {
+  return sendCommand("terrain/set-settings", params);
+}
+
+export async function resizeTerrain(params) {
+  return sendCommand("terrain/resize", params);
+}
+
+export async function createTerrainGrid(params) {
+  return sendCommand("terrain/create-grid", params);
+}
+
+export async function setTerrainNeighbors(params) {
+  return sendCommand("terrain/set-neighbors", params);
+}
+
+export async function importTerrainHeightmap(params) {
+  return sendCommand("terrain/import-heightmap", params);
+}
+
+export async function exportTerrainHeightmap(params) {
+  return sendCommand("terrain/export-heightmap", params);
+}
+
+export async function getTerrainSteepness(params) {
+  return sendCommand("terrain/get-steepness", params);
+}
+
 // ─── Particle System ───
 
 export async function createParticleSystem(params) {
