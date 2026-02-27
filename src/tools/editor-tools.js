@@ -1016,6 +1016,130 @@ export const editorTools = [
     handler: async (params) => JSON.stringify(await bridge.reparentGameObject(params), null, 2),
   },
 
+  // ─── Prefab Asset (Direct Editing) ───
+  {
+    name: "unity_prefab_get_hierarchy",
+    description: "Get the full hierarchy tree of a prefab asset directly from disk — no scene instance needed. Shows all GameObjects, components, and nested children inside the prefab.",
+    inputSchema: {
+      type: "object",
+      properties: {
+        assetPath: { type: "string", description: "Asset path of the prefab (e.g. 'Assets/Prefabs/Player.prefab')" },
+        maxDepth: { type: "number", description: "Maximum hierarchy depth to traverse (default: 10)" },
+      },
+      required: ["assetPath"],
+    },
+    handler: async (params) => JSON.stringify(await bridge.getPrefabAssetHierarchy(params), null, 2),
+  },
+  {
+    name: "unity_prefab_get_properties",
+    description: "Read all serialized properties of a component on a GameObject inside a prefab asset — no scene instance needed. Use prefabPath to target nested children (e.g. 'Body/Head').",
+    inputSchema: {
+      type: "object",
+      properties: {
+        assetPath: { type: "string", description: "Asset path of the prefab (e.g. 'Assets/Prefabs/Player.prefab')" },
+        prefabPath: { type: "string", description: "Path within the prefab hierarchy to the target GameObject (e.g. 'Body/Head'). Empty or omitted = prefab root." },
+        componentType: { type: "string", description: "Component type name (e.g. 'MeshRenderer', 'PlayerController')" },
+      },
+      required: ["assetPath", "componentType"],
+    },
+    handler: async (params) => JSON.stringify(await bridge.getPrefabAssetProperties(params), null, 2),
+  },
+  {
+    name: "unity_prefab_set_property",
+    description: "Set a serialized property value on a component inside a prefab asset — no scene instance needed. Supports floats, ints, strings, bools, vectors, colors, enums.",
+    inputSchema: {
+      type: "object",
+      properties: {
+        assetPath: { type: "string", description: "Asset path of the prefab (e.g. 'Assets/Prefabs/Player.prefab')" },
+        prefabPath: { type: "string", description: "Path within the prefab hierarchy (e.g. 'Body/Head'). Empty = root." },
+        componentType: { type: "string", description: "Component type name" },
+        propertyName: { type: "string", description: "Name of the property to set" },
+        value: { description: "Value to set (type depends on property)" },
+      },
+      required: ["assetPath", "componentType", "propertyName"],
+    },
+    handler: async (params) => JSON.stringify(await bridge.setPrefabAssetProperty(params), null, 2),
+  },
+  {
+    name: "unity_prefab_add_component",
+    description: "Add a component to a GameObject inside a prefab asset — no scene instance needed. Supports built-in types (Rigidbody, BoxCollider, etc.) and custom scripts.",
+    inputSchema: {
+      type: "object",
+      properties: {
+        assetPath: { type: "string", description: "Asset path of the prefab" },
+        prefabPath: { type: "string", description: "Path within the prefab hierarchy. Empty = root." },
+        componentType: { type: "string", description: "Full type name (e.g. 'Rigidbody', 'BoxCollider', 'MyNamespace.MyScript')" },
+      },
+      required: ["assetPath", "componentType"],
+    },
+    handler: async (params) => JSON.stringify(await bridge.addPrefabAssetComponent(params), null, 2),
+  },
+  {
+    name: "unity_prefab_remove_component",
+    description: "Remove a component from a GameObject inside a prefab asset — no scene instance needed.",
+    inputSchema: {
+      type: "object",
+      properties: {
+        assetPath: { type: "string", description: "Asset path of the prefab" },
+        prefabPath: { type: "string", description: "Path within the prefab hierarchy. Empty = root." },
+        componentType: { type: "string", description: "Component type name to remove" },
+        index: { type: "number", description: "Index if multiple components of same type (default: 0)" },
+      },
+      required: ["assetPath", "componentType"],
+    },
+    handler: async (params) => JSON.stringify(await bridge.removePrefabAssetComponent(params), null, 2),
+  },
+  {
+    name: "unity_prefab_set_reference",
+    description: "Wire an ObjectReference property on a component inside a prefab asset — no scene instance needed. Can reference project assets (materials, textures, prefabs, ScriptableObjects) or other GameObjects within the same prefab.",
+    inputSchema: {
+      type: "object",
+      properties: {
+        assetPath: { type: "string", description: "Asset path of the prefab" },
+        prefabPath: { type: "string", description: "Path within the prefab hierarchy. Empty = root." },
+        componentType: { type: "string", description: "Component type (optional — searches all if omitted)" },
+        propertyName: { type: "string", description: "Name of the ObjectReference property to set" },
+        referenceAssetPath: { type: "string", description: "Asset path of the reference target (e.g. 'Assets/Materials/Red.mat')" },
+        referencePrefabPath: { type: "string", description: "Path to another GameObject within the same prefab (e.g. 'Body/Head')" },
+        referenceComponentType: { type: "string", description: "Get a specific component on the referenced prefab GameObject" },
+        clear: { type: "boolean", description: "Set to true to null out the reference" },
+      },
+      required: ["assetPath", "propertyName"],
+    },
+    handler: async (params) => JSON.stringify(await bridge.setPrefabAssetReference(params), null, 2),
+  },
+  {
+    name: "unity_prefab_add_gameobject",
+    description: "Create a new child GameObject inside a prefab asset — no scene instance needed. Optionally create as a primitive (Cube, Sphere, etc.) with position/rotation/scale.",
+    inputSchema: {
+      type: "object",
+      properties: {
+        assetPath: { type: "string", description: "Asset path of the prefab" },
+        prefabPath: { type: "string", description: "Parent path within the prefab hierarchy. Empty = add under root." },
+        name: { type: "string", description: "Name for the new GameObject" },
+        primitiveType: { type: "string", enum: ["Cube", "Sphere", "Capsule", "Cylinder", "Plane", "Quad"], description: "Optional primitive mesh type" },
+        position: { type: "object", properties: { x: { type: "number" }, y: { type: "number" }, z: { type: "number" } }, description: "Local position" },
+        rotation: { type: "object", properties: { x: { type: "number" }, y: { type: "number" }, z: { type: "number" } }, description: "Local rotation (Euler angles)" },
+        scale: { type: "object", properties: { x: { type: "number" }, y: { type: "number" }, z: { type: "number" } }, description: "Local scale" },
+      },
+      required: ["assetPath", "name"],
+    },
+    handler: async (params) => JSON.stringify(await bridge.addPrefabAssetGameObject(params), null, 2),
+  },
+  {
+    name: "unity_prefab_remove_gameobject",
+    description: "Delete a child GameObject from inside a prefab asset — no scene instance needed. Cannot remove the prefab root.",
+    inputSchema: {
+      type: "object",
+      properties: {
+        assetPath: { type: "string", description: "Asset path of the prefab" },
+        prefabPath: { type: "string", description: "Path to the child GameObject to remove (e.g. 'Body/OldPart'). Cannot be empty (can't delete root)." },
+      },
+      required: ["assetPath", "prefabPath"],
+    },
+    handler: async (params) => JSON.stringify(await bridge.removePrefabAssetGameObject(params), null, 2),
+  },
+
   // ─── Physics ───
   {
     name: "unity_physics_raycast",

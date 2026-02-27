@@ -672,6 +672,40 @@ export async function reparentGameObject(params) {
   return sendCommand("prefab/reparent", params);
 }
 
+// ─── Prefab Asset (Direct Editing) ───
+
+export async function getPrefabAssetHierarchy(params) {
+  return sendCommand("prefab-asset/hierarchy", params);
+}
+
+export async function getPrefabAssetProperties(params) {
+  return sendCommand("prefab-asset/get-properties", params);
+}
+
+export async function setPrefabAssetProperty(params) {
+  return sendCommand("prefab-asset/set-property", params);
+}
+
+export async function addPrefabAssetComponent(params) {
+  return sendCommand("prefab-asset/add-component", params);
+}
+
+export async function removePrefabAssetComponent(params) {
+  return sendCommand("prefab-asset/remove-component", params);
+}
+
+export async function setPrefabAssetReference(params) {
+  return sendCommand("prefab-asset/set-reference", params);
+}
+
+export async function addPrefabAssetGameObject(params) {
+  return sendCommand("prefab-asset/add-gameobject", params);
+}
+
+export async function removePrefabAssetGameObject(params) {
+  return sendCommand("prefab-asset/remove-gameobject", params);
+}
+
 // ─── Physics ───
 
 export async function physicsRaycast(params) {

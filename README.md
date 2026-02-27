@@ -2,11 +2,11 @@
 
 <p align="center">
   <strong>Multi-agent MCP server for Unity, designed for Claude Cowork</strong><br>
-  <em>232 tools across 21 categories — scenes, GameObjects, scripts, builds, profiling, and more</em>
+  <em>240 tools across 22 categories — scenes, GameObjects, prefab assets, scripts, builds, profiling, and more</em>
 </p>
 
 <p align="center">
-  <a href="https://github.com/AnkleBreaker-Studio/unity-mcp-server/releases"><img alt="Version" src="https://img.shields.io/badge/version-2.10.6-blue"></a>
+  <a href="https://github.com/AnkleBreaker-Studio/unity-mcp-server/releases"><img alt="Version" src="https://img.shields.io/badge/version-2.11.0-blue"></a>
   <a href="LICENSE"><img alt="License" src="https://img.shields.io/badge/license-MIT-green"></a>
   <a href="https://nodejs.org"><img alt="Node" src="https://img.shields.io/badge/Node.js-18%2B-green"></a>
 </p>
@@ -147,7 +147,7 @@ If it fails, check the [Troubleshooting](#troubleshooting) section below.
 
 ---
 
-## Tools (232)
+## Tools (240)
 
 | Category | Examples |
 |----------|---------|
@@ -163,6 +163,7 @@ If it fails, check the [Troubleshooting](#troubleshooting) section below.
 | **Editor** | Menu items, C# execution (Roslyn compiler), state, project info |
 | **Animation** | Clips, controllers, parameters |
 | **Prefab** | Prefab mode, overrides, apply/revert |
+| **Prefab Asset** | Direct editing: hierarchy, properties, components, references — no scene needed |
 | **Physics** | Raycasts, overlap tests, physics settings |
 | **Lighting** | Lights, environment, lightmaps, reflection probes |
 | **Audio** | Sources, listeners, mixers |
@@ -301,6 +302,11 @@ Please also check out the companion plugin repo: [AnkleBreaker Unity MCP — Plu
 ---
 
 ## Changelog
+
+### v2.11.0
+
+- **8 new prefab asset editing tools** — `unity_prefab_get_hierarchy`, `unity_prefab_get_properties`, `unity_prefab_set_property`, `unity_prefab_add_component`, `unity_prefab_remove_component`, `unity_prefab_set_reference`, `unity_prefab_add_gameobject`, `unity_prefab_remove_gameobject`. Edit prefab assets directly on disk — browse hierarchy, get/set properties, wire references, add/remove components and children — all without instantiating into a scene.
+- Requires plugin v2.11.0+.
 
 ### v2.10.6
 
