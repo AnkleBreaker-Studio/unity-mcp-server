@@ -2,11 +2,11 @@
 
 <p align="center">
   <strong>Multi-agent MCP server for Unity, designed for Claude Cowork</strong><br>
-  <em>259 tools across 24 categories — 66 core + 193 advanced via two-tier system — scenes, GameObjects, prefab assets, prefab variants, graphics & visuals, scripts, builds, profiling, and more</em>
+  <em>285 tools across 25 categories — 66 core + 219 advanced via two-tier system — scenes, GameObjects, prefab assets, prefab variants, graphics & visuals, terrain, scripts, builds, profiling, and more</em>
 </p>
 
 <p align="center">
-  <a href="https://github.com/AnkleBreaker-Studio/unity-mcp-server/releases"><img alt="Version" src="https://img.shields.io/badge/version-2.18.0-blue"></a>
+  <a href="https://github.com/AnkleBreaker-Studio/unity-mcp-server/releases"><img alt="Version" src="https://img.shields.io/badge/version-2.19.0-blue"></a>
   <a href="LICENSE"><img alt="License" src="https://img.shields.io/badge/license-MIT-green"></a>
   <a href="https://nodejs.org"><img alt="Node" src="https://img.shields.io/badge/Node.js-18%2B-green"></a>
   <a href="https://discord.gg/Q2XmedUctz"><img alt="Discord" src="https://img.shields.io/badge/Discord-Join%20Community-5865F2?logo=discord&logoColor=white"></a>
@@ -155,11 +155,11 @@ If it fails, check the [Troubleshooting](#troubleshooting) section below.
 
 ---
 
-## Tools (259 total — 66 core + 193 advanced)
+## Tools (285 total — 66 core + 219 advanced)
 
-The server uses a **two-tier tool system** to stay within MCP client limits while still providing full access to all 259 tools.
+The server uses a **two-tier tool system** to stay within MCP client limits while still providing full access to all 285 tools.
 
-**Core tools** (~66) are always exposed as individual MCP tools — these cover the most common Unity operations. **Advanced tools** (~193) are accessed on-demand via the `unity_advanced_tool` meta-tool, which routes calls to any specialized tool by name. Use `unity_list_advanced_tools` to browse the full catalog.
+**Core tools** (~66) are always exposed as individual MCP tools — these cover the most common Unity operations. **Advanced tools** (~219) are accessed on-demand via the `unity_advanced_tool` meta-tool, which routes calls to any specialized tool by name. Use `unity_list_advanced_tools` to browse the full catalog. Advanced tools also support **lazy loading** — new tools added to the C# plugin are discovered automatically via `_meta/routes` without restarting the MCP server.
 
 | Category | Core | Advanced | Total |
 |----------|------|----------|-------|
@@ -186,7 +186,8 @@ The server uses a **two-tier tool system** to stay within MCP client limits whil
 | **Amplify** | — | Full graph manipulation (23 tools) | 23 |
 | **Graphics** | Scene/game capture | Asset preview, mesh/material/texture/renderer/lighting info | 9 |
 | **Profiler & Memory** | — | Profiling, deep profiles, memory snapshots | 6+ |
-| **Other** | — | Tags, layers, input actions, assembly defs, terrain, particles, navmesh, UI, LOD, constraints, ScriptableObjects, EditorPrefs, PlayerPrefs, VFX | 50+ |
+| **Terrain** | — | Create, info, list, heightmaps (raise/lower, smooth, noise, region get/set, import/export), splat layers (add/remove/paint/fill), trees (prototypes, place, clear, get), details/grass (prototypes, paint, scatter, clear), holes, settings, resize, multi-terrain grids, neighbors, steepness | 32 |
+| **Other** | — | Tags, layers, input actions, assembly defs, particles, navmesh, UI, LOD, constraints, ScriptableObjects, EditorPrefs, PlayerPrefs, VFX | 50+ |
 | **Project Context** | Get project context | — | 1 |
 
 ---
@@ -368,6 +369,14 @@ Please also check out the companion plugin repo: [AnkleBreaker Unity MCP — Plu
 
 ## Changelog
 
+### v2.19.0
+
+- **Comprehensive terrain tools** — 26 new terrain tool definitions covering heightmaps (raise/lower, smooth, noise, region get/set, import/export), splat layers (add/remove/paint/fill), tree management (prototypes, placement, clearing), detail/grass painting, hole painting, terrain settings, resize, multi-terrain grids, neighbor stitching, and steepness queries. Total tool count: 285 (66 core + 219 advanced).
+- **Lazy loading for advanced tools** — `unity_advanced_tool` now supports dynamic dispatch. If a tool isn't in the cached map, the route is derived from the tool name (`unity_terrain_list` → `terrain/list`) and called directly via `sendCommand`. New tools added to the C# plugin work immediately without restarting the MCP server.
+- **Dynamic tool discovery** — `unity_list_advanced_tools` queries the plugin's `_meta/routes` endpoint to discover all registered routes, including tools not yet in the Node.js tool definitions. Lazy-loaded tools show as `(lazy-loaded from Unity plugin)` in the catalog.
+- 26 new bridge functions in `unity-editor-bridge.js` for all terrain operations.
+- Requires plugin v2.18.0+.
+
 ### v2.18.0
 
 - **Large-scene "Write EOF" fix** — Responses from hierarchy, search, and asset-list tools could exceed the MCP stdio transport limit (~64 KB `highWaterMark`), crashing the connection on large projects (79 K+ objects). Fixed with a 3-layer defense:
@@ -401,7 +410,7 @@ Please also check out the companion plugin repo: [AnkleBreaker Unity MCP — Plu
 
 ### v2.16.0
 
-- **Two-tier tool system** — Splits 259 tools into 66 core (always exposed) + 193 advanced (accessed via `unity_advanced_tool`). This reduces the MCP response payload from ~125KB to ~32KB, fixing silent tool registration failures in Claude Desktop and Cowork. Core tools cover the most common Unity operations; advanced tools for animation, physics, lighting, shaders, profiling, etc. are all still accessible on-demand.
+- **Two-tier tool system** — Splits 285 tools into 66 core (always exposed) + 219 advanced (accessed via `unity_advanced_tool`). This reduces the MCP response payload from ~125KB to ~32KB, fixing silent tool registration failures in Claude Desktop and Cowork. Core tools cover the most common Unity operations; advanced tools for animation, physics, lighting, shaders, terrain, profiling, etc. are all still accessible on-demand.
 - **New meta-tools**: `unity_list_advanced_tools` (browse the full catalog by category) and `unity_advanced_tool` (execute any advanced tool by name + params).
 - **Fixed duplicate tool name** — Removed duplicate `unity_agents_list` definition that could cause MCP client rejection.
 - **Cowork compatibility** — The server now works reliably in Claude Cowork mode, matching the response size profile of other working MCP servers (~30KB, ~70 tools).

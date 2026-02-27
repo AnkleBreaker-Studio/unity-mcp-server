@@ -7,6 +7,30 @@
 // Why: MCP clients like Claude Cowork silently fail when a server
 // exposes too many tools (our 268 tools / 125KB response was ~5x
 // larger than working servers). This keeps us under the safe limit.
+//
+// Lazy loading: Advanced tools support dynamic dispatch. If a tool
+// isn't in the cached map, the route is derived from the tool name
+// (unity_terrain_list → terrain/list) and called directly via sendCommand.
+// This means new tools added to the C# plugin work immediately without
+// restarting the MCP server.
+
+import { sendCommand } from "./unity-editor-bridge.js";
+
+/**
+ * Derive an HTTP route from a tool name.
+ * unity_terrain_raise_lower → terrain/raise-lower
+ * unity_animation_create_clip → animation/create-clip
+ */
+function toolNameToRoute(toolName) {
+  // Remove unity_ prefix
+  const withoutPrefix = toolName.replace(/^unity_/, "");
+  // Split into parts: first part is category, rest is action
+  const parts = withoutPrefix.split("_");
+  if (parts.length < 2) return null;
+  const category = parts[0];
+  const action = parts.slice(1).join("-");
+  return `${category}/${action}`;
+}
 
 // ─── Core tool names (always exposed individually) ───
 const CORE_TOOLS = new Set([
@@ -167,29 +191,73 @@ export function splitToolTiers(allEditorTools) {
       },
     },
     handler: async ({ category } = {}) => {
+      // Try to fetch dynamic routes from Unity plugin for lazy discovery
+      let dynamicRoutes = null;
+      try {
+        dynamicRoutes = await sendCommand("_meta/routes", {});
+      } catch (_) {
+        // Plugin might not support _meta/routes yet, use cached list only
+      }
+
+      // Merge dynamic routes into the advanced tool list
+      // Dynamic routes that aren't in our cached map get listed as lazy-loadable tools
+      let mergedCategories = { ...categories };
+      let dynamicCount = 0;
+
+      if (dynamicRoutes && dynamicRoutes.routes) {
+        for (const route of dynamicRoutes.routes) {
+          // Convert route to tool name: terrain/list → unity_terrain_list
+          const toolName = "unity_" + route.replace(/\//g, "_").replace(/-/g, "_");
+          const cat = route.split("/")[0];
+
+          // Skip if already in our cached map
+          if (advancedMap.has(toolName) || CORE_TOOLS.has(toolName)) continue;
+
+          // Add to merged categories
+          if (!mergedCategories[cat]) mergedCategories[cat] = [];
+          if (!mergedCategories[cat].includes(toolName)) {
+            mergedCategories[cat].push(toolName);
+            dynamicCount++;
+          }
+        }
+      }
+
       if (category) {
         const cat = category.toLowerCase();
+
+        // Check cached tools first
         const matching = advanced.filter((t) => {
           const toolCat = t.name.replace(/^unity_/, "").split("_")[0];
           return toolCat === cat;
         });
-        if (matching.length === 0) {
-          return `No advanced tools found for category "${category}". Available categories: ${Object.keys(categories).join(", ")}`;
+
+        // Also include dynamic-only tools for this category
+        const dynamicTools = (mergedCategories[cat] || [])
+          .filter((name) => !advancedMap.has(name))
+          .map((name) => ({ name, description: `(lazy-loaded from Unity plugin)` }));
+
+        const all = [
+          ...matching.map((t) => ({ name: t.name, description: t.description })),
+          ...dynamicTools,
+        ];
+
+        if (all.length === 0) {
+          return `No advanced tools found for category "${category}". Available categories: ${Object.keys(mergedCategories).join(", ")}`;
         }
-        return JSON.stringify(
-          matching.map((t) => ({ name: t.name, description: t.description })),
-          null,
-          2
-        );
+        return JSON.stringify(all, null, 2);
       }
 
       // Full catalog grouped by category
       const result = {};
-      for (const [cat, names] of Object.entries(categories)) {
+      for (const [cat, names] of Object.entries(mergedCategories)) {
         result[cat] = names;
       }
       return JSON.stringify(
-        { totalAdvancedTools: advanced.length, categories: result },
+        {
+          totalAdvancedTools: advanced.length + dynamicCount,
+          dynamicTools: dynamicCount,
+          categories: result,
+        },
         null,
         2
       );
@@ -226,12 +294,25 @@ export function splitToolTiers(allEditorTools) {
       }
 
       const targetTool = advancedMap.get(tool);
-      if (!targetTool) {
-        // Maybe it's a core tool being called through advanced?
-        return `Error: Unknown advanced tool "${tool}". Use unity_list_advanced_tools to see available tools.`;
+      if (targetTool) {
+        return await targetTool.handler(params || {});
       }
 
-      return await targetTool.handler(params || {});
+      // ─── Lazy loading fallback ───
+      // Tool not in cached map — derive the route from the name and call Unity directly.
+      // This allows new tools added to the C# plugin to work without restarting the MCP server.
+      const route = toolNameToRoute(tool);
+      if (route) {
+        try {
+          console.debug(`[MCP] Lazy-loading tool "${tool}" via route "${route}"`);
+          const result = await sendCommand(route, params || {});
+          return JSON.stringify(result, null, 2);
+        } catch (err) {
+          return `Error executing "${tool}" (lazy route: ${route}): ${err.message}`;
+        }
+      }
+
+      return `Error: Unknown tool "${tool}". Use unity_list_advanced_tools to see available tools.`;
     },
   };
 
