@@ -21,7 +21,7 @@ export const CONFIG = {
   // Unity Editor Bridge (default — used as fallback when no instance is selected)
   editorBridgeHost: process.env.UNITY_BRIDGE_HOST || "127.0.0.1",
   editorBridgePort: parseInt(process.env.UNITY_BRIDGE_PORT || "7890"),
-  editorBridgeTimeout: parseInt(process.env.UNITY_BRIDGE_TIMEOUT || "30000"),
+  editorBridgeTimeout: parseInt(process.env.UNITY_BRIDGE_TIMEOUT || "60000"),
 
   // Multi-instance support
   portRangeStart: parseInt(process.env.UNITY_PORT_RANGE_START || "7890"),
