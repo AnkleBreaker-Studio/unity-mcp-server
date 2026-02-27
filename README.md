@@ -2,7 +2,7 @@
 
 <p align="center">
   <strong>Multi-agent MCP server for Unity, designed for Claude Cowork</strong><br>
-  <em>254 tools across 24 categories — scenes, GameObjects, prefab assets, prefab variants, graphics & visuals, scripts, builds, profiling, and more</em>
+  <em>268 tools across 24 categories — scenes, GameObjects, prefab assets, prefab variants, graphics & visuals, scripts, builds, profiling, and more</em>
 </p>
 
 <p align="center">
@@ -175,7 +175,7 @@ If it fails, check the [Troubleshooting](#troubleshooting) section below.
 | **Profiler** | Profiling, deep profiles |
 | **Memory** | Memory breakdown, snapshots |
 | **Shader Graph** | Create, inspect, open (requires package) |
-| **Amplify** | Amplify shader management (requires asset) |
+| **Amplify** | Full Amplify Shader Editor integration — create, inspect, graph manipulation: add/remove/connect/disconnect/duplicate nodes, set properties, templates (requires asset) |
 | **Queue Management** | Queue info, ticket status, agent list, agent logs |
 | **Project Context** | Auto-injected project docs, MCP resources |
 
@@ -303,6 +303,12 @@ Please also check out the companion plugin repo: [AnkleBreaker Unity MCP — Plu
 ---
 
 ## Changelog
+
+### v2.14.0
+
+- **14 new Amplify Shader Editor graph manipulation tools** — `unity_amplify_add_node`, `unity_amplify_remove_node`, `unity_amplify_connect`, `unity_amplify_disconnect`, `unity_amplify_node_info`, `unity_amplify_set_node_property`, `unity_amplify_move_node`, `unity_amplify_save`, `unity_amplify_close`, `unity_amplify_create_from_template`, `unity_amplify_focus_node`, `unity_amplify_master_node_info`, `unity_amplify_disconnect_all`, `unity_amplify_duplicate_node`. Full graph manipulation: add/remove/connect/disconnect/duplicate nodes, set node properties via reflection, move nodes, save/close editor, create shaders from templates (surface, unlit, URP lit, transparent, post-process), inspect master node, and focus view on nodes.
+- Amplify toolset expanded from 9 to 23 tools, matching the comprehensive ShaderGraph toolset.
+- Requires plugin v2.14.0+.
 
 ### v2.13.2
 

@@ -1064,6 +1064,62 @@ export async function createAmplifyShader(params) {
   return sendCommand("amplify/create-shader", params);
 }
 
+export async function addAmplifyNode(params) {
+  return sendCommand("amplify/add-node", params);
+}
+
+export async function removeAmplifyNode(params) {
+  return sendCommand("amplify/remove-node", params);
+}
+
+export async function connectAmplifyNodes(params) {
+  return sendCommand("amplify/connect", params);
+}
+
+export async function disconnectAmplifyNodes(params) {
+  return sendCommand("amplify/disconnect", params);
+}
+
+export async function getAmplifyNodeInfo(params) {
+  return sendCommand("amplify/node-info", params);
+}
+
+export async function setAmplifyNodeProperty(params) {
+  return sendCommand("amplify/set-node-property", params);
+}
+
+export async function moveAmplifyNode(params) {
+  return sendCommand("amplify/move-node", params);
+}
+
+export async function saveAmplifyGraph(params) {
+  return sendCommand("amplify/save", params);
+}
+
+export async function closeAmplifyEditor(params) {
+  return sendCommand("amplify/close", params);
+}
+
+export async function createAmplifyFromTemplate(params) {
+  return sendCommand("amplify/create-from-template", params);
+}
+
+export async function focusAmplifyNode(params) {
+  return sendCommand("amplify/focus-node", params);
+}
+
+export async function getAmplifyMasterNodeInfo(params) {
+  return sendCommand("amplify/master-node-info", params);
+}
+
+export async function disconnectAllAmplifyNode(params) {
+  return sendCommand("amplify/disconnect-all", params);
+}
+
+export async function duplicateAmplifyNode(params) {
+  return sendCommand("amplify/duplicate-node", params);
+}
+
 // ─── Agent Management ───
 
 export async function listAgents(params) {

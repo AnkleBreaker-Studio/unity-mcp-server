@@ -2229,6 +2229,178 @@ export const editorTools = [
     },
     handler: async (params) => JSON.stringify(await bridge.createAmplifyShader(params), null, 2),
   },
+  {
+    name: "unity_amplify_add_node",
+    description: "Add a node to the currently open Amplify Shader Editor graph. The ASE window must be open with a shader loaded. Use unity_amplify_get_node_types to discover available node types first.",
+    inputSchema: {
+      type: "object",
+      properties: {
+        nodeType: { type: "string", description: "Full type name of the node (e.g., 'AmplifyShaderEditor.ColorNode', 'AmplifyShaderEditor.SimpleMultiplyOpNode', 'AmplifyShaderEditor.SamplerNode')" },
+        x: { type: "number", description: "X position in graph (default: 0)" },
+        y: { type: "number", description: "Y position in graph (default: 0)" },
+      },
+      required: ["nodeType"],
+    },
+    handler: async (params) => JSON.stringify(await bridge.addAmplifyNode(params), null, 2),
+  },
+  {
+    name: "unity_amplify_remove_node",
+    description: "Remove a node from the currently open Amplify Shader Editor graph by its unique ID. Cannot remove the master/output node.",
+    inputSchema: {
+      type: "object",
+      properties: {
+        nodeId: { type: "number", description: "Unique ID of the node to remove (from unity_amplify_get_nodes)" },
+      },
+      required: ["nodeId"],
+    },
+    handler: async (params) => JSON.stringify(await bridge.removeAmplifyNode(params), null, 2),
+  },
+  {
+    name: "unity_amplify_connect",
+    description: "Connect two nodes in the Amplify Shader Editor graph. Connects an output port of one node to an input port of another node.",
+    inputSchema: {
+      type: "object",
+      properties: {
+        outputNodeId: { type: "number", description: "ID of the source node (output side)" },
+        outputPortId: { type: "number", description: "Port index on the output node (0-based)" },
+        inputNodeId: { type: "number", description: "ID of the destination node (input side)" },
+        inputPortId: { type: "number", description: "Port index on the input node (0-based)" },
+      },
+      required: ["outputNodeId", "outputPortId", "inputNodeId", "inputPortId"],
+    },
+    handler: async (params) => JSON.stringify(await bridge.connectAmplifyNodes(params), null, 2),
+  },
+  {
+    name: "unity_amplify_disconnect",
+    description: "Disconnect a specific port on a node in the Amplify Shader Editor graph.",
+    inputSchema: {
+      type: "object",
+      properties: {
+        nodeId: { type: "number", description: "ID of the node" },
+        portId: { type: "number", description: "Port index (0-based)" },
+        isInput: { type: "boolean", description: "True to disconnect an input port, false for output port (default: true)" },
+      },
+      required: ["nodeId", "portId"],
+    },
+    handler: async (params) => JSON.stringify(await bridge.disconnectAmplifyNodes(params), null, 2),
+  },
+  {
+    name: "unity_amplify_node_info",
+    description: "Get detailed information about a specific node in the Amplify Shader Editor graph, including all input/output ports with names, data types, and connection status.",
+    inputSchema: {
+      type: "object",
+      properties: {
+        nodeId: { type: "number", description: "Unique ID of the node" },
+      },
+      required: ["nodeId"],
+    },
+    handler: async (params) => JSON.stringify(await bridge.getAmplifyNodeInfo(params), null, 2),
+  },
+  {
+    name: "unity_amplify_set_node_property",
+    description: "Set a property or field value on a node in the Amplify Shader Editor graph via reflection. If the property name is wrong, returns a list of available properties.",
+    inputSchema: {
+      type: "object",
+      properties: {
+        nodeId: { type: "number", description: "Unique ID of the node" },
+        propertyName: { type: "string", description: "Name of the property or field to set (e.g., 'm_defaultValue', 'PropertyName')" },
+        value: { type: "string", description: "Value to set (will be parsed based on property type)" },
+      },
+      required: ["nodeId", "propertyName", "value"],
+    },
+    handler: async (params) => JSON.stringify(await bridge.setAmplifyNodeProperty(params), null, 2),
+  },
+  {
+    name: "unity_amplify_move_node",
+    description: "Move a node to a new position in the Amplify Shader Editor graph.",
+    inputSchema: {
+      type: "object",
+      properties: {
+        nodeId: { type: "number", description: "Unique ID of the node" },
+        x: { type: "number", description: "New X position" },
+        y: { type: "number", description: "New Y position" },
+      },
+      required: ["nodeId", "x", "y"],
+    },
+    handler: async (params) => JSON.stringify(await bridge.moveAmplifyNode(params), null, 2),
+  },
+  {
+    name: "unity_amplify_save",
+    description: "Save the currently open Amplify Shader Editor graph to disk.",
+    inputSchema: { type: "object", properties: {} },
+    handler: async (params) => JSON.stringify(await bridge.saveAmplifyGraph(params), null, 2),
+  },
+  {
+    name: "unity_amplify_close",
+    description: "Close the Amplify Shader Editor window. Optionally save before closing.",
+    inputSchema: {
+      type: "object",
+      properties: {
+        save: { type: "boolean", description: "Save the graph before closing (default: false)" },
+      },
+    },
+    handler: async (params) => JSON.stringify(await bridge.closeAmplifyEditor(params), null, 2),
+  },
+  {
+    name: "unity_amplify_create_from_template",
+    description: "Create a new Amplify shader from a predefined template (surface, unlit, urp_lit, transparent, post_process). The shader file is created and can then be opened in ASE.",
+    inputSchema: {
+      type: "object",
+      properties: {
+        path: { type: "string", description: "Asset path for the new shader (e.g., 'Assets/Shaders/MyShader.shader')" },
+        shaderName: { type: "string", description: "Shader name in the dropdown (e.g., 'Custom/MyShader')" },
+        template: { type: "string", description: "Template type: 'surface' (Standard PBR), 'unlit', 'urp' or 'urp_lit' (URP Lit), 'transparent', 'post_process' or 'postprocess'" },
+      },
+      required: ["path", "shaderName", "template"],
+    },
+    handler: async (params) => JSON.stringify(await bridge.createAmplifyFromTemplate(params), null, 2),
+  },
+  {
+    name: "unity_amplify_focus_node",
+    description: "Focus the Amplify Shader Editor view on a specific node, centering and optionally zooming to it.",
+    inputSchema: {
+      type: "object",
+      properties: {
+        nodeId: { type: "number", description: "Unique ID of the node to focus on" },
+        zoom: { type: "number", description: "Zoom level (default: 1.0)" },
+        select: { type: "boolean", description: "Also select the node (default: true)" },
+      },
+      required: ["nodeId"],
+    },
+    handler: async (params) => JSON.stringify(await bridge.focusAmplifyNode(params), null, 2),
+  },
+  {
+    name: "unity_amplify_master_node_info",
+    description: "Get detailed information about the master/output node of the currently open Amplify shader graph, including all its input ports and properties.",
+    inputSchema: { type: "object", properties: {} },
+    handler: async (params) => JSON.stringify(await bridge.getAmplifyMasterNodeInfo(params), null, 2),
+  },
+  {
+    name: "unity_amplify_disconnect_all",
+    description: "Remove all connections from a specific node in the Amplify Shader Editor graph (both input and output connections).",
+    inputSchema: {
+      type: "object",
+      properties: {
+        nodeId: { type: "number", description: "Unique ID of the node to disconnect" },
+      },
+      required: ["nodeId"],
+    },
+    handler: async (params) => JSON.stringify(await bridge.disconnectAllAmplifyNode(params), null, 2),
+  },
+  {
+    name: "unity_amplify_duplicate_node",
+    description: "Duplicate a node in the Amplify Shader Editor graph. Creates a new node of the same type at a slight offset from the original.",
+    inputSchema: {
+      type: "object",
+      properties: {
+        nodeId: { type: "number", description: "Unique ID of the node to duplicate" },
+        offsetX: { type: "number", description: "X offset from original (default: 50)" },
+        offsetY: { type: "number", description: "Y offset from original (default: 50)" },
+      },
+      required: ["nodeId"],
+    },
+    handler: async (params) => JSON.stringify(await bridge.duplicateAmplifyNode(params), null, 2),
+  },
 
   {
     name: "unity_agents_list",
