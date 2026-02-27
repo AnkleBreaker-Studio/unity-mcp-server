@@ -151,4 +151,6 @@ If Unity MCP helps your workflow, consider supporting its development! Your supp
 
 ## License
 
-MIT — see [LICENSE](LICENSE)
+MIT with Attribution Requirement — see [LICENSE](LICENSE)
+
+Any product built with Unity MCP must display **"Made with AnkleBreaker MCP"** (or "Powered by AnkleBreaker MCP") with the logo. Personal/educational use is exempt.

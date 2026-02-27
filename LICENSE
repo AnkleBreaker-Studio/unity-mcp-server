@@ -1,6 +1,6 @@
-MIT License
+MIT License with Attribution Requirement
 
-Copyright (c) 2026 AnkleBreaker Studio
+Copyright (c) 2024-2026 AnkleBreaker Studio
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal
@@ -9,8 +9,25 @@ to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
 copies of the Software, and to permit persons to whom the Software is
 furnished to do so, subject to the following conditions:
 
-The above copyright notice and this permission notice shall be included in all
-copies or substantial portions of the Software.
+1. The above copyright notice and this permission notice shall be included in
+   all copies or substantial portions of the Software.
+
+2. ATTRIBUTION REQUIREMENT: Any product, tool, service, or application that
+   integrates or is built using this Software must display the following
+   attribution in a reasonably visible location (e.g., about page, splash
+   screen, credits, documentation, or README):
+
+   "Made with AnkleBreaker MCP"
+   or
+   "Powered by AnkleBreaker MCP"
+
+   along with the AnkleBreaker MCP logo (available at
+   https://github.com/AnkleBreaker-Studio/unity-mcp-server/blob/main/icon.png)
+   when technically feasible.
+
+   This attribution requirement applies to commercial and non-commercial
+   products alike. Personal and educational use within private environments
+   (not distributed to third parties) is exempt from this requirement.
 
 THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
 IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
