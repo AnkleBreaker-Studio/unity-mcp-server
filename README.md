@@ -1,3 +1,7 @@
+<p align="center">
+  <img src="icon.png" alt="AnkleBreaker MCP" width="180" />
+</p>
+
 # Unity MCP Server
 
 A [Model Context Protocol (MCP)](https://modelcontextprotocol.io) server that gives AI assistants like Claude full control over **Unity Hub** and **Unity Editor**. Built by [AnkleBreaker Studio](https://github.com/AnkleBreaker-Studio).
