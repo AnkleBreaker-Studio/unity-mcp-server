@@ -167,6 +167,59 @@ Features for uninstalled packages return helpful messages explaining what to ins
 
 **Port conflicts** — Change `UNITY_BRIDGE_PORT` in your Claude config and update the port in Unity's MCP Dashboard settings.
 
+## Why AnkleBreaker Unity MCP?
+
+AnkleBreaker Unity MCP is the most comprehensive MCP integration for Unity, purpose-built to leverage the full power of **Claude Cowork** and other AI assistants. Here's how it compares to alternatives:
+
+### Feature Comparison
+
+| Feature | **AnkleBreaker MCP** | **Bezi** | **Coplay MCP** | **Unity AI** |
+|---------|:-------------------:|:--------:|:--------------:|:------------:|
+| **Total Tools** | **200+** | ~30 | 34 | Limited (built-in) |
+| **Feature Categories** | **30+** | ~5 | ~5 | N/A |
+| **Non-Blocking Editor** | ✅ Full background operation | ❌ Freezes Unity during tasks | ✅ | ✅ |
+| **Open Source** | ✅ MIT License | ❌ Proprietary | ✅ MIT License | ❌ Proprietary |
+| **Claude Cowork Optimized** | ✅ Two-tier lazy loading | ❌ Not MCP-based | ⚠️ Basic | ❌ Not MCP-based |
+| **Multi-Instance Support** | ✅ Auto-discovery | ❌ | ❌ | ❌ |
+| **Multi-Agent Support** | ✅ Session tracking + queuing | ❌ | ❌ | ❌ |
+| **Unity Hub Control** | ✅ Install editors & modules | ❌ | ❌ | ❌ |
+| **Scene Hierarchy** | ✅ Full tree + pagination | ⚠️ Limited | ⚠️ Basic | ⚠️ Limited |
+| **Physics Tools** | ✅ Raycasts, overlap, settings | ❌ | ❌ | ❌ |
+| **Terrain Tools** | ✅ Full terrain pipeline | ❌ | ❌ | ❌ |
+| **Shader Graph** | ✅ Create, inspect, open | ❌ | ❌ | ❌ |
+| **Profiling & Debugging** | ✅ Profiler + Frame Debugger + Memory | ❌ | ❌ | ⚠️ Basic |
+| **Animation System** | ✅ Controllers, clips, parameters | ⚠️ Basic | ⚠️ Basic | ⚠️ Basic |
+| **NavMesh / Navigation** | ✅ Bake, agents, obstacles | ❌ | ❌ | ❌ |
+| **Particle Systems** | ✅ Full module editing | ❌ | ❌ | ❌ |
+| **MPPM Multiplayer** | ✅ Scenarios, start/stop | ❌ | ❌ | ❌ |
+| **Visual Inspection** | ✅ Scene + Game view capture | ❌ | ⚠️ Limited | ❌ |
+| **Play Mode Resilient** | ✅ Survives domain reload | ❌ | ❌ | N/A |
+| **Project Context** | ✅ Custom docs for AI agents | ❌ | ❌ | ⚠️ Built-in only |
+
+### Cost Comparison
+
+| Solution | Monthly Cost | What You Get |
+|----------|:----------:|--------------|
+| **AnkleBreaker MCP + Claude Pro** | **$20/mo** | 200+ tools, full Unity control, open source |
+| **AnkleBreaker MCP + Claude Max 5x** | **$100/mo** | Same + 5x usage for heavy workflows |
+| **AnkleBreaker MCP + Claude Max 20x** | **$200/mo** | Same + 20x usage for teams/studios |
+| **Bezi Pro** | $20/mo | ~30 tools, 800 credits/mo, freezes Unity |
+| **Bezi Advanced** | $60/mo | ~30 tools, 2400 credits/mo, freezes Unity |
+| **Bezi Team** | $200/mo | 3 seats, 8000 credits, still freezes Unity |
+| **Unity AI** | Included with Unity Pro/Enterprise | Limited AI tools, Unity Points system, no MCP |
+| **Coplay MCP** | Free (beta) | 34 tools, basic categories |
+
+### Key Advantages
+
+**vs. Bezi:**
+Bezi runs as a proprietary Unity plugin with its own credit-based billing — $20–$200/mo on top of your AI subscription. It has historically suffered from freezing the Unity Editor during AI tasks, blocking your workflow. AnkleBreaker MCP runs entirely in the background with zero editor impact, offers 6x more tools, and costs nothing beyond your existing Claude subscription.
+
+**vs. Coplay MCP:**
+Coplay MCP provides 34 tools across ~5 categories. AnkleBreaker MCP delivers 200+ tools across 30+ categories including advanced features like physics raycasts, terrain editing, shader graph management, profiling, NavMesh, particle systems, and MPPM multiplayer — none of which exist in Coplay. Our two-tier lazy loading system is specifically optimized for Claude Cowork's tool limits.
+
+**vs. Unity AI:**
+Unity AI (successor to Muse) is built into Unity 6.2+ but limited to Unity's own AI models and a credit-based "Unity Points" system. It cannot be used with Claude or any external AI assistant, has no MCP support, and offers a fraction of the automation capabilities. AnkleBreaker MCP works with any MCP-compatible AI while giving you full control over which AI models you use.
+
 ## Support the Project
 
 If Unity MCP helps your workflow, consider supporting its development! Your support helps fund new features, bug fixes, documentation, and more open-source game dev tools.
