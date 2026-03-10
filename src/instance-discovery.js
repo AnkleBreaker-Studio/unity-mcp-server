@@ -114,12 +114,24 @@ export async function validateSelectedInstance() {
 
     if (registryMatch) {
       // Registry still claims our project is on this port.
-      // Unity is very likely just compiling (main thread blocked → HTTP bridge unresponsive).
-      // Keep the selection — the bridge will respond once compilation finishes.
-      debugLog(
-        `Port ${savedPort} unresponsive but registry still lists ${saved.projectName} there — likely compiling. Keeping selection.`
-      );
-      return _selectedInstance;
+      // But check for staleness — if Unity crashed, OnDisable never fires and
+      // the entry persists forever. The plugin sends a heartbeat every 30s,
+      // so if lastSeen is older than the staleness timeout, Unity likely crashed.
+      if (isRegistryEntryStale(registryMatch)) {
+        debugLog(
+          `Port ${savedPort} unresponsive and registry entry is STALE (lastSeen: ${registryMatch.lastSeen}). Unity likely crashed. Proceeding to re-discovery.`
+        );
+        console.error(
+          `[MCP Discovery] Registry entry for "${saved.projectName}" on port ${savedPort} is stale — Unity may have crashed. Re-discovering...`
+        );
+      } else {
+        // Entry is fresh — Unity is very likely just compiling (main thread blocked → HTTP bridge unresponsive).
+        // Keep the selection — the bridge will respond once compilation finishes.
+        debugLog(
+          `Port ${savedPort} unresponsive but registry entry is fresh (lastSeen: ${registryMatch.lastSeen}) — likely compiling. Keeping selection.`
+        );
+        return _selectedInstance;
+      }
     }
 
     debugLog(`Port ${savedPort} unresponsive and not in registry — re-discovering...`);
@@ -145,12 +157,19 @@ export async function validateSelectedInstance() {
     (entry) => entry.projectPath && entry.projectPath === savedPath
   );
   if (registryFallback && registryFallback.port) {
-    debugLog(
-      `Project "${saved.projectName}" not responding but found in registry on port ${registryFallback.port} — likely compiling. Keeping selection with updated port.`
-    );
-    _selectedInstance = { ...saved, port: registryFallback.port };
-    persistState("selectedInstance", _selectedInstance);
-    return _selectedInstance;
+    // But check for staleness — a crashed Unity leaves a stale entry forever
+    if (isRegistryEntryStale(registryFallback)) {
+      debugLog(
+        `Project "${saved.projectName}" found in registry on port ${registryFallback.port} but entry is STALE (lastSeen: ${registryFallback.lastSeen}). Unity likely crashed. Clearing selection.`
+      );
+    } else {
+      debugLog(
+        `Project "${saved.projectName}" not responding but found in registry on port ${registryFallback.port} (fresh entry) — likely compiling. Keeping selection with updated port.`
+      );
+      _selectedInstance = { ...saved, port: registryFallback.port };
+      persistState("selectedInstance", _selectedInstance);
+      return _selectedInstance;
+    }
   }
 
   // Project truly gone — not responding AND not in registry
@@ -380,6 +399,43 @@ export async function autoSelectInstance() {
 }
 
 // ─── Internal helpers ───
+
+/**
+ * Check if a registry entry is stale (Unity likely crashed).
+ * The plugin updates `lastSeen` every ~30s via a heartbeat. If the entry's
+ * lastSeen timestamp is older than the staleness timeout, Unity likely crashed
+ * without calling OnDisable (which would have cleaned up the entry).
+ *
+ * If the entry has no `lastSeen` field (old plugin version), we fall back to
+ * `registeredAt`. If neither is present, we treat it as stale (no way to verify).
+ *
+ * @param {object} entry - A registry entry object.
+ * @returns {boolean} True if the entry is considered stale.
+ */
+function isRegistryEntryStale(entry) {
+  const timestamp = entry.lastSeen || entry.registeredAt;
+  if (!timestamp) {
+    // No timestamp at all — can't verify freshness, assume stale
+    return true;
+  }
+
+  try {
+    const entryTime = new Date(timestamp).getTime();
+    if (isNaN(entryTime)) return true; // Unparseable timestamp
+
+    const ageMs = Date.now() - entryTime;
+    const isStale = ageMs > CONFIG.registryStalenessTimeoutMs;
+
+    if (isStale) {
+      const ageMinutes = Math.round(ageMs / 60000);
+      debugLog(`Registry entry staleness check: age=${ageMinutes}min, threshold=${CONFIG.registryStalenessTimeoutMs / 60000}min → STALE`);
+    }
+
+    return isStale;
+  } catch {
+    return true; // Error parsing — assume stale
+  }
+}
 
 /**
  * Read the instance registry file.

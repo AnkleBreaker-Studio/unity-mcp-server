@@ -36,6 +36,11 @@ export const CONFIG = {
   // Default Unity Editor path pattern (version will be interpolated)
   editorPathPattern: process.env.UNITY_EDITOR_PATH || "C:\\Program Files\\Unity\\Hub\\Editor\\{version}\\Editor\\Unity.exe",
 
+  // Registry staleness timeout (ms) — if a registry entry's lastSeen timestamp is older
+  // than this AND the port is unresponsive, the entry is considered stale (Unity likely crashed).
+  // The plugin sends a heartbeat every 30s, so 5 minutes gives plenty of margin.
+  registryStalenessTimeoutMs: parseInt(process.env.UNITY_REGISTRY_STALENESS_TIMEOUT || "300000"), // 5 minutes
+
   // Response size limits (bytes) — protects against Write EOF errors on large projects
   // Soft limit: log a warning but still return the response
   responseSoftLimitBytes: parseInt(process.env.UNITY_RESPONSE_SOFT_LIMIT || String(2 * 1024 * 1024)),   // 2 MB
