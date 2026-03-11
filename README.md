@@ -190,7 +190,7 @@ AnkleBreaker Unity MCP is the most comprehensive MCP integration for Unity, purp
 | **Total Tools** | **200+** | ~30 | 34 | Limited (built-in) |
 | **Feature Categories** | **30+** | ~5 | ~5 | N/A |
 | **Non-Blocking Editor** | ✅ Full background operation | ❌ Freezes Unity during tasks | ✅ | ✅ |
-| **Open Source** | ✅ MIT License | ❌ Proprietary | ✅ MIT License | ❌ Proprietary |
+| **Open Source** | ✅ AnkleBreaker Open License | ❌ Proprietary | ✅ MIT License | ❌ Proprietary |
 | **Claude Cowork Optimized** | ✅ Two-tier lazy loading | ❌ Not MCP-based | ⚠️ Basic | ❌ Not MCP-based |
 | **Multi-Instance Support** | ✅ Auto-discovery | ❌ | ❌ | ❌ |
 | **Multi-Agent Support** | ✅ Session tracking + queuing | ❌ | ❌ | ❌ |
@@ -214,7 +214,7 @@ AnkleBreaker Unity MCP is the most comprehensive MCP integration for Unity, purp
 > **AnkleBreaker Unity MCP is completely free and open source.** The prices below reflect only the cost of the AI assistant (Claude) itself — the MCP plugin and server are $0.
 
 | Solution | Monthly Cost | What You Get |
-|----------|:----------:|--------------|
+|----------|:----------:|--------------| 
 | **AnkleBreaker MCP (free) + Claude Pro** | **$20/mo** | 200+ tools, full Unity control, open source — MCP is free, price is Claude only |
 | **AnkleBreaker MCP (free) + Claude Max 5x** | **$100/mo** | Same + 5x usage for heavy workflows — MCP is free, price is Claude only |
 | **AnkleBreaker MCP (free) + Claude Max 20x** | **$200/mo** | Same + 20x usage for teams/studios — MCP is free, price is Claude only |
@@ -257,6 +257,6 @@ If Unity MCP helps your workflow, consider supporting its development! Your supp
 
 ## License
 
-MIT with Attribution Requirement — see [LICENSE](LICENSE)
+AnkleBreaker Open License v1.0 — see [LICENSE](LICENSE)
 
-Any product built with Unity MCP must display **"Made with AnkleBreaker MCP"** (or "Powered by AnkleBreaker MCP") with the logo. Personal/educational use is exempt.
+This license requires: (1) including the copyright notice, (2) displaying **"Made with AnkleBreaker MCP"** (or "Powered by AnkleBreaker MCP") attribution in any product built with it (personal/educational use is exempt), and (3) not reselling behind a paywall without adding significant new functionality. See the full [LICENSE](LICENSE) for details.
