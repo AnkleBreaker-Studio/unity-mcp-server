@@ -146,6 +146,11 @@ const CORE_TOOLS = new Set([
   "unity_queue_info",
   "unity_agents_list",
   "unity_agent_log",
+
+  // Testing
+  "unity_testing_run_tests",
+  "unity_testing_get_job",
+  "unity_testing_list_tests",
 ]);
 
 /**
