@@ -7,7 +7,7 @@
 
 import { readFileSync } from "fs";
 import { CONFIG } from "./config.js";
-import { debugLog } from "./state-persistence.js";
+import { debugLog, persistState, loadState } from "./state-persistence.js";
 
 // ─── Per-Agent Session State ───
 // Tracks which Unity instance each agent is targeting.
@@ -220,7 +220,19 @@ export async function selectInstance(port) {
 
   _agentInstances.set(_currentAgentId, match);
   _agentSelectionRequired.set(_currentAgentId, false);
-  debugLog(`selectInstance: agent ${_currentAgentId} selected port ${port} (${match.projectName})`);
+
+  // Persist to disk so selection survives MCP process restarts.
+  // Uses projectPath as the stable key (ports can change, paths don't).
+  persistState('selectedInstance', {
+    port: match.port,
+    projectName: match.projectName,
+    projectPath: match.projectPath,
+    unityVersion: match.unityVersion,
+    isClone: match.isClone,
+    cloneIndex: match.cloneIndex,
+  });
+
+  debugLog(`selectInstance: agent ${_currentAgentId} selected port ${port} (${match.projectName}) — persisted to disk`);
 
   return {
     success: true,
@@ -386,8 +398,47 @@ export async function autoSelectInstance() {
     };
   }
 
-  // Multiple instances — require user selection (but only if none already selected for this agent)
-  const agentSelected = _agentInstances.get(_currentAgentId);
+  // Multiple instances — check in-memory selection first, then persisted selection
+  let agentSelected = _agentInstances.get(_currentAgentId);
+
+  // If no in-memory selection (e.g. process restarted), try to restore from disk
+  if (!agentSelected) {
+    const persisted = loadState('selectedInstance');
+    if (persisted && persisted.projectPath) {
+      // Match by projectPath (stable) — port may have changed since last session
+      const match = instances.find(
+        (inst) => inst.projectPath && inst.projectPath === persisted.projectPath
+      );
+      if (match) {
+        _agentInstances.set(_currentAgentId, match);
+        _agentSelectionRequired.set(_currentAgentId, false);
+        agentSelected = match;
+
+        // Update persisted port if it changed
+        if (match.port !== persisted.port) {
+          persistState('selectedInstance', {
+            port: match.port,
+            projectName: match.projectName,
+            projectPath: match.projectPath,
+            unityVersion: match.unityVersion,
+            isClone: match.isClone,
+            cloneIndex: match.cloneIndex,
+          });
+        }
+
+        debugLog(`autoSelect: agent ${_currentAgentId} → restored persisted selection: ${match.projectName} (port ${match.port})`);
+        return {
+          autoSelected: true,
+          instance: match,
+          instances,
+          message: `Restored previous selection: ${match.projectName} (port ${match.port})`,
+        };
+      } else {
+        debugLog(`autoSelect: persisted project "${persisted.projectName}" not found among running instances — ignoring`);
+      }
+    }
+  }
+
   if (!agentSelected) {
     _agentSelectionRequired.set(_currentAgentId, true);
     debugLog(`autoSelect: agent ${_currentAgentId} → ${instances.length} instances found, selection required`);
