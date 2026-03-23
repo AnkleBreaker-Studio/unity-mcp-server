@@ -89,6 +89,63 @@ export const editorTools = [
     },
     handler: async (params) => JSON.stringify(await bridge.sendCommand("vrse/open-room-manager-config", params), null, 2),
   },
+  {
+    name: "unity_vrse_get_selected_project",
+    description: "Get the currently selected VRseBuilder project.",
+    inputSchema: { type: "object", properties: {} },
+    handler: async () => JSON.stringify(await bridge.sendCommand("vrse/get-selected-project", {}), null, 2),
+  },
+  {
+    name: "unity_vrse_get_project_config",
+    description: "Get RoomManagerConfig and scene paths for the selected VRseBuilder project.",
+    inputSchema: {
+      type: "object",
+      properties: {
+        projectName: { type: "string", description: "Optional project name override" }
+      }
+    },
+    handler: async (params) => JSON.stringify(await bridge.sendCommand("vrse/get-project-config", params), null, 2),
+  },
+  {
+    name: "unity_vrse_ensure_project_settings",
+    description: "Ensure VRseBuilder project settings assets exist for the selected project.",
+    inputSchema: {
+      type: "object",
+      properties: {
+        projectName: { type: "string", description: "Optional project name override" }
+      }
+    },
+    handler: async (params) => JSON.stringify(await bridge.sendCommand("vrse/ensure-project-settings", params), null, 2),
+  },
+  {
+    name: "unity_vrse_apply_project_settings",
+    description: "Auto-apply VRseBuilder project settings for the selected project.",
+    inputSchema: {
+      type: "object",
+      properties: {
+        projectName: { type: "string", description: "Optional project name override" }
+      }
+    },
+    handler: async (params) => JSON.stringify(await bridge.sendCommand("vrse/apply-project-settings", params), null, 2),
+  },
+  {
+    name: "unity_vrse_open_studio_project_window",
+    description: "Open the VRse Studio project selection window in the Unity editor.",
+    inputSchema: { type: "object", properties: {} },
+    handler: async () => JSON.stringify(await bridge.sendCommand("vrse/open-studio-project-window", {}), null, 2),
+  },
+  {
+    name: "unity_vrse_open_project_config_window",
+    description: "Open the VRseBuilder project config window in the Unity editor.",
+    inputSchema: { type: "object", properties: {} },
+    handler: async () => JSON.stringify(await bridge.sendCommand("vrse/open-project-config-window", {}), null, 2),
+  },
+  {
+    name: "unity_vrse_open_build_tool",
+    description: "Open the VRseBuilder build tool window in the Unity editor.",
+    inputSchema: { type: "object", properties: {} },
+    handler: async () => JSON.stringify(await bridge.sendCommand("vrse/open-build-tool", {}), null, 2),
+  },
   // ─── Connection ───
   {
     name: "unity_editor_ping",

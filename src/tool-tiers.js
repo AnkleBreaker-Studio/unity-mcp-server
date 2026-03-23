@@ -66,6 +66,13 @@ const CORE_TOOLS = new Set([
   "unity_vrse_open_menu_scene",
   "unity_vrse_open_module",
   "unity_vrse_open_room_manager_config",
+  "unity_vrse_get_selected_project",
+  "unity_vrse_get_project_config",
+  "unity_vrse_ensure_project_settings",
+  "unity_vrse_apply_project_settings",
+  "unity_vrse_open_studio_project_window",
+  "unity_vrse_open_project_config_window",
+  "unity_vrse_open_build_tool",
 
   // Scene management
   "unity_scene_info",
