@@ -2,6 +2,93 @@
 import * as bridge from "../unity-editor-bridge.js";
 
 export const editorTools = [
+  // VRseBuilder SDK
+  {
+    name: "unity_vrse_status",
+    description: "Get VRseBuilder SDK login state, selected project, and active scene status.",
+    inputSchema: { type: "object", properties: {} },
+    handler: async () => JSON.stringify(await bridge.sendCommand("vrse/status", {}), null, 2),
+  },
+  {
+    name: "unity_vrse_login",
+    description: "Log into VRseBuilder SDK using username and password.",
+    inputSchema: {
+      type: "object",
+      properties: {
+        username: { type: "string", description: "VRseBuilder username" },
+        password: { type: "string", description: "VRseBuilder password" }
+      },
+      required: ["username", "password"]
+    },
+    handler: async ({ username, password }) => JSON.stringify(await bridge.sendCommand("vrse/login", { username, password }), null, 2),
+  },
+  {
+    name: "unity_vrse_list_projects",
+    description: "List accessible VRse Studio projects and local VRseBuilder project configs.",
+    inputSchema: { type: "object", properties: {} },
+    handler: async () => JSON.stringify(await bridge.sendCommand("vrse/list-projects", {}), null, 2),
+  },
+  {
+    name: "unity_vrse_select_project",
+    description: "Select the active VRseBuilder project by name or backend project ID.",
+    inputSchema: {
+      type: "object",
+      properties: {
+        projectName: { type: "string", description: "Project name" },
+        projectId: { type: "string", description: "Backend project ID" }
+      }
+    },
+    handler: async (params) => JSON.stringify(await bridge.sendCommand("vrse/select-project", params), null, 2),
+  },
+  {
+    name: "unity_vrse_list_modules",
+    description: "List VRseBuilder modules and experiences for the selected project or an explicitly provided project.",
+    inputSchema: {
+      type: "object",
+      properties: {
+        projectName: { type: "string", description: "Optional project name override" }
+      }
+    },
+    handler: async (params) => JSON.stringify(await bridge.sendCommand("vrse/list-modules", params), null, 2),
+  },
+  {
+    name: "unity_vrse_open_menu_scene",
+    description: "Open the selected VRseBuilder project's menu scene.",
+    inputSchema: {
+      type: "object",
+      properties: {
+        projectName: { type: "string", description: "Optional project name override" }
+      }
+    },
+    handler: async (params) => JSON.stringify(await bridge.sendCommand("vrse/open-menu-scene", params), null, 2),
+  },
+  {
+    name: "unity_vrse_open_module",
+    description: "Open a VRseBuilder module experience dev scene. Defaults to the training experience if no specific experience is provided.",
+    inputSchema: {
+      type: "object",
+      properties: {
+        projectName: { type: "string", description: "Optional project name override" },
+        moduleId: { type: "string", description: "Module ID" },
+        moduleName: { type: "string", description: "Module name" },
+        experienceId: { type: "string", description: "Experience ID" },
+        experienceName: { type: "string", description: "Experience name" },
+        experienceType: { type: "string", description: "Training or Evaluation" }
+      }
+    },
+    handler: async (params) => JSON.stringify(await bridge.sendCommand("vrse/open-module", params), null, 2),
+  },
+  {
+    name: "unity_vrse_open_room_manager_config",
+    description: "Open the selected VRseBuilder project's RoomManagerConfig asset.",
+    inputSchema: {
+      type: "object",
+      properties: {
+        projectName: { type: "string", description: "Optional project name override" }
+      }
+    },
+    handler: async (params) => JSON.stringify(await bridge.sendCommand("vrse/open-room-manager-config", params), null, 2),
+  },
   // ─── Connection ───
   {
     name: "unity_editor_ping",

@@ -3,6 +3,7 @@
 // Supports both queue mode (async ticket-based) and legacy sync mode
 import { CONFIG } from "./config.js";
 import { getActiveBridgeUrl } from "./instance-discovery.js";
+import { debugLog } from "./state-persistence.js";
 
 // Dynamic bridge URL — resolved per-call based on selected instance
 function getBridgeUrl() {
@@ -205,7 +206,7 @@ async function sendCommandLegacyMode(command, params = {}) {
       // Transient server error — retry
       if (isTransientError(null, response) && attempt < MAX_RETRIES) {
         const delay = RETRY_BASE_DELAY_MS * Math.pow(2, attempt);
-        console.error(
+        debugLog(
           `[MCP Bridge] HTTP ${response.status} on ${command}, retrying in ${delay}ms (${attempt + 1}/${MAX_RETRIES})...`
         );
         await sleep(delay);
@@ -221,7 +222,7 @@ async function sendCommandLegacyMode(command, params = {}) {
 
       // If we retried, log that we recovered
       if (attempt > 0) {
-        console.error(
+        debugLog(
           `[MCP Bridge] Recovered after ${attempt} retries for ${command}`
         );
       }
@@ -234,7 +235,7 @@ async function sendCommandLegacyMode(command, params = {}) {
       // Transient connection error — retry with backoff
       if (isTransientError(error, null) && attempt < MAX_RETRIES) {
         const delay = RETRY_BASE_DELAY_MS * Math.pow(2, attempt);
-        console.error(
+        debugLog(
           `[MCP Bridge] ${error.code || error.name || "Error"} on ${command}, retrying in ${delay}ms (${attempt + 1}/${MAX_RETRIES})...`
         );
         await sleep(delay);
@@ -281,7 +282,7 @@ export async function sendCommand(command, params = {}) {
           const ticketData = await submitToQueue(command, bodyString);
           const ticketId = ticketData.ticketId;
 
-          console.debug(`[MCP Bridge] Submitted ${command} to queue, ticket: ${ticketId}`);
+          debugLog(`[MCP Bridge] Submitted ${command} to queue, ticket: ${ticketId}`);
 
           // Poll for completion
           const result = await pollQueueStatus(ticketId);
@@ -296,7 +297,7 @@ export async function sendCommand(command, params = {}) {
           // Check if it's a transient error worth retrying
           if (isTransientError(submitError, null) && attempt < MAX_RETRIES) {
             const delay = RETRY_BASE_DELAY_MS * Math.pow(2, attempt);
-            console.error(
+            debugLog(
               `[MCP Bridge] Error submitting to queue: ${submitError.message}, retrying in ${delay}ms (${attempt + 1}/${MAX_RETRIES})...`
             );
             await sleep(delay);
@@ -305,7 +306,7 @@ export async function sendCommand(command, params = {}) {
 
           // Check if it's a 404 (queue not supported) — match "HTTP 404" or raw status code
           if (submitError.status === 404 || (submitError.message && /HTTP\s*404/.test(submitError.message))) {
-            console.warn(
+            debugLog(
               `[MCP Bridge] Queue mode not supported (HTTP 404), falling back to legacy sync mode`
             );
             _queueModeDetermined = true;
@@ -320,7 +321,7 @@ export async function sendCommand(command, params = {}) {
 
       // If we get here, queue submit failed after retries
       if (submitLastError) {
-        console.warn(
+        debugLog(
           `[MCP Bridge] Queue mode failed after retries, falling back to legacy sync mode: ${submitLastError.message}`
         );
         _queueModeDetermined = true;
@@ -328,7 +329,7 @@ export async function sendCommand(command, params = {}) {
         return sendCommandLegacyMode(command, params);
       }
     } catch (error) {
-      console.warn(
+      debugLog(
         `[MCP Bridge] Unexpected error in queue mode, falling back to legacy: ${error.message}`
       );
       _queueModeDetermined = true;

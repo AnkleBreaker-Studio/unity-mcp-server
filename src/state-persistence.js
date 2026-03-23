@@ -91,7 +91,7 @@ export function debugLog(message) {
     mkdirSync(STATE_DIR, { recursive: true });
     appendFileSync(DEBUG_LOG, `[${ts}] [PID:${pid}] ${message}\n`);
   } catch {
-    // Last-resort: try console.error
-    console.error(`[MCP Debug] ${message}`);
+    // Last-resort: console log disabled to prevent stdout corruption in AB Unity MCP
+    // console.error(`[MCP Debug] ${message}`);
   }
 }

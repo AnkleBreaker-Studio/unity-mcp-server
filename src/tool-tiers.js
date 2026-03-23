@@ -1,3 +1,4 @@
+import { debugLog } from './state-persistence.js';
 // AnkleBreaker Unity MCP — Two-tier tool system
 // Reduces the exposed tool count to avoid overwhelming MCP clients.
 //
@@ -55,6 +56,16 @@ const CORE_TOOLS = new Set([
   "unity_editor_ping",
   "unity_editor_state",
   "unity_project_info",
+  
+  // VRseBuilder (common tools for VRSE integration)
+  "unity_vrse_status",
+  "unity_vrse_login",
+  "unity_vrse_list_projects",
+  "unity_vrse_select_project",
+  "unity_vrse_list_modules",
+  "unity_vrse_open_menu_scene",
+  "unity_vrse_open_module",
+  "unity_vrse_open_room_manager_config",
 
   // Scene management
   "unity_scene_info",
@@ -321,7 +332,7 @@ export function splitToolTiers(allEditorTools) {
       const route = toolNameToRoute(tool);
       if (route) {
         try {
-          console.debug(`[MCP] Lazy-loading tool "${tool}" via route "${route}"`);
+          debugLog(`[MCP] Lazy-loading tool "${tool}" via route "${route}"`);
           const result = await sendCommand(route, params || {});
           return JSON.stringify(result, null, 2);
         } catch (err) {

@@ -66,7 +66,7 @@ function truncateResponseIfNeeded(contentBlocks) {
   if (totalSize > hardLimit) {
     const sizeMB = (totalSize / (1024 * 1024)).toFixed(1);
     const limitMB = (hardLimit / (1024 * 1024)).toFixed(1);
-    console.error(`[MCP] Response truncated: ${sizeMB}MB exceeds hard limit of ${limitMB}MB`);
+    debugLog(`[MCP] Response truncated: ${sizeMB}MB exceeds hard limit of ${limitMB}MB`);
     return [
       {
         type: "text",
@@ -86,7 +86,7 @@ function truncateResponseIfNeeded(contentBlocks) {
 
   if (totalSize > softLimit) {
     const sizeMB = (totalSize / (1024 * 1024)).toFixed(1);
-    console.error(`[MCP] Large response warning: ${sizeMB}MB exceeds soft limit`);
+    debugLog(`[MCP] Large response warning: ${sizeMB}MB exceeds soft limit`);
     // Still return the data but add a warning
     contentBlocks.push({
       type: "text",
@@ -116,7 +116,7 @@ const ALL_TOOLS = [
   ...metaTools,
   ...contextTools,
 ];
-console.error(
+debugLog(
   `[MCP] Tool tiers: ${coreCount} core + ${advancedCount} advanced (via unity_advanced_tool) = ${coreCount + advancedCount} total, ${ALL_TOOLS.length} exposed`
 );
 
@@ -263,7 +263,7 @@ async function ensureInstanceDiscovery() {
 
     return prompt;
   } catch (err) {
-    console.error(`[MCP] Instance discovery failed: ${err.message}`);
+    debugLog(`[MCP] Instance discovery failed: ${err.message}`);
     return null;
   }
 }
@@ -517,12 +517,12 @@ async function main() {
   const transport = new StdioServerTransport();
   await server.connect(transport);
   debugLog(`=== SERVER START === v2.25.0, agent=${PROCESS_AGENT_ID}, discoveryDone=${_discoveryDonePerAgent.get(PROCESS_AGENT_ID) || false}, selectedPort=${getSelectedInstance()?.port || 'null'}`);
-  console.error(
+  debugLog(
     `Unity MCP Server running on stdio (agent: ${PROCESS_AGENT_ID})`
   );
 }
 
 main().catch((error) => {
-  console.error("Fatal error:", error);
+  debugLog(`Fatal error: ${error.message}`);
   process.exit(1);
 });

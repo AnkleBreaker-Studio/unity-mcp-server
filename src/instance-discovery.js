@@ -106,7 +106,7 @@ export async function validateSelectedInstance() {
     if (info && info.projectPath) {
       // PORT SWAP DETECTED: a different project is on the saved port
       debugLog(`⚠ Port swap detected! Port ${savedPort} now hosts "${info.projectName}" (expected "${saved.projectName}")`);
-      console.error(
+      debugLog(
         `[MCP Discovery] Port swap detected: port ${savedPort} now hosts "${info.projectName}" instead of "${saved.projectName}". Re-discovering...`
       );
     }
@@ -290,7 +290,7 @@ export async function discoverInstances() {
       instances = validated.filter((inst) => inst !== null);
     }
   } catch (err) {
-    console.error(`[MCP Discovery] Error reading registry: ${err.message}`);
+    debugLog(`[MCP Discovery] Error reading registry: ${err.message}`);
   }
 
   // Step 2: Port scan fallback (find instances not in registry)
