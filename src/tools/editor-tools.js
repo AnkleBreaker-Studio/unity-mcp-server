@@ -474,6 +474,25 @@ export const editorTools = [
     handler: async () => JSON.stringify(await bridge.clearConsoleLog(), null, 2),
   },
 
+  // ─── Compilation ───
+  {
+    name: "unity_get_compilation_errors",
+    description:
+      "Get C# compilation errors and warnings from the Unity Editor. " +
+      "Uses CompilationPipeline directly — independent of the console log buffer. " +
+      "Not affected by console clear or Play Mode log flooding. " +
+      "Returns errors from the last compilation cycle. " +
+      "Use this instead of unity_console_log when diagnosing script compilation issues.",
+    inputSchema: {
+      type: "object",
+      properties: {
+        count: { type: "number", description: "Max number of entries to retrieve (default: 50)" },
+        severity: { type: "string", description: "Filter: 'error', 'warning', or 'all' (default: 'all')" },
+      },
+    },
+    handler: async (params) => JSON.stringify(await bridge.getCompilationErrors(params), null, 2),
+  },
+
   // ─── Play Mode ───
   {
     name: "unity_play_mode",
