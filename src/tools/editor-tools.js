@@ -475,6 +475,26 @@ export const editorTools = [
   },
 
   // â”€â”€â”€ Play Mode â”€â”€â”€
+  // ─── Compilation ───
+  {
+    name: "unity_get_compilation_errors",
+    description:
+      "Get C# compilation errors and warnings from the Unity Editor. " +
+      "Uses CompilationPipeline directly — independent of the console log buffer. " +
+      "Not affected by console clear or Play Mode log flooding. " +
+      "Returns errors from the last compilation cycle. " +
+      "Use this instead of unity_console_log when diagnosing script compilation issues.",
+    inputSchema: {
+      type: "object",
+      properties: {
+        count: { type: "number", description: "Max number of entries to retrieve (default: 50)" },
+        severity: { type: "string", description: "Filter: 'error', 'warning', or 'all' (default: 'all')" },
+      },
+    },
+    handler: async (params) => JSON.stringify(await bridge.getCompilationErrors(params), null, 2),
+  },
+
+  // ─── Play Mode ───
   {
     name: "unity_play_mode",
     description: "Control Unity Editor play mode: enter play, pause, or stop.",
@@ -4148,4 +4168,135 @@ export const editorTools = [
     handler: async () => JSON.stringify(await bridge.sendCommand("scenario/info", {}), null, 2),
   },
 
+  // ─── Testing ───
+  {
+    name: "unity_testing_run_tests",
+    description:
+      "Start a Unity Test Runner test run. Returns a job ID immediately — use unity_testing_get_job to poll for progress and results. " +
+      "Supports EditMode and PlayMode tests with optional filters by test name, category, assembly, or group.",
+    inputSchema: {
+      type: "object",
+      properties: {
+        mode: {
+          type: "string",
+          description: "Test mode: 'EditMode' or 'PlayMode' (default: EditMode)",
+          enum: ["EditMode", "PlayMode"],
+        },
+        testNames: {
+          type: "array",
+          items: { type: "string" },
+          description: "Run only tests matching these full names (e.g. ['MyNamespace.MyTestClass.MyTest'])",
+        },
+        categories: {
+          type: "array",
+          items: { type: "string" },
+          description: "Run only tests in these NUnit categories",
+        },
+        assemblies: {
+          type: "array",
+          items: { type: "string" },
+          description: "Run only tests from these assembly names (e.g. ['Augmentus.Repository.Tests'])",
+        },
+        groupNames: {
+          type: "array",
+          items: { type: "string" },
+          description: "Run only tests in these groups",
+        },
+        clearStuck: {
+          type: "boolean",
+          description: "Force-clear a stuck test job before starting a new one",
+        },
+      },
+    },
+    handler: async (params) => {
+      const result = await bridge.runTests(params);
+      // If the run started successfully, auto-poll for a few seconds to provide early feedback
+      if (result.jobId && result.status === "running") {
+        // Wait briefly then check for early results
+        await new Promise((r) => setTimeout(r, 2000));
+        try {
+          const status = await bridge.getTestJob({ jobId: result.jobId });
+          return JSON.stringify(status, null, 2);
+        } catch (_) {
+          return JSON.stringify(result, null, 2);
+        }
+      }
+      return JSON.stringify(result, null, 2);
+    },
+  },
+  {
+    name: "unity_testing_get_job",
+    description:
+      "Get the status and results of a test run job. If no jobId is provided, returns the latest job. " +
+      "Poll this after calling unity_testing_run_tests until status is 'succeeded' or 'failed'. " +
+      "Use waitTimeout for server-side polling to avoid repeated calls.",
+    inputSchema: {
+      type: "object",
+      properties: {
+        jobId: {
+          type: "string",
+          description: "The job ID returned by unity_testing_run_tests. Omit to get the latest job.",
+        },
+        includeDetails: {
+          type: "boolean",
+          description: "Include full results for every test (name, status, duration, message, stackTrace)",
+        },
+        includeFailedOnly: {
+          type: "boolean",
+          description: "Include detailed results only for failed/inconclusive tests",
+        },
+        waitTimeout: {
+          type: "number",
+          description:
+            "Server-side wait timeout in seconds. If set, polls Unity every 2s until tests complete or timeout expires. " +
+            "Reduces client-side polling. Recommended: 30-60 seconds.",
+        },
+      },
+    },
+    handler: async (params) => {
+      const waitTimeout = params?.waitTimeout;
+      if (waitTimeout && waitTimeout > 0) {
+        // Server-side polling loop
+        const deadline = Date.now() + waitTimeout * 1000;
+        let lastResult;
+        while (Date.now() < deadline) {
+          lastResult = await bridge.getTestJob(params);
+          const status = lastResult?.status;
+          if (status === "succeeded" || status === "failed") {
+            return JSON.stringify(lastResult, null, 2);
+          }
+          // Wait 2 seconds before next poll
+          await new Promise((r) => setTimeout(r, 2000));
+        }
+        // Timeout — return last known state
+        return JSON.stringify(lastResult || (await bridge.getTestJob(params)), null, 2);
+      }
+      return JSON.stringify(await bridge.getTestJob(params), null, 2);
+    },
+  },
+  {
+    name: "unity_testing_list_tests",
+    description:
+      "List available tests in the Unity project. Returns test names, categories, and run state. " +
+      "Use this to discover what tests exist before running them.",
+    inputSchema: {
+      type: "object",
+      properties: {
+        mode: {
+          type: "string",
+          description: "Test mode: 'EditMode' or 'PlayMode' (default: EditMode)",
+          enum: ["EditMode", "PlayMode"],
+        },
+        nameFilter: {
+          type: "string",
+          description: "Filter tests by name (case-insensitive substring match)",
+        },
+        maxResults: {
+          type: "number",
+          description: "Maximum number of tests to return (default: 200)",
+        },
+      },
+    },
+    handler: async (params) => JSON.stringify(await bridge.listTests(params || {}), null, 2),
+  },
 ];

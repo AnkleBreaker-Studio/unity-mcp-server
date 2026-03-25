@@ -530,6 +530,10 @@ export async function clearConsoleLog() {
   return sendCommand("console/clear");
 }
 
+export async function getCompilationErrors(params) {
+  return sendCommand("compilation/errors", params);
+}
+
 export async function playMode(action) {
   return sendCommand("editor/play-mode", { action }); // "play", "pause", "stop"
 }
@@ -1637,3 +1641,14 @@ export async function getProjectContext(category = null) {
   return response.json();
 }
 
+// ─── Testing ───
+
+export async function runTests(params) {
+  return sendCommand("testing/run-tests", params);
+}
+export async function getTestJob(params) {
+  return sendCommand("testing/get-job", params);
+}
+export async function listTests(params) {
+  return sendCommand("testing/list-tests", params);
+}

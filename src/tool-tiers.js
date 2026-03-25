@@ -103,9 +103,10 @@ const CORE_TOOLS = new Set([
   "unity_build",
   "unity_play_mode",
 
-  // Console
+  // Console & Compilation
   "unity_console_log",
   "unity_console_clear",
+  "unity_get_compilation_errors",
 
   // Editor actions
   "unity_execute_menu_item",
