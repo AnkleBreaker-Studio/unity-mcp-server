@@ -8,6 +8,14 @@
 
 **AnkleBreaker Unity MCP** turns your AI assistant into a full Unity co-pilot — create scenes, manipulate GameObjects, manage components, run builds, profile performance, edit Shader Graphs, control Amplify Shader Editor, sculpt terrain, bake NavMesh, manage animations, run multiplayer playmode scenarios, and much more — all without leaving your AI chat. Works with Claude Desktop, Claude Cowork, Cursor, Windsurf, and any tool that supports the Model Context Protocol.
 
+<p align="center">
+  <img src="docs/unity-mcp-demo.gif" alt="Unity MCP Demo — AI controlling Unity Editor via Model Context Protocol" width="800" />
+</p>
+
+<p align="center">
+  <img src="docs/unity-mcp-architecture.gif" alt="Unity MCP Architecture — AI Assistant → MCP Server → Unity Plugin → Unity Editor" width="800" />
+</p>
+
 ## Features
 
 **268 tools** covering the full Unity workflow:
@@ -64,6 +72,10 @@ Claude / AI Assistant ←→ MCP Server (this repo) ←→ Unity Editor Plugin (
 This server communicates with:
 - **Unity Hub** via its CLI (supports both modern `--headless` and legacy `-- --headless` syntax)
 - **Unity Editor** via the companion [unity-mcp-plugin](https://github.com/AnkleBreaker-Studio/unity-mcp-plugin) which runs an HTTP API inside the editor
+
+<p align="center">
+  <img src="docs/unity-mcp-features.gif" alt="Unity MCP Features — 268 tools across 30+ categories for AI-powered game development" width="800" />
+</p>
 
 ### Two-Tier Tool System
 
