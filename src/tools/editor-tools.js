@@ -279,6 +279,109 @@ export const editorTools = [
     handler: async (params) => JSON.stringify(await bridge.sendCommand("vrse/story-validate", params), null, 2),
   },
 
+  {
+    name: "unity_vrse_story_move_action",
+    description: "Reorder an action within a moment section or trigger set.",
+    inputSchema: {
+      type: "object",
+      properties: {
+        storyCreatorName: { type: "string", description: "Optional StoryCreator GameObject name override" },
+        chapterIndex: { type: "number", description: "Chapter index" },
+        momentIndex: { type: "number", description: "Moment index" },
+        section: { type: "string", description: "onAwake, onStart, onFirstWarning, onLastWarning, onEnd, onWrong, or onRight" },
+        triggerSetIndex: { type: "number", description: "Required when section is onWrong or onRight" },
+        fromIndex: { type: "number", description: "Current action index" },
+        toIndex: { type: "number", description: "Destination action index" }
+      },
+      required: ["chapterIndex", "momentIndex", "section", "fromIndex", "toIndex"]
+    },
+    handler: async (params) => JSON.stringify(await bridge.sendCommand("vrse/story-move-action", params), null, 2),
+  },
+  {
+    name: "unity_vrse_story_duplicate_action",
+    description: "Duplicate an action in-place within a moment section or trigger set.",
+    inputSchema: {
+      type: "object",
+      properties: {
+        storyCreatorName: { type: "string", description: "Optional StoryCreator GameObject name override" },
+        chapterIndex: { type: "number", description: "Chapter index" },
+        momentIndex: { type: "number", description: "Moment index" },
+        section: { type: "string", description: "onAwake, onStart, onFirstWarning, onLastWarning, onEnd, onWrong, or onRight" },
+        triggerSetIndex: { type: "number", description: "Required when section is onWrong or onRight" },
+        nodeIndex: { type: "number", description: "Action index to duplicate" }
+      },
+      required: ["chapterIndex", "momentIndex", "section", "nodeIndex"]
+    },
+    handler: async (params) => JSON.stringify(await bridge.sendCommand("vrse/story-duplicate-action", params), null, 2),
+  },
+  {
+    name: "unity_vrse_story_apply_action_to_multiple_moments",
+    description: "Copy one action node to multiple target moments.",
+    inputSchema: {
+      type: "object",
+      properties: {
+        storyCreatorName: { type: "string", description: "Optional StoryCreator GameObject name override" },
+        chapterIndex: { type: "number", description: "Source chapter index" },
+        momentIndex: { type: "number", description: "Source moment index" },
+        section: { type: "string", description: "Source section" },
+        triggerSetIndex: { type: "number", description: "Source trigger set index when using onWrong or onRight" },
+        nodeIndex: { type: "number", description: "Source action index" },
+        targets: {
+          type: "array",
+          description: "Target moments. Each entry may override section and triggerSetIndex; otherwise the source values are reused.",
+          items: {
+            type: "object",
+            properties: {
+              chapterIndex: { type: "number" },
+              momentIndex: { type: "number" },
+              section: { type: "string" },
+              triggerSetIndex: { type: "number" }
+            },
+            required: ["chapterIndex", "momentIndex"]
+          }
+        }
+      },
+      required: ["chapterIndex", "momentIndex", "section", "nodeIndex", "targets"]
+    },
+    handler: async (params) => JSON.stringify(await bridge.sendCommand("vrse/story-apply-action-to-multiple-moments", params), null, 2),
+  },
+  {
+    name: "unity_vrse_list_story_backups",
+    description: "List JSON backups for the active StoryCreator story file.",
+    inputSchema: {
+      type: "object",
+      properties: {
+        storyCreatorName: { type: "string", description: "Optional StoryCreator GameObject name override" }
+      }
+    },
+    handler: async (params) => JSON.stringify(await bridge.sendCommand("vrse/list-story-backups", params), null, 2),
+  },
+  {
+    name: "unity_vrse_create_story_backup",
+    description: "Create a backup snapshot for the active StoryCreator story file.",
+    inputSchema: {
+      type: "object",
+      properties: {
+        storyCreatorName: { type: "string", description: "Optional StoryCreator GameObject name override" },
+        reason: { type: "string", description: "Optional backup reason" }
+      }
+    },
+    handler: async (params) => JSON.stringify(await bridge.sendCommand("vrse/create-story-backup", params), null, 2),
+  },
+  {
+    name: "unity_vrse_restore_story_backup",
+    description: "Restore a StoryCreator JSON file from a backup path or backup index.",
+    inputSchema: {
+      type: "object",
+      properties: {
+        storyCreatorName: { type: "string", description: "Optional StoryCreator GameObject name override" },
+        backupPath: { type: "string", description: "Full backup file path" },
+        backupIndex: { type: "number", description: "Index from unity_vrse_list_story_backups" }
+      }
+    },
+    handler: async (params) => JSON.stringify(await bridge.sendCommand("vrse/restore-story-backup", params), null, 2),
+  },
+
   // ─── Connection ───
   {
     name: "unity_editor_ping",

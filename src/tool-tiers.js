@@ -81,6 +81,12 @@ const CORE_TOOLS = new Set([
   "unity_vrse_story_update_node",
   "unity_vrse_story_save",
   "unity_vrse_story_validate",
+  "unity_vrse_story_move_action",
+  "unity_vrse_story_duplicate_action",
+  "unity_vrse_story_apply_action_to_multiple_moments",
+  "unity_vrse_list_story_backups",
+  "unity_vrse_create_story_backup",
+  "unity_vrse_restore_story_backup",
 
   // Scene management
   "unity_scene_info",
