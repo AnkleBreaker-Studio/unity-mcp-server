@@ -11,7 +11,7 @@ import { debugLog } from './state-persistence.js';
 //
 // Lazy loading: Advanced tools support dynamic dispatch. If a tool
 // isn't in the cached map, the route is derived from the tool name
-// (unity_terrain_list → terrain/list) and called directly via sendCommand.
+// (unity_animation_create_clip → animation/create-clip) and called directly via sendCommand.
 // This means new tools added to the C# plugin work immediately without
 // restarting the MCP server.
 
@@ -33,7 +33,7 @@ const ROUTE_OVERRIDES = {
 
 /**
  * Derive an HTTP route from a tool name.
- * unity_terrain_raise_lower → terrain/raise-lower
+ * unity_prefab_open → prefab/open
  * unity_animation_create_clip → animation/create-clip
  */
 function toolNameToRoute(toolName) {
@@ -247,7 +247,7 @@ export function splitToolTiers(allEditorTools) {
       "List all available advanced/specialized Unity tools organized by category. " +
       "These tools are not directly exposed but can be called via unity_advanced_tool. " +
       "Categories include: animation, prefab, physics, lighting, audio, shadergraph, " +
-      "amplify, terrain, particle, navmesh, ui, texture, profiler, memory, settings, " +
+      "amplify, particle, navmesh, ui, texture, profiler, memory, settings, " +
       "input, asmdef, scriptableobject, constraint, lod, editorprefs, playerprefs, " +
       "vfx, graphics, sceneview, and more.",
     inputSchema: {
@@ -276,7 +276,7 @@ export function splitToolTiers(allEditorTools) {
 
       if (dynamicRoutes && dynamicRoutes.routes) {
         for (const route of dynamicRoutes.routes) {
-          // Convert route to tool name: terrain/list → unity_terrain_list
+          // Convert route to tool name: prefab/open → unity_prefab_open
           const toolName = "unity_" + route.replace(/\//g, "_").replace(/-/g, "_");
           const cat = route.split("/")[0];
 
@@ -339,7 +339,7 @@ export function splitToolTiers(allEditorTools) {
     description:
       "Execute an advanced/specialized Unity tool by name. Use unity_list_advanced_tools " +
       "to discover available tools and their parameters. This provides access to 200+ " +
-      "specialized tools for animation, prefabs, physics, shaders, terrain, particles, " +
+      "specialized tools for animation, prefabs, physics, shaders, particles, " +
       "UI, profiling, and more.",
     inputSchema: {
       type: "object",
