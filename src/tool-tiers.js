@@ -1,4 +1,4 @@
-import { debugLog } from './state-persistence.js';
+﻿import { debugLog } from './state-persistence.js';
 // AnkleBreaker Unity MCP — Two-tier tool system
 // Reduces the exposed tool count to avoid overwhelming MCP clients.
 //
@@ -73,6 +73,14 @@ const CORE_TOOLS = new Set([
   "unity_vrse_open_studio_project_window",
   "unity_vrse_open_project_config_window",
   "unity_vrse_open_build_tool",
+  "unity_vrse_create_experience",
+  "unity_vrse_get_experience_creation_status",
+  "unity_vrse_open_art_scene",
+  "unity_vrse_story_add_trigger_set",
+  "unity_vrse_story_add_action",
+  "unity_vrse_story_update_node",
+  "unity_vrse_story_save",
+  "unity_vrse_story_validate",
 
   // Scene management
   "unity_scene_info",

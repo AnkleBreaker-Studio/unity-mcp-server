@@ -1,4 +1,4 @@
-// AnkleBreaker Unity MCP — Tool definitions for Unity Editor operations (via HTTP bridge)
+﻿// AnkleBreaker Unity MCP — Tool definitions for Unity Editor operations (via HTTP bridge)
 import * as bridge from "../unity-editor-bridge.js";
 
 export const editorTools = [
@@ -146,6 +146,139 @@ export const editorTools = [
     inputSchema: { type: "object", properties: {} },
     handler: async () => JSON.stringify(await bridge.sendCommand("vrse/open-build-tool", {}), null, 2),
   },
+  {
+    name: "unity_vrse_create_experience",
+    description: "Create a VRseBuilder experience dev scene, download its story JSON, and register it in RoomManagerConfig when IDs are provided.",
+    inputSchema: {
+      type: "object",
+      properties: {
+        projectName: { type: "string", description: "Optional project name override" },
+        projectId: { type: "string", description: "Optional backend project ID used when resolving jsonFileUrl" },
+        moduleId: { type: "string", description: "Module ID" },
+        moduleName: { type: "string", description: "Module name" },
+        experienceId: { type: "string", description: "Experience ID" },
+        experienceName: { type: "string", description: "Experience name" },
+        experienceType: { type: "string", description: "Training or Evaluation" },
+        jsonFileUrl: { type: "string", description: "Optional story JSON URL. If omitted, the bridge will try to resolve it from the logged-in backend project." }
+      },
+      required: ["moduleName", "experienceName"]
+    },
+    handler: async (params) => JSON.stringify(await bridge.sendCommand("vrse/create-experience", params), null, 2),
+  },
+  {
+    name: "unity_vrse_get_experience_creation_status",
+    description: "Get creation status for a VRseBuilder experience: config entry, story JSON, dev scene, and art scene.",
+    inputSchema: {
+      type: "object",
+      properties: {
+        projectName: { type: "string", description: "Optional project name override" },
+        moduleId: { type: "string", description: "Module ID" },
+        moduleName: { type: "string", description: "Module name" },
+        experienceId: { type: "string", description: "Experience ID" },
+        experienceName: { type: "string", description: "Experience name" },
+        experienceType: { type: "string", description: "Training or Evaluation" }
+      }
+    },
+    handler: async (params) => JSON.stringify(await bridge.sendCommand("vrse/get-experience-creation-status", params), null, 2),
+  },
+  {
+    name: "unity_vrse_open_art_scene",
+    description: "Open the configured art scene for a VRseBuilder experience additively.",
+    inputSchema: {
+      type: "object",
+      properties: {
+        projectName: { type: "string", description: "Optional project name override" },
+        moduleId: { type: "string", description: "Module ID" },
+        moduleName: { type: "string", description: "Module name" },
+        experienceId: { type: "string", description: "Experience ID" },
+        experienceName: { type: "string", description: "Experience name" },
+        experienceType: { type: "string", description: "Training or Evaluation" }
+      }
+    },
+    handler: async (params) => JSON.stringify(await bridge.sendCommand("vrse/open-art-scene", params), null, 2),
+  },
+  {
+    name: "unity_vrse_story_add_trigger_set",
+    description: "Add a default trigger set to a story moment's onWrong or onRight section.",
+    inputSchema: {
+      type: "object",
+      properties: {
+        storyCreatorName: { type: "string", description: "Optional StoryCreator GameObject name override" },
+        chapterIndex: { type: "number", description: "Chapter index" },
+        momentIndex: { type: "number", description: "Moment index" },
+        section: { type: "string", description: "onWrong or onRight" },
+        mode: { type: "string", description: "Optional onRight mode override, e.g. InOrder" }
+      },
+      required: ["chapterIndex", "momentIndex", "section"]
+    },
+    handler: async (params) => JSON.stringify(await bridge.sendCommand("vrse/story-add-trigger-set", params), null, 2),
+  },
+  {
+    name: "unity_vrse_story_add_action",
+    description: "Add a default action node to a story moment section or to a specific trigger set.",
+    inputSchema: {
+      type: "object",
+      properties: {
+        storyCreatorName: { type: "string", description: "Optional StoryCreator GameObject name override" },
+        chapterIndex: { type: "number", description: "Chapter index" },
+        momentIndex: { type: "number", description: "Moment index" },
+        section: { type: "string", description: "onAwake, onStart, onFirstWarning, onLastWarning, onEnd, onWrong, or onRight" },
+        triggerSetIndex: { type: "number", description: "Required when section is onWrong or onRight" }
+      },
+      required: ["chapterIndex", "momentIndex", "section"]
+    },
+    handler: async (params) => JSON.stringify(await bridge.sendCommand("vrse/story-add-action", params), null, 2),
+  },
+  {
+    name: "unity_vrse_story_update_node",
+    description: "Update a story node's name, option, query, data payload, type, or target object.",
+    inputSchema: {
+      type: "object",
+      properties: {
+        storyCreatorName: { type: "string", description: "Optional StoryCreator GameObject name override" },
+        chapterIndex: { type: "number", description: "Chapter index" },
+        momentIndex: { type: "number", description: "Moment index" },
+        section: { type: "string", description: "Target section name" },
+        triggerSetIndex: { type: "number", description: "Required when targeting onWrong or onRight" },
+        nodeIndex: { type: "number", description: "Action node index within the section or trigger set" },
+        nodeKind: { type: "string", description: "For onWrong/onRight: trigger or action" },
+        name: { type: "string", description: "New node name" },
+        option: { type: "string", description: "New node option" },
+        query: { type: "string", description: "New node query string" },
+        data: { type: "string", description: "New raw JSON data payload string" },
+        type: { description: "Optional node type override: Action, Trigger, 0, or 1" },
+        targetGameObjectName: { type: "string", description: "Scene GameObject name to assign as TargetGameObject" },
+        targetGameObjectPath: { type: "string", description: "Scene hierarchy path to assign as TargetGameObject" },
+        clearTargetGameObject: { type: "boolean", description: "Clear the current target object and query" }
+      },
+      required: ["chapterIndex", "momentIndex", "section"]
+    },
+    handler: async (params) => JSON.stringify(await bridge.sendCommand("vrse/story-update-node", params), null, 2),
+  },
+  {
+    name: "unity_vrse_story_save",
+    description: "Save the active StoryCreator story back to its JSON file.",
+    inputSchema: {
+      type: "object",
+      properties: {
+        storyCreatorName: { type: "string", description: "Optional StoryCreator GameObject name override" }
+      }
+    },
+    handler: async (params) => JSON.stringify(await bridge.sendCommand("vrse/story-save", params), null, 2),
+  },
+  {
+    name: "unity_vrse_story_validate",
+    description: "Run the VRseBuilder story flow validator against the active StoryCreator and return the issues it finds.",
+    inputSchema: {
+      type: "object",
+      properties: {
+        storyCreatorName: { type: "string", description: "Optional StoryCreator GameObject name override" },
+        autoAssignDefaultTargets: { type: "boolean", description: "Auto-assign default target objects before validation (default: true)" }
+      }
+    },
+    handler: async (params) => JSON.stringify(await bridge.sendCommand("vrse/story-validate", params), null, 2),
+  },
+
   // ─── Connection ───
   {
     name: "unity_editor_ping",
