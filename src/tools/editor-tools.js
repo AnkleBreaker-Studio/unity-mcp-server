@@ -278,6 +278,74 @@ export const editorTools = [
     },
     handler: async (params) => JSON.stringify(await bridge.sendCommand("vrse/story-validate", params), null, 2),
   },
+  {
+    name: "unity_vrse_story_remove_node_by_name",
+    description: "Remove actions with a given node name from a story moment section or trigger set.",
+    inputSchema: {
+      type: "object",
+      properties: {
+        storyCreatorName: { type: "string", description: "Optional StoryCreator GameObject name override" },
+        chapterIndex: { type: "number", description: "Chapter index" },
+        momentIndex: { type: "number", description: "Moment index" },
+        section: { type: "string", description: "Section name (onAwake, onStart, onFirstWarning, onLastWarning, onEnd, onWrong, or onRight)" },
+        triggerSetIndex: { type: "number", description: "Required when removing from onWrong or onRight" },
+        nodeName: { type: "string", description: "Name of the node to remove" }
+      },
+      required: ["chapterIndex", "momentIndex", "section", "nodeName"]
+    },
+    handler: async (params) => JSON.stringify(await bridge.sendCommand("vrse/story-remove-node-by-name", params), null, 2),
+  },
+  {
+    name: "unity_vrse_apply_moment_weightage",
+    description: "Set weightage and wrong-reduction defaults on a story moment.",
+    inputSchema: {
+      type: "object",
+      properties: {
+        storyCreatorName: { type: "string", description: "Optional StoryCreator GameObject name override" },
+        chapterIndex: { type: "number", description: "Chapter index" },
+        momentIndex: { type: "number", description: "Moment index" },
+        weightage: { type: "number", description: "New weightage value" },
+        wrongReduction: { type: "number", description: "New wrong-reduction value" }
+      },
+      required: ["chapterIndex", "momentIndex"]
+    },
+    handler: async (params) => JSON.stringify(await bridge.sendCommand("vrse/apply-moment-weightage", params), null, 2),
+  },
+  {
+    name: "unity_vrse_story_has_pending_vo",
+    description: "Check whether the active story has pending VO lines to generate.",
+    inputSchema: {
+      type: "object",
+      properties: {
+        storyCreatorName: { type: "string", description: "Optional StoryCreator GameObject name override" }
+      }
+    },
+    handler: async (params) => JSON.stringify(await bridge.sendCommand("vrse/story-has-pending-vo", params), null, 2),
+  },
+  {
+    name: "unity_vrse_create_evaluation_from_training",
+    description: "Use the evaluation automation tool to create an evaluation scene from the current or selected training experience.",
+    inputSchema: {
+      type: "object",
+      properties: {
+        projectName: { type: "string", description: "Optional project name override" },
+        moduleId: { type: "string", description: "Module ID" },
+        moduleName: { type: "string", description: "Module name" },
+        experienceId: { type: "string", description: "Training experience ID" },
+        experienceName: { type: "string", description: "Training experience name" },
+        evaluationSceneName: { type: "string", description: "Override evaluation scene name" },
+        evaluationStoryName: { type: "string", description: "Override evaluation story name" },
+        storyDefaults: { type: "string", description: "JSON defaults to write to the evaluation story" },
+        evaluationType: { type: "string", description: "Enums.EvaluationType name" },
+        showAutoToastForWrongAction: { type: "boolean" },
+        showAutoToastForRightAction: { type: "boolean" },
+        rightActionToastMessageDisplayTime: { type: "number" },
+        mistakeCoolDownTime: { type: "number" },
+        debugMistakesCountToPass: { type: "number" }
+      }
+    },
+    handler: async (params) => JSON.stringify(await bridge.sendCommand("vrse/create-evaluation-from-training", params), null, 2),
+  },
 
   {
     name: "unity_vrse_story_move_action",
