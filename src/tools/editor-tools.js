@@ -381,6 +381,90 @@ export const editorTools = [
     handler: async (params) => JSON.stringify(await bridge.sendCommand("vrse/query-objects-list", params), null, 2),
   },
   {
+    name: "unity_vrse_story_add_chapter",
+    description: "Create a new chapter at the end of the story or inserted at a specific index.",
+    inputSchema: {
+      type: "object",
+      properties: {
+        storyCreatorName: { type: "string", description: "Optional StoryCreator GameObject name override" },
+        name: { type: "string", description: "Name of the new chapter (default: 'New Chapter')" },
+        index: { type: "number", description: "Optional zero-based index to insert at. If omitted, appends to the end." }
+      }
+    },
+    handler: async (params) => JSON.stringify(await bridge.sendCommand("vrse/story-add-chapter", params), null, 2),
+  },
+  {
+    name: "unity_vrse_story_rename_chapter",
+    description: "Rename an existing chapter.",
+    inputSchema: {
+      type: "object",
+      properties: {
+        storyCreatorName: { type: "string", description: "Optional StoryCreator GameObject name override" },
+        chapterIndex: { type: "number", description: "Index of the chapter to rename" },
+        newName: { type: "string", description: "New name for the chapter" }
+      },
+      required: ["chapterIndex", "newName"]
+    },
+    handler: async (params) => JSON.stringify(await bridge.sendCommand("vrse/story-rename-chapter", params), null, 2),
+  },
+  {
+    name: "unity_vrse_story_remove_chapter",
+    description: "Remove a chapter and all its moments by index.",
+    inputSchema: {
+      type: "object",
+      properties: {
+        storyCreatorName: { type: "string", description: "Optional StoryCreator GameObject name override" },
+        chapterIndex: { type: "number", description: "Index of the chapter to remove" }
+      },
+      required: ["chapterIndex"]
+    },
+    handler: async (params) => JSON.stringify(await bridge.sendCommand("vrse/story-remove-chapter", params), null, 2),
+  },
+  {
+    name: "unity_vrse_story_add_moment",
+    description: "Create a new moment inside a specific chapter.",
+    inputSchema: {
+      type: "object",
+      properties: {
+        storyCreatorName: { type: "string", description: "Optional StoryCreator GameObject name override" },
+        chapterIndex: { type: "number", description: "Index of the chapter to add the moment to" },
+        name: { type: "string", description: "Name of the new moment (default: 'New Moment')" },
+        index: { type: "number", description: "Optional zero-based index to insert at. If omitted, appends to the end of the chapter." }
+      },
+      required: ["chapterIndex"]
+    },
+    handler: async (params) => JSON.stringify(await bridge.sendCommand("vrse/story-add-moment", params), null, 2),
+  },
+  {
+    name: "unity_vrse_story_rename_moment",
+    description: "Rename an existing moment.",
+    inputSchema: {
+      type: "object",
+      properties: {
+        storyCreatorName: { type: "string", description: "Optional StoryCreator GameObject name override" },
+        chapterIndex: { type: "number", description: "Index of the chapter containing the moment" },
+        momentIndex: { type: "number", description: "Index of the moment to rename" },
+        newName: { type: "string", description: "New name for the moment" }
+      },
+      required: ["chapterIndex", "momentIndex", "newName"]
+    },
+    handler: async (params) => JSON.stringify(await bridge.sendCommand("vrse/story-rename-moment", params), null, 2),
+  },
+  {
+    name: "unity_vrse_story_remove_moment",
+    description: "Remove a moment by index.",
+    inputSchema: {
+      type: "object",
+      properties: {
+        storyCreatorName: { type: "string", description: "Optional StoryCreator GameObject name override" },
+        chapterIndex: { type: "number", description: "Index of the chapter containing the moment" },
+        momentIndex: { type: "number", description: "Index of the moment to remove" }
+      },
+      required: ["chapterIndex", "momentIndex"]
+    },
+    handler: async (params) => JSON.stringify(await bridge.sendCommand("vrse/story-remove-moment", params), null, 2),
+  },
+  {
     name: "unity_vrse_story_remove_action",
     description: "Remove an action node by its index within a moment section or trigger set. Returns the removed node for confirmation.",
     inputSchema: {
