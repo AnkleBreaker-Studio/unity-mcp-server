@@ -1,4 +1,4 @@
-﻿// AnkleBreaker Unity MCP — Tool definitions for Unity Editor operations (via HTTP bridge)
+// AnkleBreaker Unity MCP — Tool definitions for Unity Editor operations (via HTTP bridge)
 import * as bridge from "../unity-editor-bridge.js";
 
 export const editorTools = [
@@ -347,6 +347,56 @@ export const editorTools = [
     handler: async (params) => JSON.stringify(await bridge.sendCommand("vrse/create-evaluation-from-training", params), null, 2),
   },
 
+  {
+    name: "unity_vrse_story_read",
+    description: "Read the full story structure from the active StoryCreator. Returns chapters, moments, sections, and action/trigger nodes. Use optional filters to narrow the response to a specific chapter, moment, or section.",
+    inputSchema: {
+      type: "object",
+      properties: {
+        storyCreatorName: { type: "string", description: "Optional StoryCreator GameObject name override" },
+        chapterIndex: { type: "number", description: "Optional: only return this chapter (0-based)" },
+        momentIndex: { type: "number", description: "Optional: only return this moment (0-based, requires chapterIndex)" },
+        section: { type: "string", description: "Optional: only return this section (onAwake, onStart, onFirstWarning, onLastWarning, onEnd, onWrong, onRight)" },
+        maxNodes: { type: "number", description: "Maximum nodes to return (default: 500)" }
+      }
+    },
+    handler: async (params) => JSON.stringify(await bridge.sendCommand("vrse/story-read", params), null, 2),
+  },
+  {
+    name: "unity_vrse_story_list_node_templates",
+    description: "List all available action and trigger node templates. Returns each template's name, type, description, options, and parameter schemas. Use this to discover what node types and options are available when adding or updating story nodes.",
+    inputSchema: {
+      type: "object",
+      properties: {}
+    },
+    handler: async (params) => JSON.stringify(await bridge.sendCommand("vrse/story-list-node-templates", params), null, 2),
+  },
+  {
+    name: "unity_vrse_query_objects_list",
+    description: "List all registered queryable scene objects (GameObjectQuery components) in the loaded scenes. Returns each object's query name, ID, hierarchy path, active state, and VRse component markers (Grabbable, PlacePoint, etc.). Essential for knowing what objects can be wired to story nodes.",
+    inputSchema: {
+      type: "object",
+      properties: {}
+    },
+    handler: async (params) => JSON.stringify(await bridge.sendCommand("vrse/query-objects-list", params), null, 2),
+  },
+  {
+    name: "unity_vrse_story_remove_action",
+    description: "Remove an action node by its index within a moment section or trigger set. Returns the removed node for confirmation.",
+    inputSchema: {
+      type: "object",
+      properties: {
+        storyCreatorName: { type: "string", description: "Optional StoryCreator GameObject name override" },
+        chapterIndex: { type: "number", description: "Chapter index" },
+        momentIndex: { type: "number", description: "Moment index" },
+        section: { type: "string", description: "onAwake, onStart, onFirstWarning, onLastWarning, onEnd, onWrong, or onRight" },
+        triggerSetIndex: { type: "number", description: "Required when section is onWrong or onRight" },
+        nodeIndex: { type: "number", description: "Action index to remove" }
+      },
+      required: ["chapterIndex", "momentIndex", "section", "nodeIndex"]
+    },
+    handler: async (params) => JSON.stringify(await bridge.sendCommand("vrse/story-remove-action", params), null, 2),
+  },
   {
     name: "unity_vrse_story_move_action",
     description: "Reorder an action within a moment section or trigger set.",
