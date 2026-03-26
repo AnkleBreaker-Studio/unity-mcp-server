@@ -4634,6 +4634,95 @@ export const editorTools = [
     handler: async (params) => JSON.stringify(await bridge.deleteAllPlayerPrefs(params), null, 2),
   },
 
+  {
+    name: "unity_vrse_story_defaults_get",
+    description: "Get the global story defaults (interaction rules, UI configs, warning definitions).",
+    inputSchema: { 
+      type: "object", 
+      properties: {
+        projectName: { type: "string", description: "Optional project name override" },
+        port: { type: "number", description: "Target Unity instance port for parallel-safe routing. Get this from unity_select_instance." }
+      } 
+    },
+    handler: async (params) => JSON.stringify(await bridge.sendCommand("vrse/story-defaults-get", params), null, 2),
+  },
+  {
+    name: "unity_vrse_building_blocks_list",
+    description: "List all available Building Block prefabs available for instantiation.",
+    inputSchema: { 
+      type: "object", 
+      properties: {
+        port: { type: "number", description: "Target Unity instance port for parallel-safe routing." }
+      } 
+    },
+    handler: async (params) => JSON.stringify(await bridge.sendCommand("vrse/building-blocks-list", params), null, 2),
+  },
+  {
+    name: "unity_vrse_building_blocks_instantiate",
+    description: "Instantiate a Building Block prefab into the scene.",
+    inputSchema: { 
+      type: "object", 
+      properties: {
+        blockId: { type: "string", description: "The GUID of the Building Block to instantiate" },
+        parentPath: { type: "string", description: "Optional path to the parent GameObject" },
+        port: { type: "number", description: "Target Unity instance port for parallel-safe routing." }
+      },
+      required: ["blockId", "port"]
+    },
+    handler: async (params) => JSON.stringify(await bridge.sendCommand("vrse/building-blocks-instantiate", params), null, 2),
+  },
+  {
+    name: "unity_vrse_scene_hierarchy_checkup",
+    description: "Perform a scene hierarchy checkup and move unparented query objects into the global QueryObjects group.",
+    inputSchema: { 
+      type: "object", 
+      properties: {
+        port: { type: "number", description: "Target Unity instance port for parallel-safe routing." }
+      } 
+    },
+    handler: async (params) => JSON.stringify(await bridge.sendCommand("vrse/scene-hierarchy-checkup", params), null, 2),
+  },
+  {
+    name: "unity_vrse_module_set_include_in_build",
+    description: "Set whether a specific VRseBuilder module should be included in the Unity build settings.",
+    inputSchema: { 
+      type: "object", 
+      properties: {
+        projectName: { type: "string", description: "Optional project name override" },
+        moduleName: { type: "string", description: "The name of the module" },
+        includeInBuild: { type: "boolean", description: "Whether to include this module in the build (default: true)" },
+        port: { type: "number", description: "Target Unity instance port for parallel-safe routing." }
+      },
+      required: ["moduleName", "port"]
+    },
+    handler: async (params) => JSON.stringify(await bridge.sendCommand("vrse/module-set-include-in-build", params), null, 2),
+  },
+  {
+    name: "unity_vrse_build_start",
+    description: "Trigger a headless Unity build for the VRseBuilder project.",
+    inputSchema: { 
+      type: "object", 
+      properties: {
+        projectName: { type: "string", description: "Optional project name override" },
+        buildPath: { type: "string", description: "Output path for the built player/APK" },
+        port: { type: "number", description: "Target Unity instance port for parallel-safe routing." }
+      },
+      required: ["buildPath", "port"]
+    },
+    handler: async (params) => JSON.stringify(await bridge.sendCommand("vrse/build-start", params), null, 2),
+  },
+  {
+    name: "unity_vrse_build_status",
+    description: "Check the status of the Unity build process.",
+    inputSchema: { 
+      type: "object", 
+      properties: {
+        port: { type: "number", description: "Target Unity instance port for parallel-safe routing." }
+      } 
+    },
+    handler: async (params) => JSON.stringify(await bridge.sendCommand("vrse/build-status", params), null, 2),
+  },
+
   // ─── Queue Management (Multi-Agent) ───
   {
     name: "unity_queue_info",
