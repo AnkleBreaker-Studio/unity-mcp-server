@@ -246,8 +246,8 @@ export function splitToolTiers(allEditorTools) {
     description:
       "List all available advanced/specialized Unity tools organized by category. " +
       "These tools are not directly exposed but can be called via unity_advanced_tool. " +
-      "Categories include: animation, prefab, physics, lighting, audio, shadergraph, " +
-      "amplify, particle, navmesh, ui, texture, profiler, memory, settings, " +
+      "Categories include: animation, prefab, physics, lighting, audio, " +
+      "particle, ui, texture, profiler, memory, settings, " +
       "input, asmdef, scriptableobject, constraint, lod, editorprefs, playerprefs, " +
       "vfx, graphics, sceneview, and more.",
     inputSchema: {
@@ -256,7 +256,7 @@ export function splitToolTiers(allEditorTools) {
         category: {
           type: "string",
           description:
-            'Filter by category name (e.g. "animation", "prefab", "shadergraph"). Omit for full list.',
+            'Filter by category name (e.g. "animation", "prefab"). Omit for full list.',
         },
       },
     },
@@ -339,7 +339,7 @@ export function splitToolTiers(allEditorTools) {
     description:
       "Execute an advanced/specialized Unity tool by name. Use unity_list_advanced_tools " +
       "to discover available tools and their parameters. This provides access to 200+ " +
-      "specialized tools for animation, prefabs, physics, shaders, particles, " +
+      "specialized tools for animation, prefabs, physics, particles, " +
       "UI, profiling, and more.",
     inputSchema: {
       type: "object",
@@ -347,7 +347,7 @@ export function splitToolTiers(allEditorTools) {
         tool: {
           type: "string",
           description:
-            'The tool name to execute (e.g. "unity_animation_create_controller", "unity_shadergraph_create")',
+            'The tool name to execute (e.g. "unity_animation_create_controller", "unity_prefab_open"). Use unity_list_advanced_tools to see available tools.',
         },
         params: {
           type: "object",
