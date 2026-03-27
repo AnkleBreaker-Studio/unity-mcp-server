@@ -19,7 +19,7 @@ A [Model Context Protocol (MCP)](https://modelcontextprotocol.io) server that gi
 | **Assets** | List, import, delete, search, create prefabs, create & assign materials |
 | **Scripts** | Create, read, update C# scripts |
 | **Builds** | Multi-platform builds (Windows, macOS, Linux, Android, iOS, WebGL) |
-| **Console** | Read/clear Unity console logs (errors, warnings, info) |
+| **Console & Compilation** | Read/clear Unity console logs (errors, warnings, info); get C# compilation errors via CompilationPipeline (independent of console buffer) |
 | **Play Mode** | Play, pause, stop |
 | **Editor** | Execute menu items, run C# code, get editor state, undo/redo |
 | **Project** | Project info, packages (list/add/remove/search), render pipeline, build settings |
@@ -247,6 +247,10 @@ If Unity MCP helps your workflow, consider supporting its development! Your supp
 </a>
 
 **Sponsor tiers include priority feature requests** — your ideas get bumped up the roadmap! Check out the tiers on [GitHub Sponsors](https://github.com/sponsors/AnkleBreaker-Studio) or [Patreon](https://www.patreon.com/AnkleBreakerStudio).
+
+## What's New in v2.26.0
+
+- **Compilation error detection** — New `unity_get_compilation_errors` tool retrieves C# compilation errors and warnings directly from Unity's `CompilationPipeline` API. Unlike `unity_console_log`, this is independent of the console log buffer — not affected by console clear, Play Mode log flooding, or buffer overflow. Supports filtering by severity (`error`, `warning`, `all`) and count limit. Registered as a core tool (always directly accessible, not behind `unity_advanced_tool`).
 
 ## What's New in v2.25.0
 
