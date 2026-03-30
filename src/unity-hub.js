@@ -62,64 +62,64 @@ async function runHubCommand(args, timeoutMs = 30000) {
 /**
  * List installed Unity Editor versions
  */
-export async function listInstalledEditors() {
-  const result = await runHubCommand(["editors", "--installed"]);
-  if (!result.success) return { error: result.error, raw: result.stderr };
+// export async function listInstalledEditors() {
+//   const result = await runHubCommand(["editors", "--installed"]);
+//   if (!result.success) return { error: result.error, raw: result.stderr };
 
-  const editors = [];
-  const lines = result.stdout.split("\n").filter((l) => l.trim());
-  for (const line of lines) {
-    // Parse lines like: "2022.3.0f1 , installed at C:\Program Files\Unity\..."
-    const match = line.match(/^([\d.]+\w+)\s*,?\s*installed at\s+(.+)$/i);
-    if (match) {
-      editors.push({ version: match[1].trim(), path: match[2].trim() });
-    }
-  }
-  return { editors, raw: result.stdout };
-}
+//   const editors = [];
+//   const lines = result.stdout.split("\n").filter((l) => l.trim());
+//   for (const line of lines) {
+//     // Parse lines like: "2022.3.0f1 , installed at C:\Program Files\Unity\..."
+//     const match = line.match(/^([\d.]+\w+)\s*,?\s*installed at\s+(.+)$/i);
+//     if (match) {
+//       editors.push({ version: match[1].trim(), path: match[2].trim() });
+//     }
+//   }
+//   return { editors, raw: result.stdout };
+// }
 
 /**
  * List available Unity Editor releases
  */
-export async function listAvailableReleases() {
-  const result = await runHubCommand(["editors", "--releases"]);
-  if (!result.success) return { error: result.error };
-  return { raw: result.stdout };
-}
+// export async function listAvailableReleases() {
+//   const result = await runHubCommand(["editors", "--releases"]);
+//   if (!result.success) return { error: result.error };
+//   return { raw: result.stdout };
+// }
 
 /**
  * Install a Unity Editor version with optional modules
  */
-export async function installEditor(version, modules = []) {
-  const args = ["install", "--version", version];
-  for (const mod of modules) {
-    args.push("--module", mod);
-  }
-  const result = await runHubCommand(args, 600000); // 10min timeout for installs
-  return result;
-}
+// export async function installEditor(version, modules = []) {
+//   const args = ["install", "--version", version];
+//   for (const mod of modules) {
+//     args.push("--module", mod);
+//   }
+//   const result = await runHubCommand(args, 600000); // 10min timeout for installs
+//   return result;
+// }
 
 /**
  * Install modules to an existing editor
  */
-export async function installModules(version, modules) {
-  const args = ["install-modules", "--version", version];
-  for (const mod of modules) {
-    args.push("--module", mod);
-  }
-  const result = await runHubCommand(args, 300000);
-  return result;
-}
+// export async function installModules(version, modules) {
+//   const args = ["install-modules", "--version", version];
+//   for (const mod of modules) {
+//     args.push("--module", mod);
+//   }
+//   const result = await runHubCommand(args, 300000);
+//   return result;
+// }
 
 /**
  * Get or set the editor installation path
  */
-export async function getInstallPath() {
-  const result = await runHubCommand(["install-path"]);
-  return result;
-}
+// export async function getInstallPath() {
+//   const result = await runHubCommand(["install-path"]);
+//   return result;
+// }
 
-export async function setInstallPath(path) {
-  const result = await runHubCommand(["install-path", "--set", path]);
-  return result;
-}
+// export async function setInstallPath(path) {
+//   const result = await runHubCommand(["install-path", "--set", path]);
+//   return result;
+// }
