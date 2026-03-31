@@ -1498,7 +1498,37 @@ export async function setTextureAsNormalMap(params) {
   return sendCommand("texture/set-normalmap", params);
 }
 
-// â”€â”€â”€ Navigation â”€â”€â”€
+// ─── Sprite Atlas ───
+
+export async function createSpriteAtlas(params) {
+  return sendCommand(“spriteatlas/create”, params);
+}
+
+export async function getSpriteAtlasInfo(params) {
+  return sendCommand(“spriteatlas/info”, params);
+}
+
+export async function addToSpriteAtlas(params) {
+  return sendCommand(“spriteatlas/add”, params);
+}
+
+export async function removeFromSpriteAtlas(params) {
+  return sendCommand(“spriteatlas/remove”, params);
+}
+
+export async function setSpriteAtlasSettings(params) {
+  return sendCommand(“spriteatlas/settings”, params);
+}
+
+export async function deleteSpriteAtlas(params) {
+  return sendCommand(“spriteatlas/delete”, params);
+}
+
+export async function listSpriteAtlases(params) {
+  return sendCommand(“spriteatlas/list”, params);
+}
+
+// ─── Navigation ───
 
 export async function bakeNavMesh(params) {
   return sendCommand("navigation/bake", params);
