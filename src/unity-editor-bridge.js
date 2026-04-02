@@ -1,10 +1,10 @@
-﻿// Unity Editor HTTP Bridge Client
+// Unity Editor HTTP Bridge Client
 // Communicates with the C# plugin running inside Unity Editor
 // Supports both queue mode (async ticket-based) and legacy sync mode
 import { CONFIG } from "./config.js";
 import { getActiveBridgeUrl } from "./instance-discovery.js";
 
-// Dynamic bridge URL â€” resolved per-call based on selected instance
+// Dynamic bridge URL â€" resolved per-call based on selected instance
 function getBridgeUrl() {
   return getActiveBridgeUrl();
 }
@@ -12,10 +12,10 @@ function getBridgeUrl() {
 // Legacy constant kept for backward compat in places that don't need dynamic routing
 const BRIDGE_URL = `http://${CONFIG.editorBridgeHost}:${CONFIG.editorBridgePort}`;
 
-// Agent identity â€” tracks which AI agent is making requests
+// Agent identity â€" tracks which AI agent is making requests
 let _currentAgentId = "default";
 
-// Mode detection â€” cached to avoid repeated 404 checks
+// Mode detection â€" cached to avoid repeated 404 checks
 let _useQueueMode = true;
 let _queueModeDetermined = false;
 
@@ -26,7 +26,7 @@ export function setAgentId(agentId) {
   _currentAgentId = agentId || "default";
 }
 
-// Retry settings â€” handles Unity domain reloads (1-3 sec server downtime)
+// Retry settings â€" handles Unity domain reloads (1-3 sec server downtime)
 const MAX_RETRIES = 4;
 const RETRY_BASE_DELAY_MS = 800; // 800ms, 1600ms, 3200ms, 6400ms
 
@@ -43,7 +43,7 @@ function sleep(ms) {
  */
 function isTransientError(error, response) {
   if (error) {
-    // Connection refused / reset / aborted â€” server is restarting
+    // Connection refused / reset / aborted â€" server is restarting
     const msg = error.message || "";
     return (
       error.code === "ECONNREFUSED" ||
@@ -103,7 +103,7 @@ async function pollQueueStatus(ticketId) {
   // Use dedicated poll timeout (longer than bridge timeout to handle slow operations like execute_code)
   const timeoutMs = CONFIG.queuePollTimeoutMs || CONFIG.editorBridgeTimeout;
   let consecutive404s = 0;
-  const max404Grace = 5; // Allow a few 404s during the dequeueâ†’execute race window
+  const max404Grace = 5; // Allow a few 404s during the dequeueâ†'execute race window
 
   while (true) {
     // Check timeout
@@ -126,7 +126,7 @@ async function pollQueueStatus(ticketId) {
       });
 
       if (!response.ok) {
-        // Grace period for 404 â€” ticket may be between dequeue and execution tracking
+        // Grace period for 404 â€" ticket may be between dequeue and execution tracking
         if (response.status === 404) {
           consecutive404s++;
           if (consecutive404s < max404Grace) {
@@ -149,7 +149,7 @@ async function pollQueueStatus(ticketId) {
 
       // Check completion status
       if (statusData.status === "Completed") {
-        // Extract result â€” use explicit undefined check so falsy values (null, 0, false, "") pass through
+        // Extract result â€" use explicit undefined check so falsy values (null, 0, false, "") pass through
         return {
           success: true,
           data: statusData.result !== undefined ? statusData.result : statusData,
@@ -161,7 +161,7 @@ async function pollQueueStatus(ticketId) {
         };
       }
 
-      // Still processing â€” wait before polling again
+      // Still processing â€" wait before polling again
       await sleep(pollIntervalMs);
 
       // Increase poll interval up to max
@@ -202,7 +202,7 @@ async function sendCommandLegacyMode(command, params = {}) {
       });
       clearTimeout(timeout);
 
-      // Transient server error â€” retry
+      // Transient server error â€" retry
       if (isTransientError(null, response) && attempt < MAX_RETRIES) {
         const delay = RETRY_BASE_DELAY_MS * Math.pow(2, attempt);
         console.error(
@@ -231,7 +231,7 @@ async function sendCommandLegacyMode(command, params = {}) {
       clearTimeout(timeout);
       lastError = error;
 
-      // Transient connection error â€” retry with backoff
+      // Transient connection error â€" retry with backoff
       if (isTransientError(error, null) && attempt < MAX_RETRIES) {
         const delay = RETRY_BASE_DELAY_MS * Math.pow(2, attempt);
         console.error(
@@ -303,7 +303,7 @@ export async function sendCommand(command, params = {}) {
             continue;
           }
 
-          // Check if it's a 404 (queue not supported) â€” match "HTTP 404" or raw status code
+          // Check if it's a 404 (queue not supported) â€" match "HTTP 404" or raw status code
           if (submitError.status === 404 || (submitError.message && /HTTP\s*404/.test(submitError.message))) {
             console.warn(
               `[MCP Bridge] Queue mode not supported (HTTP 404), falling back to legacy sync mode`
@@ -313,7 +313,7 @@ export async function sendCommand(command, params = {}) {
             return sendCommandLegacyMode(command, params);
           }
 
-          // Other errors â€” don't retry, mark mode as undetermined and try legacy
+          // Other errors â€" don't retry, mark mode as undetermined and try legacy
           break;
         }
       }
@@ -420,7 +420,7 @@ export async function ping() {
   }
 }
 
-// â”€â”€â”€ Convenience wrappers for common Editor operations â”€â”€â”€
+// â"€â"€â"€ Convenience wrappers for common Editor operations â"€â"€â"€
 
 export async function getSceneInfo() {
   return sendCommand("scene/info");
@@ -562,7 +562,7 @@ export async function createMaterial(params) {
   return sendCommand("asset/create-material", params);
 }
 
-// â”€â”€â”€ Animation â”€â”€â”€
+// â"€â"€â"€ Animation â"€â"€â"€
 
 export async function createAnimatorController(params) {
   return sendCommand("animation/create-controller", params);
@@ -660,7 +660,7 @@ export async function getBlendTreeInfo(params) {
   return sendCommand("animation/get-blend-tree", params);
 }
 
-// â”€â”€â”€ Prefab (Advanced) â”€â”€â”€
+// â"€â"€â"€ Prefab (Advanced) â"€â"€â"€
 
 export async function getPrefabInfo(params) {
   return sendCommand("prefab/info", params);
@@ -698,7 +698,7 @@ export async function reparentGameObject(params) {
   return sendCommand("prefab/reparent", params);
 }
 
-// â”€â”€â”€ Prefab Asset (Direct Editing) â”€â”€â”€
+// â"€â"€â"€ Prefab Asset (Direct Editing) â"€â"€â"€
 
 export async function getPrefabAssetHierarchy(params) {
   return sendCommand("prefab-asset/hierarchy", params);
@@ -732,7 +732,7 @@ export async function removePrefabAssetGameObject(params) {
   return sendCommand("prefab-asset/remove-gameobject", params);
 }
 
-// â”€â”€â”€ Prefab Variant Management â”€â”€â”€
+// â"€â"€â"€ Prefab Variant Management â"€â"€â"€
 
 export async function getPrefabVariantInfo(params) {
   return sendCommand("prefab-asset/variant-info", params);
@@ -754,7 +754,7 @@ export async function transferPrefabVariantOverrides(params) {
   return sendCommand("prefab-asset/transfer-variant-overrides", params);
 }
 
-// â”€â”€â”€ Physics â”€â”€â”€
+// â"€â"€â"€ Physics â"€â"€â"€
 
 export async function physicsRaycast(params) {
   return sendCommand("physics/raycast", params);
@@ -780,7 +780,7 @@ export async function setGravity(params) {
   return sendCommand("physics/set-gravity", params);
 }
 
-// â”€â”€â”€ Lighting â”€â”€â”€
+// â"€â"€â"€ Lighting â"€â"€â"€
 
 export async function getLightingInfo(params) {
   return sendCommand("lighting/info", params);
@@ -802,7 +802,7 @@ export async function createLightProbeGroup(params) {
   return sendCommand("lighting/create-light-probe-group", params);
 }
 
-// â”€â”€â”€ Audio â”€â”€â”€
+// â"€â"€â"€ Audio â"€â"€â"€
 
 export async function getAudioInfo(params) {
   return sendCommand("audio/info", params);
@@ -816,7 +816,7 @@ export async function setGlobalAudio(params) {
   return sendCommand("audio/set-global", params);
 }
 
-// â”€â”€â”€ Tags & Layers â”€â”€â”€
+// â"€â"€â"€ Tags & Layers â"€â"€â"€
 
 export async function getTagsAndLayers(params) {
   return sendCommand("taglayer/info", params);
@@ -838,7 +838,7 @@ export async function setStatic(params) {
   return sendCommand("taglayer/set-static", params);
 }
 
-// â”€â”€â”€ Selection & Scene View â”€â”€â”€
+// â"€â"€â"€ Selection & Scene View â"€â"€â"€
 
 export async function getSelection(params) {
   return sendCommand("selection/get", params);
@@ -856,7 +856,7 @@ export async function findObjectsByType(params) {
   return sendCommand("selection/find-by-type", params);
 }
 
-// â”€â”€â”€ Input Actions â”€â”€â”€
+// â"€â"€â"€ Input Actions â"€â"€â"€
 
 export async function createInputActions(params) {
   return sendCommand("input/create", params);
@@ -890,7 +890,7 @@ export async function addInputCompositeBinding(params) {
   return sendCommand("input/add-composite-binding", params);
 }
 
-// â”€â”€â”€ Assembly Definitions â”€â”€â”€
+// â"€â"€â"€ Assembly Definitions â"€â"€â"€
 
 export async function createAssemblyDef(params) {
   return sendCommand("asmdef/create", params);
@@ -924,7 +924,7 @@ export async function createAssemblyRef(params) {
   return sendCommand("asmdef/create-ref", params);
 }
 
-// â”€â”€â”€ Profiler â”€â”€â”€
+// â"€â"€â"€ Profiler â"€â"€â"€
 
 export async function enableProfiler(params) {
   return sendCommand("profiler/enable", params);
@@ -946,7 +946,7 @@ export async function analyzePerformance(params) {
   return sendCommand("profiler/analyze", params);
 }
 
-// â”€â”€â”€ Frame Debugger â”€â”€â”€
+// â"€â"€â"€ Frame Debugger â"€â"€â"€
 
 export async function enableFrameDebugger(params) {
   return sendCommand("debugger/enable", params);
@@ -960,7 +960,7 @@ export async function getFrameDebuggerEventDetails(params) {
   return sendCommand("debugger/event-details", params);
 }
 
-// â”€â”€â”€ Memory Profiler â”€â”€â”€
+// â"€â"€â"€ Memory Profiler â"€â"€â"€
 
 export async function getMemoryStatus(params) {
   return sendCommand("profiler/memory-status", params);
@@ -978,7 +978,7 @@ export async function takeMemorySnapshot(params) {
   return sendCommand("profiler/memory-snapshot", params);
 }
 
-// â”€â”€â”€ Shader Graph â”€â”€â”€
+// â"€â"€â"€ Shader Graph â"€â"€â"€
 
 export async function getShaderGraphStatus(params) {
   return sendCommand("shadergraph/status", params);
@@ -1052,7 +1052,7 @@ export async function getShaderGraphNodeTypes(params) {
   return sendCommand("shadergraph/get-node-types", params);
 }
 
-// â”€â”€â”€ Amplify Shader Editor â”€â”€â”€
+// â"€â"€â"€ Amplify Shader Editor â"€â"€â"€
 
 export async function getAmplifyStatus(params) {
   return sendCommand("amplify/status", params);
@@ -1146,7 +1146,7 @@ export async function duplicateAmplifyNode(params) {
   return sendCommand("amplify/duplicate-node", params);
 }
 
-// â”€â”€â”€ Agent Management â”€â”€â”€
+// â"€â"€â"€ Agent Management â"€â"€â"€
 
 export async function listAgents(params) {
   return sendCommand("agents/list", params);
@@ -1156,7 +1156,7 @@ export async function getAgentLog(params) {
   return sendCommand("agents/log", params);
 }
 
-// â”€â”€â”€ Search â”€â”€â”€
+// â"€â"€â"€ Search â"€â"€â"€
 
 export async function findByComponent(params) {
   return sendCommand("search/by-component", params);
@@ -1190,7 +1190,7 @@ export async function getSceneStats(params) {
   return sendCommand("search/scene-stats", params);
 }
 
-// â”€â”€â”€ Project Settings â”€â”€â”€
+// â"€â"€â"€ Project Settings â"€â"€â"€
 
 export async function getQualitySettings(params) {
   return sendCommand("settings/quality", params);
@@ -1228,7 +1228,7 @@ export async function getRenderPipelineInfo(params) {
   return sendCommand("settings/render-pipeline", params);
 }
 
-// â”€â”€â”€ Undo â”€â”€â”€
+// â"€â"€â"€ Undo â"€â"€â"€
 
 export async function performUndo(params) {
   return sendCommand("undo/perform", params);
@@ -1246,7 +1246,7 @@ export async function clearUndo(params) {
   return sendCommand("undo/clear", params);
 }
 
-// â”€â”€â”€ Screenshot / Scene View â”€â”€â”€
+// â"€â"€â"€ Screenshot / Scene View â"€â"€â"€
 
 export async function captureGameView(params) {
   return sendCommand("screenshot/game", params);
@@ -1264,7 +1264,7 @@ export async function setSceneViewCamera(params) {
   return sendCommand("sceneview/set-camera", params);
 }
 
-// â”€â”€â”€ Graphics & Visuals â”€â”€â”€
+// â"€â"€â"€ Graphics & Visuals â"€â"€â"€
 
 export async function captureAssetPreview(params) {
   return sendCommand("graphics/asset-preview", params);
@@ -1302,7 +1302,7 @@ export async function getLightingSummary(params) {
   return sendCommand("graphics/lighting-summary", params);
 }
 
-// â”€â”€â”€ Terrain â”€â”€â”€
+// â"€â"€â"€ Terrain â"€â"€â"€
 
 export async function createTerrain(params) {
   return sendCommand("terrain/create", params);
@@ -1432,7 +1432,7 @@ export async function getTerrainSteepness(params) {
   return sendCommand("terrain/get-steepness", params);
 }
 
-// â”€â”€â”€ Particle System â”€â”€â”€
+// â"€â"€â"€ Particle System â"€â"€â"€
 
 export async function createParticleSystem(params) {
   return sendCommand("particle/create", params);
@@ -1458,7 +1458,7 @@ export async function particlePlayback(params) {
   return sendCommand("particle/playback", params);
 }
 
-// â”€â”€â”€ ScriptableObject â”€â”€â”€
+// â"€â"€â"€ ScriptableObject â"€â"€â"€
 
 export async function createScriptableObject(params) {
   return sendCommand("scriptableobject/create", params);
@@ -1476,7 +1476,7 @@ export async function listScriptableObjectTypes(params) {
   return sendCommand("scriptableobject/list-types", params);
 }
 
-// â”€â”€â”€ Texture â”€â”€â”€
+// â"€â"€â"€ Texture â"€â"€â"€
 
 export async function getTextureInfo(params) {
   return sendCommand("texture/info", params);
@@ -1501,31 +1501,31 @@ export async function setTextureAsNormalMap(params) {
 // ─── Sprite Atlas ───
 
 export async function createSpriteAtlas(params) {
-  return sendCommand(“spriteatlas/create”, params);
+  return sendCommand("spriteatlas/create", params);
 }
 
 export async function getSpriteAtlasInfo(params) {
-  return sendCommand(“spriteatlas/info”, params);
+  return sendCommand("spriteatlas/info", params);
 }
 
 export async function addToSpriteAtlas(params) {
-  return sendCommand(“spriteatlas/add”, params);
+  return sendCommand("spriteatlas/add", params);
 }
 
 export async function removeFromSpriteAtlas(params) {
-  return sendCommand(“spriteatlas/remove”, params);
+  return sendCommand("spriteatlas/remove", params);
 }
 
 export async function setSpriteAtlasSettings(params) {
-  return sendCommand(“spriteatlas/settings”, params);
+  return sendCommand("spriteatlas/settings", params);
 }
 
 export async function deleteSpriteAtlas(params) {
-  return sendCommand(“spriteatlas/delete”, params);
+  return sendCommand("spriteatlas/delete", params);
 }
 
 export async function listSpriteAtlases(params) {
-  return sendCommand(“spriteatlas/list”, params);
+  return sendCommand("spriteatlas/list", params);
 }
 
 // ─── Navigation ───
@@ -1554,7 +1554,7 @@ export async function setAgentDestination(params) {
   return sendCommand("navigation/set-destination", params);
 }
 
-// â”€â”€â”€ UI â”€â”€â”€
+// â"€â"€â"€ UI â"€â"€â"€
 
 export async function createCanvas(params) {
   return sendCommand("ui/create-canvas", params);
@@ -1576,7 +1576,7 @@ export async function setUIImage(params) {
   return sendCommand("ui/set-image", params);
 }
 
-// â”€â”€â”€ Package Manager â”€â”€â”€
+// â"€â"€â"€ Package Manager â"€â"€â"€
 
 export async function listPackages(params) {
   return sendCommand("packages/list", params);
@@ -1598,7 +1598,7 @@ export async function getPackageInfo(params) {
   return sendCommand("packages/info", params);
 }
 
-// â”€â”€â”€ Constraints & LOD â”€â”€â”€
+// â"€â"€â"€ Constraints & LOD â"€â"€â"€
 
 export async function addConstraint(params) {
   return sendCommand("constraint/add", params);
@@ -1616,7 +1616,7 @@ export async function getLODGroupInfo(params) {
   return sendCommand("lod/info", params);
 }
 
-// â”€â”€â”€ Prefs â”€â”€â”€
+// â"€â"€â"€ Prefs â"€â"€â"€
 
 export async function getEditorPref(params) {
   return sendCommand("editorprefs/get", params);
@@ -1646,7 +1646,7 @@ export async function deleteAllPlayerPrefs(params) {
   return sendCommand("playerprefs/delete-all", params);
 }
 
-// â”€â”€â”€ Project Context (direct HTTP, no queue) â”€â”€â”€
+// â"€â"€â"€ Project Context (direct HTTP, no queue) â"€â"€â"€
 
 /**
  * Get project context files. Bypasses the command queue since it's read-only file I/O.
