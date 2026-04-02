@@ -75,7 +75,7 @@ const CORE_TOOLS = new Set([
   // "unity_vrse_open_build_tool",
   "unity_vrse_create_experience",
   "unity_vrse_get_experience_creation_status",
-  "unity_vrse_open_art_scene",
+  // "unity_vrse_open_art_scene",
   "unity_vrse_story_add_trigger_set",
   "unity_vrse_story_add_action",
   "unity_vrse_story_update_node",
@@ -107,6 +107,8 @@ const CORE_TOOLS = new Set([
   // "unity_vrse_build_status",
   "unity_vrse_story_search_node_templates",
   "unity_vrse_story_generate_vo",
+  "unity_list_conversion_tools",
+  "unity_conversion_tool",
 
   // Scene management
   "unity_scene_info",
@@ -189,11 +191,11 @@ const CORE_TOOLS = new Set([
   "unity_set_object_reference",
 
   // Packages
-  "unity_packages_list",
-  "unity_packages_add",
-  "unity_packages_remove",
-  "unity_packages_search",
-  "unity_packages_info",
+  // "unity_packages_list",
+  // "unity_packages_add",
+  // "unity_packages_remove",
+  // "unity_packages_search",
+  // "unity_packages_info",
 
   // Queue & agents
   "unity_queue_info",
@@ -208,13 +210,21 @@ const CORE_TOOLS = new Set([
 export function splitToolTiers(allEditorTools) {
   const core = [];
   const advanced = [];
+  const conversions = [];
 
   for (const tool of allEditorTools) {
-    if (CORE_TOOLS.has(tool.name)) {
+    if (tool.name.includes("_convert_") || tool.name === "vrse_create_placepoint") {
+      conversions.push(tool);
+    } else if (CORE_TOOLS.has(tool.name)) {
       core.push(tool);
     } else {
       advanced.push(tool);
     }
+  }
+
+  const conversionMap = new Map();
+  for (const t of conversions) {
+    conversionMap.set(t.name, t);
   }
 
   // Build an index of advanced tools for the catalog
@@ -386,9 +396,53 @@ export function splitToolTiers(allEditorTools) {
     },
   };
 
+  const conversionTool = {
+    name: "unity_conversion_tool",
+    description:
+      "Execute a VRse conversion tool by name. Use unity_list_conversion_tools " +
+      "to discover available tools for converting scene objects to interactables.",
+    inputSchema: {
+      type: "object",
+      properties: {
+        tool: {
+          type: "string",
+          description:
+            'The conversion tool name (e.g. "unity_vrse_convert_to_grabbable").',
+        },
+        params: {
+          type: "object",
+          description: "Parameters for the conversion tool.",
+          additionalProperties: true,
+        },
+      },
+      required: ["tool"],
+    },
+    handler: async ({ tool, params } = {}) => {
+      const target = conversionMap.get(tool);
+      if (target) return await target.handler(params || {});
+      return `Error: Unknown conversion tool "${tool}". Use unity_list_conversion_tools to see available tools.`;
+    },
+  };
+
+  const listConversionTools = {
+    name: "unity_list_conversion_tools",
+    description: "List all available VRse interactable conversion tools and their schemas.",
+    inputSchema: { type: "object", properties: {} },
+    handler: async () => {
+      return JSON.stringify(
+        conversions.map((t) => ({ name: t.name, description: t.description })),
+        null,
+        2
+      );
+    },
+  };
+
+  const metaTools = [catalogTool, advancedTool, conversionTool, listConversionTools];
+
   return {
     coreTools: core,
-    metaTools: [catalogTool, advancedTool],
+    advancedTools: advanced,
+    metaTools,
     advancedCount: advanced.length,
     coreCount: core.length,
   };
