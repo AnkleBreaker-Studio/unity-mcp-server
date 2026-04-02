@@ -1,7 +1,9 @@
 // AnkleBreaker Unity MCP — Tool definitions for Unity Editor operations (via HTTP bridge)
 import * as bridge from "../unity-editor-bridge.js";
+import { vrseInteractableTools } from "./vrse-interactable-tools.js";
 
 export const editorTools = [
+  ...vrseInteractableTools,
   // VRseBuilder SDK
   {
     name: "unity_vrse_status",
