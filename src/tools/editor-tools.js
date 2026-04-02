@@ -4299,4 +4299,103 @@ export const editorTools = [
     },
     handler: async (params) => JSON.stringify(await bridge.listTests(params || {}), null, 2),
   },
+
+  // ─── Sprite Atlas ───
+
+  {
+    name: "unity_spriteatlas_create",
+    description: "Create a new SpriteAtlas asset at the given path.",
+    inputSchema: {
+      type: "object",
+      properties: {
+        path: { type: "string", description: "Asset path (e.g. 'Assets/Atlases/MyAtlas.spriteatlas')" },
+        includeInBuild: { type: "boolean", description: "Include atlas in builds (default: true)" },
+      },
+      required: ["path"],
+    },
+    handler: async (params) => JSON.stringify(await bridge.createSpriteAtlas(params), null, 2),
+  },
+  {
+    name: "unity_spriteatlas_info",
+    description: "Get SpriteAtlas details: packables, texture settings, packing settings.",
+    inputSchema: {
+      type: "object",
+      properties: {
+        path: { type: "string", description: "Asset path of the SpriteAtlas" },
+      },
+      required: ["path"],
+    },
+    handler: async (params) => JSON.stringify(await bridge.getSpriteAtlasInfo(params), null, 2),
+  },
+  {
+    name: "unity_spriteatlas_add",
+    description: "Add sprites, textures, or folders to a SpriteAtlas.",
+    inputSchema: {
+      type: "object",
+      properties: {
+        path: { type: "string", description: "Asset path of the SpriteAtlas" },
+        assetPaths: { type: "array", items: { type: "string" }, description: "Asset paths to add" },
+        assetPath: { type: "string", description: "Single asset path to add (alternative to assetPaths)" },
+      },
+      required: ["path"],
+    },
+    handler: async (params) => JSON.stringify(await bridge.addToSpriteAtlas(params), null, 2),
+  },
+  {
+    name: "unity_spriteatlas_remove",
+    description: "Remove packables from a SpriteAtlas.",
+    inputSchema: {
+      type: "object",
+      properties: {
+        path: { type: "string", description: "Asset path of the SpriteAtlas" },
+        assetPaths: { type: "array", items: { type: "string" }, description: "Asset paths to remove" },
+        assetPath: { type: "string", description: "Single asset path to remove (alternative to assetPaths)" },
+      },
+      required: ["path"],
+    },
+    handler: async (params) => JSON.stringify(await bridge.removeFromSpriteAtlas(params), null, 2),
+  },
+  {
+    name: "unity_spriteatlas_settings",
+    description: "Update SpriteAtlas packing and texture settings.",
+    inputSchema: {
+      type: "object",
+      properties: {
+        path: { type: "string", description: "Asset path of the SpriteAtlas" },
+        includeInBuild: { type: "boolean", description: "Include in builds" },
+        enableRotation: { type: "boolean", description: "Allow sprite rotation during packing" },
+        enableTightPacking: { type: "boolean", description: "Use tight packing" },
+        padding: { type: "number", description: "Padding between sprites in pixels" },
+        readable: { type: "boolean", description: "Make atlas texture readable" },
+        generateMipMaps: { type: "boolean", description: "Generate mipmaps" },
+        sRGB: { type: "boolean", description: "Use sRGB color space" },
+        filterMode: { type: "string", description: "Texture filter mode (Point, Bilinear, Trilinear)" },
+      },
+      required: ["path"],
+    },
+    handler: async (params) => JSON.stringify(await bridge.setSpriteAtlasSettings(params), null, 2),
+  },
+  {
+    name: "unity_spriteatlas_delete",
+    description: "Delete a SpriteAtlas asset.",
+    inputSchema: {
+      type: "object",
+      properties: {
+        path: { type: "string", description: "Asset path of the SpriteAtlas to delete" },
+      },
+      required: ["path"],
+    },
+    handler: async (params) => JSON.stringify(await bridge.deleteSpriteAtlas(params), null, 2),
+  },
+  {
+    name: "unity_spriteatlas_list",
+    description: "Find all SpriteAtlas assets in the project, optionally filtered by folder.",
+    inputSchema: {
+      type: "object",
+      properties: {
+        folder: { type: "string", description: "Folder to search in (e.g. 'Assets/Atlases'). Omit to search entire project." },
+      },
+    },
+    handler: async (params) => JSON.stringify(await bridge.listSpriteAtlases(params), null, 2),
+  },
 ];
