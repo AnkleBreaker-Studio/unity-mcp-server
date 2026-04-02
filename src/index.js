@@ -32,6 +32,8 @@ import { hubTools } from "./tools/hub-tools.js";
 import { editorTools } from "./tools/editor-tools.js";
 import { contextTools } from "./tools/context-tools.js";
 import { instanceTools } from "./tools/instance-tools.js";
+import { vrseInteractableTools } from "./tools/vrse-interactable-tools.js";
+import { vrseStoryOrchestrationTools } from "./tools/vrse-story-orchestration-tools.js";
 import { splitToolTiers } from "./tool-tiers.js";
 import { setAgentId, getProjectContext } from "./unity-editor-bridge.js";
 import {
@@ -115,6 +117,8 @@ const ALL_TOOLS = [
   ...coreTools,
   ...metaTools,
   ...contextTools,
+  ...vrseInteractableTools,
+  ...vrseStoryOrchestrationTools,
 ];
 debugLog(
   `[MCP] Tool tiers: ${coreCount} core + ${advancedCount} advanced (via unity_advanced_tool) = ${coreCount + advancedCount} total, ${ALL_TOOLS.length} exposed`
