@@ -15,6 +15,12 @@ All notable changes to this package will be documented in this file.
   - `spriteatlas/list` — List all SpriteAtlases in the project
 - New `spriteatlas-bridge.js` and `spriteatlas-tools.js` modules
 
+### Added
+- **npm auto-publish** — GitHub Action that automatically publishes to npm whenever a new GitHub release is created (contributed by [@vatanaksoytezer](https://github.com/vatanaksoytezer) in [#8](https://github.com/AnkleBreaker-Studio/unity-mcp-server/pull/8))
+
+### Changed
+- **npm package renamed** — Package renamed from `unity-mcp-server` to `anklebreaker-unity-mcp` to avoid name conflict on npm. Install via `npx anklebreaker-unity-mcp@latest`
+
 ### Fixed
 - **UTF-8 encoding** — Fixed mojibake characters (corrupted em-dashes, arrows, section headers) across all comments in `unity-editor-bridge.js`; removed stale BOM
 - **package-lock.json** — Synced version field to 2.27.0

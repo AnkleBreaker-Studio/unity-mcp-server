@@ -291,6 +291,8 @@ If Unity MCP helps your workflow, consider supporting its development! Your supp
 
 ## What's New in v2.28.0
 
+- **npm auto-publish** — A GitHub Action now automatically publishes to npm whenever a new GitHub release is created. Contributed by [@vatanaksoytezer](https://github.com/vatanaksoytezer) in [#8](https://github.com/AnkleBreaker-Studio/unity-mcp-server/pull/8).
+- **npm package renamed** — Package renamed from `unity-mcp-server` to `anklebreaker-unity-mcp` to avoid name conflict on npm. Install via `npx anklebreaker-unity-mcp@latest`.
 - **SpriteAtlas tools** — 7 new tools for Unity SpriteAtlas management: create, inspect, add/remove sprites, configure packing & texture settings, delete, and list SpriteAtlases. Contributed by [@zaferdace](https://github.com/zaferdace). Registered as advanced tools accessible via `unity_advanced_tool`.
 - **UTF-8 encoding fix** — Fixed corrupted characters in `unity-editor-bridge.js` comments and section headers.
 
