@@ -138,7 +138,7 @@ const CORE_TOOLS = new Set([
 
   // Asset management
   "unity_asset_list",
-  "unity_asset_import",
+  // "unity_asset_import",
   "unity_asset_delete",
   "unity_asset_create_prefab",
   "unity_asset_instantiate_prefab",
@@ -159,7 +159,7 @@ const CORE_TOOLS = new Set([
 
   // Console & Compilation
   "unity_console_log",
-  "unity_console_clear",
+  // "unity_console_clear",
   "unity_get_compilation_errors",
 
   // Editor actions
@@ -201,13 +201,23 @@ const CORE_TOOLS = new Set([
   "unity_queue_info",
   "unity_agents_list",
   "unity_agent_log",
+
+  // Meta-tools for Infinity Workshop & Advanced VRse tools
+  "unity_list_infinity_tools",
+  "unity_infinity_tool",
+  "unity_list_advanced_vrse_tools",
+  "unity_advanced_vrse_tool",
 ]);
 
 /**
  * Split a flat tool array into { core, advanced }.
  * Also generates the meta-tools for accessing advanced tools.
+ * @param {Array} allEditorTools - All editor tool definitions
+ * @param {Object} options - Optional tool arrays for specialized categories
+ * @param {Array} options.infinityTools - Infinity Workshop tools (hidden behind meta-tool)
+ * @param {Array} options.advancedVrseTools - Advanced VRse mesh/physics tools (hidden behind meta-tool)
  */
-export function splitToolTiers(allEditorTools) {
+export function splitToolTiers(allEditorTools, { infinityTools = [], advancedVrseTools = [] } = {}) {
   const core = [];
   const advanced = [];
   const conversions = [];
@@ -437,7 +447,123 @@ export function splitToolTiers(allEditorTools) {
     },
   };
 
-  const metaTools = [catalogTool, advancedTool, conversionTool, listConversionTools];
+  // ─── Infinity Workshop meta-tools ───
+  const infinityMap = new Map();
+  for (const t of infinityTools) {
+    infinityMap.set(t.name, t);
+  }
+
+  const listInfinityTools = {
+    name: "unity_list_infinity_tools",
+    description:
+      "List all available Infinity Workshop tools for searching, downloading, and placing 3D assets from the cloud. " +
+      "These tools are not directly exposed but can be called via unity_infinity_tool. " +
+      "Categories: lifecycle (status, initialize), discovery (list/search assets), " +
+      "download (by ID, by query, poll status), placement (add to scene, smart place, batch place, download+place).",
+    inputSchema: { type: "object", properties: {} },
+    handler: async () => {
+      return JSON.stringify(
+        infinityTools.map((t) => ({ name: t.name, description: t.description })),
+        null,
+        2
+      );
+    },
+  };
+
+  const infinityTool = {
+    name: "unity_infinity_tool",
+    description:
+      "Execute an Infinity Workshop tool by name. Use unity_list_infinity_tools " +
+      "to discover available tools and their parameters. Provides access to asset " +
+      "searching, downloading, and smart scene placement from the Infinity Workshop cloud.",
+    inputSchema: {
+      type: "object",
+      properties: {
+        tool: {
+          type: "string",
+          description:
+            'The infinity tool name to execute (e.g. "vrse_infinity_status", "vrse_infinity_list_assets"). ' +
+            'Use unity_list_infinity_tools to see available tools.',
+        },
+        params: {
+          type: "object",
+          description: "Parameters to pass to the tool.",
+          additionalProperties: true,
+        },
+      },
+      required: ["tool"],
+    },
+    handler: async ({ tool, params } = {}) => {
+      if (!tool) {
+        return "Error: 'tool' parameter is required. Use unity_list_infinity_tools to see available tools.";
+      }
+      const target = infinityMap.get(tool);
+      if (target) return await target.handler(params || {});
+      return `Error: Unknown infinity tool "${tool}". Use unity_list_infinity_tools to see available tools.`;
+    },
+  };
+
+  // ─── Advanced VRse meta-tools (mesh analysis, pivot rotate limiter) ───
+  const advancedVrseMap = new Map();
+  for (const t of advancedVrseTools) {
+    advancedVrseMap.set(t.name, t);
+  }
+
+  const listAdvancedVrseTools = {
+    name: "unity_list_advanced_vrse_tools",
+    description:
+      "List all available advanced VRse mesh & physics tools. " +
+      "These are heuristic-based tools for creating physical interactables like hinges, levers, and rotating doors. " +
+      "Two-tool AI flow: (1) analyze mesh data, (2) create with AI-determined parameters.",
+    inputSchema: { type: "object", properties: {} },
+    handler: async () => {
+      return JSON.stringify(
+        advancedVrseTools.map((t) => ({ name: t.name, description: t.description })),
+        null,
+        2
+      );
+    },
+  };
+
+  const advancedVrseTool = {
+    name: "unity_advanced_vrse_tool",
+    description:
+      "Execute an advanced VRse mesh/physics tool by name. Use unity_list_advanced_vrse_tools " +
+      "to discover available tools. Provides access to mesh analysis for hinge detection " +
+      "and PivotRotateLimiter creation.",
+    inputSchema: {
+      type: "object",
+      properties: {
+        tool: {
+          type: "string",
+          description:
+            'The advanced VRse tool name (e.g. "vrse_analyze_mesh_for_rotation", "vrse_create_pivot_rotate_limiter"). ' +
+            'Use unity_list_advanced_vrse_tools to see available tools.',
+        },
+        params: {
+          type: "object",
+          description: "Parameters to pass to the tool.",
+          additionalProperties: true,
+        },
+      },
+      required: ["tool"],
+    },
+    handler: async ({ tool, params } = {}) => {
+      if (!tool) {
+        return "Error: 'tool' parameter is required. Use unity_list_advanced_vrse_tools to see available tools.";
+      }
+      const target = advancedVrseMap.get(tool);
+      if (target) return await target.handler(params || {});
+      return `Error: Unknown advanced VRse tool "${tool}". Use unity_list_advanced_vrse_tools to see available tools.`;
+    },
+  };
+
+  const metaTools = [
+    catalogTool, advancedTool,
+    conversionTool, listConversionTools,
+    listInfinityTools, infinityTool,
+    listAdvancedVrseTools, advancedVrseTool,
+  ];
 
   return {
     coreTools: core,

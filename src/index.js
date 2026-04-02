@@ -34,6 +34,8 @@ import { contextTools } from "./tools/context-tools.js";
 import { instanceTools } from "./tools/instance-tools.js";
 import { vrseInteractableTools } from "./tools/vrse-interactable-tools.js";
 import { vrseStoryOrchestrationTools } from "./tools/vrse-story-orchestration-tools.js";
+import { vrseInfinityTools } from "./tools/vrse-infinity-tools.js";
+import { vrseAdvancedTools } from "./tools/vrse-advanced-tools.js";
 import { splitToolTiers } from "./tool-tiers.js";
 import { setAgentId, getProjectContext } from "./unity-editor-bridge.js";
 import {
@@ -110,7 +112,10 @@ setAgentId(PROCESS_AGENT_ID);
 // This keeps the tool count under ~70, preventing MCP client rejection caused by
 // oversized tool lists (268 tools / 125KB was ~5x beyond what clients handle).
 const { coreTools, metaTools, advancedCount, coreCount } =
-  splitToolTiers(editorTools);
+  splitToolTiers(editorTools, {
+    infinityTools: vrseInfinityTools,
+    advancedVrseTools: vrseAdvancedTools,
+  });
 const ALL_TOOLS = [
   ...instanceTools,
   ...hubTools,
