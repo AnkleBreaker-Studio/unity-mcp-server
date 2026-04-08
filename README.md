@@ -2,7 +2,7 @@
   <img src="icon.png" alt="AnkleBreaker MCP" width="180" />
 </p>
 
-# Unity MCP Server — AI-Powered Unity Editor & Hub Control
+# Unity MCP Server AI-Powered Unity Editor & Hub Control
 
 > **The most comprehensive [Model Context Protocol (MCP)](https://modelcontextprotocol.io) server for Unity game development.** Connect Claude, Cursor, Windsurf, or any MCP-compatible AI assistant to **Unity Editor** and **Unity Hub** with **288 tools** across **30+ categories**. Built and maintained by [AnkleBreaker Studio](https://github.com/AnkleBreaker-Studio).
 
@@ -12,7 +12,7 @@
 > Claude creates the entire game: scene setup, neon materials with bloom post-processing, brick grid layout, game scripts, VFX, and UI — all through Unity MCP commands.
 
 <p align="center">
-  <img src="docs/unity-mcp-showcase-brickbreaker.gif" alt="Unity MCP — AI building a neon brick breaker game in Unity Editor" width="800" />
+  <img src="docs/unity-mcp-showcase-brickbreaker.gif" alt="Unity MCP AI building a neon brick breaker game in Unity Editor" width="800" />
 </p>
 
 ### 3D Medieval Village — AI-generated terrain, houses, and environment
