@@ -281,7 +281,7 @@ export async function sendCommand(command, params = {}) {
           const ticketData = await submitToQueue(command, bodyString);
           const ticketId = ticketData.ticketId;
 
-          console.debug(`[MCP Bridge] Submitted ${command} to queue, ticket: ${ticketId}`);
+          console.error(`[MCP Bridge] Submitted ${command} to queue, ticket: ${ticketId}`);
 
           // Poll for completion
           const result = await pollQueueStatus(ticketId);

@@ -322,7 +322,7 @@ export function splitToolTiers(allEditorTools) {
       const route = toolNameToRoute(tool);
       if (route) {
         try {
-          console.debug(`[MCP] Lazy-loading tool "${tool}" via route "${route}"`);
+          console.error(`[MCP] Lazy-loading tool "${tool}" via route "${route}"`);
           const result = await sendCommand(route, params || {});
           return JSON.stringify(result, null, 2);
         } catch (err) {
