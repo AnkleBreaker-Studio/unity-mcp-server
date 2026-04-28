@@ -1,3 +1,5 @@
+[![MseeP.ai Security Assessment Badge](https://mseep.net/pr/anklebreaker-studio-unity-mcp-server-badge.png)](https://mseep.ai/app/anklebreaker-studio-unity-mcp-server)
+
 <p align="center">
   <img src="icon.png" alt="AnkleBreaker MCP" width="180" />
 </p>
