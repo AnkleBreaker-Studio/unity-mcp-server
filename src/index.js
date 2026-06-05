@@ -36,6 +36,8 @@ import { vrseInteractableTools } from "./tools/vrse-interactable-tools.js";
 import { vrseStoryOrchestrationTools } from "./tools/vrse-story-orchestration-tools.js";
 import { vrseInfinityTools } from "./tools/vrse-infinity-tools.js";
 import { vrseAdvancedTools } from "./tools/vrse-advanced-tools.js";
+import { vrseParityTools } from "./tools/vrse-parity-tools.js";
+import { vrseSpatialTools } from "./tools/vrse-spatial-tools.js";
 import { splitToolTiers } from "./tool-tiers.js";
 import { setAgentId, getProjectContext } from "./unity-editor-bridge.js";
 import {
@@ -124,6 +126,8 @@ const ALL_TOOLS = [
   ...contextTools,
   ...vrseInteractableTools,
   ...vrseStoryOrchestrationTools,
+  ...vrseParityTools,
+  ...vrseSpatialTools,
 ];
 debugLog(
   `[MCP] Tool tiers: ${coreCount} core + ${advancedCount} advanced (via unity_advanced_tool) = ${coreCount + advancedCount} total, ${ALL_TOOLS.length} exposed`
