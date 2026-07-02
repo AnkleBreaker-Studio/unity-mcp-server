@@ -46,6 +46,7 @@ import {
 } from "./instance-discovery.js";
 import { debugLog } from "./state-persistence.js";
 import { CONFIG } from "./config.js";
+import { isErrorResult } from "./response-format.js";
 
 // ─── Response size protection ───
 // Prevents "Write EOF" errors when tool responses exceed stdio transport limits.
@@ -439,7 +440,13 @@ server.setRequestHandler(CallToolRequestSchema, async (request) => {
       contentBlocks.push({ type: "text", text: result });
     }
 
-    return { content: truncateResponseIfNeeded(contentBlocks) };
+    const response = { content: truncateResponseIfNeeded(contentBlocks) };
+    // Surface Unity-side logical errors as MCP errors so the agent can branch
+    // on them (WIN A keystone — the bridge returns HTTP 200 on logical failure).
+    if (isErrorResult(result)) {
+      response.isError = true;
+    }
+    return response;
 
     } finally {
       // Always clear port override after request completes, even on error
