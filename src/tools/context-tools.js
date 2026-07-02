@@ -4,6 +4,8 @@
 
 import * as bridge from "../unity-editor-bridge.js";
 
+import { formatResult } from "../response-format.js";
+
 export const contextTools = [
   {
     name: "unity_get_project_context",
@@ -27,7 +29,7 @@ export const contextTools = [
     },
     handler: async ({ category } = {}) => {
       const data = await bridge.getProjectContext(category || null);
-      return JSON.stringify(data, null, 2);
+      return formatResult(data);
     },
   },
 ];

@@ -8,6 +8,8 @@ import {
   autoSelectInstance,
 } from "../instance-discovery.js";
 
+import { formatResult } from "../response-format.js";
+
 export const instanceTools = [
   {
     name: "unity_list_instances",
@@ -56,7 +58,7 @@ export const instanceTools = [
         result.message = `Found ${instances.length} Unity instance(s). Currently targeting: ${selected.projectName} (port ${selected.port})`;
       }
 
-      return JSON.stringify(result, null, 2);
+      return formatResult(result);
     },
   },
 
@@ -83,15 +85,12 @@ export const instanceTools = [
     },
     handler: async ({ port }) => {
       if (!port || typeof port !== "number") {
-        return JSON.stringify(
+        return formatResult(
           {
             success: false,
             error:
               "Port number is required. Use unity_list_instances to see available instances.",
-          },
-          null,
-          2
-        );
+          });
       }
 
       const result = await selectInstance(port);
@@ -108,7 +107,7 @@ export const instanceTools = [
         };
       }
 
-      return JSON.stringify(result, null, 2);
+      return formatResult(result);
     },
   },
 ];
