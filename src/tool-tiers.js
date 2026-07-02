@@ -15,6 +15,7 @@
 // restarting the MCP server.
 
 import { sendCommand } from "./unity-editor-bridge.js";
+import { formatResult } from "./response-format.js";
 
 /**
  * Explicit route overrides for tools whose API endpoints
@@ -47,6 +48,41 @@ function toolNameToRoute(toolName) {
   const category = parts[0];
   const action = parts.slice(1).join("-");
   return `${category}/${action}`;
+}
+
+/**
+ * Levenshtein edit distance (small inputs: tool names).
+ */
+function levenshtein(a, b) {
+  const m = a.length;
+  const n = b.length;
+  if (m === 0) return n;
+  if (n === 0) return m;
+  let prev = Array.from({ length: n + 1 }, (_, i) => i);
+  let curr = new Array(n + 1);
+  for (let i = 1; i <= m; i++) {
+    curr[0] = i;
+    for (let j = 1; j <= n; j++) {
+      const cost = a[i - 1] === b[j - 1] ? 0 : 1;
+      curr[j] = Math.min(prev[j] + 1, curr[j - 1] + 1, prev[j - 1] + cost);
+    }
+    [prev, curr] = [curr, prev];
+  }
+  return prev[n];
+}
+
+/**
+ * Return up to `limit` known tool names closest to `name` (did-you-mean),
+ * within a sane edit-distance threshold so a wild miss yields no suggestion.
+ */
+function nearestToolNames(name, knownNames, limit = 3) {
+  const threshold = Math.max(3, Math.floor(name.length / 3));
+  return knownNames
+    .map((n) => ({ n, d: levenshtein(name, n) }))
+    .filter((x) => x.d <= threshold)
+    .sort((a, b) => a.d - b.d)
+    .slice(0, limit)
+    .map((x) => x.n);
 }
 
 // ─── Core tool names (always exposed individually) ───
@@ -197,7 +233,8 @@ export function splitToolTiers(allEditorTools) {
       "Categories include: uma, animation, prefab, physics, lighting, audio, shadergraph, " +
       "amplify, terrain, particle, navmesh, ui, texture, profiler, memory, settings, " +
       "input, asmdef, scriptableobject, constraint, lod, editorprefs, playerprefs, " +
-      "vfx, graphics, sceneview, and more.",
+      "vfx, graphics, sceneview, and more. " +
+      "Pass a `category` to get each tool's full inputSchema (required params + allowed values), not just its name.",
     inputSchema: {
       type: "object",
       properties: {
@@ -252,17 +289,30 @@ export function splitToolTiers(allEditorTools) {
         // Also include dynamic-only tools for this category
         const dynamicTools = (mergedCategories[cat] || [])
           .filter((name) => !advancedMap.has(name))
-          .map((name) => ({ name, description: `(lazy-loaded from Unity plugin)` }));
+          .map((name) => ({
+            name,
+            description: `(lazy-loaded from Unity plugin)`,
+            inputSchema: null,
+          }));
 
+        // Echo each cached tool's inputSchema (WIN F) so the agent sees required
+        // params + enums BEFORE the dispatch round-trip. Lazy-only tools resolve
+        // to inputSchema:null until the C# plugin emits per-route schemas via
+        // _meta/routes. Confined to the category branch so the (potentially huge)
+        // full catalog stays terse and never re-trips the client tool-size limit.
         const all = [
-          ...matching.map((t) => ({ name: t.name, description: t.description })),
+          ...matching.map((t) => ({
+            name: t.name,
+            description: t.description,
+            inputSchema: t.inputSchema,
+          })),
           ...dynamicTools,
         ];
 
         if (all.length === 0) {
           return `No advanced tools found for category "${category}". Available categories: ${Object.keys(mergedCategories).join(", ")}`;
         }
-        return JSON.stringify(all, null, 2);
+        return formatResult(all);
       }
 
       // Full catalog grouped by category
@@ -270,25 +320,21 @@ export function splitToolTiers(allEditorTools) {
       for (const [cat, names] of Object.entries(mergedCategories)) {
         result[cat] = names;
       }
-      return JSON.stringify(
-        {
-          totalAdvancedTools: advanced.length + dynamicCount,
-          dynamicTools: dynamicCount,
-          categories: result,
-        },
-        null,
-        2
-      );
+      return formatResult({
+        totalAdvancedTools: advanced.length + dynamicCount,
+        dynamicTools: dynamicCount,
+        categories: result,
+      });
     },
   };
 
   const advancedTool = {
     name: "unity_advanced_tool",
     description:
-      "Execute an advanced/specialized Unity tool by name. Use unity_list_advanced_tools " +
-      "to discover available tools and their parameters. This provides access to 200+ " +
-      "specialized tools for animation, prefabs, physics, shaders, terrain, particles, " +
-      "UI, profiling, and more.",
+      "Execute an advanced/specialized Unity tool by name. Call unity_list_advanced_tools " +
+      "with a `category` to discover tools AND their full inputSchema (required params + " +
+      "allowed values) before calling. Provides access to 200+ specialized tools for " +
+      "animation, prefabs, physics, shaders, terrain, particles, UI, profiling, and more.",
     inputSchema: {
       type: "object",
       properties: {
@@ -300,7 +346,7 @@ export function splitToolTiers(allEditorTools) {
         params: {
           type: "object",
           description:
-            "Parameters to pass to the tool. Use unity_list_advanced_tools to see required parameters.",
+            "Parameters to pass to the tool. Call unity_list_advanced_tools with the tool's category to see its inputSchema (required params + allowed values).",
           additionalProperties: true,
         },
       },
@@ -316,6 +362,14 @@ export function splitToolTiers(allEditorTools) {
         return await targetTool.handler(params || {});
       }
 
+      // Did-you-mean over known cached tool names (WIN F): a typo'd tool name
+      // otherwise falls through to a derived lazy route and fails with an opaque
+      // bridge 404. Suggesting near names lets the agent self-correct in one hop.
+      const knownNames = [...advancedMap.keys(), ...CORE_TOOLS];
+      const didYouMean = nearestToolNames(tool, knownNames);
+      const suggestion =
+        didYouMean.length > 0 ? ` Did you mean: ${didYouMean.join(", ")}?` : "";
+
       // ─── Lazy loading fallback ───
       // Tool not in cached map — derive the route from the name and call Unity directly.
       // This allows new tools added to the C# plugin to work without restarting the MCP server.
@@ -325,13 +379,21 @@ export function splitToolTiers(allEditorTools) {
           // Log to stderr, not stdout — stdout carries the MCP JSON-RPC transport.
           console.error(`[MCP] Lazy-loading tool "${tool}" via route "${route}"`);
           const result = await sendCommand(route, params || {});
-          return JSON.stringify(result, null, 2);
+          // The bridge returns HTTP 200 even for an unknown endpoint (a structured
+          // {error:"Unknown API endpoint: ..."}), so a typo'd route does NOT throw.
+          // Detect that case so the did-you-mean still fires instead of leaking an
+          // opaque "successful" error back to the agent.
+          const errText = result?.error || result?.data?.error;
+          if (typeof errText === "string" && /unknown api endpoint/i.test(errText)) {
+            return `Error: Unknown tool "${tool}" (no route "${route}").${suggestion} Use unity_list_advanced_tools to see available tools.`;
+          }
+          return formatResult(result);
         } catch (err) {
-          return `Error executing "${tool}" (lazy route: ${route}): ${err.message}`;
+          return `Error executing "${tool}" (lazy route: ${route}): ${err.message}.${suggestion}`;
         }
       }
 
-      return `Error: Unknown tool "${tool}". Use unity_list_advanced_tools to see available tools.`;
+      return `Error: Unknown tool "${tool}".${suggestion} Use unity_list_advanced_tools to see available tools.`;
     },
   };
 
