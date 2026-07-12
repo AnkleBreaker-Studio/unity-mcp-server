@@ -1,6 +1,9 @@
 ﻿// AnkleBreaker Unity MCP â€” Tool definitions for Unity Editor operations (via HTTP bridge)
 import * as bridge from "../unity-editor-bridge.js";
 
+import { callBatchWireWithFallback } from "../capabilities.js";
+import { getSelectedInstance } from "../instance-discovery.js";
+
 export const editorTools = [
   // â”€â”€â”€ Connection â”€â”€â”€
   {
@@ -255,7 +258,10 @@ export const editorTools = [
       },
       required: ["references"],
     },
-    handler: async (params) => JSON.stringify(await bridge.batchWireReferences(params), null, 2),
+    // Negotiated capability: fall back to N single set-reference calls when the
+    // connected plugin predates component/batch-wire (see src/capabilities.js).
+    handler: async (params) =>
+      JSON.stringify(await callBatchWireWithFallback(bridge, getSelectedInstance(), params), null, 2),
   },
   {
     name: "unity_component_get_referenceable",

@@ -313,6 +313,8 @@ export async function discoverInstances() {
             unityVersion: info?.unityVersion || "",
             isClone: info?.isClone || false,
             cloneIndex: info?.cloneIndex ?? -1,
+            protocolVersion: info?.protocolVersion ?? null,
+            pluginVersion: info?.pluginVersion || null,
             alive: true,
             source: "portscan",
           };
@@ -351,6 +353,8 @@ export async function autoSelectInstance() {
         unityVersion: info?.unityVersion || "",
         isClone: false,
         cloneIndex: -1,
+        protocolVersion: info?.protocolVersion ?? null,
+        pluginVersion: info?.pluginVersion || null,
         alive: true,
         source: "default",
       };
@@ -494,6 +498,9 @@ async function getInstanceInfo(port) {
       unityVersion: data.unityVersion || data.version || null,
       isClone: data.isClone || false,
       cloneIndex: data.cloneIndex ?? -1,
+      // Capability handshake (server↔plugin drift): absent on pre-handshake plugins.
+      protocolVersion: data.protocolVersion ?? null,
+      pluginVersion: data.pluginVersion || null,
     };
   } catch {
     return null;
