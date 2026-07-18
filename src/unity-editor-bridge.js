@@ -95,7 +95,10 @@ async function submitToQueue(apiPath, bodyString) {
  */
 async function pollQueueStatus(ticketId) {
   let pollIntervalMs = CONFIG.queuePollIntervalMs;
-  const maxIntervalMs = Math.min(1000, CONFIG.queuePollMaxMs);
+  // Cap the growth of the poll interval at the configured max (default 1500ms). This used
+  // to be Math.min(1000, ...), which silently clamped the documented UNITY_QUEUE_POLL_MAX
+  // and the default to 1000.
+  const maxIntervalMs = CONFIG.queuePollMaxMs;
   const startTime = Date.now();
   // Use dedicated poll timeout (longer than bridge timeout to handle slow operations like execute_code)
   const timeoutMs = CONFIG.queuePollTimeoutMs || CONFIG.editorBridgeTimeout;

@@ -51,6 +51,8 @@ describe("queue-mode session (single instance)", () => {
     bridge.on("graphics/asset-preview", () => ({ base64: "QUJDREVG".repeat(40_000), width: 256, height: 256 }));
     bridge.on("silent/completion", () => undefined);
     bridge.on("terrain/lisr", () => ({ __fail: true, error: "Unknown route: terrain/lisr" }));
+    // A finished test job — status lives under the bridge's data envelope.
+    bridge.on("testing/get-job", () => ({ status: "succeeded", passed: 3, failed: 0 }));
     // Old-plugin era: batch-wire route doesn't exist; single set-reference does.
     bridge.on("component/batch-wire", () => ({ __fail: true, error: "Unknown API endpoint: component/batch-wire" }));
     // Old plugins report a per-call failure as an HTTP-200 { success:true, data:{error} }
@@ -268,6 +270,17 @@ describe("queue-mode session (single instance)", () => {
   test("instance listing surfaces the plugin version from the capability handshake", async () => {
     const { payload } = await client.callTool("unity_list_instances");
     assert.equal(payload.instances[0].pluginVersion, "9.9.9-mock");
+  });
+
+  test("testing get_job waitTimeout short-circuits on terminal status (reads data.status)", async () => {
+    const start = Date.now();
+    const { payload } = await client.callTool("unity_advanced_tool", {
+      tool: "unity_testing_get_job",
+      params: { waitTimeout: 30 },
+    });
+    // Must return promptly (terminal status detected), not burn the 30s timeout.
+    assert.ok(Date.now() - start < 5_000, "returned without burning the full waitTimeout");
+    assert.equal(payload.data.status, "succeeded");
   });
 
   test("unknown tool names are rejected with a helpful error", async () => {

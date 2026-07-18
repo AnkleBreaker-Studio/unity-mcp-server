@@ -4362,13 +4362,13 @@ export const editorTools = [
     },
     handler: async (params) => {
       const result = await bridge.runTests(params);
-      // If the run started successfully, auto-poll for a few seconds to provide early feedback
-      if (result.jobId && result.status === "running") {
-        // Wait briefly then check for early results
+      // Bridge wraps handler payloads as { success, data:{...} }, so the jobId/status
+      // live under .data. Reading the top level made this early-feedback branch dead.
+      const started = result.data ?? result;
+      if (started.jobId && started.status === "running") {
         await new Promise((r) => setTimeout(r, 2000));
         try {
-          const status = await bridge.getTestJob({ jobId: result.jobId });
-          return formatResult(status);
+          return formatResult(await bridge.getTestJob({ jobId: started.jobId }));
         } catch (_) {
           return formatResult(result);
         }
@@ -4408,16 +4408,18 @@ export const editorTools = [
     handler: async (params) => {
       const waitTimeout = params?.waitTimeout;
       if (waitTimeout && waitTimeout > 0) {
-        // Server-side polling loop
+        // Server-side polling loop. Terminal status lives under .data (bridge envelope);
+        // reading the top level meant this never short-circuited and always burned the
+        // full timeout even when the run finished in seconds.
+        const TERMINAL = new Set(["succeeded", "failed", "error", "cancelled", "canceled", "completed", "timedout"]);
         const deadline = Date.now() + waitTimeout * 1000;
         let lastResult;
         while (Date.now() < deadline) {
           lastResult = await bridge.getTestJob(params);
-          const status = lastResult?.status;
-          if (status === "succeeded" || status === "failed") {
+          const status = (lastResult?.data?.status ?? lastResult?.status ?? "").toLowerCase();
+          if (TERMINAL.has(status)) {
             return formatResult(lastResult);
           }
-          // Wait 2 seconds before next poll
           await new Promise((r) => setTimeout(r, 2000));
         }
         // Timeout — return last known state

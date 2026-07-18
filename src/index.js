@@ -413,7 +413,10 @@ server.setRequestHandler(CallToolRequestSchema, async (request) => {
       setAgentId(overrideId);
       setCurrentAgent(overrideId);
     } else {
-      // Ensure instance-discovery state targets this process's agent
+      // Reset BOTH the bridge agent id and the discovery agent to this process. Without
+      // the setAgentId reset, a prior request's _meta.agentId override leaked into the
+      // X-Agent-Id header of every later request (wrong queue attribution).
+      setAgentId(PROCESS_AGENT_ID);
       setCurrentAgent(PROCESS_AGENT_ID);
     }
 
