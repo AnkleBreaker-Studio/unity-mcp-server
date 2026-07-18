@@ -27,6 +27,38 @@ function imageResultBlocks(result, noImageError) {
   ];
 }
 
+// Console entries ship a full multi-frame stack trace on EVERY entry — measured at
+// ~80% of a typical console payload, almost all of it noise for plain info logs.
+// Server-side stripping works against every plugin version. Policy: "errors" (default)
+// keeps a trimmed trace on error-like entries only; "all"/"none" override; frame cap
+// applies wherever a trace is kept. The plugin data is untouched — full traces remain
+// one explicit parameter away, so no capability is lost.
+const ERROR_LIKE_LOG_TYPES = new Set(["error", "exception", "assert"]);
+
+function shapeConsoleLogResult(result, includeStackTrace, maxStackFrames) {
+  const mode = includeStackTrace === "all" || includeStackTrace === "none" ? includeStackTrace : "errors";
+  const frameCap = Number.isInteger(maxStackFrames) && maxStackFrames > 0 ? maxStackFrames : 6;
+  const entries = result?.data?.entries;
+  if (!Array.isArray(entries)) return result;
+
+  const shaped = entries.map((entry) => {
+    if (!entry || typeof entry.stackTrace !== "string" || entry.stackTrace.length === 0) return entry;
+    const keep = mode === "all" || (mode === "errors" && ERROR_LIKE_LOG_TYPES.has(String(entry.type).toLowerCase()));
+    if (!keep) {
+      const { stackTrace, ...rest } = entry;
+      return rest;
+    }
+    const frames = entry.stackTrace.split("\n").filter((line) => line.trim().length > 0);
+    if (frames.length <= frameCap) return entry;
+    return {
+      ...entry,
+      stackTrace: `${frames.slice(0, frameCap).join("\n")}\n... (+${frames.length - frameCap} more frames; use includeStackTrace:"all" + maxStackFrames for the full trace)`,
+    };
+  });
+
+  return { ...result, data: { ...result.data, entries: shaped } };
+}
+
 export const editorTools = [
   // â”€â”€â”€ Connection â”€â”€â”€
   {
@@ -209,7 +241,7 @@ export const editorTools = [
         gameObjectPath: { type: "string", description: "Path or name of target GameObject" },
         componentType: { type: "string", description: "Component type name" },
         propertyName: { type: "string", description: "Name of the property to set" },
-        value: { type: ["string", "number", "boolean", "object", "array", "null"], description: "Value to set (type depends on property). For ObjectReference: string asset path, string scene object name, null, or {assetPath?, instanceId?, gameObject?, componentType?}" },
+        value: { type: ["string", "number", "boolean", "object", "array", "null"], description: "Value to set. ObjectReference accepts: asset path, scene object name, null, or {assetPath?, instanceId?, gameObject?, componentType?}" },
       },
       required: ["gameObjectPath", "componentType", "propertyName", "value"],
     },
@@ -501,15 +533,25 @@ export const editorTools = [
   // â”€â”€â”€ Console / Logging â”€â”€â”€
   {
     name: "unity_console_log",
-    description: "Get recent Unity console log messages (errors, warnings, info). Useful for debugging.",
+    description: "Get recent Unity console log messages (errors, warnings, info).",
     inputSchema: {
       type: "object",
       properties: {
         count: { type: "number", description: "Number of recent messages to retrieve (default: 50)" },
         type: { type: "string", description: "Filter: 'error', 'warning', 'info', or 'all' (default: 'all')" },
+        includeStackTrace: {
+          type: "string",
+          enum: ["errors", "all", "none"],
+          description: "Traces to keep: 'errors' (default, error-like entries only, trimmed), 'all', 'none'.",
+        },
+        maxStackFrames: { type: "number", description: "Frames kept per retained trace (default: 6)" },
       },
     },
-    handler: async (params) => formatResult(await bridge.getConsoleLog(params)),
+    handler: async (params) => {
+      const { includeStackTrace, maxStackFrames, ...bridgeParams } = params || {};
+      const result = await bridge.getConsoleLog(bridgeParams);
+      return formatResult(shapeConsoleLogResult(result, includeStackTrace, maxStackFrames));
+    },
   },
   {
     name: "unity_console_clear",
@@ -2745,9 +2787,9 @@ export const editorTools = [
     inputSchema: {
       type: "object",
       properties: {
-        window: { type: "string", description: "Target window: EditorWindow type FullName (e.g. 'UnityEditor.InspectorWindow'), simple type name, or visible tab title." },
-        path: { type: "string", description: "Save path (default: Assets/Screenshots/EditorWindow_timestamp.png). Must end in .png; any folder is allowed." },
-        maxDimension: { type: "number", description: "Max pixels per side before the capture is rejected (default: 8192; also clamped to the GPU max texture size)." },
+        window: { type: "string", description: "EditorWindow type FullName (e.g. 'UnityEditor.InspectorWindow'), simple type name, or tab title." },
+        path: { type: "string", description: "Save path ending in .png (default: Assets/Screenshots/EditorWindow_<time>.png)." },
+        maxDimension: { type: "number", description: "Max pixels per side (default 8192, clamped to GPU max)." },
       },
       required: ["window"],
     },

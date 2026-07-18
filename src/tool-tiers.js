@@ -229,10 +229,10 @@ export function splitToolTiers(allEditorTools) {
   const catalogTool = {
     name: "unity_list_advanced_tools",
     description:
-      "List advanced/specialized Unity tools by category; call them via unity_advanced_tool. " +
-      "Categories: uma, animation, prefab, physics, lighting, audio, shadergraph, amplify, " +
-      "terrain, particle, navmesh, ui, texture, profiler, memory, settings, input, asmdef, " +
-      "scriptableobject, constraint, lod, editorprefs, playerprefs, vfx, graphics, sceneview, and more.",
+      "List advanced Unity tools by category; call them via unity_advanced_tool. Categories: " +
+      "uma, animation, prefab, physics, lighting, audio, shadergraph, amplify, terrain, particle, " +
+      "navmesh, ui, texture, profiler, memory, settings, input, asmdef, scriptableobject, " +
+      "constraint, lod, editorprefs, playerprefs, vfx, graphics, sceneview, more.",
     inputSchema: {
       type: "object",
       properties: {

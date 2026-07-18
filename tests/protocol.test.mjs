@@ -54,6 +54,14 @@ describe("queue-mode session (single instance)", () => {
     // Old-plugin era: batch-wire route doesn't exist; single set-reference does.
     bridge.on("component/batch-wire", () => ({ __fail: true, error: "Unknown API endpoint: component/batch-wire" }));
     bridge.on("component/set-reference", (p) => ({ success: true, wired: p.propertyName }));
+    const trace = Array.from({ length: 12 }, (_, i) => `Frame${i} (at ./Library/PackageCache/pkg/File.cs:${i})`).join("\n");
+    bridge.on("console/log", () => ({
+      count: 2,
+      entries: [
+        { message: "plain info", type: "log", timestamp: "10:00:00.000", stackTrace: trace },
+        { message: "kaboom", type: "error", timestamp: "10:00:01.000", stackTrace: trace },
+      ],
+    }));
     await bridge.start();
     client = new McpTestClient({ env: bridge.env() }).start();
     initResult = await client.initialize();
@@ -211,6 +219,18 @@ describe("queue-mode session (single instance)", () => {
     const text = JSON.stringify(payload);
     assert.ok(!text.includes("ticketId"), "no ticket metadata in tool output");
     assert.ok(!text.includes("agentId"), "no agent metadata in tool output");
+  });
+
+  test("console log strips info-entry stack traces by default and trims error traces", async () => {
+    const { payload } = await client.callTool("unity_console_log", { count: 2 });
+    const [info, error] = payload.data.entries;
+    assert.equal(info.stackTrace, undefined, "info entries drop their trace by default");
+    assert.ok(error.stackTrace.includes("Frame0"), "error entries keep the trace head");
+    assert.ok(!error.stackTrace.includes("Frame7"), "error traces are frame-capped");
+    assert.match(error.stackTrace, /more frames/, "truncation is marked");
+
+    const full = await client.callTool("unity_console_log", { count: 2, includeStackTrace: "all", maxStackFrames: 50 });
+    assert.ok(full.payload.data.entries[0].stackTrace.includes("Frame11"), "explicit 'all' restores full traces");
   });
 
   test("batch-wire degrades to single set-reference calls on plugins without the route", async () => {
@@ -390,5 +410,17 @@ describe("multi-instance selection gate", () => {
     await client.callTool("unity_editor_state");
     assert.ok(bridgeB.seen.some((r) => r.route === "editor/state"), "selected instance B received the call");
     assert.ok(!bridgeA.seen.some((r) => r.route === "editor/state"), "instance A did not receive the call");
+  });
+
+  test("instances can be selected by stable projectName instead of dynamic port", async () => {
+    const selected = await client.callTool("unity_select_instance", { projectName: "ProjectA" });
+    assert.match(JSON.stringify(selected.payload), /ProjectA/);
+    await client.callTool("unity_editor_state");
+    assert.ok(bridgeA.seen.some((r) => r.route === "editor/state"), "name-selected instance A now receives calls");
+
+    const missing = await client.callTool("unity_select_instance", { projectName: "NoSuchProject" });
+    assert.match(missing.payloadText, /No running instance named/);
+    assert.match(missing.payloadText, /ProjectA/, "error lists available instances");
+    assert.equal(missing.isError, true);
   });
 });
