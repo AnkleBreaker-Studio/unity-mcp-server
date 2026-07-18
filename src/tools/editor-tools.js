@@ -1,6 +1,30 @@
 ﻿// AnkleBreaker Unity MCP â€” Tool definitions for Unity Editor operations (via HTTP bridge)
 import * as bridge from "../unity-editor-bridge.js";
 
+// Shared shaping for image-returning graphics tools.
+// The bridge wraps plugin payloads as { success, data: { ..., base64 } } (queue mode)
+// but legacy mode and some code paths surface { ..., base64 } at the top level, so the
+// image is looked up at both depths. The base64 payload must NEVER remain inside the
+// metadata text block: a single leaked PNG is a multi-hundred-KB token bomb.
+function imageResultBlocks(result, noImageError) {
+  if (result.error) return JSON.stringify(result, null, 2);
+  const imageData = result.data?.base64 || result.base64;
+  if (!imageData || typeof imageData !== "string") {
+    return JSON.stringify({ error: noImageError, ...result }, null, 2);
+  }
+  const metadata = { ...result };
+  delete metadata.base64;
+  if (metadata.data && typeof metadata.data === "object") {
+    metadata.data = { ...metadata.data };
+    delete metadata.data.base64;
+  }
+  const b64 = imageData.replace(/^data:image\/\w+;base64,/, "");
+  return [
+    { type: "image", data: b64, mimeType: "image/png" },
+    { type: "text", text: JSON.stringify(metadata, null, 2) },
+  ];
+}
+
 export const editorTools = [
   // â”€â”€â”€ Connection â”€â”€â”€
   {
@@ -2761,16 +2785,8 @@ export const editorTools = [
       },
       required: ["assetPath"],
     },
-    handler: async (params) => {
-      const result = await bridge.captureAssetPreview(params);
-      if (result.error) return JSON.stringify(result, null, 2);
-      const metadata = { ...result };
-      delete metadata.base64;
-      return [
-        { type: "image", data: result.base64, mimeType: "image/png" },
-        { type: "text", text: JSON.stringify(metadata, null, 2) },
-      ];
-    },
+    handler: async (params) =>
+      imageResultBlocks(await bridge.captureAssetPreview(params), "Asset preview returned no image data"),
   },
   {
     name: "unity_graphics_scene_capture",
@@ -2789,23 +2805,8 @@ export const editorTools = [
         },
       },
     },
-    handler: async (params) => {
-      const result = await bridge.captureSceneViewGraphics(params);
-      if (result.error) return JSON.stringify(result, null, 2);
-      // Bridge wraps response: { success, data: { success, base64 } }
-      const imageData = result.data?.base64 || result.base64;
-      if (!imageData || typeof imageData !== "string") {
-        return JSON.stringify({ error: "Scene capture returned no image data", ...result }, null, 2);
-      }
-      const metadata = { ...result };
-      delete metadata.base64;
-      if (metadata.data) delete metadata.data.base64;
-      const b64 = imageData.replace(/^data:image\/\w+;base64,/, "");
-      return [
-        { type: "image", data: b64, mimeType: "image/png" },
-        { type: "text", text: JSON.stringify(metadata, null, 2) },
-      ];
-    },
+    handler: async (params) =>
+      imageResultBlocks(await bridge.captureSceneViewGraphics(params), "Scene capture returned no image data"),
   },
   {
     name: "unity_graphics_game_capture",
@@ -2829,23 +2830,8 @@ export const editorTools = [
         },
       },
     },
-    handler: async (params) => {
-      const result = await bridge.captureGameViewGraphics(params);
-      if (result.error) return JSON.stringify(result, null, 2);
-      // Bridge wraps response: { success, data: { success, base64 } }
-      const imageData = result.data?.base64 || result.base64;
-      if (!imageData || typeof imageData !== "string") {
-        return JSON.stringify({ error: "Game capture returned no image data", ...result }, null, 2);
-      }
-      const metadata = { ...result };
-      delete metadata.base64;
-      if (metadata.data) delete metadata.data.base64;
-      const b64 = imageData.replace(/^data:image\/\w+;base64,/, "");
-      return [
-        { type: "image", data: b64, mimeType: "image/png" },
-        { type: "text", text: JSON.stringify(metadata, null, 2) },
-      ];
-    },
+    handler: async (params) =>
+      imageResultBlocks(await bridge.captureGameViewGraphics(params), "Game capture returned no image data"),
   },
   {
     name: "unity_graphics_prefab_render",
@@ -2884,16 +2870,8 @@ export const editorTools = [
       },
       required: ["assetPath"],
     },
-    handler: async (params) => {
-      const result = await bridge.renderPrefabPreview(params);
-      if (result.error) return JSON.stringify(result, null, 2);
-      const metadata = { ...result };
-      delete metadata.base64;
-      return [
-        { type: "image", data: result.base64, mimeType: "image/png" },
-        { type: "text", text: JSON.stringify(metadata, null, 2) },
-      ];
-    },
+    handler: async (params) =>
+      imageResultBlocks(await bridge.renderPrefabPreview(params), "Prefab render returned no image data"),
   },
   {
     name: "unity_graphics_mesh_info",
@@ -2948,16 +2926,10 @@ export const editorTools = [
     },
     handler: async (params) => {
       const result = await bridge.getMaterialInfo(params);
-      if (result.error) return JSON.stringify(result, null, 2);
-      if (result.base64) {
-        const metadata = { ...result };
-        delete metadata.base64;
-        return [
-          { type: "image", data: result.base64, mimeType: "image/png" },
-          { type: "text", text: JSON.stringify(metadata, null, 2) },
-        ];
-      }
-      return JSON.stringify(result, null, 2);
+      const hasImage = typeof (result.data?.base64 || result.base64) === "string";
+      return hasImage
+        ? imageResultBlocks(result, "Material preview returned no image data")
+        : JSON.stringify(result, null, 2);
     },
   },
   {
@@ -2982,16 +2954,10 @@ export const editorTools = [
     },
     handler: async (params) => {
       const result = await bridge.getTextureInfoGraphics(params);
-      if (result.error) return JSON.stringify(result, null, 2);
-      if (result.base64) {
-        const metadata = { ...result };
-        delete metadata.base64;
-        return [
-          { type: "image", data: result.base64, mimeType: "image/png" },
-          { type: "text", text: JSON.stringify(metadata, null, 2) },
-        ];
-      }
-      return JSON.stringify(result, null, 2);
+      const hasImage = typeof (result.data?.base64 || result.base64) === "string";
+      return hasImage
+        ? imageResultBlocks(result, "Texture preview returned no image data")
+        : JSON.stringify(result, null, 2);
     },
   },
   {

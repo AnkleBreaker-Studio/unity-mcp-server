@@ -23,7 +23,7 @@ export const instanceTools = [
         refresh: {
           type: "boolean",
           description:
-            "Force a fresh discovery scan (default: true). Set to false to use cached results.",
+            "Accepted for compatibility. Discovery always performs a fresh registry read + port scan.",
         },
       },
     },

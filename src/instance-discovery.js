@@ -247,20 +247,6 @@ export function getActiveBridgeUrl() {
   return `http://${host}:${CONFIG.editorBridgePort}`;
 }
 
-/**
- * Get the port of the currently selected instance, or the default.
- * Priority: per-request port override > per-agent selection > default CONFIG port.
- */
-export function getActivePort() {
-  if (_portOverride !== null) {
-    return _portOverride;
-  }
-  const selected = _agentInstances.get(_currentAgentId);
-  if (selected) {
-    return selected.port;
-  }
-  return CONFIG.editorBridgePort;
-}
 
 /**
  * Discover all running Unity instances.

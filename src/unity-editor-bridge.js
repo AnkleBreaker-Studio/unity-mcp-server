@@ -9,9 +9,6 @@ function getBridgeUrl() {
   return getActiveBridgeUrl();
 }
 
-// Legacy constant kept for backward compat in places that don't need dynamic routing
-const BRIDGE_URL = `http://${CONFIG.editorBridgeHost}:${CONFIG.editorBridgePort}`;
-
 // Agent identity â€" tracks which AI agent is making requests
 let _currentAgentId = "default";
 
@@ -149,10 +146,12 @@ async function pollQueueStatus(ticketId) {
 
       // Check completion status
       if (statusData.status === "Completed") {
-        // Extract result â€" use explicit undefined check so falsy values (null, 0, false, "") pass through
+        // Extract result — explicit undefined check so falsy results (null, 0, false, "") pass
+        // through. A ticket with NO result field completes with a minimal status object;
+        // returning the whole ticket here used to leak queue metadata into tool output.
         return {
           success: true,
-          data: statusData.result !== undefined ? statusData.result : statusData,
+          data: statusData.result !== undefined ? statusData.result : { status: "Completed" },
         };
       } else if (statusData.status === "Failed") {
         return {

@@ -19,6 +19,7 @@
 //   receive project knowledge without needing to explicitly request it.
 
 import { randomBytes } from "crypto";
+import { readFileSync } from "fs";
 import { Server } from "@modelcontextprotocol/sdk/server/index.js";
 import { StdioServerTransport } from "@modelcontextprotocol/sdk/server/stdio.js";
 import {
@@ -270,10 +271,16 @@ async function ensureInstanceDiscovery() {
 }
 
 // ─── Create MCP Server ───
+// Single source of truth for the server version: package.json. A hardcoded copy
+// here once drifted four releases behind (2.26.0 vs 2.30.0 — issue #27).
+const PACKAGE_VERSION = JSON.parse(
+  readFileSync(new URL("../package.json", import.meta.url), "utf-8")
+).version;
+
 const server = new Server(
   {
     name: "unity-mcp",
-    version: "2.26.0",
+    version: PACKAGE_VERSION,
   },
   {
     capabilities: {
@@ -517,7 +524,7 @@ server.setRequestHandler(ReadResourceRequestSchema, async (request) => {
 async function main() {
   const transport = new StdioServerTransport();
   await server.connect(transport);
-  debugLog(`=== SERVER START === v2.26.0, agent=${PROCESS_AGENT_ID}, discoveryDone=${_discoveryDonePerAgent.get(PROCESS_AGENT_ID) || false}, selectedPort=${getSelectedInstance()?.port || 'null'}`);
+  debugLog(`=== SERVER START === v${PACKAGE_VERSION}, agent=${PROCESS_AGENT_ID}, discoveryDone=${_discoveryDonePerAgent.get(PROCESS_AGENT_ID) || false}, selectedPort=${getSelectedInstance()?.port || 'null'}`);
   console.error(
     `Unity MCP Server running on stdio (agent: ${PROCESS_AGENT_ID})`
   );

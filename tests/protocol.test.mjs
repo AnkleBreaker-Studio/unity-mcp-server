@@ -34,6 +34,8 @@ describe("queue-mode session (single instance)", () => {
     bridge.on("editor/state", () => ({ isPlaying: false, isCompiling: false, activeScene: "MockScene" }));
     bridge.on("logical/failure", () => ({ __fail: true, error: "boom: mock logical failure" }));
     bridge.on("payload/huge", () => ({ blob: "x".repeat(4_500_000) }));
+    bridge.on("graphics/asset-preview", () => ({ base64: "QUJDREVG".repeat(40_000), width: 256, height: 256 }));
+    bridge.on("silent/completion", () => undefined);
     await bridge.start();
     client = new McpTestClient({ env: bridge.env() }).start();
     initResult = await client.initialize();
@@ -49,8 +51,7 @@ describe("queue-mode session (single instance)", () => {
     assert.ok(initResult.serverInfo.version, "serverInfo.version present");
   });
 
-  // Known drift: index.js hardcodes an old version string. Flip todo → real assert when fixed.
-  test("serverInfo.version matches package.json", { todo: true }, () => {
+  test("serverInfo.version matches package.json (single source of truth)", () => {
     assert.equal(initResult.serverInfo.version, PACKAGE_VERSION);
   });
 
@@ -135,6 +136,33 @@ describe("queue-mode session (single instance)", () => {
       params: {},
     });
     assert.equal(isError, true);
+  });
+
+  test("image tools emit an image block and never leak base64 into the text metadata", async () => {
+    const result = await client.request("tools/call", {
+      name: "unity_advanced_tool",
+      arguments: { tool: "unity_graphics_asset_preview", params: { assetPath: "Assets/Mock.png" } },
+    });
+    const image = (result.content || []).find((b) => b.type === "image");
+    assert.ok(image, "an image content block is present");
+    assert.ok(image.data && image.data.length > 100_000, "image block carries the base64 payload");
+    assert.equal(image.mimeType, "image/png");
+    for (const block of result.content) {
+      if (block.type === "text") {
+        assert.ok(!block.text.includes("QUJDREVG"), "base64 payload must not appear in text blocks");
+      }
+    }
+  });
+
+  test("tickets that complete without a result don't leak queue metadata", async () => {
+    const { payload } = await client.callTool("unity_advanced_tool", {
+      tool: "unity_silent_completion",
+      params: {},
+    });
+    assert.equal(payload.success, true);
+    const text = JSON.stringify(payload);
+    assert.ok(!text.includes("ticketId"), "no ticket metadata in tool output");
+    assert.ok(!text.includes("agentId"), "no agent metadata in tool output");
   });
 
   test("unknown tool names are rejected with a helpful error", async () => {
