@@ -3,6 +3,7 @@
 import { test, describe } from "node:test";
 import assert from "node:assert/strict";
 import { PLUGIN_FEATURES, pluginSupports, isUnknownRouteResult } from "../../src/capabilities.js";
+import { looksLikeErrorObject, isErrorText } from "../../src/response-format.js";
 
 describe("pluginSupports", () => {
   test("new plugins advertising protocolVersion pass the gate", () => {
@@ -41,5 +42,27 @@ describe("isUnknownRouteResult", () => {
     assert.equal(isUnknownRouteResult({ success: false, error: "Timeout after 30s" }), false);
     assert.equal(isUnknownRouteResult(null), false);
     assert.equal(isUnknownRouteResult("Unknown route"), false);
+  });
+});
+
+describe("error-shape detection (isError seam)", () => {
+  test("explicit self-reported success wins over a stray error field (status tools)", () => {
+    // A "is X installed?" handler answering successfully but carrying an error string.
+    assert.equal(looksLikeErrorObject({ success: true, installed: false, error: "UMA not installed" }), false);
+    assert.equal(looksLikeErrorObject({ ok: true, error: "nothing to bake" }), false);
+    assert.equal(isErrorText(JSON.stringify({ success: true, data: { success: true, error: "package absent" } })), false);
+  });
+
+  test("queue-wrapped and inner failures are still flagged", () => {
+    assert.equal(isErrorText(JSON.stringify({ success: true, data: { error: "boom" } })), true);
+    assert.equal(isErrorText(JSON.stringify({ success: true, data: { success: false } })), true);
+    assert.equal(isErrorText(JSON.stringify({ error: "top-level failure" })), true);
+    assert.equal(isErrorText("Error: plain text failure"), true);
+  });
+
+  test("legitimate nested error collections are not flagged", () => {
+    // Compilation errors live under a plural array, console errors under entries[].
+    assert.equal(isErrorText(JSON.stringify({ success: true, data: { count: 2, errors: ["a", "b"] } })), false);
+    assert.equal(isErrorText(JSON.stringify({ data: { entries: [{ type: "error", message: "x" }] } })), false);
   });
 });

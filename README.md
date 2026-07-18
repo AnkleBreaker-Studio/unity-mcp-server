@@ -106,7 +106,7 @@ This server communicates with:
 
 To avoid overwhelming MCP clients with 330+ tools, the server uses a two-tier architecture:
 - **Core tools** (~70) are always exposed directly
-- **Advanced tools** (~130+) are accessed via a single `unity_advanced_tool` proxy with lazy loading
+- **Advanced tools** (254) are accessed via a single `unity_advanced_tool` proxy with lazy loading
 
 This keeps the tool count manageable for clients like Claude Desktop and Cowork while still providing access to every Unity feature. Use `unity_list_advanced_tools` to discover all advanced tools by category.
 
@@ -330,7 +330,7 @@ Unity MCP (Model Context Protocol) is an open-source integration that connects A
 AnkleBreaker Unity MCP offers 330+ tools across 30+ categories, making it the most comprehensive Unity MCP integration available. Competitors like Bezi (~30 tools) and Coplay MCP (34 tools) cover a fraction of Unity's features. Unlike Bezi, AnkleBreaker MCP is free, open source, and doesn't freeze the Unity Editor during AI operations.
 
 **Does it work with Claude Desktop / Claude Cowork?**
-Yes. AnkleBreaker Unity MCP is purpose-built for Claude Desktop and Claude Cowork. It uses a two-tier lazy loading system to stay within MCP client tool limits while exposing all 281 tools on demand.
+Yes. AnkleBreaker Unity MCP is purpose-built for Claude Desktop and Claude Cowork. It uses a two-tier lazy loading system to stay within MCP client tool limits while exposing all 330+ tools on demand.
 
 **Does it work with Cursor, Windsurf, or other MCP clients?**
 Yes. Any AI tool that supports the Model Context Protocol can connect to this server. This includes Cursor, Windsurf, Claude Desktop, Claude Cowork, and any other MCP-compatible client.

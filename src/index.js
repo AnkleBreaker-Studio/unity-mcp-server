@@ -343,7 +343,21 @@ function stripSchemaDescriptions(schema) {
 
 function firstSentence(text) {
   if (!text) return text;
-  const cut = text.indexOf(". ");
+  // Find the first sentence-ending ". " that isn't part of "e.g." / "i.e." — otherwise
+  // descriptions get cut mid-abbreviation ("... in one call (e.g.").
+  let from = 0;
+  let cut = -1;
+  while (true) {
+    const idx = text.indexOf(". ", from);
+    if (idx < 0) break;
+    const before = text.slice(Math.max(0, idx - 3), idx).toLowerCase();
+    if (before.endsWith("e.g") || before.endsWith("i.e")) {
+      from = idx + 2;
+      continue;
+    }
+    cut = idx;
+    break;
+  }
   const sentence = cut > 0 ? text.slice(0, cut + 1) : text;
   return sentence.length > 160 ? `${sentence.slice(0, 157)}...` : sentence;
 }

@@ -53,7 +53,11 @@ describe("queue-mode session (single instance)", () => {
     bridge.on("terrain/lisr", () => ({ __fail: true, error: "Unknown route: terrain/lisr" }));
     // Old-plugin era: batch-wire route doesn't exist; single set-reference does.
     bridge.on("component/batch-wire", () => ({ __fail: true, error: "Unknown API endpoint: component/batch-wire" }));
-    bridge.on("component/set-reference", (p) => ({ success: true, wired: p.propertyName }));
+    // Old plugins report a per-call failure as an HTTP-200 { success:true, data:{error} }
+    // envelope — model that for the "propBad" entry to prove the degrade path detects it.
+    bridge.on("component/set-reference", (p) =>
+      p.propertyName === "propBad" ? { error: "Property not found: propBad" } : { success: true, wired: p.propertyName }
+    );
     const trace = Array.from({ length: 12 }, (_, i) => `Frame${i} (at ./Library/PackageCache/pkg/File.cs:${i})`).join("\n");
     bridge.on("console/log", () => ({
       count: 2,
@@ -247,6 +251,18 @@ describe("queue-mode session (single instance)", () => {
     const singles = bridge.seen.filter((r) => r.route === "component/set-reference");
     assert.equal(singles.length, 2, "each entry executed as its own set-reference call");
     assert.deepEqual(singles.map((r) => r.params.propertyName), ["panelA", "panelB"]);
+  });
+
+  test("degraded batch-wire reports failure when an entry fails via the legacy error envelope", async () => {
+    const { payload, isError } = await client.callTool("unity_component_batch_wire", {
+      references: [
+        { path: "Manager", componentType: "Hud", propertyName: "propOk", referenceGameObject: "X" },
+        { path: "Manager", componentType: "Hud", propertyName: "propBad", referenceGameObject: "Y" },
+      ],
+    });
+    assert.equal(payload.success, false, "a failed degraded entry must not report overall success");
+    assert.equal(payload.failedCount, 1);
+    assert.equal(isError, true, "the misleading-success class stays flagged");
   });
 
   test("instance listing surfaces the plugin version from the capability handshake", async () => {

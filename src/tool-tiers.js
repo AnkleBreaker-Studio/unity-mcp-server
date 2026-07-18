@@ -16,6 +16,7 @@
 
 import { sendCommand } from "./unity-editor-bridge.js";
 import { formatResult } from "./response-format.js";
+import { isUnknownRouteResult } from "./capabilities.js";
 
 /**
  * Explicit route overrides for tools whose API endpoints
@@ -359,9 +360,10 @@ export function splitToolTiers(allEditorTools) {
           // Log to stderr, not stdout — stdout carries the MCP JSON-RPC transport.
           console.error(`[MCP] Lazy-loading tool "${tool}" via route "${route}"`);
           const result = await sendCommand(route, params || {});
-          // A failed lazy route is often a typo'd tool name — suggest close matches
-          // alongside the original error (kept intact for genuine route failures).
-          if (result && result.success === false) {
+          // Only an UNKNOWN-ROUTE failure means a probable typo — suggest close names.
+          // A legit failure from a correctly-named tool (e.g. "no terrain in scene")
+          // must not get an irrelevant name suggestion bolted on.
+          if (isUnknownRouteResult(result)) {
             const suggestions = suggestSimilarTools(tool, [...advancedMap.keys(), ...CORE_TOOLS]);
             if (suggestions.length > 0) {
               return formatResult({ ...result, hint: `Did you mean: ${suggestions.join(", ")}?` });

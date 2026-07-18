@@ -30,6 +30,10 @@ export function formatResult(value) {
  */
 export function looksLikeErrorObject(obj) {
   if (!obj || typeof obj !== "object" || Array.isArray(obj)) return false;
+  // An explicit self-reported success is authoritative: a status handler answering
+  // "is X installed?" may legitimately carry an `error`/`installed:false` field while
+  // having succeeded. Don't flag those (queue-wrapped failures have no inner success flag).
+  if (obj.success === true || obj.ok === true) return false;
   if (obj.success === false || obj.ok === false) return true;
   if (typeof obj.error === "string" && obj.error.length > 0) return true;
   if (obj.error && typeof obj.error === "object" && typeof obj.error.message === "string") return true;
@@ -50,6 +54,9 @@ export function isErrorText(text) {
     try {
       const parsed = JSON.parse(text);
       if (looksLikeErrorObject(parsed)) return true;
+      // Bridge envelope: HTTP 200 always sets outer success:true, so the real signal
+      // is the inner data payload. An explicit inner success:true still wins (handled
+      // inside looksLikeErrorObject).
       if (parsed && typeof parsed === "object" && looksLikeErrorObject(parsed.data)) return true;
       return false;
     } catch {

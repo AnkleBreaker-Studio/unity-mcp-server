@@ -1,6 +1,6 @@
 ﻿// AnkleBreaker Unity MCP â€” Tool definitions for Unity Editor operations (via HTTP bridge)
 import * as bridge from "../unity-editor-bridge.js";
-import { formatResult } from "../response-format.js";
+import { formatResult, looksLikeErrorObject } from "../response-format.js";
 import { isUnknownRouteResult } from "../capabilities.js";
 
 // Shared shaping for image-returning graphics tools.
@@ -12,7 +12,8 @@ function imageResultBlocks(result, noImageError) {
   if (result.error) return formatResult(result);
   const imageData = result.data?.base64 || result.base64;
   if (!imageData || typeof imageData !== "string") {
-    return formatResult({ error: noImageError, ...result });
+    // noImageError last so an empty-string result.error can't clobber the message.
+    return formatResult({ ...result, error: noImageError });
   }
   const metadata = { ...result };
   delete metadata.base64;
@@ -278,7 +279,7 @@ export const editorTools = [
         assetPath: { type: "string", description: "Asset path to assign (e.g. 'Assets/Materials/MyMat.mat', 'Assets/Prefabs/Enemy.prefab')" },
         referenceGameObject: { type: "string", description: "Name or hierarchy path of a scene GameObject to assign" },
         referenceComponentType: { type: "string", description: "When referencing a scene object, get a specific component instead of the GameObject itself (e.g. 'Camera', 'AudioSource')" },
-        referenceInstanceId: { type: "number", description: "Instance ID of the object to assign" },
+        referenceInstanceId: { type: "string", description: "Instance ID of the object to assign (64-bit-safe string)" },
         clear: { type: "boolean", description: "Set to true to clear/null the reference" },
       },
       required: ["propertyName"],
@@ -304,7 +305,7 @@ export const editorTools = [
               assetPath: { type: "string", description: "Asset path to assign" },
               referenceGameObject: { type: "string", description: "Scene GameObject to assign" },
               referenceComponentType: { type: "string", description: "Component type on the referenced GameObject" },
-              referenceInstanceId: { type: "string", description: "Instance ID to assign (decimal string; 64-bit safe)" },
+              referenceInstanceId: { type: "string", description: "Instance ID to assign (64-bit-safe string)" },
               clear: { type: "boolean", description: "Clear the reference" },
             },
             required: ["propertyName"],
@@ -323,10 +324,16 @@ export const editorTools = [
         for (const entry of params.references || []) {
           results.push(await bridge.setComponentReference(entry));
         }
-        const allOk = results.every((r) => r && r.success !== false);
+        // Old plugins report per-call failures as an HTTP 200 { success:true, data:{error} }
+        // envelope, so a plain success!==false check would mask every degraded failure —
+        // the exact misleading-success class this project set out to kill. Inspect the
+        // inner payload too.
+        const isOk = (r) => r && r.success !== false && !looksLikeErrorObject(r.data);
+        const allOk = results.every(isOk);
         return formatResult({
           success: allOk,
           degraded: "batch-wire unavailable on this plugin version; executed as single set-reference calls",
+          failedCount: results.filter((r) => !isOk(r)).length,
           results,
         });
       }
