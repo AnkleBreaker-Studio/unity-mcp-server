@@ -1,6 +1,7 @@
 ﻿// AnkleBreaker Unity MCP â€” Tool definitions for Unity Editor operations (via HTTP bridge)
 import * as bridge from "../unity-editor-bridge.js";
 import { formatResult } from "../response-format.js";
+import { isUnknownRouteResult } from "../capabilities.js";
 
 // Shared shaping for image-returning graphics tools.
 // The bridge wraps plugin payloads as { success, data: { ..., base64 } } (queue mode)
@@ -271,7 +272,7 @@ export const editorTools = [
               assetPath: { type: "string", description: "Asset path to assign" },
               referenceGameObject: { type: "string", description: "Scene GameObject to assign" },
               referenceComponentType: { type: "string", description: "Component type on the referenced GameObject" },
-              referenceInstanceId: { type: "number", description: "Instance ID to assign" },
+              referenceInstanceId: { type: "string", description: "Instance ID to assign (decimal string; 64-bit safe)" },
               clear: { type: "boolean", description: "Clear the reference" },
             },
             required: ["propertyName"],
@@ -280,7 +281,25 @@ export const editorTools = [
       },
       required: ["references"],
     },
-    handler: async (params) => formatResult(await bridge.batchWireReferences(params)),
+    handler: async (params) => {
+      const result = await bridge.batchWireReferences(params);
+      // Graceful degrade for plugins that predate component/batch-wire: run the
+      // entries as single set-reference calls instead of failing the whole batch.
+      if (isUnknownRouteResult(result)) {
+        console.error("[MCP] Plugin lacks component/batch-wire - degrading to single set-reference calls");
+        const results = [];
+        for (const entry of params.references || []) {
+          results.push(await bridge.setComponentReference(entry));
+        }
+        const allOk = results.every((r) => r && r.success !== false);
+        return formatResult({
+          success: allOk,
+          degraded: "batch-wire unavailable on this plugin version; executed as single set-reference calls",
+          results,
+        });
+      }
+      return formatResult(result);
+    },
   },
   {
     name: "unity_component_get_referenceable",

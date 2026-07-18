@@ -37,6 +37,7 @@ export const instanceTools = [
           unityVersion: inst.unityVersion,
           isClone: inst.isClone,
           cloneIndex: inst.cloneIndex,
+          pluginVersion: inst.pluginVersion,
           source: inst.source,
           isSelected: selected ? selected.port === inst.port : false,
         })),

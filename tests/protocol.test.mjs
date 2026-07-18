@@ -51,6 +51,9 @@ describe("queue-mode session (single instance)", () => {
     bridge.on("graphics/asset-preview", () => ({ base64: "QUJDREVG".repeat(40_000), width: 256, height: 256 }));
     bridge.on("silent/completion", () => undefined);
     bridge.on("terrain/lisr", () => ({ __fail: true, error: "Unknown route: terrain/lisr" }));
+    // Old-plugin era: batch-wire route doesn't exist; single set-reference does.
+    bridge.on("component/batch-wire", () => ({ __fail: true, error: "Unknown API endpoint: component/batch-wire" }));
+    bridge.on("component/set-reference", (p) => ({ success: true, wired: p.propertyName }));
     await bridge.start();
     client = new McpTestClient({ env: bridge.env() }).start();
     initResult = await client.initialize();
@@ -208,6 +211,27 @@ describe("queue-mode session (single instance)", () => {
     const text = JSON.stringify(payload);
     assert.ok(!text.includes("ticketId"), "no ticket metadata in tool output");
     assert.ok(!text.includes("agentId"), "no agent metadata in tool output");
+  });
+
+  test("batch-wire degrades to single set-reference calls on plugins without the route", async () => {
+    const { payload, isError } = await client.callTool("unity_component_batch_wire", {
+      references: [
+        { path: "Manager", componentType: "Hud", propertyName: "panelA", referenceGameObject: "PanelA" },
+        { path: "Manager", componentType: "Hud", propertyName: "panelB", referenceGameObject: "PanelB" },
+      ],
+    });
+    assert.equal(payload.success, true);
+    assert.match(payload.degraded, /batch-wire unavailable/);
+    assert.equal(payload.results.length, 2);
+    assert.equal(isError, false);
+    const singles = bridge.seen.filter((r) => r.route === "component/set-reference");
+    assert.equal(singles.length, 2, "each entry executed as its own set-reference call");
+    assert.deepEqual(singles.map((r) => r.params.propertyName), ["panelA", "panelB"]);
+  });
+
+  test("instance listing surfaces the plugin version from the capability handshake", async () => {
+    const { payload } = await client.callTool("unity_list_instances");
+    assert.equal(payload.instances[0].pluginVersion, "9.9.9-mock");
   });
 
   test("unknown tool names are rejected with a helpful error", async () => {

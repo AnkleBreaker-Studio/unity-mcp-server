@@ -268,8 +268,17 @@ export async function discoverInstances() {
           const port = entry.port;
           if (!port) return null;
 
-          const alive = await pingInstance(port);
-          return alive ? { ...entry, alive: true, source: "registry" } : null;
+          // Validation ping doubles as capability capture: the ping body carries
+          // protocolVersion/pluginVersion on newer plugins (absent = pre-handshake).
+          const info = await getInstanceInfo(port);
+          if (info === null) return null;
+          return {
+            ...entry,
+            protocolVersion: info.protocolVersion,
+            pluginVersion: info.pluginVersion,
+            alive: true,
+            source: "registry",
+          };
         })
       );
 
@@ -299,6 +308,8 @@ export async function discoverInstances() {
             unityVersion: info?.unityVersion || "",
             isClone: info?.isClone || false,
             cloneIndex: info?.cloneIndex ?? -1,
+            protocolVersion: info?.protocolVersion,
+            pluginVersion: info?.pluginVersion,
             alive: true,
             source: "portscan",
           };
@@ -337,6 +348,8 @@ export async function autoSelectInstance() {
         unityVersion: info?.unityVersion || "",
         isClone: false,
         cloneIndex: -1,
+        protocolVersion: info?.protocolVersion,
+        pluginVersion: info?.pluginVersion,
         alive: true,
         source: "default",
       };
@@ -480,6 +493,9 @@ async function getInstanceInfo(port) {
       unityVersion: data.unityVersion || data.version || null,
       isClone: data.isClone || false,
       cloneIndex: data.cloneIndex ?? -1,
+      // Capability handshake fields (plugins >= protocolVersion 1; else undefined)
+      protocolVersion: typeof data.protocolVersion === "number" ? data.protocolVersion : undefined,
+      pluginVersion: typeof data.pluginVersion === "string" ? data.pluginVersion : undefined,
     };
   } catch {
     return null;

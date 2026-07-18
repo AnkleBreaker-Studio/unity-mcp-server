@@ -31,6 +31,8 @@ export class MockBridge {
       unityVersion: "6000.0.0f1",
       isClone: false,
       cloneIndex: -1,
+      protocolVersion: 1,
+      pluginVersion: "9.9.9-mock",
       ...options.instance,
     };
     this.processingDelayMs = options.processingDelayMs ?? 0;
