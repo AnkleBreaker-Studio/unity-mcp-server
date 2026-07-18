@@ -2,6 +2,18 @@
 
 All notable changes to this package will be documented in this file.
 
+## [2.32.0] - 2026-07-18
+
+### Added
+- **`overwrite` parameter on the asset-creator tools** — companion to the `unity-mcp-plugin` 2.34.0 data-safety guards. `unity_script_create`, `unity_material_create`, `unity_asset_import`, `unity_scriptableobject_create`, `unity_animation_create_controller`, `unity_animation_create_clip`, `unity_terrain_create`, and `unity_shadergraph_create` now refuse to replace an existing asset by default; pass `overwrite: true` to intentionally replace it. **Behavior change:** flows that re-created an asset over an existing one (e.g. re-running a material/import setup) now need `overwrite: true`. This prevents the plugin from silently destroying a tuned asset and every reference to it.
+
+### Fixed
+- **Queue-poll duplicate execution** — a single transient poll error (`ECONNRESET` / "fetch failed" / `AbortError`) during a domain-reload window failed the command while Unity still finished the ticket, so the client retried a non-idempotent operation that had already run. The poll loop now retries through transient errors to the deadline (matching the submit path); only non-transient errors fail fast.
+- **Plugin-side `TimedOut` now surfaced as terminal** — previously unrecognized, so a timed-out ticket was polled ~30-60s until eviction and then read back as a misleading HTTP 404; it now returns a clear timeout error immediately.
+- **`unity_testing_get_job` `waitTimeout` never short-circuited** — it read `status` off the top-level result but the value is under the bridge's `data` envelope, so it always polled the full timeout (up to ~56s) even when the run finished in seconds. Fixed here and in `unity_testing_run_tests`' early-feedback branch.
+- **Per-request `_meta.agentId` override leaked into later requests** — the reset path restored the discovery agent but not the bridge `X-Agent-Id` header, so a prior override's id stuck on every subsequent request (wrong queue attribution).
+- **`UNITY_QUEUE_POLL_MAX` was silently clamped to 1000ms** — `Math.min(1000, ...)` capped the documented env var and the 1500ms default; the configured maximum is now honored.
+
 ## [2.31.0] - 2026-07-18
 
 ### Added

@@ -124,11 +124,14 @@ describe("queue-mode session (single instance)", () => {
   });
 
   // Diet regression lock (issue #27): baseline was 50.6KB; the compaction wave landed 42.8KB
-  // with full parameter docs retained. UNITY_MCP_COMPACT_TOOLS=1 (tested below) goes further.
+  // with full parameter docs retained, later ~44.3KB after adding the `overwrite` safety param
+  // to the core asset-creator tools. The gate catches unintentional bloat while leaving room for
+  // deliberate capability — still ~62% under the 120KB hard ceiling. UNITY_MCP_COMPACT_TOOLS=1
+  // (tested below) goes much further for constrained clients.
   test("tools/list payload stays within the rich-mode diet budget", async () => {
     const { tools } = await client.listTools();
     const bytes = Buffer.byteLength(JSON.stringify(tools), "utf8");
-    assert.ok(bytes <= 44_000, `tools/list ${bytes} bytes exceeds the 44KB rich-mode budget`);
+    assert.ok(bytes <= 45_000, `tools/list ${bytes} bytes exceeds the 45KB rich-mode budget`);
   });
 
   test("advanced tool category listing echoes inputSchema for on-demand parameter discovery", async () => {
