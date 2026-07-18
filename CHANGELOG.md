@@ -2,6 +2,29 @@
 
 All notable changes to this package will be documented in this file.
 
+## [2.31.0] - 2026-07-18
+
+### Added
+- **Test suite + CI** — protocol-level integration harness (mock Unity bridge + MCP stdio client): tools/list size budgets and strict-schema gates, queue/legacy/multi-instance round-trips, stdout protocol purity, 4MB-guard, isError semantics, version-skew scenarios. `npm test` (41 tests), env-gated `npm run test:live` live-bridge smoke, GitHub Actions on push/PR (ubuntu+windows, Node 20/22). The publish workflow is no longer the only automation.
+- **Compact JSON responses by default** — all ~338 tool-result sites now serialize compact (the C# plugin already sends compact; Node-side pretty-printing inflated every structured response 20–50% in tokens). `UNITY_MCP_PRETTY_JSON=1` restores indentation. (Idea credit: PR [#31](https://github.com/AnkleBreaker-Studio/unity-mcp-server/pull/31) by @D3vCrow.)
+- **`UNITY_MCP_COMPACT_TOOLS=1`** — minimal tools/list (~21.5KB vs ~43KB) keeping ALL 79 tools and strict schema structure while dropping per-parameter prose; for clients with registry size limits (fixes Codex Desktop on Windows losing the whole MCP surface, issue [#27](https://github.com/AnkleBreaker-Studio/unity-mcp-server/issues/27) `spawn ENAMETOOLONG`). Rich mode dieted from ~50.6KB to ~43KB with full parameter docs retained; both modes are CI-gated.
+- **MCP `isError` on logical failures** — the bridge returns HTTP 200 for logical failures ({success:false}, {error}, {ok:false}, enveloped variants); the CallTool seam now sets `isError` so clients stop reading failures as successes. (Idea credit: PR #31 by @D3vCrow.)
+- **Capability handshake (server half)** — discovery captures `protocolVersion`/`pluginVersion` from ping (registry validation, port scan, default port); `unity_list_instances` surfaces `pluginVersion`; `unity_component_batch_wire` degrades gracefully to single `component/set-reference` calls on plugins without the route. Pairs with plugin 2.33.0. (Idea credit: PR [#32](https://github.com/AnkleBreaker-Studio/unity-mcp-server/pull/32) by @D3vCrow.)
+- **Console stack-trace shaping** — `unity_console_log` gains `includeStackTrace` (`errors` default / `all` / `none`) + `maxStackFrames` (default 6). Traces were ~80% of a typical console payload; error-like entries keep a trimmed trace, everything else drops it, full traces stay one parameter away. Works against every plugin version (server-side).
+- **Select instance by name** — `unity_select_instance` accepts `projectName` (stable across restarts) as an alternative to `port` (dynamic); helpful errors list available instances.
+- **Advanced-tool schema echo + did-you-mean** — `unity_list_advanced_tools` category view includes each tool's `inputSchema`; failed lazy routes suggest the closest tool names (Levenshtein top-3). (Idea credit: PR #31 by @D3vCrow.)
+
+### Fixed
+- **`serverInfo.version` drift** — MCP initialize advertised a hardcoded `2.26.0` four releases behind (issue #27); the version now comes from package.json (single source). `manifest.json` synced too (was 2.18.0 with stale counts).
+- **Base64 token-bomb in four graphics handlers** — `unity_graphics_asset_preview` / `prefab_render` read the image at the wrong envelope depth (broken image block) and `material_info` / `texture_info` never image-ified enveloped previews; in all four the full PNG base64 leaked into the text metadata (hundreds of KB of tokens per call). All six graphics handlers now share one envelope-aware helper; regression-tested.
+- **Queue-ticket metadata leak** — tickets completing without a result returned the whole ticket object (ticketId, agentId) as tool output; now a minimal status object.
+- **Dynamic route discovery never merged** — the plugin's `_meta/routes` list was read at the wrong envelope depth (`.routes` instead of `.data.routes`), so lazily-added plugin routes never appeared in `unity_list_advanced_tools`.
+- **Strict-client schemas** — both untyped `value` params (`component_set_property`, `prefab_set_property`) now declare an explicit type union; `referenceInstanceId` in batch-wire entries was still `number` (the one site the 2.28.3 64-bit string sweep missed) and is now a decimal string. A recursive strict-schema CI gate prevents regressions (issue #27).
+- **Unconditional debug log** — the file debug log wrote on every tool call with no gate and no rotation (unbounded growth + sync I/O); now opt-in via `UNITY_MCP_DEBUG=1` with 5MB rotation, matching the README.
+
+### Changed
+- Dead code removed (never-wired state persistence, unused exports/config); `unity_list_instances`' `refresh` param documented honestly; README env table corrected (`UNITY_BRIDGE_TIMEOUT` 60000, real `UNITY_MCP_DEBUG` semantics, new env vars); tool counts corrected to 331 (68 core + 254 advanced + hub/instance/context).
+
 ## [2.30.0] - 2026-06-02
 
 ### Added
