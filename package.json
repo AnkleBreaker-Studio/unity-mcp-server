@@ -12,7 +12,8 @@
     "dev": "node --watch src/index.js",
     "test": "node --test tests/protocol.test.mjs tests/unit/tool-tiers.test.mjs",
     "test:stress": "node tests/multi-agent-stress-test.mjs --mock",
-    "pack": "npx @anthropic-ai/mcpb pack . unity-mcp.mcpb && npx @anthropic-ai/mcpb clean unity-mcp.mcpb"
+    "pack": "npx @anthropic-ai/mcpb pack . unity-mcp.mcpb && npx @anthropic-ai/mcpb clean unity-mcp.mcpb",
+    "test:live": "node --test tests/live-smoke.test.mjs"
   },
   "dependencies": {
     "@modelcontextprotocol/sdk": "^1.0.0"
