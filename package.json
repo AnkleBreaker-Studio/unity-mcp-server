@@ -10,6 +10,8 @@
   "scripts": {
     "start": "node src/index.js",
     "dev": "node --watch src/index.js",
+    "test": "node --test tests/protocol.test.mjs tests/unit/tool-tiers.test.mjs",
+    "test:stress": "node tests/multi-agent-stress-test.mjs --mock",
     "pack": "npx @anthropic-ai/mcpb pack . unity-mcp.mcpb && npx @anthropic-ai/mcpb clean unity-mcp.mcpb"
   },
   "dependencies": {
