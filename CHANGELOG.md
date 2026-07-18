@@ -2,6 +2,14 @@
 
 All notable changes to this package will be documented in this file.
 
+## [2.35.0] - 2026-07-19
+
+### Changed (context efficiency — three-level lazy discovery)
+- **`unity_list_advanced_tools` redesigned so finding one tool never costs a schema dump.** Measured on the real registry: no-args summary **9.7KB → 0.7KB** (category names + counts, was every tool name); category view **12–22KB → 3–6KB** (per tool: name, one-line brief, parameter names + required — was full schemas); new **`search=`** keyword lookup across advanced + core + plugin lazy-loaded tools (~0.2KB, name-hits ranked first); new **`tool=`** fetch of exactly ONE full parameter schema (~0.8KB, did-you-mean on a miss). A complete discovery flow (search → schema → call) drops from ~30KB to ~1KB of context. `includeSchemas:true` restores the old full-schema category echo for one-round-trip callers, so no capability is lost. Plugin lazy-loaded routes (from `_meta/routes`) now appear in every view — summary counts, category listings, search results, and `tool=` (which reports the derived route).
+- **Meta-tool descriptions are computed at registration** — `unity_advanced_tool` no longer hardcodes a tool count that drifts (was stale twice already).
+- **`unity_scene_hierarchy` declares the new `verbose` parameter** and documents the dense default (companion to `unity-mcp-plugin` 2.37.0's dense hierarchy — absent per-node fields mean the default value).
+- `firstSentence`/`stripSchemaDescriptions` moved to `response-format.js` (shared by compact tools/list mode and the catalog's lean views).
+
 ## [2.34.0] - 2026-07-18
 
 ### Added

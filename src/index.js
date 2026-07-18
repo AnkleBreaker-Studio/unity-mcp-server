@@ -47,7 +47,7 @@ import {
   clearPortOverride,
 } from "./instance-discovery.js";
 import { debugLog } from "./state-persistence.js";
-import { isErrorText } from "./response-format.js";
+import { isErrorText, firstSentence, stripSchemaDescriptions } from "./response-format.js";
 import { CONFIG } from "./config.js";
 
 // ─── Response size protection ───
@@ -323,45 +323,6 @@ const TOOLS_SKIP_PORT_INJECT = new Set([
 // trims tool descriptions to their first sentence. Full parameter documentation
 // remains available on demand via unity_list_advanced_tools' schema echo.
 const COMPACT_TOOLS = process.env.UNITY_MCP_COMPACT_TOOLS === "1";
-
-function stripSchemaDescriptions(schema) {
-  if (!schema || typeof schema !== "object" || Array.isArray(schema)) return schema;
-  const out = {};
-  for (const [key, value] of Object.entries(schema)) {
-    if (key === "description") continue;
-    if (key === "properties" && value && typeof value === "object") {
-      const props = {};
-      for (const [prop, sub] of Object.entries(value)) props[prop] = stripSchemaDescriptions(sub);
-      out[key] = props;
-    } else if (key === "items") {
-      out[key] = stripSchemaDescriptions(value);
-    } else {
-      out[key] = value;
-    }
-  }
-  return out;
-}
-
-function firstSentence(text) {
-  if (!text) return text;
-  // Find the first sentence-ending ". " that isn't part of "e.g." / "i.e." — otherwise
-  // descriptions get cut mid-abbreviation ("... in one call (e.g.").
-  let from = 0;
-  let cut = -1;
-  while (true) {
-    const idx = text.indexOf(". ", from);
-    if (idx < 0) break;
-    const before = text.slice(Math.max(0, idx - 3), idx).toLowerCase();
-    if (before.endsWith("e.g") || before.endsWith("i.e")) {
-      from = idx + 2;
-      continue;
-    }
-    cut = idx;
-    break;
-  }
-  const sentence = cut > 0 ? text.slice(0, cut + 1) : text;
-  return sentence.length > 160 ? `${sentence.slice(0, 157)}...` : sentence;
-}
 
 server.setRequestHandler(ListToolsRequestSchema, async () => {
   return {

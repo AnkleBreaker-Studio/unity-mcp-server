@@ -108,13 +108,16 @@ export const editorTools = [
   },
   {
     name: "unity_scene_hierarchy",
-    description: "Get the full hierarchy tree of all GameObjects in the active scene, including their components and children.",
+    description:
+      "Get the hierarchy tree of all GameObjects in the active scene, including their components and children. " +
+      "Dense by default: per-node fields at their default value (active=true, tag=Untagged, layer=Default, origin position, Transform) are omitted — an absent field means the default.",
     inputSchema: {
       type: "object",
       properties: {
         maxDepth: { type: "number", description: "Maximum depth to traverse (default: 10)" },
         maxNodes: { type: "number", description: "Maximum total nodes to return (default: 5000). Use lower values for very large scenes to avoid timeouts." },
         parentPath: { type: "string", description: "Only return hierarchy under this GameObject path (e.g. 'Canvas/Panel'). Useful for exploring specific subtrees in large scenes." },
+        verbose: { type: "boolean", description: "Emit every per-node field even at default values (the pre-2.37 shape)." },
       },
     },
     handler: async (params) => formatResult(await bridge.getHierarchy(params)),

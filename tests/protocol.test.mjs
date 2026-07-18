@@ -62,6 +62,9 @@ describe("queue-mode session (single instance)", () => {
       success: true, message: "Reverted 'probuilder/create-shape'.", revertedCount: 1,
       echoAgentId: p.agentId ?? null, echoForce: p.force ?? false,
     }));
+    // Plugin route advertisement: terrain/list is already cached server-side (skipped),
+    // experimental/new-thing is dynamic-only — exercises the lazy-discovery merge.
+    bridge.on("_meta/routes", () => ({ routes: ["terrain/list", "experimental/new-thing"] }));
     // A finished test job — status lives under the bridge's data envelope.
     bridge.on("testing/get-job", () => ({ status: "succeeded", passed: 3, failed: 0 }));
     // Old-plugin era: batch-wire route doesn't exist; single set-reference does.
@@ -146,11 +149,71 @@ describe("queue-mode session (single instance)", () => {
     assert.ok(bytes <= 46_500, `tools/list ${bytes} bytes exceeds the 46.5KB rich-mode budget`);
   });
 
-  test("advanced tool category listing echoes inputSchema for on-demand parameter discovery", async () => {
-    const { payload } = await client.callTool("unity_list_advanced_tools", { category: "terrain" });
-    assert.ok(Array.isArray(payload) && payload.length > 10, "terrain category lists its tools");
+  // Lazy discovery is three-tier so finding one tool never costs a schema dump:
+  // summary (counts) → category/search (brief + param names) → tool (one full schema).
+  test("advanced-tool discovery is lean by default: counts, then brief+params, then one schema", async () => {
+    // Level 1: summary with category COUNTS, not name dumps.
+    const summary = await client.callTool("unity_list_advanced_tools");
+    assert.equal(typeof summary.payload.categories.terrain, "number", "categories map to counts");
+    assert.ok(summary.payload.totalAdvancedTools > 200);
+    assert.ok(Buffer.byteLength(summary.payloadText) < 1_500, `summary stays tiny (got ${summary.payloadText.length})`);
+
+    // Level 2: category view carries brief + parameter names, NO schemas.
+    const cat = await client.callTool("unity_list_advanced_tools", { category: "terrain" });
+    assert.ok(Array.isArray(cat.payload.tools) && cat.payload.tools.length > 10, "terrain lists its tools");
+    const entry = cat.payload.tools.find((t) => t.name === "unity_terrain_raise_lower");
+    assert.ok(entry && entry.brief, "entries carry a one-line brief");
+    assert.ok(Array.isArray(entry.params) && entry.params.length > 0, "entries carry parameter names");
+    assert.equal(entry.inputSchema, undefined, "no schemas in the lean view");
+    assert.ok(Buffer.byteLength(cat.payloadText) < 8_000, `category view stays lean (got ${cat.payloadText.length})`);
+
+    // Level 3: tool= returns exactly one full schema.
+    const one = await client.callTool("unity_list_advanced_tools", { tool: "unity_terrain_raise_lower" });
+    assert.equal(one.payload.inputSchema.type, "object", "full schema on demand");
+    assert.equal(one.payload.category, "terrain");
+  });
+
+  test("advanced-tool search matches keywords and ranks name-hits first", async () => {
+    const { payload } = await client.callTool("unity_list_advanced_tools", { search: "probuilder boolean" });
+    assert.ok(payload.totalMatches >= 1);
+    assert.equal(payload.results[0].name, "unity_probuilder_boolean", "name-hit ranks first");
+    assert.equal(payload.results[0].inputSchema, undefined, "search results carry no schemas");
+    assert.ok(payload.results.length <= 20, "results are capped");
+  });
+
+  test("includeSchemas restores the full category schema echo on demand", async () => {
+    const { payload } = await client.callTool("unity_list_advanced_tools", { category: "terrain", includeSchemas: true });
+    assert.ok(Array.isArray(payload) && payload.length > 10);
     const withSchema = payload.filter((t) => t.inputSchema && t.inputSchema.type === "object");
     assert.equal(withSchema.length, payload.length, "every cached entry carries its schema");
+  });
+
+  test("plugin lazy-loaded routes are discoverable in every view and callable", async () => {
+    const summary = await client.callTool("unity_list_advanced_tools");
+    assert.equal(summary.payload.dynamicTools, 1, "dynamic-only route counted");
+
+    const cat = await client.callTool("unity_list_advanced_tools", { category: "experimental" });
+    assert.deepEqual(cat.payload.tools[0], { name: "unity_experimental_new_thing", dynamic: true });
+
+    const one = await client.callTool("unity_list_advanced_tools", { tool: "unity_experimental_new_thing" });
+    assert.equal(one.payload.dynamic, true);
+    assert.equal(one.payload.route, "experimental/new-thing", "route derivation exposed for lazy tools");
+
+    const srch = await client.callTool("unity_list_advanced_tools", { search: "experimental" });
+    assert.ok(srch.payload.results.some((r) => r.name === "unity_experimental_new_thing" && r.dynamic));
+
+    // The lazy tool actually dispatches through unity_advanced_tool.
+    const call = await client.callTool("unity_advanced_tool", { tool: "unity_experimental_new_thing", params: { x: 1 } });
+    assert.equal(call.payload.success, true);
+    const seen = bridge.seen.find((r) => r.route === "experimental/new-thing");
+    assert.ok(seen, "derived route reached the bridge");
+  });
+
+  test("tool= misses get a did-you-mean and the error flag", async () => {
+    const { payload, isError } = await client.callTool("unity_list_advanced_tools", { tool: "unity_terrain_lisr" });
+    assert.match(payload.error, /Did you mean/);
+    assert.match(payload.error, /unity_terrain_list/);
+    assert.equal(isError, true);
   });
 
   test("mistyped advanced tool names get a did-you-mean suggestion", async () => {

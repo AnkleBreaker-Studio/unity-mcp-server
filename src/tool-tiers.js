@@ -15,7 +15,7 @@
 // restarting the MCP server.
 
 import { sendCommand } from "./unity-editor-bridge.js";
-import { formatResult } from "./response-format.js";
+import { formatResult, firstSentence } from "./response-format.js";
 import { isUnknownRouteResult } from "./capabilities.js";
 
 /**
@@ -204,12 +204,6 @@ export function splitToolTiers(allEditorTools) {
     }
   }
 
-  // Build an index of advanced tools for the catalog
-  const advancedIndex = advanced.map((t) => ({
-    name: t.name,
-    description: t.description,
-  }));
-
   // Group advanced tools by category for the catalog
   const categories = {};
   for (const t of advanced) {
@@ -226,27 +220,53 @@ export function splitToolTiers(allEditorTools) {
     advancedMap.set(t.name, t);
   }
 
+  // Core tools by name, for search/tool lookups that land on a directly-exposed tool.
+  const coreMap = new Map();
+  for (const t of core) {
+    coreMap.set(t.name, t);
+  }
+
   // ─── Meta-tools ───
+  //
+  // Three-level lazy discovery, cheapest first — so finding one tool never costs a
+  // full-catalog or full-schema dump:
+  //   1. no args        → category names + counts (~0.7KB)
+  //   2. search/category → tool names + one-line brief + parameter names (~1-3KB)
+  //   3. tool           → ONE tool's complete parameter schema
+  // (The old behavior — every name in the catalog, every schema in a category view —
+  // cost 10-22KB per discovery call; includeSchemas:true restores it on demand.)
 
   const catalogTool = {
     name: "unity_list_advanced_tools",
     description:
-      "List advanced Unity tools by category; call them via unity_advanced_tool. Categories: " +
-      "uma, probuilder, animation, prefab, physics, lighting, audio, shadergraph, amplify, terrain, particle, " +
-      "navmesh, ui, texture, profiler, memory, settings, input, asmdef, scriptableobject, " +
-      "constraint, lod, editorprefs, playerprefs, vfx, graphics, sceneview, more.",
+      "Discover advanced Unity tools (execute them via unity_advanced_tool) without loading full schemas: " +
+      "search=keywords → matching tools; category=name → its tools with parameter names; " +
+      "tool=name → that tool's full parameter schema; no args → all category names with counts " +
+      "(e.g. animation, terrain, shadergraph, probuilder, uma, physics, lighting, ui, …).",
     inputSchema: {
       type: "object",
       properties: {
+        search: {
+          type: "string",
+          description: 'Keywords, e.g. "terrain raise". Every word must match a tool\'s name, category, or description.',
+        },
         category: {
           type: "string",
-          description:
-            'Filter by category name (e.g. "animation", "prefab", "shadergraph"). Omit for full list.',
+          description: "Category name → its tools with brief + parameter names.",
+        },
+        tool: {
+          type: "string",
+          description: "Exact tool name → its full parameter schema.",
+        },
+        includeSchemas: {
+          type: "boolean",
+          description: "With category: full schemas for every tool (large — prefer tool= for one).",
         },
       },
     },
-    handler: async ({ category } = {}) => {
-      // Try to fetch dynamic routes from Unity plugin for lazy discovery
+    handler: async ({ search, category, tool, includeSchemas } = {}) => {
+      // Fetch dynamic routes from the Unity plugin so lazy-loadable tools (added to the
+      // C# plugin after this server started) are discoverable in every view.
       let dynamicRoutes = null;
       try {
         dynamicRoutes = await sendCommand("_meta/routes", {});
@@ -254,10 +274,9 @@ export function splitToolTiers(allEditorTools) {
         // Plugin might not support _meta/routes yet, use cached list only
       }
 
-      // Merge dynamic routes into the advanced tool list
-      // Dynamic routes that aren't in our cached map get listed as lazy-loadable tools
-      let mergedCategories = { ...categories };
-      let dynamicCount = 0;
+      // Dynamic-only tool names (not cached, not core), grouped and flat.
+      const mergedCategories = { ...categories };
+      const dynamicNames = new Set();
 
       // The bridge wraps results as { success, data } — the route list lives in data.routes.
       // (Top-level .routes kept as a fallback for legacy sync payload shapes.)
@@ -271,51 +290,138 @@ export function splitToolTiers(allEditorTools) {
           // Skip if already in our cached map
           if (advancedMap.has(toolName) || CORE_TOOLS.has(toolName)) continue;
 
-          // Add to merged categories
           if (!mergedCategories[cat]) mergedCategories[cat] = [];
           if (!mergedCategories[cat].includes(toolName)) {
             mergedCategories[cat].push(toolName);
-            dynamicCount++;
+            dynamicNames.add(toolName);
           }
         }
       }
 
+      const categoryOf = (name) => name.replace(/^unity_/, "").split("_")[0];
+
+      // ── Level 3: one tool's full definition ──
+      if (tool) {
+        const cached = advancedMap.get(tool);
+        if (cached) {
+          return formatResult({
+            name: cached.name,
+            category: categoryOf(cached.name),
+            description: cached.description,
+            inputSchema: cached.inputSchema,
+          });
+        }
+        const coreTool = coreMap.get(tool);
+        if (coreTool) {
+          return formatResult({
+            name: coreTool.name,
+            core: true,
+            description: coreTool.description,
+            inputSchema: coreTool.inputSchema,
+            note: "Core tool — call it directly, not via unity_advanced_tool.",
+          });
+        }
+        if (dynamicNames.has(tool)) {
+          return formatResult({
+            name: tool,
+            dynamic: true,
+            route: toolNameToRoute(tool),
+            note: "Lazy tool from the Unity plugin — no cached schema on this server; call it via unity_advanced_tool and the plugin validates parameters.",
+          });
+        }
+        const suggestions = suggestSimilarTools(tool, [...advancedMap.keys(), ...CORE_TOOLS, ...dynamicNames]);
+        const hint = suggestions.length > 0 ? ` Did you mean: ${suggestions.join(", ")}?` : "";
+        return formatResult({ error: `Unknown tool "${tool}".${hint}` });
+      }
+
+      // ── Level 2a: keyword search across everything ──
+      if (search) {
+        const tokens = search.toLowerCase().split(/\s+/).filter(Boolean);
+        const candidates = [];
+        for (const t of advanced)
+          candidates.push({ name: t.name, category: categoryOf(t.name), description: t.description || "" });
+        for (const t of core)
+          candidates.push({ name: t.name, category: "core", description: t.description || "", core: true });
+        for (const name of dynamicNames)
+          candidates.push({ name, category: categoryOf(name), description: "", dynamic: true });
+
+        const matches = [];
+        for (const c of candidates) {
+          if (category && c.category !== category.toLowerCase()) continue;
+          const nameText = c.name.toLowerCase();
+          const blob = `${nameText} ${c.category} ${c.description.toLowerCase()}`;
+          if (!tokens.every((tok) => blob.includes(tok))) continue;
+          // Rank name hits above description-only hits.
+          const rank = tokens.every((tok) => nameText.includes(tok)) ? 0 : 1;
+          matches.push({ rank, c });
+        }
+        matches.sort((a, b) => a.rank - b.rank || a.c.name.localeCompare(b.c.name));
+
+        const results = matches.slice(0, 20).map(({ c }) => {
+          const entry = { name: c.name, category: c.category };
+          const brief = firstSentence(c.description);
+          if (brief) entry.brief = brief;
+          if (c.core) entry.core = true;
+          if (c.dynamic) entry.dynamic = true;
+          return entry;
+        });
+        return formatResult({
+          totalMatches: matches.length,
+          results,
+          hint: matches.length === 0
+            ? "No tools matched. Try fewer or shorter keywords, or call with no arguments for category counts."
+            : "tool=<name> returns a tool's full parameter schema.",
+        });
+      }
+
+      // ── Level 2b: one category's tools with brief + parameter names ──
       if (category) {
         const cat = category.toLowerCase();
+        const matching = advanced.filter((t) => categoryOf(t.name) === cat);
+        const dynamicOnly = (mergedCategories[cat] || []).filter((name) => dynamicNames.has(name));
 
-        // Check cached tools first
-        const matching = advanced.filter((t) => {
-          const toolCat = t.name.replace(/^unity_/, "").split("_")[0];
-          return toolCat === cat;
-        });
-
-        // Also include dynamic-only tools for this category
-        const dynamicTools = (mergedCategories[cat] || [])
-          .filter((name) => !advancedMap.has(name))
-          .map((name) => ({ name, description: `(lazy-loaded from Unity plugin)` }));
-
-        // Echo inputSchema in the category view so agents (and compact-mode clients)
-        // can read parameters on demand without the tool being directly exposed.
-        const all = [
-          ...matching.map((t) => ({ name: t.name, description: t.description, inputSchema: t.inputSchema })),
-          ...dynamicTools,
-        ];
-
-        if (all.length === 0) {
-          return `No advanced tools found for category "${category}". Available categories: ${Object.keys(mergedCategories).join(", ")}`;
+        if (matching.length === 0 && dynamicOnly.length === 0) {
+          return `No advanced tools found for category "${category}". Available categories: ${Object.keys(mergedCategories).sort().join(", ")}`;
         }
-        return formatResult(all);
+
+        // includeSchemas restores the old full-schema echo for one-round-trip callers.
+        if (includeSchemas === true) {
+          const all = [
+            ...matching.map((t) => ({ name: t.name, description: t.description, inputSchema: t.inputSchema })),
+            ...dynamicOnly.map((name) => ({ name, description: "(lazy-loaded from Unity plugin)" })),
+          ];
+          return formatResult(all);
+        }
+
+        const all = [
+          ...matching.map((t) => {
+            const entry = { name: t.name, brief: firstSentence(t.description) };
+            const params = Object.keys(t.inputSchema?.properties || {});
+            if (params.length > 0) entry.params = params;
+            const required = t.inputSchema?.required;
+            if (Array.isArray(required) && required.length > 0) entry.required = required;
+            return entry;
+          }),
+          ...dynamicOnly.map((name) => ({ name, dynamic: true })),
+        ];
+        return formatResult({
+          category: cat,
+          count: all.length,
+          tools: all,
+          hint: "tool=<name> returns a tool's full parameter schema; includeSchemas=true returns all of them.",
+        });
       }
 
-      // Full catalog grouped by category
-      const result = {};
-      for (const [cat, names] of Object.entries(mergedCategories)) {
-        result[cat] = names;
+      // ── Level 1: category counts only ──
+      const counts = {};
+      for (const cat of Object.keys(mergedCategories).sort()) {
+        counts[cat] = mergedCategories[cat].length;
       }
       return formatResult({
-        totalAdvancedTools: advanced.length + dynamicCount,
-        dynamicTools: dynamicCount,
-        categories: result,
+        totalAdvancedTools: advanced.length + dynamicNames.size,
+        dynamicTools: dynamicNames.size,
+        categories: counts,
+        hint: "Drill down: search=<keywords>, category=<name> (tools + param names), tool=<name> (full schema).",
       });
     },
   };
@@ -323,8 +429,8 @@ export function splitToolTiers(allEditorTools) {
   const advancedTool = {
     name: "unity_advanced_tool",
     description:
-      "Execute an advanced Unity tool by name (268 tools; discover names and parameters " +
-      "with unity_list_advanced_tools).",
+      `Execute an advanced Unity tool by name (${advanced.length} cached + plugin lazy-loaded; ` +
+      "discover names via unity_list_advanced_tools search=/category=, parameters via tool=).",
     inputSchema: {
       type: "object",
       properties: {
