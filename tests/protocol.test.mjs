@@ -47,6 +47,7 @@ describe("queue-mode session (single instance)", () => {
     // Plugin handlers return raw result objects; the Node bridge adds {success, data}.
     bridge.on("editor/state", () => ({ isPlaying: false, isCompiling: false, activeScene: "MockScene" }));
     bridge.on("logical/failure", () => ({ __fail: true, error: "boom: mock logical failure" }));
+    bridge.on("plugin/timeout", () => ({ __timeout: true, error: "Timed out on the main thread" }));
     bridge.on("payload/huge", () => ({ blob: "x".repeat(4_500_000) }));
     bridge.on("graphics/asset-preview", () => ({ base64: "QUJDREVG".repeat(40_000), width: 256, height: 256 }));
     bridge.on("silent/completion", () => undefined);
@@ -281,6 +282,17 @@ describe("queue-mode session (single instance)", () => {
     // Must return promptly (terminal status detected), not burn the 30s timeout.
     assert.ok(Date.now() - start < 5_000, "returned without burning the full waitTimeout");
     assert.equal(payload.data.status, "succeeded");
+  });
+
+  test("plugin-side TimedOut is surfaced as a terminal error, not polled to a 404", async () => {
+    const { payload, payloadText, isError } = await client.callTool("unity_advanced_tool", {
+      tool: "unity_plugin_timeout",
+      params: {},
+    });
+    const text = payload ? JSON.stringify(payload) : payloadText;
+    assert.match(text, /timed out/i);
+    assert.ok(!/404/.test(text), "no misleading 404");
+    assert.equal(isError, true);
   });
 
   test("unknown tool names are rejected with a helpful error", async () => {

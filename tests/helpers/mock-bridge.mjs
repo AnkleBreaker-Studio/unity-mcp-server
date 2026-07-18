@@ -138,6 +138,10 @@ export class MockBridge {
             if (outcome && outcome.__fail) {
               ticket.status = "Failed";
               ticket.error = outcome.error || "Mock failure";
+            } else if (outcome && outcome.__timeout) {
+              // Simulate a plugin-side sync-timeout terminal state.
+              ticket.status = "TimedOut";
+              ticket.error = outcome.error || "Timed out on the main thread";
             } else {
               ticket.status = "Completed";
               ticket.result = outcome;

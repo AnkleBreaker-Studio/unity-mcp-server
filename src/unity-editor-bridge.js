@@ -103,6 +103,7 @@ async function pollQueueStatus(ticketId) {
   // Use dedicated poll timeout (longer than bridge timeout to handle slow operations like execute_code)
   const timeoutMs = CONFIG.queuePollTimeoutMs || CONFIG.editorBridgeTimeout;
   let consecutive404s = 0;
+  let consecutiveTransient = 0;
   const max404Grace = 5; // Allow a few 404s during the dequeueâ†'execute race window
 
   while (true) {
@@ -142,8 +143,9 @@ async function pollQueueStatus(ticketId) {
         };
       }
 
-      // Reset 404 counter on successful poll
+      // Reset the 404 and transient-error counters on any successful poll response.
       consecutive404s = 0;
+      consecutiveTransient = 0;
 
       const statusData = await response.json();
 
@@ -161,6 +163,13 @@ async function pollQueueStatus(ticketId) {
           success: false,
           error: statusData.error || "Queue processing failed",
         };
+      } else if (statusData.status === "TimedOut") {
+        // Terminal on the plugin side — surface it now instead of polling a doomed ticket
+        // until it's evicted (which then reads back as a misleading 404 ~30-60s later).
+        return {
+          success: false,
+          error: statusData.error || `Unity-side execution timed out for ticket ${ticketId}`,
+        };
       }
 
       // Still processing â€" wait before polling again
@@ -172,6 +181,20 @@ async function pollQueueStatus(ticketId) {
         maxIntervalMs
       );
     } catch (error) {
+      // A transient poll failure (ECONNRESET/"fetch failed"/AbortError) commonly happens
+      // when the command triggered a domain reload that briefly drops the bridge — Unity
+      // still finishes the ticket. Failing here made the client retry a NON-idempotent
+      // command that already ran (duplicate GameObject, double package add). Keep polling
+      // through transient errors until the deadline; only give up on a non-transient one.
+      if (isTransientError(error, null)) {
+        consecutiveTransient++;
+        console.error(
+          `[MCP Bridge] Transient poll error for ticket ${ticketId} (${error.message}), retrying (${consecutiveTransient})...`
+        );
+        await sleep(pollIntervalMs);
+        pollIntervalMs = Math.min(Math.ceil(pollIntervalMs * 1.5), maxIntervalMs);
+        continue;
+      }
       return {
         success: false,
         error: `Error polling queue: ${error.message}`,
