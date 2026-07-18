@@ -7,16 +7,14 @@ import {
   getSelectedInstance,
   autoSelectInstance,
 } from "../instance-discovery.js";
+import { formatResult } from "../response-format.js";
 
 export const instanceTools = [
   {
     name: "unity_list_instances",
     description:
-      "List all running Unity Editor instances that the MCP can connect to. " +
-      "Returns each instance's project name, port, Unity version, and whether it's a ParrelSync clone. " +
-      "Use this to see which Unity projects are currently open before selecting one to work with. " +
-      "IMPORTANT: When multiple instances are detected, always call this first and then use " +
-      "unity_select_instance to choose which project to target.",
+      "List running Unity Editor instances (project name, port, Unity version, ParrelSync clone flag). " +
+      "With multiple instances: call this first, then unity_select_instance to choose the target.",
     inputSchema: {
       type: "object",
       properties: {
@@ -56,20 +54,16 @@ export const instanceTools = [
         result.message = `Found ${instances.length} Unity instance(s). Currently targeting: ${selected.projectName} (port ${selected.port})`;
       }
 
-      return JSON.stringify(result, null, 2);
+      return formatResult(result);
     },
   },
 
   {
     name: "unity_select_instance",
     description:
-      "Select which Unity Editor instance to work with for this session. " +
-      "All subsequent unity_* commands will be routed to the selected instance. " +
-      "You must provide the port number of the instance (get it from unity_list_instances). " +
-      "IMPORTANT: Call unity_list_instances first to see available instances and their ports. " +
-      "PARALLEL SAFETY: After selecting, include 'port: <number>' as a parameter in ALL " +
-      "subsequent unity_* tool calls to guarantee routing to this instance even when " +
-      "multiple agents share the same MCP process.",
+      "Select the Unity Editor instance this session targets; subsequent unity_* calls route there. " +
+      "Takes the port from unity_list_instances. PARALLEL SAFETY: after selecting, include port " +
+      "on every unity_* call when multiple agents share this MCP process.",
     inputSchema: {
       type: "object",
       properties: {
@@ -83,15 +77,11 @@ export const instanceTools = [
     },
     handler: async ({ port }) => {
       if (!port || typeof port !== "number") {
-        return JSON.stringify(
-          {
-            success: false,
-            error:
-              "Port number is required. Use unity_list_instances to see available instances.",
-          },
-          null,
-          2
-        );
+        return formatResult({
+          success: false,
+          error:
+            "Port number is required. Use unity_list_instances to see available instances.",
+        });
       }
 
       const result = await selectInstance(port);
@@ -108,7 +98,7 @@ export const instanceTools = [
         };
       }
 
-      return JSON.stringify(result, null, 2);
+      return formatResult(result);
     },
   },
 ];

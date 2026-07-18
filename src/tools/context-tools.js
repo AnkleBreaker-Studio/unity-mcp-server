@@ -3,16 +3,14 @@
 // stored in the Unity project's Assets/MCP/Context/ folder.
 
 import * as bridge from "../unity-editor-bridge.js";
+import { formatResult } from "../response-format.js";
 
 export const contextTools = [
   {
     name: "unity_get_project_context",
     description:
-      "Get project-specific context and documentation that the team has prepared for AI agents. " +
-      "This includes project guidelines, architecture docs, game design documents, networking rules, " +
-      "and any other project knowledge stored in Assets/MCP/Context/. " +
-      "Call this without arguments to get ALL context, or specify a category for a specific document. " +
-      "IMPORTANT: Call this early in your session to understand the project's conventions and architecture.",
+      "Get the project docs/guidelines the team prepared for AI agents (from Assets/MCP/Context/). " +
+      "No args = all context; pass a category for one document. Call early in a session.",
     inputSchema: {
       type: "object",
       properties: {
@@ -27,7 +25,7 @@ export const contextTools = [
     },
     handler: async ({ category } = {}) => {
       const data = await bridge.getProjectContext(category || null);
-      return JSON.stringify(data, null, 2);
+      return formatResult(data);
     },
   },
 ];

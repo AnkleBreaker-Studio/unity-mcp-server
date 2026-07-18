@@ -46,6 +46,7 @@ import {
   clearPortOverride,
 } from "./instance-discovery.js";
 import { debugLog } from "./state-persistence.js";
+import { isErrorText } from "./response-format.js";
 import { CONFIG } from "./config.js";
 
 // ─── Response size protection ───
@@ -313,31 +314,66 @@ const TOOLS_SKIP_PORT_INJECT = new Set([
   "unity_list_instances",
 ]);
 
+// ─── Compact tool registry mode (UNITY_MCP_COMPACT_TOOLS=1) ───
+// Some clients pass the aggregate tools/list payload through size-limited process
+// boundaries (Codex Desktop on Windows dies with spawn ENAMETOOLONG — issue #27).
+// Compact mode keeps every tool and its full schema STRUCTURE (types, required,
+// enums stay — strict clients still validate) but drops per-property prose and
+// trims tool descriptions to their first sentence. Full parameter documentation
+// remains available on demand via unity_list_advanced_tools' schema echo.
+const COMPACT_TOOLS = process.env.UNITY_MCP_COMPACT_TOOLS === "1";
+
+function stripSchemaDescriptions(schema) {
+  if (!schema || typeof schema !== "object" || Array.isArray(schema)) return schema;
+  const out = {};
+  for (const [key, value] of Object.entries(schema)) {
+    if (key === "description") continue;
+    if (key === "properties" && value && typeof value === "object") {
+      const props = {};
+      for (const [prop, sub] of Object.entries(value)) props[prop] = stripSchemaDescriptions(sub);
+      out[key] = props;
+    } else if (key === "items") {
+      out[key] = stripSchemaDescriptions(value);
+    } else {
+      out[key] = value;
+    }
+  }
+  return out;
+}
+
+function firstSentence(text) {
+  if (!text) return text;
+  const cut = text.indexOf(". ");
+  const sentence = cut > 0 ? text.slice(0, cut + 1) : text;
+  return sentence.length > 160 ? `${sentence.slice(0, 157)}...` : sentence;
+}
+
 server.setRequestHandler(ListToolsRequestSchema, async () => {
   return {
     tools: ALL_TOOLS.map(({ name, description, inputSchema }) => {
+      let schema = inputSchema;
       // Inject port into unity_* tools that target an Editor instance
       if (
         name.startsWith("unity_") &&
         !name.startsWith("unity_hub_") &&
         !TOOLS_SKIP_PORT_INJECT.has(name)
       ) {
-        const augmented = {
-          ...inputSchema,
+        schema = {
+          ...schema,
           properties: {
-            ...(inputSchema.properties || {}),
+            ...(schema.properties || {}),
             port: {
               type: "number",
               description:
-                "Target Unity instance port for parallel-safe routing. " +
-                "Get this from unity_select_instance. When working with " +
-                "multiple Unity instances, ALWAYS include this parameter.",
+                "Unity instance port (from unity_select_instance). Always include it when multiple instances run.",
             },
           },
         };
-        return { name, description, inputSchema: augmented };
       }
-      return { name, description, inputSchema };
+      if (COMPACT_TOOLS) {
+        return { name, description: firstSentence(description), inputSchema: stripSchemaDescriptions(schema) };
+      }
+      return { name, description, inputSchema: schema };
     }),
   };
 });
@@ -446,7 +482,13 @@ server.setRequestHandler(CallToolRequestSchema, async (request) => {
       contentBlocks.push({ type: "text", text: result });
     }
 
-    return { content: truncateResponseIfNeeded(contentBlocks) };
+    // Logical failures come back as HTTP 200 payloads ({success:false}, {error}, ...)
+    // — surface them through the MCP isError flag so clients don't read them as success.
+    const response = { content: truncateResponseIfNeeded(contentBlocks) };
+    if (!Array.isArray(result) && isErrorText(result)) {
+      response.isError = true;
+    }
+    return response;
 
     } finally {
       // Always clear port override after request completes, even on error

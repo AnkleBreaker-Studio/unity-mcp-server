@@ -23,6 +23,20 @@ function isStrictSchema(schema) {
   );
 }
 
+/** Recursively validate that nested object/array property schemas stay explicitly shaped. */
+function collectSchemaViolations(toolName, path, schema, violations) {
+  if (!isStrictSchema(schema)) {
+    violations.push(`${toolName}.${path}`);
+    return;
+  }
+  for (const [prop, sub] of Object.entries(schema.properties || {})) {
+    collectSchemaViolations(toolName, `${path}.${prop}`, sub, violations);
+  }
+  if (schema.items && typeof schema.items === "object" && !Array.isArray(schema.items)) {
+    collectSchemaViolations(toolName, `${path}[]`, schema.items, violations);
+  }
+}
+
 describe("queue-mode session (single instance)", () => {
   /** @type {MockBridge} */ let bridge;
   /** @type {McpTestClient} */ let client;
@@ -36,6 +50,7 @@ describe("queue-mode session (single instance)", () => {
     bridge.on("payload/huge", () => ({ blob: "x".repeat(4_500_000) }));
     bridge.on("graphics/asset-preview", () => ({ base64: "QUJDREVG".repeat(40_000), width: 256, height: 256 }));
     bridge.on("silent/completion", () => undefined);
+    bridge.on("terrain/lisr", () => ({ __fail: true, error: "Unknown route: terrain/lisr" }));
     await bridge.start();
     client = new McpTestClient({ env: bridge.env() }).start();
     initResult = await client.initialize();
@@ -90,20 +105,38 @@ describe("queue-mode session (single instance)", () => {
     assert.ok(bytes < 120_000, `tools/list must stay under 120KB hard ceiling (got ${bytes})`);
   });
 
-  // Diet target from issue #27 (53KB → ≤30KB). Flip todo when the compaction wave lands.
-  test("tools/list payload fits the 30KB diet budget", { todo: true }, async () => {
+  // Diet regression lock (issue #27): baseline was 50.6KB; the compaction wave landed 42.8KB
+  // with full parameter docs retained. UNITY_MCP_COMPACT_TOOLS=1 (tested below) goes further.
+  test("tools/list payload stays within the rich-mode diet budget", async () => {
     const { tools } = await client.listTools();
     const bytes = Buffer.byteLength(JSON.stringify(tools), "utf8");
-    assert.ok(bytes <= 30_000, `tools/list ${bytes} bytes exceeds 30KB budget`);
+    assert.ok(bytes <= 44_000, `tools/list ${bytes} bytes exceeds the 44KB rich-mode budget`);
+  });
+
+  test("advanced tool category listing echoes inputSchema for on-demand parameter discovery", async () => {
+    const { payload } = await client.callTool("unity_list_advanced_tools", { category: "terrain" });
+    assert.ok(Array.isArray(payload) && payload.length > 10, "terrain category lists its tools");
+    const withSchema = payload.filter((t) => t.inputSchema && t.inputSchema.type === "object");
+    assert.equal(withSchema.length, payload.length, "every cached entry carries its schema");
+  });
+
+  test("mistyped advanced tool names get a did-you-mean suggestion", async () => {
+    const { payloadText, isError } = await client.callTool("unity_advanced_tool", {
+      tool: "unity_terrain_lisr",
+      params: {},
+    });
+    assert.match(payloadText, /Did you mean/i);
+    assert.match(payloadText, /unity_terrain_list/);
+    assert.equal(isError, true, "unknown tool errors carry isError");
   });
 
   // Strict-client compatibility (issue #27): every declared property must have an explicit shape.
-  test("every inputSchema property is explicitly shaped for strict clients", { todo: true }, async () => {
+  test("every inputSchema property is explicitly shaped for strict clients", async () => {
     const { tools } = await client.listTools();
     const violations = [];
     for (const tool of tools) {
       for (const [prop, schema] of Object.entries(tool.inputSchema.properties || {})) {
-        if (!isStrictSchema(schema)) violations.push(`${tool.name}.${prop}`);
+        collectSchemaViolations(tool.name, prop, schema, violations);
       }
     }
     assert.deepEqual(violations, [], `${violations.length} loosely-shaped properties`);
@@ -129,13 +162,25 @@ describe("queue-mode session (single instance)", () => {
     assert.match(text, /boom: mock logical failure|success.{0,4}false/i);
   });
 
-  // MCP spec: logical failures should set isError so clients don't read them as success.
-  test("logical failures set the MCP isError flag", { todo: true }, async () => {
+  // MCP spec: logical failures set isError so clients don't read them as success.
+  test("logical failures set the MCP isError flag", async () => {
     const { isError } = await client.callTool("unity_advanced_tool", {
       tool: "unity_logical_failure",
       params: {},
     });
     assert.equal(isError, true);
+  });
+
+  test("successful calls do NOT set isError", async () => {
+    const { isError, payload } = await client.callTool("unity_editor_state");
+    assert.equal(payload.success, true);
+    assert.equal(isError, false);
+  });
+
+  test("responses are compact JSON by default (no pretty-print token overhead)", async () => {
+    const { payloadText } = await client.callTool("unity_editor_state");
+    assert.ok(!payloadText.includes("\n  "), "no 2-space indentation in default mode");
+    assert.ok(JSON.parse(payloadText), "still valid JSON");
   });
 
   test("image tools emit an image block and never leak base64 into the text metadata", async () => {
@@ -188,6 +233,65 @@ describe("queue-mode session (single instance)", () => {
 
   test("stdout carried only clean JSON-RPC for the entire session", () => {
     assert.deepEqual(client.stdoutViolations, [], `stdout violations: ${client.stdoutViolations.slice(0, 3).join(" | ")}`);
+  });
+});
+
+describe("compact tool registry mode (UNITY_MCP_COMPACT_TOOLS=1)", () => {
+  /** @type {MockBridge} */ let bridge;
+  /** @type {McpTestClient} */ let client;
+
+  before(async () => {
+    bridge = new MockBridge();
+    await bridge.start();
+    client = new McpTestClient({ env: { ...bridge.env(), UNITY_MCP_COMPACT_TOOLS: "1" } }).start();
+    await client.initialize();
+  });
+
+  after(async () => {
+    await client.close();
+    await bridge.stop();
+  });
+
+  test("keeps all 79 tools but fits constrained-client budgets (issue #27)", async () => {
+    const { tools } = await client.listTools();
+    assert.ok(tools.length >= 70 && tools.length <= 90, `all tools still exposed (${tools.length})`);
+    const bytes = Buffer.byteLength(JSON.stringify(tools), "utf8");
+    console.error(`[gate] compact tools/list payload: ${(bytes / 1024).toFixed(1)} KB`);
+    assert.ok(bytes <= 24_000, `compact tools/list ${bytes} bytes exceeds 24KB`);
+  });
+
+  test("schema structure stays strict (types/required survive, prose dropped)", async () => {
+    const { tools } = await client.listTools();
+    const setProp = tools.find((t) => t.name === "unity_component_set_property");
+    assert.deepEqual(setProp.inputSchema.required, ["gameObjectPath", "componentType", "propertyName", "value"]);
+    for (const [prop, schema] of Object.entries(setProp.inputSchema.properties)) {
+      assert.ok("type" in schema, `${prop} keeps an explicit type`);
+      assert.ok(!("description" in schema), `${prop} drops prose in compact mode`);
+    }
+  });
+});
+
+describe("pretty JSON opt-out (UNITY_MCP_PRETTY_JSON=1)", () => {
+  /** @type {MockBridge} */ let bridge;
+  /** @type {McpTestClient} */ let client;
+
+  before(async () => {
+    bridge = new MockBridge();
+    bridge.on("editor/state", () => ({ isPlaying: false, activeScene: "PrettyScene" }));
+    await bridge.start();
+    client = new McpTestClient({ env: { ...bridge.env(), UNITY_MCP_PRETTY_JSON: "1" } }).start();
+    await client.initialize();
+  });
+
+  after(async () => {
+    await client.close();
+    await bridge.stop();
+  });
+
+  test("restores 2-space indentation for human debugging", async () => {
+    const { payloadText, payload } = await client.callTool("unity_editor_state");
+    assert.ok(payloadText.includes('\n  "'), "indented output in pretty mode");
+    assert.equal(payload.data.activeScene, "PrettyScene");
   });
 });
 

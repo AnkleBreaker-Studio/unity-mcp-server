@@ -185,6 +185,8 @@ Restart Claude Desktop. Done!
 | `UNITY_RESPONSE_SOFT_LIMIT` | `2097152` | Response size soft limit in bytes (warning) |
 | `UNITY_RESPONSE_HARD_LIMIT` | `4194304` | Response size hard limit in bytes (truncation) |
 | `UNITY_MCP_DEBUG` | unset | Set to `1` to append diagnostics to `UnityMCP/mcp-debug.log` (5MB rotation) |
+| `UNITY_MCP_PRETTY_JSON` | unset | Set to `1` to pretty-print tool responses (default is compact JSON — 20-50% fewer tokens) |
+| `UNITY_MCP_COMPACT_TOOLS` | unset | Set to `1` for a minimal tools/list (~21KB vs ~43KB): keeps all 79 tools and strict schema structure, drops per-parameter prose. For clients with registry size limits (e.g. Codex Desktop on Windows) |
 
 The Unity plugin also has its own settings accessible via the Dashboard (`Window > MCP Dashboard`) for port, auto-start, and per-category feature toggles.
 

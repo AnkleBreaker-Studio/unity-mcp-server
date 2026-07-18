@@ -15,6 +15,7 @@
 // restarting the MCP server.
 
 import { sendCommand } from "./unity-editor-bridge.js";
+import { formatResult } from "./response-format.js";
 
 /**
  * Explicit route overrides for tools whose API endpoints
@@ -154,6 +155,38 @@ const CORE_TOOLS = new Set([
 ]);
 
 /**
+ * Levenshtein distance (iterative two-row) — powers "did you mean" suggestions
+ * for mistyped advanced tool names. (Idea credit: community PR #31 by D3vCrow.)
+ */
+function levenshtein(a, b) {
+  if (a === b) return 0;
+  let prev = Array.from({ length: b.length + 1 }, (_, i) => i);
+  for (let i = 1; i <= a.length; i++) {
+    const current = [i];
+    for (let j = 1; j <= b.length; j++) {
+      current[j] = Math.min(
+        prev[j] + 1,
+        current[j - 1] + 1,
+        prev[j - 1] + (a[i - 1] === b[j - 1] ? 0 : 1)
+      );
+    }
+    prev = current;
+  }
+  return prev[b.length];
+}
+
+/** Closest tool names within a sane edit distance, best first (max 3). */
+function suggestSimilarTools(input, candidates) {
+  const scored = [];
+  for (const name of candidates) {
+    const distance = levenshtein(input, name);
+    if (distance <= 5) scored.push({ name, distance });
+  }
+  scored.sort((a, b) => a.distance - b.distance);
+  return scored.slice(0, 3).map((s) => s.name);
+}
+
+/**
  * Split a flat tool array into { core, advanced }.
  * Also generates the meta-tools for accessing advanced tools.
  */
@@ -196,12 +229,10 @@ export function splitToolTiers(allEditorTools) {
   const catalogTool = {
     name: "unity_list_advanced_tools",
     description:
-      "List all available advanced/specialized Unity tools organized by category. " +
-      "These tools are not directly exposed but can be called via unity_advanced_tool. " +
-      "Categories include: uma, animation, prefab, physics, lighting, audio, shadergraph, " +
-      "amplify, terrain, particle, navmesh, ui, texture, profiler, memory, settings, " +
-      "input, asmdef, scriptableobject, constraint, lod, editorprefs, playerprefs, " +
-      "vfx, graphics, sceneview, and more.",
+      "List advanced/specialized Unity tools by category; call them via unity_advanced_tool. " +
+      "Categories: uma, animation, prefab, physics, lighting, audio, shadergraph, amplify, " +
+      "terrain, particle, navmesh, ui, texture, profiler, memory, settings, input, asmdef, " +
+      "scriptableobject, constraint, lod, editorprefs, playerprefs, vfx, graphics, sceneview, and more.",
     inputSchema: {
       type: "object",
       properties: {
@@ -226,8 +257,11 @@ export function splitToolTiers(allEditorTools) {
       let mergedCategories = { ...categories };
       let dynamicCount = 0;
 
-      if (dynamicRoutes && dynamicRoutes.routes) {
-        for (const route of dynamicRoutes.routes) {
+      // The bridge wraps results as { success, data } — the route list lives in data.routes.
+      // (Top-level .routes kept as a fallback for legacy sync payload shapes.)
+      const dynamicRouteList = dynamicRoutes?.data?.routes || dynamicRoutes?.routes;
+      if (Array.isArray(dynamicRouteList)) {
+        for (const route of dynamicRouteList) {
           // Convert route to tool name: terrain/list → unity_terrain_list
           const toolName = "unity_" + route.replace(/\//g, "_").replace(/-/g, "_");
           const cat = route.split("/")[0];
@@ -258,15 +292,17 @@ export function splitToolTiers(allEditorTools) {
           .filter((name) => !advancedMap.has(name))
           .map((name) => ({ name, description: `(lazy-loaded from Unity plugin)` }));
 
+        // Echo inputSchema in the category view so agents (and compact-mode clients)
+        // can read parameters on demand without the tool being directly exposed.
         const all = [
-          ...matching.map((t) => ({ name: t.name, description: t.description })),
+          ...matching.map((t) => ({ name: t.name, description: t.description, inputSchema: t.inputSchema })),
           ...dynamicTools,
         ];
 
         if (all.length === 0) {
           return `No advanced tools found for category "${category}". Available categories: ${Object.keys(mergedCategories).join(", ")}`;
         }
-        return JSON.stringify(all, null, 2);
+        return formatResult(all);
       }
 
       // Full catalog grouped by category
@@ -274,25 +310,19 @@ export function splitToolTiers(allEditorTools) {
       for (const [cat, names] of Object.entries(mergedCategories)) {
         result[cat] = names;
       }
-      return JSON.stringify(
-        {
-          totalAdvancedTools: advanced.length + dynamicCount,
-          dynamicTools: dynamicCount,
-          categories: result,
-        },
-        null,
-        2
-      );
+      return formatResult({
+        totalAdvancedTools: advanced.length + dynamicCount,
+        dynamicTools: dynamicCount,
+        categories: result,
+      });
     },
   };
 
   const advancedTool = {
     name: "unity_advanced_tool",
     description:
-      "Execute an advanced/specialized Unity tool by name. Use unity_list_advanced_tools " +
-      "to discover available tools and their parameters. This provides access to 200+ " +
-      "specialized tools for animation, prefabs, physics, shaders, terrain, particles, " +
-      "UI, profiling, and more.",
+      "Execute an advanced Unity tool by name (254 tools; discover names and parameters " +
+      "with unity_list_advanced_tools).",
     inputSchema: {
       type: "object",
       properties: {
@@ -329,13 +359,23 @@ export function splitToolTiers(allEditorTools) {
           // Log to stderr, not stdout — stdout carries the MCP JSON-RPC transport.
           console.error(`[MCP] Lazy-loading tool "${tool}" via route "${route}"`);
           const result = await sendCommand(route, params || {});
-          return JSON.stringify(result, null, 2);
+          // A failed lazy route is often a typo'd tool name — suggest close matches
+          // alongside the original error (kept intact for genuine route failures).
+          if (result && result.success === false) {
+            const suggestions = suggestSimilarTools(tool, [...advancedMap.keys(), ...CORE_TOOLS]);
+            if (suggestions.length > 0) {
+              return formatResult({ ...result, hint: `Did you mean: ${suggestions.join(", ")}?` });
+            }
+          }
+          return formatResult(result);
         } catch (err) {
           return `Error executing "${tool}" (lazy route: ${route}): ${err.message}`;
         }
       }
 
-      return `Error: Unknown tool "${tool}". Use unity_list_advanced_tools to see available tools.`;
+      const suggestions = suggestSimilarTools(tool, [...advancedMap.keys(), ...CORE_TOOLS]);
+      const hint = suggestions.length > 0 ? ` Did you mean: ${suggestions.join(", ")}?` : "";
+      return `Error: Unknown tool "${tool}".${hint} Use unity_list_advanced_tools to see available tools.`;
     },
   };
 
