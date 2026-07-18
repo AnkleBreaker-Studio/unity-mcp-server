@@ -32,6 +32,7 @@ import {
 import { hubTools } from "./tools/hub-tools.js";
 import { editorTools } from "./tools/editor-tools.js";
 import { umaTools } from "./tools/uma-tools.js";
+import { probuilderTools } from "./tools/probuilder-tools.js";
 import { contextTools } from "./tools/context-tools.js";
 import { instanceTools } from "./tools/instance-tools.js";
 import { splitToolTiers } from "./tool-tiers.js";
@@ -111,7 +112,7 @@ setAgentId(PROCESS_AGENT_ID);
 // This keeps the tool count under ~70, preventing MCP client rejection caused by
 // oversized tool lists (268 tools / 125KB was ~5x beyond what clients handle).
 const { coreTools, metaTools, advancedCount, coreCount } =
-  splitToolTiers([...editorTools, ...umaTools]);
+  splitToolTiers([...editorTools, ...umaTools, ...probuilderTools]);
 const ALL_TOOLS = [
   ...instanceTools,
   ...hubTools,

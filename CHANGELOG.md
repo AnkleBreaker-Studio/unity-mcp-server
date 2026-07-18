@@ -2,6 +2,11 @@
 
 All notable changes to this package will be documented in this file.
 
+## [2.33.0] - 2026-07-18
+
+### Added
+- **ProBuilder tool suite (14 advanced-tier tools)** — companion to `unity-mcp-plugin` 2.35.0's ProBuilder integration. New `unity_probuilder_*` tools reachable via `unity_advanced_tool` under the `probuilder` category: `create_shape`, `info`, `extrude_faces`, `bevel_edges`, `subdivide`, `delete_faces`, `translate_faces`, `flip_normals`, `set_face_material`, `boolean`, `combine`, `probuilderize`, `center_pivot`, `export_mesh`. Each ships a full parameter schema (shape parameters, face-index selection, boolean operands, export path). New `probuilder-bridge.js` + `probuilder-tools.js` follow the existing UMA optional-integration pattern; tool names derive to the plugin's `probuilder/*` routes so the lazy-load fallback works even against an unlisted plugin build. Advanced-tier count 254 → 268.
+
 ## [2.32.0] - 2026-07-18
 
 ### Added

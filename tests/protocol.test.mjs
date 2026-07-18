@@ -52,6 +52,11 @@ describe("queue-mode session (single instance)", () => {
     bridge.on("graphics/asset-preview", () => ({ base64: "QUJDREVG".repeat(40_000), width: 256, height: 256 }));
     bridge.on("silent/completion", () => undefined);
     bridge.on("terrain/lisr", () => ({ __fail: true, error: "Unknown route: terrain/lisr" }));
+    // ProBuilder advanced-tier round-trip fixture (mirrors the plugin's create-shape result shape).
+    bridge.on("probuilder/create-shape", (p) => ({
+      success: true, name: p.name || `PB_${p.shape || "cube"}`, instanceId: "-14510",
+      faceCount: 6, vertexCount: 24, shape: p.shape || "cube",
+    }));
     // A finished test job — status lives under the bridge's data envelope.
     bridge.on("testing/get-job", () => ({ status: "succeeded", passed: 3, failed: 0 }));
     // Old-plugin era: batch-wire route doesn't exist; single set-reference does.
@@ -172,6 +177,21 @@ describe("queue-mode session (single instance)", () => {
     assert.ok(seen, "bridge received editor/state");
     assert.equal(seen.via, "queue");
     assert.ok(seen.headers["x-agent-id"], "X-Agent-Id header sent");
+  });
+
+  test("ProBuilder advanced tool dispatches to its plugin route via the explicit handler", async () => {
+    const { payload, isError } = await client.callTool("unity_advanced_tool", {
+      tool: "unity_probuilder_create_shape",
+      params: { shape: "cylinder", name: "TestCyl" },
+    });
+    assert.equal(payload.success, true);
+    assert.equal(payload.data.shape, "cylinder");
+    assert.equal(payload.data.name, "TestCyl");
+    assert.equal(isError, false);
+    const seen = bridge.seen.find((r) => r.route === "probuilder/create-shape");
+    assert.ok(seen, "bridge received the probuilder/create-shape route");
+    assert.equal(seen.params.shape, "cylinder", "params forwarded intact");
+    assert.equal(seen.via, "queue", "routed through the multi-agent queue");
   });
 
   test("logical failures surface an error payload", async () => {

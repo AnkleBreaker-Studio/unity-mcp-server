@@ -7,14 +7,18 @@ import assert from "node:assert/strict";
 import { splitToolTiers } from "../../src/tool-tiers.js";
 import { editorTools } from "../../src/tools/editor-tools.js";
 import { umaTools } from "../../src/tools/uma-tools.js";
+import { probuilderTools } from "../../src/tools/probuilder-tools.js";
 
 describe("splitToolTiers on the real tool set", () => {
-  const split = splitToolTiers([...editorTools, ...umaTools]);
+  const split = splitToolTiers([...editorTools, ...umaTools, ...probuilderTools]);
 
   test("tier counts are pinned (update deliberately when the surface changes)", () => {
     assert.equal(split.coreCount, 68, "core tier count");
-    assert.equal(split.advancedCount, 254, "advanced tier count");
-    assert.equal(split.coreCount + split.advancedCount, editorTools.length + umaTools.length);
+    assert.equal(split.advancedCount, 268, "advanced tier count");
+    assert.equal(
+      split.coreCount + split.advancedCount,
+      editorTools.length + umaTools.length + probuilderTools.length
+    );
   });
 
   test("meta-tools are generated with strict-enough schemas", () => {
@@ -40,7 +44,7 @@ describe("splitToolTiers on the real tool set", () => {
   });
 
   test("no tool is lost or duplicated across tiers", () => {
-    const all = [...editorTools, ...umaTools];
+    const all = [...editorTools, ...umaTools, ...probuilderTools];
     const seen = new Set();
     for (const t of all) {
       assert.ok(!seen.has(t.name), `duplicate tool definition: ${t.name}`);
@@ -53,12 +57,39 @@ describe("splitToolTiers on the real tool set", () => {
   });
 
   test("every tool definition has the {name, description, inputSchema, handler} contract", () => {
-    for (const t of [...editorTools, ...umaTools]) {
+    for (const t of [...editorTools, ...umaTools, ...probuilderTools]) {
       assert.ok(/^unity_[a-z0-9_]+$/.test(t.name), `name convention: ${t.name}`);
       assert.equal(typeof t.description, "string");
       assert.equal(t.inputSchema?.type, "object", `${t.name} schema root`);
       assert.equal(typeof t.handler, "function", `${t.name} handler`);
     }
+  });
+
+  test("all 14 ProBuilder tools land in the advanced tier under the 'probuilder' category", () => {
+    const coreNames = new Set(split.coreTools.map((t) => t.name));
+    assert.equal(probuilderTools.length, 14, "ProBuilder tool count");
+    for (const t of probuilderTools) {
+      assert.ok(!coreNames.has(t.name), `${t.name} must be advanced, not core`);
+      const category = t.name.replace(/^unity_/, "").split("_")[0];
+      assert.equal(category, "probuilder", `${t.name} category`);
+    }
+  });
+
+  test("ProBuilder tool names derive to the exact plugin routes (lazy-load parity)", () => {
+    // Mirrors toolNameToRoute in tool-tiers.js: unity_probuilder_create_shape → probuilder/create-shape.
+    const derive = (name) => {
+      const parts = name.replace(/^unity_/, "").split("_");
+      return `${parts[0]}/${parts.slice(1).join("-")}`;
+    };
+    const expected = new Set([
+      "probuilder/create-shape", "probuilder/info", "probuilder/extrude-faces",
+      "probuilder/bevel-edges", "probuilder/subdivide", "probuilder/delete-faces",
+      "probuilder/translate-faces", "probuilder/flip-normals", "probuilder/set-face-material",
+      "probuilder/boolean", "probuilder/combine", "probuilder/probuilderize",
+      "probuilder/center-pivot", "probuilder/export-mesh",
+    ]);
+    const derived = new Set(probuilderTools.map((t) => derive(t.name)));
+    assert.deepEqual(derived, expected, "derived routes must match the plugin's registered routes");
   });
 });
 
