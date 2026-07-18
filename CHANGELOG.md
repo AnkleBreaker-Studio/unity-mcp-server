@@ -2,7 +2,14 @@
 
 All notable changes to this package will be documented in this file.
 
-## [2.33.0] - 2026-07-18
+## [2.34.0] - 2026-07-18
+
+### Added
+- **`unity_undo_last` (core tool)** — companion to `unity-mcp-plugin` 2.36.0's per-action undo. Reverts the most recent undoable MCP action as a whole; `agentId` targets a specific agent's last action; `force` opts into Unity's linear cascade (revert newer actions stacked on top). Core tier count 68 → 69.
+
+### Changed
+- **`unity_undo_history` is now an action log** — surfaces the plugin's per-agent action history (newest first, `count`/`agentId` filters) with undoable flags and the current undo group, instead of just the current group name. New `agentId`/`count` params.
+- **`unity_undo` description clarified** — it's the single-step global undo (Ctrl+Z); `unity_undo_last` is the per-action/per-agent revert. Rich-mode `tools/list` diet budget nudged 45KB → 46.5KB to fit the new core tool (still ~61% under the 120KB hard ceiling; compact mode unchanged at ~22KB).
 
 ### Added
 - **ProBuilder tool suite (14 advanced-tier tools)** — companion to `unity-mcp-plugin` 2.35.0's ProBuilder integration. New `unity_probuilder_*` tools reachable via `unity_advanced_tool` under the `probuilder` category: `create_shape`, `info`, `extrude_faces`, `bevel_edges`, `subdivide`, `delete_faces`, `translate_faces`, `flip_normals`, `set_face_material`, `boolean`, `combine`, `probuilderize`, `center_pivot`, `export_mesh`. Each ships a full parameter schema (shape parameters, face-index selection, boolean operands, export path). New `probuilder-bridge.js` + `probuilder-tools.js` follow the existing UMA optional-integration pattern; tool names derive to the plugin's `probuilder/*` routes so the lazy-load fallback works even against an unlisted plugin build. Advanced-tier count 254 → 268.

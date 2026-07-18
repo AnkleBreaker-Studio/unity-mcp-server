@@ -116,6 +116,7 @@ const CORE_TOOLS = new Set([
   // Editor actions
   "unity_execute_menu_item",
   "unity_undo",
+  "unity_undo_last",
   "unity_redo",
   "unity_undo_history",
 

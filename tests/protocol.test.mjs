@@ -57,6 +57,11 @@ describe("queue-mode session (single instance)", () => {
       success: true, name: p.name || `PB_${p.shape || "cube"}`, instanceId: "-14510",
       faceCount: 6, vertexCount: 24, shape: p.shape || "cube",
     }));
+    // Per-action undo (core tool) — echoes params so the test can assert forwarding.
+    bridge.on("undo/last", (p) => ({
+      success: true, message: "Reverted 'probuilder/create-shape'.", revertedCount: 1,
+      echoAgentId: p.agentId ?? null, echoForce: p.force ?? false,
+    }));
     // A finished test job — status lives under the bridge's data envelope.
     bridge.on("testing/get-job", () => ({ status: "succeeded", passed: 3, failed: 0 }));
     // Old-plugin era: batch-wire route doesn't exist; single set-reference does.
@@ -130,13 +135,15 @@ describe("queue-mode session (single instance)", () => {
 
   // Diet regression lock (issue #27): baseline was 50.6KB; the compaction wave landed 42.8KB
   // with full parameter docs retained, later ~44.3KB after adding the `overwrite` safety param
-  // to the core asset-creator tools. The gate catches unintentional bloat while leaving room for
+  // to the core asset-creator tools, then ~45.7KB after adding the core `unity_undo_last` tool
+  // (per-action/per-agent undo). The gate catches unintentional bloat while leaving room for
   // deliberate capability — still ~62% under the 120KB hard ceiling. UNITY_MCP_COMPACT_TOOLS=1
-  // (tested below) goes much further for constrained clients.
+  // (tested below) goes much further for constrained clients. Bump this only for a real new
+  // capability, never to absorb prose creep.
   test("tools/list payload stays within the rich-mode diet budget", async () => {
     const { tools } = await client.listTools();
     const bytes = Buffer.byteLength(JSON.stringify(tools), "utf8");
-    assert.ok(bytes <= 45_000, `tools/list ${bytes} bytes exceeds the 45KB rich-mode budget`);
+    assert.ok(bytes <= 46_500, `tools/list ${bytes} bytes exceeds the 46.5KB rich-mode budget`);
   });
 
   test("advanced tool category listing echoes inputSchema for on-demand parameter discovery", async () => {
@@ -192,6 +199,19 @@ describe("queue-mode session (single instance)", () => {
     assert.ok(seen, "bridge received the probuilder/create-shape route");
     assert.equal(seen.params.shape, "cylinder", "params forwarded intact");
     assert.equal(seen.via, "queue", "routed through the multi-agent queue");
+  });
+
+  test("unity_undo_last is a core tool that routes to undo/last with its params", async () => {
+    const { tools } = await client.listTools();
+    assert.ok(tools.some((t) => t.name === "unity_undo_last"), "unity_undo_last is exposed as a core tool");
+    const { payload, isError } = await client.callTool("unity_undo_last", { agentId: "agent-7", force: true });
+    assert.equal(payload.success, true);
+    assert.equal(payload.data.echoAgentId, "agent-7", "agentId forwarded to the plugin");
+    assert.equal(payload.data.echoForce, true, "force forwarded to the plugin");
+    assert.equal(isError, false);
+    const seen = bridge.seen.find((r) => r.route === "undo/last");
+    assert.ok(seen, "bridge received the undo/last route");
+    assert.equal(seen.via, "queue");
   });
 
   test("logical failures surface an error payload", async () => {

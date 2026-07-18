@@ -1261,6 +1261,10 @@ export async function performUndo(params) {
   return sendCommand("undo/perform", params);
 }
 
+export async function undoLast(params) {
+  return sendCommand("undo/last", params);
+}
+
 export async function performRedo(params) {
   return sendCommand("undo/redo", params);
 }

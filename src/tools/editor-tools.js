@@ -2736,9 +2736,23 @@ export const editorTools = [
   // â”€â”€â”€ Undo â”€â”€â”€
   {
     name: "unity_undo",
-    description: "Undo the last operation in Unity Editor.",
+    description: "Undo the single most recent step on Unity's global undo stack (Ctrl+Z). To revert a specific MCP action, prefer unity_undo_last.",
     inputSchema: { type: "object", properties: {} },
     handler: async (params) => formatResult(await bridge.performUndo(params)),
+  },
+  {
+    name: "unity_undo_last",
+    description:
+      "Revert the most recent undoable MCP action as a whole (create/edit/boolean, not one internal step — each write runs in its own named undo group). With agentId, targets that agent's most recent action. " +
+      "Unity's undo is LINEAR: reverting an action also reverts anything newer stacked on it, so this refuses to cascade and lists what would be affected unless force:true. (execute-code and reads are never targets.)",
+    inputSchema: {
+      type: "object",
+      properties: {
+        agentId: { type: "string", description: "Optional: revert this agent's most recent action instead of the global newest (see unity_undo_history for ids)." },
+        force: { type: "boolean", description: "Also revert newer actions stacked on top of the target (Unity's linear undo). Default false." },
+      },
+    },
+    handler: async (params) => formatResult(await bridge.undoLast(params)),
   },
   {
     name: "unity_redo",
@@ -2748,8 +2762,14 @@ export const editorTools = [
   },
   {
     name: "unity_undo_history",
-    description: "Get information about the current undo group.",
-    inputSchema: { type: "object", properties: {} },
+    description: "List recent MCP actions with undo state: per-agent attribution, whether each is still undoable, target, and the current undo group. Use it to decide what unity_undo_last reverts or to pick an agentId.",
+    inputSchema: {
+      type: "object",
+      properties: {
+        count: { type: "number", description: "Max actions to return, newest first (default 20)." },
+        agentId: { type: "string", description: "Optional: only show actions from this agent." },
+      },
+    },
     handler: async (params) => formatResult(await bridge.getUndoHistory(params)),
   },
   {
