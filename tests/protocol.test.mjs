@@ -65,6 +65,10 @@ describe("queue-mode session (single instance)", () => {
     // Plugin route advertisement: terrain/list is already cached server-side (skipped),
     // experimental/new-thing is dynamic-only — exercises the lazy-discovery merge.
     bridge.on("_meta/routes", () => ({ routes: ["terrain/list", "experimental/new-thing"] }));
+    // Core-tool proxy fixtures: unity_advanced_tool falls back to name→route derivation
+    // for core tools too (stale-schema escape hatch); these routes need overrides.
+    bridge.on("asset/create-material", (p) => ({ success: true, path: p.path, overwrite: p.overwrite === true }));
+    bridge.on("editor/execute-code", (p) => ({ success: true, result: `ran:${(p.code || "").slice(0, 20)}` }));
     // A finished test job — status lives under the bridge's data envelope.
     bridge.on("testing/get-job", () => ({ status: "succeeded", passed: 3, failed: 0 }));
     // Old-plugin era: batch-wire route doesn't exist; single set-reference does.
@@ -207,6 +211,25 @@ describe("queue-mode session (single instance)", () => {
     assert.equal(call.payload.success, true);
     const seen = bridge.seen.find((r) => r.route === "experimental/new-thing");
     assert.ok(seen, "derived route reached the bridge");
+  });
+
+  test("unity_advanced_tool proxies CORE tools via route overrides (stale-schema escape hatch)", async () => {
+    // unity_material_create's real route is asset/create-material — the naive derivation
+    // (material/create) used to fail with unknown-route. Same class: editor/execute-code.
+    const mat = await client.callTool("unity_advanced_tool", {
+      tool: "unity_material_create",
+      params: { path: "Assets/T.mat", overwrite: true },
+    });
+    assert.equal(mat.payload.success, true);
+    assert.equal(mat.payload.data.overwrite, true, "params (incl. overwrite) pass through opaquely");
+    assert.ok(bridge.seen.some((r) => r.route === "asset/create-material"), "override route reached the bridge");
+
+    const code = await client.callTool("unity_advanced_tool", {
+      tool: "unity_execute_code",
+      params: { code: "return 1;" },
+    });
+    assert.equal(code.payload.success, true);
+    assert.ok(bridge.seen.some((r) => r.route === "editor/execute-code"));
   });
 
   test("tool= misses get a did-you-mean and the error flag", async () => {

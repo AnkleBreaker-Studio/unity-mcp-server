@@ -33,6 +33,23 @@ const ROUTE_OVERRIDES = {
   unity_mppm_list_players: "mppm/list-players",
   unity_mppm_activate_player: "mppm/activate-player",
   unity_mppm_deactivate_player: "mppm/deactivate-player",
+  // Core tools whose name → route derivation doesn't match their real endpoint.
+  // unity_advanced_tool doubles as a pass-through proxy for core tools (useful when a
+  // client's cached schema predates a new parameter), and that lazy path derives the
+  // route from the name — every mismatch below made such calls fail with unknown-route.
+  // (unity_queue_info stays out: /api/queue/info is a special non-queue endpoint.)
+  unity_editor_ping: "ping",
+  unity_scene_stats: "search/scene-stats",
+  unity_gameobject_duplicate: "prefab/duplicate",
+  unity_gameobject_set_active: "prefab/set-active",
+  unity_gameobject_reparent: "prefab/reparent",
+  unity_execute_code: "editor/execute-code",
+  unity_execute_menu_item: "editor/execute-menu-item",
+  unity_material_create: "asset/create-material",
+  unity_play_mode: "editor/play-mode",
+  unity_get_compilation_errors: "compilation/errors",
+  unity_set_object_reference: "prefab/set-object-reference",
+  unity_agent_log: "agents/log",
 };
 
 /**

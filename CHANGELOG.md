@@ -2,6 +2,14 @@
 
 All notable changes to this package will be documented in this file.
 
+## [2.35.1] - 2026-07-19
+
+### Added
+- **Live ProBuilder level-build test suite** (`tests/live-probuilder-level.test.mjs`, part of `npm run test:live`) — drives this server over real MCP stdio against a running Unity editor and builds a small level through the multi-agent queue: parametric shapes, face extrusion, boolean CSG (with a placement regression assert), per-face materials, combine, per-action undo, dense hierarchy + lazy discovery. Self-cleaning (`__mcp_lvl_` probes); ProBuilder-less projects skip the ProBuilder steps. Found three real plugin bugs on its first run (fixed in `unity-mcp-plugin` 2.37.1).
+
+### Fixed
+- **12 core tools were unreachable through `unity_advanced_tool`'s lazy proxy** — the name→route derivation missed their real endpoints (e.g. `unity_material_create` → `asset/create-material`, `unity_execute_code` → `editor/execute-code`, `unity_get_compilation_errors` → `compilation/errors`, gameobject duplicate/set-active/reparent → `prefab/*`). All now in `ROUTE_OVERRIDES`, making the advanced-tool proxy a reliable escape hatch when a client's cached schema predates a new parameter.
+
 ## [2.35.0] - 2026-07-19
 
 ### Changed (context efficiency — three-level lazy discovery)
