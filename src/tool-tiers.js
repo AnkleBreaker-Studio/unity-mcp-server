@@ -282,6 +282,14 @@ export function splitToolTiers(allEditorTools) {
       },
     },
     handler: async ({ search, category, tool, includeSchemas } = {}) => {
+      // Validate the string filters up front — a client that doesn't enforce the schema
+      // (e.g. sends category:123) would otherwise hit a raw TypeError on .toLowerCase().
+      for (const [k, v] of [["search", search], ["category", category], ["tool", tool]]) {
+        if (v !== undefined && typeof v !== "string") {
+          return formatResult({ error: `'${k}' must be a string (got ${typeof v}).` });
+        }
+      }
+
       // Fetch dynamic routes from the Unity plugin so lazy-loadable tools (added to the
       // C# plugin after this server started) are discoverable in every view.
       let dynamicRoutes = null;

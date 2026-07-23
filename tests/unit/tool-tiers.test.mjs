@@ -66,6 +66,27 @@ describe("splitToolTiers on the real tool set", () => {
     }
   });
 
+  // Strict-client schema shaping must hold for ADVANCED tools too, not only the exposed
+  // core surface (the protocol test only sees the ~80 exposed tools). A batch of advanced
+  // tools once shipped `value: { description }` with no `type`, which a strict validator
+  // rejects — this guards the whole 346-tool surface, recursively.
+  test("every property of every tool (all tiers) is explicitly type-shaped", () => {
+    const isShaped = (s) =>
+      s && typeof s === "object" &&
+      ("type" in s || "enum" in s || "const" in s || "anyOf" in s || "oneOf" in s || "allOf" in s || "$ref" in s);
+    const walk = (toolName, path, schema, out) => {
+      if (!isShaped(schema)) { out.push(`${toolName}.${path}`); return; }
+      for (const [k, sub] of Object.entries(schema.properties || {})) walk(toolName, `${path}.${k}`, sub, out);
+      if (schema.items && typeof schema.items === "object" && !Array.isArray(schema.items))
+        walk(toolName, `${path}[]`, schema.items, out);
+    };
+    const violations = [];
+    for (const t of [...editorTools, ...umaTools, ...probuilderTools])
+      for (const [prop, schema] of Object.entries(t.inputSchema?.properties || {}))
+        walk(t.name, prop, schema, violations);
+    assert.deepEqual(violations, [], `${violations.length} untyped properties: ${violations.slice(0, 10).join(", ")}`);
+  });
+
   test("all 14 ProBuilder tools land in the advanced tier under the 'probuilder' category", () => {
     const coreNames = new Set(split.coreTools.map((t) => t.name));
     assert.equal(probuilderTools.length, 14, "ProBuilder tool count");

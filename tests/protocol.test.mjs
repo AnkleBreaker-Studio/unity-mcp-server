@@ -240,6 +240,13 @@ describe("queue-mode session (single instance)", () => {
     assert.ok(bridge.seen.some((r) => r.route === "editor/execute-code"));
   });
 
+  test("advanced-tool catalog rejects non-string filters with a clean error, not a crash", async () => {
+    const { payload, isError } = await client.callTool("unity_list_advanced_tools", { category: 123 });
+    assert.match(payload.error, /must be a string/);
+    assert.ok(!/toLowerCase|TypeError/.test(payload.error), "clean validation error, not a raw exception");
+    assert.equal(isError, true);
+  });
+
   test("tool= misses get a did-you-mean and the error flag", async () => {
     const { payload, isError } = await client.callTool("unity_list_advanced_tools", { tool: "unity_terrain_lisr" });
     assert.match(payload.error, /Did you mean/);

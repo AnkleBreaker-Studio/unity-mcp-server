@@ -323,10 +323,13 @@ export const editorTools = [
       // entries as single set-reference calls instead of failing the whole batch.
       if (isUnknownRouteResult(result)) {
         console.error("[MCP] Plugin lacks component/batch-wire - degrading to single set-reference calls");
-        const results = [];
-        for (const entry of params.references || []) {
-          results.push(await bridge.setComponentReference(entry));
-        }
+        // Pipeline the round-trips instead of awaiting each in turn — the plugin queue still
+        // serializes the actual writes, but this bounds wall-clock by the slowest single call
+        // rather than their sum (the batch tool's whole point is many refs at once). Promise.all
+        // preserves order, so results[i] still matches references[i].
+        const results = await Promise.all(
+          (params.references || []).map((entry) => bridge.setComponentReference(entry))
+        );
         // Old plugins report per-call failures as an HTTP 200 { success:true, data:{error} }
         // envelope, so a plain success!==false check would mask every degraded failure —
         // the exact misleading-success class this project set out to kill. Inspect the
@@ -695,7 +698,7 @@ export const editorTools = [
         controllerPath: { type: "string", description: "Asset path of the Animator Controller" },
         parameterName: { type: "string", description: "Name of the parameter to add" },
         parameterType: { type: "string", enum: ["Float", "Int", "Bool", "Trigger"], description: "Type of the parameter" },
-        defaultValue: { description: "Default value for the parameter (not applicable to Trigger)" },
+        defaultValue: { type: ["string", "number", "boolean", "null"], description: "Default value for the parameter (not applicable to Trigger)" },
       },
       required: ["controllerPath", "parameterName", "parameterType"],
     },
@@ -2310,7 +2313,7 @@ export const editorTools = [
         path: { type: "string", description: "Asset path of the .shadergraph file" },
         nodeId: { type: "string", description: "Target node objectId" },
         propertyName: { type: "string", description: "Property name in the serialized JSON (e.g., 'm_Value', 'm_DefaultValue')" },
-        value: { description: "New value â€” string, number, or boolean depending on the property" },
+        value: { type: ["string", "number", "boolean"], description: "New value â€” string, number, or boolean depending on the property" },
       },
       required: ["path", "nodeId", "propertyName", "value"],
     },
@@ -3744,7 +3747,7 @@ export const editorTools = [
       properties: {
         path: { type: "string", description: "Asset path of the ScriptableObject" },
         field: { type: "string", description: "Property/field name" },
-        value: { description: "Value to set (type depends on field)" },
+        value: { type: ["string", "number", "boolean", "object", "array", "null"], description: "Value to set (type depends on field)" },
       },
       required: ["path", "field", "value"],
     },
@@ -4122,7 +4125,7 @@ export const editorTools = [
       type: "object",
       properties: {
         key: { type: "string", description: "Preference key" },
-        value: { description: "Value to set" },
+        value: { type: ["string", "number", "boolean"], description: "Value to set" },
         type: { type: "string", description: "Value type: string, int, float, bool" },
       },
       required: ["key", "value"],
@@ -4161,7 +4164,7 @@ export const editorTools = [
       type: "object",
       properties: {
         key: { type: "string", description: "Preference key" },
-        value: { description: "Value to set" },
+        value: { type: ["string", "number"], description: "Value to set" },
         type: { type: "string", description: "Value type: string, int, float" },
       },
       required: ["key", "value"],

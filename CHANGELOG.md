@@ -2,6 +2,13 @@
 
 All notable changes to this package will be documented in this file.
 
+## [2.35.3] - 2026-07-23
+
+### Fixed (pre-merge multi-expert audit)
+- **5 advanced tools had untyped `value`/`defaultValue` schema properties** (`unity_animation_add_parameter`, `unity_shadergraph_set_node_property`, `unity_scriptableobject_set_field`, `unity_editorprefs_set`, `unity_playerprefs_set`) — a strict-schema validator could reject them. All now carry an explicit `type` union, matching the fix already applied to the core setter tools. A new unit test enforces explicit type-shaping across the **whole** tool surface (all tiers), not just the exposed core tools the protocol test sees.
+- **`unity_list_advanced_tools` validates its string filters** — a non-string `search`/`category`/`tool` now returns a clean "must be a string" error instead of a raw `TypeError` from `.toLowerCase()` (covered by a protocol test).
+- **`unity_component_batch_wire` degrade path pipelines its calls** — the old-plugin fallback awaited each `set-reference` sequentially; it now runs them via `Promise.all` (order preserved), bounding wall-clock by the slowest call instead of their sum.
+
 ## [2.35.2] - 2026-07-22
 
 ### Fixed (Discord battle-test report, BUG 5)
