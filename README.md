@@ -291,6 +291,15 @@ If Unity MCP helps your workflow, consider supporting its development! Your supp
 
 **Sponsor tiers include priority feature requests** — your ideas get bumped up the roadmap! Check out the tiers on [GitHub Sponsors](https://github.com/sponsors/AnkleBreaker-Studio) or [Patreon](https://www.patreon.com/AnkleBreakerStudio).
 
+## What's New in v2.31.0 → v2.35.2
+
+- **ProBuilder tool suite (14 tools)** — parametric shapes (11 types), face extrude/bevel/subdivide/delete/translate, per-face materials, boolean CSG with automatic source cleanup, combine, probuilderize, pivot centering, mesh export. Advanced tier, `probuilder` category. Companion to `unity-mcp-plugin` v2.35.0+.
+- **Per-action undo (`unity_undo_last`)** — revert the most recent undoable MCP action as a whole; `agentId` targets a specific agent's last action; honest about Unity's linear undo (lists collateral, requires `force:true` to cascade). `unity_undo_history` is now a per-agent action log.
+- **Three-level lazy discovery** — `unity_list_advanced_tools` `search=` / `category=` / `tool=`: finding one tool costs ~1KB of context instead of a 10–22KB dump; `includeSchemas:true` restores the one-round-trip echo. Plugin lazy-loaded routes appear in every view.
+- **Reliability** — play-mode ticket-loss recovery (verifies editor state instead of a false 404), queue-poll transient-error hardening (no duplicate execution of non-idempotent ops), plugin-side `TimedOut` surfaced immediately, batch-wire degrade reports real failures, `overwrite:true` opt-in on all asset-creator tools (data-safety companion).
+- **Token diet** — compact JSON responses by default, console stack-trace shaping (`includeStackTrace`), dense scene hierarchy (absent field = default value; `verbose:true` restores), tools/list ~45KB rich / ~23KB compact — all CI-budget-gated.
+- **Test harness** — protocol suite over a mock bridge + MCP stdio client (57 tests, CI on Windows + Ubuntu), live suites against a real editor (`UNITY_MCP_LIVE=1 npm run test:live`, 15 tests incl. a full ProBuilder level build), capabilities handshake for version-skew (old plugin × new server and vice versa).
+
 ## What's New in v2.30.0
 
 - **`unity_screenshot_editor_window` tool** — capture any Editor window (Inspector, Project, Console, custom editor windows) to a PNG. Unlike the game/scene capture tools (which render a camera), it grabs the real editor UI via the Win32 `PrintWindow` API, so it works even when the window is hidden behind other windows — no raising or focus-stealing. **Windows editor only**: on macOS/Linux it returns a clear "unsupported platform" message instead of capturing, and the assistant will tell you the feature isn't available on your OS. Defaults to `Assets/Screenshots/`, accepts any user-chosen `.png` path. The assistant only invokes it when you explicitly ask for an editor-window screenshot. Companion to `unity-mcp-plugin` v2.32.0.
