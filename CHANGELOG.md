@@ -2,6 +2,11 @@
 
 All notable changes to this package will be documented in this file.
 
+## [2.35.2] - 2026-07-22
+
+### Fixed (Discord battle-test report, BUG 5)
+- **`unity_play_mode` false negative during the play-mode domain reload** — entering/exiting play reloads the domain and evicts queue tickets, so the status poll returned `HTTP 404 Ticket not found or expired` while the mode switch actually happened. On that specific failure signature the tool now verifies the live editor state: if it matches the requested action, it returns success with `verifiedViaEditorState: true` (and the current `isPlaying`/`isPaused`) instead of the misleading error. Covered by a protocol test using a new mock-bridge ticket-eviction mode, plus float-parameter and boolean-`sourcesDeleted` regressions in the live ProBuilder suite (companion `unity-mcp-plugin` 2.39.0).
+
 ## [2.35.1] - 2026-07-19
 
 ### Added

@@ -69,16 +69,20 @@ describe("live ProBuilder level build (write probes, self-cleaning)", { skip: !L
     assert.equal(one.payload.category, "probuilder");
   });
 
-  test("floor: parametric plane spawns as an editable ProBuilder mesh", async (t) => {
+  test("floor: parametric plane spawns as an editable ProBuilder mesh (float dims honored)", async (t) => {
     if (!pbInstalled) return t.skip("ProBuilder not installed in this project");
     const { payload } = await advanced("unity_probuilder_create_shape", {
-      shape: "plane", name: `${P}floor`, width: 12, depth: 12, widthSegments: 2, lengthSegments: 2,
+      shape: "plane", name: `${P}floor`, width: 12.5, depth: 11.8, widthSegments: 2, lengthSegments: 2,
     });
     const d = data(payload);
     assert.equal(d.success, true);
     assert.ok(d.faceCount >= 4, `plane has faces (got ${d.faceCount})`);
     floorId = d.instanceId;
     assert.equal(typeof floorId, "string", "instanceId is the 64-bit-safe string form");
+    // Float regression (battle-test BUG 1): non-integer dims used to be silently dropped
+    // to defaults on decimal-comma locales. The echo reports the ACTUALLY-applied size.
+    assert.ok(Math.abs(d.appliedSize.x - 12.5) < 1e-4, `float width applied (got ${d.appliedSize.x})`);
+    assert.ok(Math.abs(d.appliedSize.z - 11.8) < 1e-4, `float depth applied (got ${d.appliedSize.z})`);
   });
 
   test("wall: cube extrudes a face through the queue", async (t) => {
@@ -112,6 +116,9 @@ describe("live ProBuilder level build (write probes, self-cleaning)", { skip: !L
     assert.equal(boolResult.success, true);
     assert.ok(boolResult.vertexCount > 0, "boolean produced geometry");
     assert.equal(boolResult.editableProBuilder, true, "CSG result is a real ProBuilderMesh");
+    // Battle-test BUG 4: operands used to stay alive overlapping the result.
+    assert.equal(boolResult.sourcesDeleted, true, "sources removed by default");
+    assert.ok(Array.isArray(boolResult.sourceInstanceIds), "source ids reported for traceability");
 
     // Placement regression: CSG output is world-space; the pivot-centered result must sit
     // AT the carved wall (a double-offset bug once pushed it a full wall-position away).

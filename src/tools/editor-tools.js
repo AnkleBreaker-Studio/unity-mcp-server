@@ -601,7 +601,41 @@ export const editorTools = [
       },
       required: ["action"],
     },
-    handler: async ({ action }) => formatResult(await bridge.playMode(action)),
+    handler: async ({ action }) => {
+      const result = await bridge.playMode(action);
+      // Entering/exiting play mode triggers a domain reload that evicts queue tickets —
+      // the status poll then 404s while the mode switch actually happened (a false
+      // negative). Before propagating that specific failure, verify the editor state:
+      // if it matches the requested action, the operation succeeded.
+      const ticketLost =
+        result && result.success === false &&
+        /HTTP 404|not found or expired/i.test(result.error || "");
+      if (ticketLost) {
+        try {
+          const state = await bridge.getEditorState();
+          const s = state && state.data !== undefined ? state.data : state;
+          const confirmed =
+            (action === "play" && s.isPlaying === true) ||
+            (action === "stop" && s.isPlaying === false) ||
+            (action === "pause" && s.isPaused === true);
+          if (confirmed) {
+            return formatResult({
+              success: true,
+              data: {
+                action,
+                isPlaying: s.isPlaying,
+                isPaused: s.isPaused,
+                verifiedViaEditorState: true,
+                note: "The play-mode domain reload evicted the queue ticket; the editor state confirms the switch happened.",
+              },
+            });
+          }
+        } catch (_) {
+          // State check unavailable — fall through to the original error.
+        }
+      }
+      return formatResult(result);
+    },
   },
 
   // â”€â”€â”€ Editor Menu â”€â”€â”€

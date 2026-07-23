@@ -42,10 +42,18 @@ describe("queue-mode session (single instance)", () => {
   /** @type {McpTestClient} */ let client;
   let initResult;
 
+  let mockPlaying = false;
+
   before(async () => {
     bridge = new MockBridge();
     // Plugin handlers return raw result objects; the Node bridge adds {success, data}.
-    bridge.on("editor/state", () => ({ isPlaying: false, isCompiling: false, activeScene: "MockScene" }));
+    bridge.on("editor/state", () => ({ isPlaying: mockPlaying, isPaused: false, isCompiling: false, activeScene: "MockScene" }));
+    // Play-mode: the action takes effect, then the domain reload evicts the ticket
+    // (status polls 404) — exercises the false-negative recovery path.
+    bridge.on("editor/play-mode", (p) => {
+      mockPlaying = p.action === "play";
+      return { __evict: true };
+    });
     bridge.on("logical/failure", () => ({ __fail: true, error: "boom: mock logical failure" }));
     bridge.on("plugin/timeout", () => ({ __timeout: true, error: "Timed out on the main thread" }));
     bridge.on("payload/huge", () => ({ blob: "x".repeat(4_500_000) }));
@@ -285,6 +293,18 @@ describe("queue-mode session (single instance)", () => {
     assert.ok(seen, "bridge received the probuilder/create-shape route");
     assert.equal(seen.params.shape, "cylinder", "params forwarded intact");
     assert.equal(seen.via, "queue", "routed through the multi-agent queue");
+  });
+
+  test("play_mode recovers from a reload-evicted ticket by verifying the editor state", async () => {
+    const { payload, isError } = await client.callTool("unity_play_mode", { action: "play" });
+    assert.equal(payload.success, true, "false negative recovered as success");
+    assert.equal(payload.data.verifiedViaEditorState, true);
+    assert.equal(payload.data.isPlaying, true);
+    assert.equal(isError, false);
+
+    const stop = await client.callTool("unity_play_mode", { action: "stop" });
+    assert.equal(stop.payload.success, true, "stop verified the same way");
+    assert.equal(stop.payload.data.isPlaying, false);
   });
 
   test("unity_undo_last is a core tool that routes to undo/last with its params", async () => {

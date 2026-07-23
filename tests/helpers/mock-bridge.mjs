@@ -142,6 +142,10 @@ export class MockBridge {
               // Simulate a plugin-side sync-timeout terminal state.
               ticket.status = "TimedOut";
               ticket.error = outcome.error || "Timed out on the main thread";
+            } else if (outcome && outcome.__evict) {
+              // Simulate a domain reload evicting the ticket mid-flight: the action ran,
+              // but every subsequent status poll 404s (the play-mode false-negative class).
+              this._tickets.delete(ticketId);
             } else {
               ticket.status = "Completed";
               ticket.result = outcome;
