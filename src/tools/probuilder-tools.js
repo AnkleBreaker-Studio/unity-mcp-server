@@ -43,7 +43,7 @@ export const probuilderTools = [
       "Create a parametric ProBuilder shape as a new, fully-editable mesh GameObject. " +
       "Shapes: cube, plane, cylinder, prism, stair, cone, door, pipe, arch, sphere, torus. " +
       "The result is a real ProBuilder object you can further edit (extrude, bevel, boolean, ...).\n\n" +
-      "Common params: width/height/depth (size), name, position {x,y,z}, material (asset path). " +
+      "Common params: width/height/depth (size), name, position {x,y,z}, material (name or asset path), layer, addCollider, parent. " +
       "Shape-specific: sides (cylinder/cone/pipe/arch), heightSegments (cylinder/pipe), steps (stair), " +
       "ledge/legWidth (door), thickness (pipe/arch), angle (arch), subdivisions (sphere), " +
       "rows/columns/tubeRadius (torus), widthSegments/lengthSegments (plane).\n\n" +
@@ -61,7 +61,10 @@ export const probuilderTools = [
         depth: { type: "number", description: "Depth / Z size (default 1)." },
         name: { type: "string", description: "GameObject name (default 'PB_<shape>')." },
         position: VEC3_PROP("World position for the new object (default origin)."),
-        material: { type: "string", description: "Optional material asset path to apply to all faces." },
+        material: { type: "string", description: "Optional material for all faces — full asset path ('Assets/Materials/Brick.mat') OR a bare material name ('Brick'). A name that can't be resolved is reported as materialWarning (no more silent fallback to the default)." },
+        layer: { type: "string", description: "Optional layer for the new object — a layer NAME or a numeric index. An unknown layer is reported as layerWarning." },
+        addCollider: { type: "boolean", description: "Add a MeshCollider matching the generated mesh (default false)." },
+        parent: { type: "string", description: "Optional hierarchy path to parent the new object under (world position kept). An unknown path is reported as parentWarning." },
         sides: { type: "number", description: "Side count for cylinder/cone/pipe/arch." },
         heightSegments: { type: "number", description: "Vertical segments for cylinder/pipe." },
         steps: { type: "number", description: "Step count for stair (default 6)." },
@@ -188,7 +191,7 @@ export const probuilderTools = [
       type: "object",
       properties: {
         ...TARGET_PROPS,
-        material: { type: "string", description: "Material asset path (e.g. 'Assets/Materials/Brick.mat')." },
+        material: { type: "string", description: "Material to assign — full asset path ('Assets/Materials/Brick.mat') OR a bare material name ('Brick')." },
         faceIndices: { ...FACE_INDICES_PROP, description: "Faces to assign the material to. Omit for all faces." },
       },
       required: ["material"],
@@ -213,6 +216,8 @@ export const probuilderTools = [
         targetInstanceId: { type: "string", description: "Instance id of the first (target) object. Provide this OR targetPath." },
         otherPath: { type: "string", description: "Hierarchy path of the second object. Provide this OR otherInstanceId." },
         otherInstanceId: { type: "string", description: "Instance id of the second object. Provide this OR otherPath." },
+        name: { type: "string", description: "Name for the result object (default 'PB_Boolean_<operation>')." },
+        deleteSources: { type: "boolean", description: "Delete the two source objects after the op (default true — the result replaces their combined volume). Pass false to keep them." },
       },
       required: ["operation"],
     },

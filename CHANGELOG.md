@@ -2,6 +2,17 @@
 
 All notable changes to this package will be documented in this file.
 
+## [2.35.4] - 2026-07-23
+
+### Fixed (Discord ProBuilder report — tool-surface gaps; companion `unity-mcp-plugin` 2.39.3)
+- **B4 — `unity_probuilder_boolean` now exposes `name` and `deleteSources`.** The plugin has honored both since 2.39.0 (custom result name; keep-sources opt-out), but the server schema didn't declare them — so agents couldn't discover them and every boolean landed as `PB_Boolean_<op>` with both sources deleted. Both are now in the schema (the bridge passes params straight through, so no bridge change was needed).
+- **B8 — `unity_probuilder_create_shape` declares `layer`, `addCollider`, `parent`.** Surfaces the new plugin params so a created object gets its project-convention layer / MeshCollider / hierarchy parent in one call instead of a follow-up per omission.
+- **B2 — `material` docs clarified** on `create_shape` and `set_face_material`: both now accept a full asset path OR a bare material name, and an unresolved name on `create_shape` is reported as `materialWarning` (no more silent fallback to the default).
+- **A1 — `unity_gameobject_delete` gains `force`** to override the new plugin shared-mesh guard (which refuses to delete an object whose runtime mesh is shared by ProBuilder clones, reporting `sharedWith`).
+
+### Notes
+- Rich-mode `tools/list` diet gate raised 46.5KB → 47KB to fit the `unity_gameobject_delete` shared-mesh guard description + `force` param — a real data-safety capability, still ~61% under the 120KB hard ceiling. `UNITY_MCP_COMPACT_TOOLS=1` is unaffected. All 59 protocol/unit tests green; route registry unchanged (337 routes).
+
 ## [2.35.3] - 2026-07-23
 
 ### Fixed (pre-merge multi-expert audit)

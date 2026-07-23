@@ -151,14 +151,15 @@ describe("queue-mode session (single instance)", () => {
   // Diet regression lock (issue #27): baseline was 50.6KB; the compaction wave landed 42.8KB
   // with full parameter docs retained, later ~44.3KB after adding the `overwrite` safety param
   // to the core asset-creator tools, then ~45.7KB after adding the core `unity_undo_last` tool
-  // (per-action/per-agent undo). The gate catches unintentional bloat while leaving room for
-  // deliberate capability — still ~62% under the 120KB hard ceiling. UNITY_MCP_COMPACT_TOOLS=1
-  // (tested below) goes much further for constrained clients. Bump this only for a real new
-  // capability, never to absorb prose creep.
+  // (per-action/per-agent undo), then ~46.6KB after the core `unity_gameobject_delete`
+  // shared-mesh guard + `force` override (ProBuilder clone data-safety). The gate catches
+  // unintentional bloat while leaving room for deliberate capability — still ~61% under the
+  // 120KB hard ceiling. UNITY_MCP_COMPACT_TOOLS=1 (tested below) goes much further for
+  // constrained clients. Bump this only for a real new capability, never to absorb prose creep.
   test("tools/list payload stays within the rich-mode diet budget", async () => {
     const { tools } = await client.listTools();
     const bytes = Buffer.byteLength(JSON.stringify(tools), "utf8");
-    assert.ok(bytes <= 46_500, `tools/list ${bytes} bytes exceeds the 46.5KB rich-mode budget`);
+    assert.ok(bytes <= 47_000, `tools/list ${bytes} bytes exceeds the 47KB rich-mode budget`);
   });
 
   // Lazy discovery is three-tier so finding one tool never costs a schema dump:

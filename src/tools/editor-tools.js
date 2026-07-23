@@ -156,12 +156,15 @@ export const editorTools = [
   },
   {
     name: "unity_gameobject_delete",
-    description: "Delete a GameObject from the scene by path or name.",
+    description:
+      "Delete a GameObject by path or name. Refuses if its runtime mesh is shared by other " +
+      "objects (ProBuilder clones) — reports sharedWith; pass force:true to override.",
     inputSchema: {
       type: "object",
       properties: {
         path: { type: "string", description: "Hierarchy path or name of the GameObject to delete" },
         instanceId: { type: "string", description: "Instance ID (alternative to path)" },
+        force: { type: "boolean", description: "Delete even when the runtime mesh is shared by other objects (ProBuilder clones). Default false." },
       },
     },
     handler: async (params) => formatResult(await bridge.deleteGameObject(params)),
