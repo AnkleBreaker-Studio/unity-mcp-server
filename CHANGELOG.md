@@ -2,6 +2,23 @@
 
 All notable changes to this package will be documented in this file.
 
+## [2.35.5] - 2026-07-24
+
+Findings from a 33-dimension + 10-blind-spot audit (127 + 40 agents, every CRITICAL/HIGH adversarially verified). Companion plugin: **2.39.4**.
+
+### Fixed
+- **Every Unity-side error message was being thrown away.** The queue ticket carries the exception in `errorMessage` (`MCPRequestQueue.TicketToDict`) but the poller read `statusData.error`, which never exists on that shape — so EVERY failure across all 337 routes collapsed to the generic `"Queue processing failed"`, and agents retried non-idempotent writes blind. **This also silently broke two other features** that detect old plugins by reading `"Unknown API endpoint"` out of the error text: the advanced-tool *did-you-mean* suggestions and the `component_batch_wire` graceful degrade. All three are repaired by reading the right field.
+  - The mock bridge emitted the wrong field name too, which is why a 59-test suite never caught it — it now mirrors `TicketToDict` exactly. The regression test that accepted `success:false` as an alternative (letting the real message vanish unnoticed) now asserts the verbatim text, and is proven to fail without the fix.
+- **A vanished project no longer silently redirects writes to a different one.** When an agent's selected instance disappeared, the code cleared the selection AND set the "selection required" gate to `false`, so the same tool call fell through to the default port — a *different* live Unity in any multi-project session, reporting success the whole way. It now fails closed and demands re-selection.
+- **A transient failure no longer permanently downgrades the session.** Any lingering submit error (editor not up yet, a domain reload longer than the retry window) latched `_useQueueMode = false` for the entire process, losing agent attribution, per-action undo grouping and read-batching, with nothing to ever reset it. Only a definitive HTTP 404 now proves the plugin lacks queue mode; transient failures fall back for that one call and re-probe next time.
+
+### Added
+- `unity_asset_delete` exposes `recursive` and `permanent`; `unity_scene_open` / `unity_scene_new` expose `saveFirst` and `discardUnsavedChanges` — the opt-ins for the plugin's new data-loss guards. (`openScene`/`newScene` previously dropped everything but `path`.)
+
+### Changed
+- License declared as `SEE LICENSE IN LICENSE` in `package.json` (it declared none) and `manifest.json` (it declared `MIT`) — the shipped LICENSE is the AnkleBreaker Open License v1.0. `manifest.json` version was also stale at 2.35.2 and is now synced.
+- Rich-mode `tools/list` budget 47KB → 48KB for the four new data-safety params (~47.5KB actual, still ~60% under the 120KB ceiling).
+
 ## [2.35.4] - 2026-07-23
 
 ### Fixed (Discord ProBuilder report — tool-surface gaps; companion `unity-mcp-plugin` 2.39.3)

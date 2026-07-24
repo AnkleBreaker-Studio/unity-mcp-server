@@ -130,18 +130,21 @@ export class MockBridge {
         const params = payload.body ? JSON.parse(payload.body) : {};
         this.seen.push({ route, params, headers: req.headers, via: "queue" });
         const ticketId = `ticket-${++this._ticketCounter}`;
-        const ticket = { ticketId, status: "Queued", agentId: payload.agentId || "unknown", result: null, error: null };
+        // Field names mirror the plugin's MCPRequestQueue.TicketToDict EXACTLY. The failure
+        // text lives in `errorMessage` — the mock previously emitted `error`, which is why a
+        // 59-test suite never caught the server reading the wrong field for every route.
+        const ticket = { ticketId, status: "Queued", agentId: payload.agentId || "unknown", result: null, errorMessage: "" };
         this._tickets.set(ticketId, ticket);
         const complete = () => {
           try {
             const outcome = this._resolve(route, params);
             if (outcome && outcome.__fail) {
               ticket.status = "Failed";
-              ticket.error = outcome.error || "Mock failure";
+              ticket.errorMessage = outcome.error || "Mock failure";
             } else if (outcome && outcome.__timeout) {
               // Simulate a plugin-side sync-timeout terminal state.
               ticket.status = "TimedOut";
-              ticket.error = outcome.error || "Timed out on the main thread";
+              ticket.errorMessage = outcome.error || "Timed out on the main thread";
             } else if (outcome && outcome.__evict) {
               // Simulate a domain reload evicting the ticket mid-flight: the action ran,
               // but every subsequent status poll 404s (the play-mode false-negative class).
@@ -152,7 +155,7 @@ export class MockBridge {
             }
           } catch (err) {
             ticket.status = "Failed";
-            ticket.error = err.message;
+            ticket.errorMessage = err.message;
           }
         };
         this.processingDelayMs > 0 ? setTimeout(complete, this.processingDelayMs) : complete();
