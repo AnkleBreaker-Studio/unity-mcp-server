@@ -429,7 +429,22 @@ describe("queue-mode session (single instance)", () => {
     assert.equal(isError, false);
     const singles = bridge.seen.filter((r) => r.route === "component/set-reference");
     assert.equal(singles.length, 2, "each entry executed as its own set-reference call");
-    assert.deepEqual(singles.map((r) => r.params.propertyName), ["panelA", "panelB"]);
+    // The degrade fires the calls CONCURRENTLY (Promise.all) to bound wall-clock by the
+    // slowest call rather than their sum. Promise.all guarantees RESULT order, not network
+    // ARRIVAL order — so asserting the order the mock happened to receive them was testing
+    // a property the implementation never promised, and it duly flipped on a faster runner.
+    // Assert the set that arrived, then the guarantee that actually matters:
+    // results[i] still corresponds to references[i].
+    assert.deepEqual(
+      singles.map((r) => r.params.propertyName).sort(),
+      ["panelA", "panelB"],
+      "both entries were wired (arrival order is not guaranteed — the calls are concurrent)"
+    );
+    assert.deepEqual(
+      payload.results.map((r) => (r.data ? r.data.wired : r.wired)),
+      ["panelA", "panelB"],
+      "results stay aligned with the input references order"
+    );
   });
 
   test("degraded batch-wire reports failure when an entry fails via the legacy error envelope", async () => {
