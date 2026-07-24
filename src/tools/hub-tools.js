@@ -1,5 +1,6 @@
 // AnkleBreaker Unity MCP — Tool definitions for Unity Hub operations
 import * as hub from "../unity-hub.js";
+import { formatResult } from "../response-format.js";
 
 export const hubTools = [
   {
@@ -11,7 +12,7 @@ export const hubTools = [
     },
     handler: async () => {
       const result = await hub.listInstalledEditors();
-      return JSON.stringify(result, null, 2);
+      return formatResult(result);
     },
   },
   {
@@ -23,7 +24,7 @@ export const hubTools = [
     },
     handler: async () => {
       const result = await hub.listAvailableReleases();
-      return JSON.stringify(result, null, 2);
+      return formatResult(result);
     },
   },
   {
@@ -43,7 +44,7 @@ export const hubTools = [
     },
     handler: async ({ version, modules }) => {
       const result = await hub.installEditor(version, modules || []);
-      return JSON.stringify(result, null, 2);
+      return formatResult(result);
     },
   },
   {
@@ -63,7 +64,7 @@ export const hubTools = [
     },
     handler: async ({ version, modules }) => {
       const result = await hub.installModules(version, modules);
-      return JSON.stringify(result, null, 2);
+      return formatResult(result);
     },
   },
   {
@@ -75,7 +76,7 @@ export const hubTools = [
     },
     handler: async () => {
       const result = await hub.getInstallPath();
-      return JSON.stringify(result, null, 2);
+      return formatResult(result);
     },
   },
   {
@@ -90,7 +91,7 @@ export const hubTools = [
     },
     handler: async ({ path }) => {
       const result = await hub.setInstallPath(path);
-      return JSON.stringify(result, null, 2);
+      return formatResult(result);
     },
   },
 ];

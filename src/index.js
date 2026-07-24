@@ -19,6 +19,7 @@
 //   receive project knowledge without needing to explicitly request it.
 
 import { randomBytes } from "crypto";
+import { readFileSync } from "fs";
 import { Server } from "@modelcontextprotocol/sdk/server/index.js";
 import { StdioServerTransport } from "@modelcontextprotocol/sdk/server/stdio.js";
 import {
@@ -31,6 +32,7 @@ import {
 import { hubTools } from "./tools/hub-tools.js";
 import { editorTools } from "./tools/editor-tools.js";
 import { umaTools } from "./tools/uma-tools.js";
+import { probuilderTools } from "./tools/probuilder-tools.js";
 import { contextTools } from "./tools/context-tools.js";
 import { instanceTools } from "./tools/instance-tools.js";
 import { splitToolTiers } from "./tool-tiers.js";
@@ -45,6 +47,7 @@ import {
   clearPortOverride,
 } from "./instance-discovery.js";
 import { debugLog } from "./state-persistence.js";
+import { isErrorText, firstSentence, stripSchemaDescriptions } from "./response-format.js";
 import { CONFIG } from "./config.js";
 
 // ─── Response size protection ───
@@ -109,7 +112,7 @@ setAgentId(PROCESS_AGENT_ID);
 // This keeps the tool count under ~70, preventing MCP client rejection caused by
 // oversized tool lists (268 tools / 125KB was ~5x beyond what clients handle).
 const { coreTools, metaTools, advancedCount, coreCount } =
-  splitToolTiers([...editorTools, ...umaTools]);
+  splitToolTiers([...editorTools, ...umaTools, ...probuilderTools]);
 const ALL_TOOLS = [
   ...instanceTools,
   ...hubTools,
@@ -270,10 +273,16 @@ async function ensureInstanceDiscovery() {
 }
 
 // ─── Create MCP Server ───
+// Single source of truth for the server version: package.json. A hardcoded copy
+// here once drifted four releases behind (2.26.0 vs 2.30.0 — issue #27).
+const PACKAGE_VERSION = JSON.parse(
+  readFileSync(new URL("../package.json", import.meta.url), "utf-8")
+).version;
+
 const server = new Server(
   {
     name: "unity-mcp",
-    version: "2.26.0",
+    version: PACKAGE_VERSION,
   },
   {
     capabilities: {
@@ -306,31 +315,41 @@ const TOOLS_SKIP_PORT_INJECT = new Set([
   "unity_list_instances",
 ]);
 
+// ─── Compact tool registry mode (UNITY_MCP_COMPACT_TOOLS=1) ───
+// Some clients pass the aggregate tools/list payload through size-limited process
+// boundaries (Codex Desktop on Windows dies with spawn ENAMETOOLONG — issue #27).
+// Compact mode keeps every tool and its full schema STRUCTURE (types, required,
+// enums stay — strict clients still validate) but drops per-property prose and
+// trims tool descriptions to their first sentence. Full parameter documentation
+// remains available on demand via unity_list_advanced_tools' schema echo.
+const COMPACT_TOOLS = process.env.UNITY_MCP_COMPACT_TOOLS === "1";
+
 server.setRequestHandler(ListToolsRequestSchema, async () => {
   return {
     tools: ALL_TOOLS.map(({ name, description, inputSchema }) => {
+      let schema = inputSchema;
       // Inject port into unity_* tools that target an Editor instance
       if (
         name.startsWith("unity_") &&
         !name.startsWith("unity_hub_") &&
         !TOOLS_SKIP_PORT_INJECT.has(name)
       ) {
-        const augmented = {
-          ...inputSchema,
+        schema = {
+          ...schema,
           properties: {
-            ...(inputSchema.properties || {}),
+            ...(schema.properties || {}),
             port: {
               type: "number",
               description:
-                "Target Unity instance port for parallel-safe routing. " +
-                "Get this from unity_select_instance. When working with " +
-                "multiple Unity instances, ALWAYS include this parameter.",
+                "Unity instance port (from unity_select_instance). Always include it when multiple instances run.",
             },
           },
         };
-        return { name, description, inputSchema: augmented };
       }
-      return { name, description, inputSchema };
+      if (COMPACT_TOOLS) {
+        return { name, description: firstSentence(description), inputSchema: stripSchemaDescriptions(schema) };
+      }
+      return { name, description, inputSchema: schema };
     }),
   };
 });
@@ -356,7 +375,10 @@ server.setRequestHandler(CallToolRequestSchema, async (request) => {
       setAgentId(overrideId);
       setCurrentAgent(overrideId);
     } else {
-      // Ensure instance-discovery state targets this process's agent
+      // Reset BOTH the bridge agent id and the discovery agent to this process. Without
+      // the setAgentId reset, a prior request's _meta.agentId override leaked into the
+      // X-Agent-Id header of every later request (wrong queue attribution).
+      setAgentId(PROCESS_AGENT_ID);
       setCurrentAgent(PROCESS_AGENT_ID);
     }
 
@@ -439,7 +461,13 @@ server.setRequestHandler(CallToolRequestSchema, async (request) => {
       contentBlocks.push({ type: "text", text: result });
     }
 
-    return { content: truncateResponseIfNeeded(contentBlocks) };
+    // Logical failures come back as HTTP 200 payloads ({success:false}, {error}, ...)
+    // — surface them through the MCP isError flag so clients don't read them as success.
+    const response = { content: truncateResponseIfNeeded(contentBlocks) };
+    if (!Array.isArray(result) && isErrorText(result)) {
+      response.isError = true;
+    }
+    return response;
 
     } finally {
       // Always clear port override after request completes, even on error
@@ -517,7 +545,7 @@ server.setRequestHandler(ReadResourceRequestSchema, async (request) => {
 async function main() {
   const transport = new StdioServerTransport();
   await server.connect(transport);
-  debugLog(`=== SERVER START === v2.26.0, agent=${PROCESS_AGENT_ID}, discoveryDone=${_discoveryDonePerAgent.get(PROCESS_AGENT_ID) || false}, selectedPort=${getSelectedInstance()?.port || 'null'}`);
+  debugLog(`=== SERVER START === v${PACKAGE_VERSION}, agent=${PROCESS_AGENT_ID}, discoveryDone=${_discoveryDonePerAgent.get(PROCESS_AGENT_ID) || false}, selectedPort=${getSelectedInstance()?.port || 'null'}`);
   console.error(
     `Unity MCP Server running on stdio (agent: ${PROCESS_AGENT_ID})`
   );
