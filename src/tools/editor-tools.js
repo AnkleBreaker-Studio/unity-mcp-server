@@ -100,9 +100,16 @@ export const editorTools = [
   },
   {
     name: "unity_scene_save",
-    description: "Save the current scene.",
-    inputSchema: { type: "object", properties: {} },
-    handler: async () => formatResult(await bridge.saveScene()),
+    description:
+      "Save the current scene. A never-saved scene requires `path` (saving without one would " +
+      "open Unity's interactive Save dialog).",
+    inputSchema: {
+      type: "object",
+      properties: {
+        path: { type: "string", description: "Asset path to save to, e.g. 'Assets/Scenes/MyScene.unity'. Required for a scene that has never been saved; also acts as Save-As." },
+      },
+    },
+    handler: async (params) => formatResult(await bridge.saveScene(params)),
   },
   {
     name: "unity_scene_new",

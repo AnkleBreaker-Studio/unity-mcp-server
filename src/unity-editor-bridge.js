@@ -470,8 +470,8 @@ export async function openScene(params) {
   return sendCommand("scene/open", typeof params === "string" ? { path: params } : params);
 }
 
-export async function saveScene() {
-  return sendCommand("scene/save");
+export async function saveScene(params = {}) {
+  return sendCommand("scene/save", params);
 }
 
 export async function newScene(params = {}) {
