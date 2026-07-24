@@ -14,6 +14,7 @@ Findings from a 33-dimension + 10-blind-spot audit (127 + 40 agents, every CRITI
 
 ### Added
 - `unity_asset_delete` exposes `recursive` and `permanent`; `unity_scene_open` / `unity_scene_new` expose `saveFirst` and `discardUnsavedChanges` — the opt-ins for the plugin's new data-loss guards. (`openScene`/`newScene` previously dropped everything but `path`.)
+- `unity_scene_save` takes an optional `path` — **required** for a scene that has never been saved, and doubling as Save-As. Without it the plugin had to raise Unity's interactive Save dialog from the request pump, which hangs an unattended editor. (`saveScene` forwarded no params at all before.)
 
 ### Changed
 - License declared as `SEE LICENSE IN LICENSE` in `package.json` (it declared none) and `manifest.json` (it declared `MIT`) — the shipped LICENSE is the AnkleBreaker Open License v1.0. `manifest.json` version was also stale at 2.35.2 and is now synced.
