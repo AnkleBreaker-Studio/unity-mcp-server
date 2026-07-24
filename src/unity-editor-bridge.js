@@ -159,16 +159,24 @@ async function pollQueueStatus(ticketId) {
           data: statusData.result !== undefined ? statusData.result : { status: "Completed" },
         };
       } else if (statusData.status === "Failed") {
+        // The queue ticket carries the Unity-side exception in `errorMessage`
+        // (MCPRequestQueue.TicketToDict) — reading only `error` here silently discarded
+        // EVERY real diagnostic and returned the generic fallback for all routes, which
+        // pushed agents into retrying non-idempotent writes blind. `error` is still
+        // accepted for the legacy synchronous shape.
         return {
           success: false,
-          error: statusData.error || "Queue processing failed",
+          error: statusData.errorMessage || statusData.error || "Queue processing failed",
         };
       } else if (statusData.status === "TimedOut") {
         // Terminal on the plugin side — surface it now instead of polling a doomed ticket
         // until it's evicted (which then reads back as a misleading 404 ~30-60s later).
         return {
           success: false,
-          error: statusData.error || `Unity-side execution timed out for ticket ${ticketId}`,
+          error:
+            statusData.errorMessage ||
+            statusData.error ||
+            `Unity-side execution timed out for ticket ${ticketId}`,
         };
       }
 
@@ -347,19 +355,21 @@ export async function sendCommand(command, params = {}) {
 
       // If we get here, queue submit failed after retries
       if (submitLastError) {
+        // A TRANSIENT failure (editor not up yet, domain reload longer than the retry window,
+        // connection reset) is NOT evidence the plugin lacks queue mode — only the HTTP 404
+        // above is. Latching here downgraded the session permanently and irreversibly: legacy
+        // mode loses agent attribution, per-action undo grouping and read-batching, and nothing
+        // ever reset the flags. Fall back for THIS call, leave the mode undetermined so the
+        // next call re-probes.
         console.warn(
-          `[MCP Bridge] Queue mode failed after retries, falling back to legacy sync mode: ${submitLastError.message}`
+          `[MCP Bridge] Queue submit failed after retries, using legacy sync for this call (mode left undetermined): ${submitLastError.message}`
         );
-        _queueModeDetermined = true;
-        _useQueueMode = false;
         return sendCommandLegacyMode(command, params);
       }
     } catch (error) {
       console.warn(
-        `[MCP Bridge] Unexpected error in queue mode, falling back to legacy: ${error.message}`
+        `[MCP Bridge] Unexpected error in queue mode, using legacy sync for this call (mode left undetermined): ${error.message}`
       );
-      _queueModeDetermined = true;
-      _useQueueMode = false;
       return sendCommandLegacyMode(command, params);
     }
   }
@@ -453,16 +463,19 @@ export async function getSceneInfo() {
   return sendCommand("scene/info");
 }
 
-export async function openScene(scenePath) {
-  return sendCommand("scene/open", { path: scenePath });
+export async function openScene(params) {
+  // Accepts the full param object so the unsaved-changes opt-ins (saveFirst /
+  // discardUnsavedChanges) reach the plugin; a bare string stays supported for callers
+  // that only pass a path.
+  return sendCommand("scene/open", typeof params === "string" ? { path: params } : params);
 }
 
-export async function saveScene() {
-  return sendCommand("scene/save");
+export async function saveScene(params = {}) {
+  return sendCommand("scene/save", params);
 }
 
-export async function newScene() {
-  return sendCommand("scene/new");
+export async function newScene(params = {}) {
+  return sendCommand("scene/new", params);
 }
 
 export async function getHierarchy(params) {

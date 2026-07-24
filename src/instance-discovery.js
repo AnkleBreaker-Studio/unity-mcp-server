@@ -171,10 +171,15 @@ export async function validateSelectedInstance() {
     }
   }
 
-  // Project truly gone — not responding AND not in registry
-  debugLog(`Project "${saved.projectName}" no longer found. Clearing selection for agent ${_currentAgentId}.`);
+  // Project truly gone — not responding AND not in registry.
+  // FAIL CLOSED: this agent explicitly had a project selected and that project vanished.
+  // Clearing the flag to false let the very same tool call fall through to the default port,
+  // which in any multi-project session is a DIFFERENT live Unity — so a write intended for
+  // project A silently landed in project B and still reported success. Require an explicit
+  // re-selection instead.
+  debugLog(`Project "${saved.projectName}" no longer found. Clearing selection for agent ${_currentAgentId} and requiring re-selection.`);
   _agentInstances.delete(_currentAgentId);
-  _agentSelectionRequired.set(_currentAgentId, false);
+  _agentSelectionRequired.set(_currentAgentId, true);
   return null;
 }
 

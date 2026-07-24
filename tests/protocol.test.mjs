@@ -152,14 +152,17 @@ describe("queue-mode session (single instance)", () => {
   // with full parameter docs retained, later ~44.3KB after adding the `overwrite` safety param
   // to the core asset-creator tools, then ~45.7KB after adding the core `unity_undo_last` tool
   // (per-action/per-agent undo), then ~46.6KB after the core `unity_gameobject_delete`
-  // shared-mesh guard + `force` override (ProBuilder clone data-safety). The gate catches
-  // unintentional bloat while leaving room for deliberate capability — still ~61% under the
-  // 120KB hard ceiling. UNITY_MCP_COMPACT_TOOLS=1 (tested below) goes much further for
-  // constrained clients. Bump this only for a real new capability, never to absorb prose creep.
+  // shared-mesh guard + `force` override (ProBuilder clone data-safety), then ~47.5KB after the
+  // audit's data-safety wave: asset_delete gained recursive/permanent, and scene_open/scene_new
+  // gained saveFirst/discardUnsavedChanges (each one is a documented way to NOT lose the user's
+  // work, so the bytes buy real protection). The gate catches unintentional bloat while leaving
+  // room for deliberate capability — still ~60% under the 120KB hard ceiling.
+  // UNITY_MCP_COMPACT_TOOLS=1 (tested below) goes much further for constrained clients.
+  // Bump this only for a real new capability, never to absorb prose creep.
   test("tools/list payload stays within the rich-mode diet budget", async () => {
     const { tools } = await client.listTools();
     const bytes = Buffer.byteLength(JSON.stringify(tools), "utf8");
-    assert.ok(bytes <= 47_000, `tools/list ${bytes} bytes exceeds the 47KB rich-mode budget`);
+    assert.ok(bytes <= 48_000, `tools/list ${bytes} bytes exceeds the 48KB rich-mode budget`);
   });
 
   // Lazy discovery is three-tier so finding one tool never costs a schema dump:
@@ -328,13 +331,29 @@ describe("queue-mode session (single instance)", () => {
     assert.equal(seen.via, "queue");
   });
 
-  test("logical failures surface an error payload", async () => {
+  // The VERBATIM Unity-side message must reach the agent. This assertion used to accept
+  // `success:false` as an alternative, which let a real regression hide: the queue ticket
+  // carries the exception in `errorMessage` (MCPRequestQueue.TicketToDict) while the server
+  // read only `error`, so EVERY route's diagnostic collapsed to "Queue processing failed"
+  // and agents retried non-idempotent writes blind. Assert the actual text, nothing weaker.
+  test("logical failures surface the verbatim Unity error message", async () => {
     const { payload, payloadText } = await client.callTool("unity_advanced_tool", {
       tool: "unity_logical_failure",
       params: {},
     });
     const text = payload ? JSON.stringify(payload) : payloadText;
-    assert.match(text, /boom: mock logical failure|success.{0,4}false/i);
+    assert.match(text, /boom: mock logical failure/i);
+    assert.doesNotMatch(text, /Queue processing failed/i, "generic fallback must not replace the real message");
+  });
+
+  // Same contract on the terminal TimedOut branch, which reads the same field.
+  test("plugin-side timeouts surface the verbatim Unity timeout message", async () => {
+    const { payload, payloadText } = await client.callTool("unity_advanced_tool", {
+      tool: "unity_plugin_timeout",
+      params: {},
+    });
+    const text = payload ? JSON.stringify(payload) : payloadText;
+    assert.match(text, /Timed out on the main thread/i);
   });
 
   // MCP spec: logical failures set isError so clients don't read them as success.

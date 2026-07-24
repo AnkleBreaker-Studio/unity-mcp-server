@@ -84,27 +84,46 @@ export const editorTools = [
   },
   {
     name: "unity_scene_open",
-    description: "Open a scene by its asset path (relative to Assets/).",
+    description:
+      "Open a scene by its asset path (relative to Assets/). Refuses if any loaded scene has " +
+      "unsaved changes — pass saveFirst or discardUnsavedChanges.",
     inputSchema: {
       type: "object",
       properties: {
         path: { type: "string", description: "Scene asset path, e.g. 'Assets/Scenes/MainScene.unity'" },
+        saveFirst: { type: "boolean", description: "Save all modified scenes before switching." },
+        discardUnsavedChanges: { type: "boolean", description: "Proceed and LOSE unsaved changes." },
       },
       required: ["path"],
     },
-    handler: async ({ path }) => formatResult(await bridge.openScene(path)),
+    handler: async (params) => formatResult(await bridge.openScene(params)),
   },
   {
     name: "unity_scene_save",
-    description: "Save the current scene.",
-    inputSchema: { type: "object", properties: {} },
-    handler: async () => formatResult(await bridge.saveScene()),
+    description:
+      "Save the current scene. A never-saved scene requires `path` (saving without one would " +
+      "open Unity's interactive Save dialog).",
+    inputSchema: {
+      type: "object",
+      properties: {
+        path: { type: "string", description: "Asset path to save to, e.g. 'Assets/Scenes/MyScene.unity'. Required for a scene that has never been saved; also acts as Save-As." },
+      },
+    },
+    handler: async (params) => formatResult(await bridge.saveScene(params)),
   },
   {
     name: "unity_scene_new",
-    description: "Create a new empty scene.",
-    inputSchema: { type: "object", properties: {} },
-    handler: async () => formatResult(await bridge.newScene()),
+    description:
+      "Create a new empty scene (REPLACES the current one). Refuses if any loaded scene has " +
+      "unsaved changes — pass saveFirst or discardUnsavedChanges.",
+    inputSchema: {
+      type: "object",
+      properties: {
+        saveFirst: { type: "boolean", description: "Save all modified scenes first." },
+        discardUnsavedChanges: { type: "boolean", description: "Proceed and LOSE unsaved changes." },
+      },
+    },
+    handler: async (params) => formatResult(await bridge.newScene(params)),
   },
   {
     name: "unity_scene_hierarchy",
@@ -398,11 +417,15 @@ export const editorTools = [
   },
   {
     name: "unity_asset_delete",
-    description: "Delete an asset from the project.",
+    description:
+      "Delete an asset — to the OS trash by default (NOT undoable via unity_undo_last). " +
+      "Deleting a FOLDER is recursive and refuses without recursive:true.",
     inputSchema: {
       type: "object",
       properties: {
         path: { type: "string", description: "Asset path relative to project root (e.g. 'Assets/Scripts/MyScript.cs')" },
+        recursive: { type: "boolean", description: "Required to delete a FOLDER and its contents. Default false refuses, reporting the asset count." },
+        permanent: { type: "boolean", description: "Hard-delete instead of OS trash. Default false." },
       },
       required: ["path"],
     },
