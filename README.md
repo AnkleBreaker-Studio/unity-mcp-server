@@ -4,6 +4,8 @@
 
 # Unity MCP Server AI-Powered Unity Editor & Hub Control
 
+[![MCP Toplist](https://mcptoplist.com/badge/glama%2FAnkleBreaker-Studio%2Funity-mcp-server.svg)](https://mcptoplist.com/server/glama%2FAnkleBreaker-Studio%2Funity-mcp-server)
+
 > **The most comprehensive [Model Context Protocol (MCP)](https://modelcontextprotocol.io) server for Unity game development.** Connect Claude, Cursor, Windsurf, or any MCP-compatible AI assistant to **Unity Editor** and **Unity Hub** with **330+ tools** across **30+ categories**. Built and maintained by [AnkleBreaker Studio](https://github.com/AnkleBreaker-Studio).
 
 **AnkleBreaker Unity MCP** turns your AI assistant into a full Unity co-pilot — create scenes, manipulate GameObjects, manage components, run builds, profile performance, edit Shader Graphs, control Amplify Shader Editor, sculpt terrain, bake NavMesh, manage animations, run multiplayer playmode scenarios, and much more — all without leaving your AI chat. Works with Claude Desktop, Claude Cowork, Cursor, Windsurf, and any tool that supports the Model Context Protocol.
