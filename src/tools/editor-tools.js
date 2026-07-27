@@ -861,6 +861,37 @@ export const editorTools = [
     handler: async (params) => formatResult(await bridge.setAnimationClipCurve(params)),
   },
   {
+    name: "unity_animation_set_object_reference_curve",
+    description:
+      "Set an OBJECT-REFERENCE (PPtr) animation curve — the curve type Unity uses for 2D sprite-frame " +
+      "animation (SpriteRenderer.m_Sprite). unity_animation_set_clip_curve only handles float curves. " +
+      "Each keyframe names an asset path; for a sliced sprite sheet add `name` to pick a specific sprite " +
+      "sub-asset. Fails closed if any keyframe can't be resolved, so a clip is never half-wired.",
+    inputSchema: {
+      type: "object",
+      properties: {
+        clipPath: { type: "string", description: "Asset path of the Animation Clip" },
+        relativePath: { type: "string", description: "Path to the animated child object (empty for the root)" },
+        propertyName: { type: "string", description: "Property to animate (default 'm_Sprite')" },
+        type: { type: "string", description: "Component type (default 'SpriteRenderer')" },
+        keyframes: {
+          type: "array",
+          description: "Ordered keyframes; each { time, assetPath, name? }",
+          items: {
+            type: "object",
+            properties: {
+              time: { type: "number", description: "Time in seconds" },
+              assetPath: { type: "string", description: "Asset path of the referenced object (e.g. the sprite sheet)" },
+              name: { type: "string", description: "Sub-asset name — required to pick one sprite out of a sliced sheet" },
+            },
+          },
+        },
+      },
+      required: ["clipPath", "keyframes"],
+    },
+    handler: async (params) => formatResult(await bridge.setAnimationObjectReferenceCurve(params)),
+  },
+  {
     name: "unity_animation_add_layer",
     description: "Add a new layer to an Animator Controller.",
     inputSchema: {

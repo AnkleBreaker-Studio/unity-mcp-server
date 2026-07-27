@@ -2,6 +2,17 @@
 
 All notable changes to this package will be documented in this file.
 
+## [2.35.6] - 2026-07-27
+
+Companion to plugin **2.39.5** (community-reported fixes).
+
+### Added
+- **`unity_animation_set_object_reference_curve`** (issue #30 by @VM233) — object-reference (PPtr) animation curves, i.e. 2D sprite-frame animation of `SpriteRenderer.m_Sprite`. `unity_animation_set_clip_curve` is float-only and cannot express an object reference, so this workflow previously required hand-writing `.anim` YAML. Keyframes take `{ time, assetPath, name? }`, where `name` selects one `Sprite` sub-asset out of a sliced sheet; `type` and `propertyName` default to `SpriteRenderer` / `m_Sprite`. The plugin fails closed on any unresolvable keyframe.
+- `unity_animation_clip_info` now also returns `objectReferenceCurveCount` / `objectReferenceCurves` — a correct sprite clip previously reported `curveCount: 0` and appeared empty through the MCP.
+
+### Changed
+- Advanced tier 268 → **269** tools (347 total). Updated in the pinned tier test and in `manifest.json`, which states the count in four places.
+
 ## [2.35.5] - 2026-07-24
 
 Findings from a 33-dimension + 10-blind-spot audit (127 + 40 agents, every CRITICAL/HIGH adversarially verified). Companion plugin: **2.39.4**.

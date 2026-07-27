@@ -644,6 +644,10 @@ export async function setAnimationClipCurve(params) {
   return sendCommand("animation/set-clip-curve", params);
 }
 
+export async function setAnimationObjectReferenceCurve(params) {
+  return sendCommand("animation/set-object-reference-curve", params);
+}
+
 export async function addAnimationLayer(params) {
   return sendCommand("animation/add-layer", params);
 }
