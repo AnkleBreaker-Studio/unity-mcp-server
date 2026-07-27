@@ -208,7 +208,7 @@ Features for uninstalled packages return helpful messages explaining what to ins
 
 ## Requirements
 
-- Node.js 18+
+- Node.js 20+
 - Unity Hub (for Hub tools)
 - Unity Editor with [unity-mcp-plugin](https://github.com/AnkleBreaker-Studio/unity-mcp-plugin) installed (for Editor tools)
 
