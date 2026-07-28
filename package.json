@@ -17,9 +17,12 @@
     "test:live": "node --test tests/live-smoke.test.mjs tests/live-probuilder-level.test.mjs"
   },
   "dependencies": {
-    "@modelcontextprotocol/sdk": "^1.0.0"
+    "@modelcontextprotocol/sdk": "^1.29.0"
+  },
+  "overrides": {
+    "@hono/node-server": "^2.0.5"
   },
   "engines": {
-    "node": ">=18.0.0"
+    "node": ">=20.0.0"
   }
 }
