@@ -458,11 +458,6 @@ function readRegistryFile() {
   }
 }
 
-/**
- * Ping a Unity instance at a specific port (fast timeout for discovery).
- * @param {number} port
- * @returns {boolean} True if the instance is alive.
- */
 // Fields the Unity MCP plugin's /api/ping is known to return. The plugin has shipped
 // projectPath since v2.21.1 specifically "enabling the MCP server to validate instance
 // identity"; older plugins still return projectName + unityVersion. A responder that
@@ -477,6 +472,26 @@ const BRIDGE_IDENTITY_FIELDS = [
   "pluginVersion",
 ];
 
+/**
+ * True when a /api/ping body carries at least one field identifying it as this plugin's
+ * bridge. A 200 alone is not proof: both discovery paths reach ports we do not control.
+ * The port scan sweeps a fixed range, and a registry entry's port may have been taken
+ * over by another local service after the Editor that claimed it died.
+ * @param {any} data - Parsed /api/ping response body.
+ * @returns {boolean}
+ */
+function isBridgeIdentity(data) {
+  if (!data || typeof data !== "object") return false;
+  return BRIDGE_IDENTITY_FIELDS.some(
+    (field) => data[field] !== undefined && data[field] !== null && data[field] !== ""
+  );
+}
+
+/**
+ * Ping a Unity instance at a specific port (fast timeout for discovery).
+ * @param {number} port
+ * @returns {boolean} True if a Unity MCP bridge answered.
+ */
 async function pingInstance(port) {
   try {
     const url = `http://${CONFIG.editorBridgeHost}:${port}/api/ping`;
@@ -486,16 +501,10 @@ async function pingInstance(port) {
     });
     if (!response.ok) return false;
 
-    // A 200 is not proof this is our bridge. The port scan sweeps a fixed range, so any
-    // unrelated local server answering on /api/ping would otherwise be listed as an
-    // instance with empty metadata ("Unknown (port N)") and become a routable target.
+    // Without this, any unrelated local server answering on /api/ping is listed as an
+    // instance with empty metadata ("Unknown (port N)") and becomes a routable target.
     // Non-JSON bodies throw out of .json() and land in the catch below.
-    const data = await response.json();
-    if (!data || typeof data !== "object") return false;
-
-    return BRIDGE_IDENTITY_FIELDS.some(
-      (field) => data[field] !== undefined && data[field] !== null && data[field] !== ""
-    );
+    return isBridgeIdentity(await response.json());
   } catch {
     return false;
   }
@@ -517,6 +526,13 @@ async function getInstanceInfo(port) {
     if (!response.ok) return null;
 
     const data = await response.json();
+
+    // Registry validation calls this directly (no pingInstance gate on that path). A stale
+    // entry whose port was taken over by another local service would otherwise be revived
+    // as "alive" while carrying the DEAD project's name and path from the spread entry —
+    // a mis-route that looks legitimate in unity_list_instances.
+    if (!isBridgeIdentity(data)) return null;
+
     return {
       projectName: data.projectName || data.project || null,
       projectPath: data.projectPath || null,
