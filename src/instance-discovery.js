@@ -463,6 +463,20 @@ function readRegistryFile() {
  * @param {number} port
  * @returns {boolean} True if the instance is alive.
  */
+// Fields the Unity MCP plugin's /api/ping is known to return. The plugin has shipped
+// projectPath since v2.21.1 specifically "enabling the MCP server to validate instance
+// identity"; older plugins still return projectName + unityVersion. A responder that
+// carries none of these is some other local service that happens to answer 200 on this
+// path — never adopt it as a Unity instance.
+const BRIDGE_IDENTITY_FIELDS = [
+  "projectName",
+  "project",
+  "projectPath",
+  "unityVersion",
+  "version",
+  "pluginVersion",
+];
+
 async function pingInstance(port) {
   try {
     const url = `http://${CONFIG.editorBridgeHost}:${port}/api/ping`;
@@ -470,7 +484,18 @@ async function pingInstance(port) {
       method: "GET",
       signal: AbortSignal.timeout(1500), // Short timeout for discovery
     });
-    return response.ok;
+    if (!response.ok) return false;
+
+    // A 200 is not proof this is our bridge. The port scan sweeps a fixed range, so any
+    // unrelated local server answering on /api/ping would otherwise be listed as an
+    // instance with empty metadata ("Unknown (port N)") and become a routable target.
+    // Non-JSON bodies throw out of .json() and land in the catch below.
+    const data = await response.json();
+    if (!data || typeof data !== "object") return false;
+
+    return BRIDGE_IDENTITY_FIELDS.some(
+      (field) => data[field] !== undefined && data[field] !== null && data[field] !== ""
+    );
   } catch {
     return false;
   }
