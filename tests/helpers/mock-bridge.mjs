@@ -40,6 +40,8 @@ export class MockBridge {
     this.routes = new Map();
     /** @type {SeenRequest[]} */
     this.seen = [];
+    this.polls = [];
+    this.pingCount = 0;
     /** @type {(cat: string|null) => object|null} return null → 404 (project without context) */
     this.contextProvider = () => null;
     this._tickets = new Map();
@@ -121,7 +123,10 @@ export class MockBridge {
       const url = new URL(req.url, `http://127.0.0.1:${this.port}`);
       const path = url.pathname.replace(/^\/api\//, "");
 
-      if (path === "ping") return this._json(res, 200, this.instance);
+      if (path === "ping") {
+        this.pingCount++;
+        return this._json(res, 200, this.instance);
+      }
 
       if (path === "queue/submit" && req.method === "POST") {
         if (this.mode === "legacy") return this._json(res, 404, { error: "Unknown route" });
@@ -163,6 +168,7 @@ export class MockBridge {
       }
 
       if (path === "queue/status") {
+        this.polls.push({ ticketId: url.searchParams.get("ticketId"), headers: req.headers });
         const ticket = this._tickets.get(url.searchParams.get("ticketId"));
         if (!ticket) return this._json(res, 404, { error: "Ticket not found" });
         return this._json(res, 200, ticket);

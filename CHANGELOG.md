@@ -2,6 +2,22 @@
 
 All notable changes to this package will be documented in this file.
 
+## [Unreleased]
+
+### Fixed
+- Isolate project routing and agent identity per asynchronous MCP request. Overlapping calls retain their own target through submission, polling and context injection.
+- Cache queue support per bridge endpoint so a legacy plugin cannot downgrade other open projects.
+- Use the live ping identity when a registry port has been reused; reject invalid routing ports before contacting an editor.
+- Share concurrent initial discovery for an agent so a second call cannot bypass required instance selection.
+
+### Changed
+- Remove duplicate identity/liveness pings from discovery and selection validation.
+- Pin the existing MCP SDK version and refresh compatible transitive dependencies; the current npm audit reports no known vulnerabilities.
+- Rebuild the README around multi-project workflows, an original vector diagram and linked architecture, configuration, feature and validation guides.
+
+### Validation
+- 65 Node tests, including five new concurrency/discovery regression tests. The companion plugin has a focused Unity 6000.6.2f1 batch validation runner; full cross-version and multiplayer validation remains in progress.
+
 ## [2.35.6] - 2026-07-27
 
 Companion to plugin **2.39.5** (community-reported fixes).

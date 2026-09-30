@@ -1,6 +1,7 @@
 // Unity Editor HTTP Bridge Client
 // Communicates with the C# plugin running inside Unity Editor
 // Supports both queue mode (async ticket-based) and legacy sync mode
+import { getRequestContext, getCurrentAgentId } from "./request-context.js";
 import { CONFIG } from "./config.js";
 import { getActiveBridgeUrl } from "./instance-discovery.js";
 
@@ -9,18 +10,11 @@ function getBridgeUrl() {
   return getActiveBridgeUrl();
 }
 
-// Agent identity â€" tracks which AI agent is making requests
-let _currentAgentId = "default";
+// Queue support belongs to an endpoint, since old and new plugins can run together.
+const queueModes = new Map();
 
-// Mode detection â€" cached to avoid repeated 404 checks
-let _useQueueMode = true;
-let _queueModeDetermined = false;
-
-/**
- * Set the current agent ID. All subsequent sendCommand calls include this as X-Agent-Id header.
- */
 export function setAgentId(agentId) {
-  _currentAgentId = agentId || "default";
+  getRequestContext().agentId = agentId || "default";
 }
 
 // Retry settings â€" handles Unity domain reloads (1-3 sec server downtime)
@@ -62,20 +56,20 @@ function isTransientError(error, response) {
  * Submit a command to the queue and get a ticket ID.
  * POST /api/queue/submit with {apiPath, method, body, agentId}
  */
-async function submitToQueue(apiPath, bodyString) {
-  const url = `${getBridgeUrl()}/api/queue/submit`;
+async function submitToQueue(apiPath, bodyString, bridgeUrl, agentId) {
+  const url = `${bridgeUrl}/api/queue/submit`;
 
   const response = await fetch(url, {
     method: "POST",
     headers: {
       "Content-Type": "application/json",
-      "X-Agent-Id": _currentAgentId,
+      "X-Agent-Id": agentId,
     },
     body: JSON.stringify({
       apiPath,
       method: "POST",
       body: bodyString,
-      agentId: _currentAgentId,
+      agentId: agentId,
     }),
     signal: AbortSignal.timeout(CONFIG.editorBridgeTimeout),
   });
@@ -93,7 +87,7 @@ async function submitToQueue(apiPath, bodyString) {
  * Poll the queue status for a ticket until completion.
  * GET /api/queue/status?ticketId=X
  */
-async function pollQueueStatus(ticketId) {
+async function pollQueueStatus(ticketId, bridgeUrl, agentId) {
   let pollIntervalMs = CONFIG.queuePollIntervalMs;
   // Cap the growth of the poll interval at the configured max (default 1500ms). This used
   // to be Math.min(1000, ...), which silently clamped the documented UNITY_QUEUE_POLL_MAX
@@ -117,11 +111,11 @@ async function pollQueueStatus(ticketId) {
 
     // Poll status
     try {
-      const url = `${getBridgeUrl()}/api/queue/status?ticketId=${ticketId}`;
+      const url = `${bridgeUrl}/api/queue/status?ticketId=${ticketId}`;
       const response = await fetch(url, {
         method: "GET",
         headers: {
-          "X-Agent-Id": _currentAgentId,
+          "X-Agent-Id": agentId,
         },
         signal: AbortSignal.timeout(10000), // 10s per individual poll request
       });
@@ -215,8 +209,8 @@ async function pollQueueStatus(ticketId) {
  * Send command via legacy sync mode (direct POST).
  * Falls back to the original implementation.
  */
-async function sendCommandLegacyMode(command, params = {}) {
-  const url = `${getBridgeUrl()}/api/${command}`;
+async function sendCommandLegacyMode(command, params, bridgeUrl, agentId) {
+  const url = `${bridgeUrl}/api/${command}`;
   let lastError = null;
 
   for (let attempt = 0; attempt <= MAX_RETRIES; attempt++) {
@@ -228,7 +222,7 @@ async function sendCommandLegacyMode(command, params = {}) {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
-          "X-Agent-Id": _currentAgentId,
+          "X-Agent-Id": agentId,
         },
         body: JSON.stringify(params),
         signal: controller.signal,
@@ -297,21 +291,24 @@ async function sendCommandLegacyMode(command, params = {}) {
  * with exponential backoff so multi-agent workflows stay resilient.
  */
 export async function sendCommand(command, params = {}) {
+  const bridgeUrl = getBridgeUrl();
+  const agentId = getCurrentAgentId();
+  const queueMode = queueModes.get(bridgeUrl);
   const bodyString = JSON.stringify(params);
 
   // If we've determined the plugin doesn't support queue mode, use legacy
-  if (_queueModeDetermined && !_useQueueMode) {
-    return sendCommandLegacyMode(command, params);
+  if (queueMode === false) {
+    return sendCommandLegacyMode(command, params, bridgeUrl, agentId);
   }
 
   // Try queue mode (if not yet determined it's unavailable)
-  if (!_queueModeDetermined || _useQueueMode) {
+  if (queueMode !== false) {
     try {
       // Submit to queue with retry logic
       let submitLastError = null;
       for (let attempt = 0; attempt <= MAX_RETRIES; attempt++) {
         try {
-          const ticketData = await submitToQueue(command, bodyString);
+          const ticketData = await submitToQueue(command, bodyString, bridgeUrl, agentId);
           const ticketId = ticketData.ticketId;
 
           // Log to stderr, not stdout — stdout is reserved for the MCP JSON-RPC
@@ -319,11 +316,10 @@ export async function sendCommand(command, params = {}) {
           console.error(`[MCP Bridge] Submitted ${command} to queue, ticket: ${ticketId}`);
 
           // Poll for completion
-          const result = await pollQueueStatus(ticketId);
+          const result = await pollQueueStatus(ticketId, bridgeUrl, agentId);
 
           // Queue submission succeeded (we got a ticket), so queue mode is confirmed
-          _queueModeDetermined = true;
-          _useQueueMode = true;
+          queueModes.set(bridgeUrl, true);
           return result;
         } catch (submitError) {
           submitLastError = submitError;
@@ -343,9 +339,8 @@ export async function sendCommand(command, params = {}) {
             console.warn(
               `[MCP Bridge] Queue mode not supported (HTTP 404), falling back to legacy sync mode`
             );
-            _queueModeDetermined = true;
-            _useQueueMode = false;
-            return sendCommandLegacyMode(command, params);
+            queueModes.set(bridgeUrl, false);
+            return sendCommandLegacyMode(command, params, bridgeUrl, agentId);
           }
 
           // Other errors â€" don't retry, mark mode as undetermined and try legacy
@@ -364,18 +359,18 @@ export async function sendCommand(command, params = {}) {
         console.warn(
           `[MCP Bridge] Queue submit failed after retries, using legacy sync for this call (mode left undetermined): ${submitLastError.message}`
         );
-        return sendCommandLegacyMode(command, params);
+        return sendCommandLegacyMode(command, params, bridgeUrl, agentId);
       }
     } catch (error) {
       console.warn(
         `[MCP Bridge] Unexpected error in queue mode, using legacy sync for this call (mode left undetermined): ${error.message}`
       );
-      return sendCommandLegacyMode(command, params);
+      return sendCommandLegacyMode(command, params, bridgeUrl, agentId);
     }
   }
 
   // Fallback (should not reach here, but just in case)
-  return sendCommandLegacyMode(command, params);
+  return sendCommandLegacyMode(command, params, bridgeUrl, agentId);
 }
 
 /**
@@ -388,7 +383,7 @@ export async function getQueueInfo() {
     const response = await fetch(url, {
       method: "GET",
       headers: {
-        "X-Agent-Id": _currentAgentId,
+        "X-Agent-Id": getCurrentAgentId(),
       },
       signal: AbortSignal.timeout(CONFIG.editorBridgeTimeout),
     });
@@ -418,7 +413,7 @@ export async function getTicketStatus(ticketId) {
     const response = await fetch(url, {
       method: "GET",
       headers: {
-        "X-Agent-Id": _currentAgentId,
+        "X-Agent-Id": getCurrentAgentId(),
       },
       signal: AbortSignal.timeout(CONFIG.editorBridgeTimeout),
     });
@@ -1712,7 +1707,7 @@ export async function getProjectContext(category = null) {
 
   const response = await fetch(url, {
     method: "GET",
-    headers: { "X-Agent-Id": _currentAgentId },
+    headers: { "X-Agent-Id": getCurrentAgentId() },
     signal: AbortSignal.timeout(5000),
   });
 

@@ -9,58 +9,21 @@ import { readFileSync } from "fs";
 import { CONFIG } from "./config.js";
 import { debugLog } from "./state-persistence.js";
 
-// ─── Per-Agent Session State ───
-// Tracks which Unity instance each agent is targeting.
-// State is stored in Maps keyed by agent ID because a SINGLE MCP process serves
-// ALL agents/tasks in the same Claude Desktop session. Without per-agent state,
-// Agent A selecting ProjectA would cause Agent B's commands to also route to
-// ProjectA — the classic "cross-agent contamination" bug.
-//
-// The MCP stdio transport processes requests sequentially (no concurrency),
-// so we use a "set current agent before handler" pattern: index.js calls
-// setCurrentAgent(agentId) before each tool handler, and all state functions
-// read/write from the Map entry for _currentAgentId.
-const _agentInstances = new Map();          // agentId → { port, projectName, projectPath, ... }
-const _agentSelectionRequired = new Map();  // agentId → boolean
-let _currentAgentId = "default";
+import { getRequestContext, getCurrentAgentId } from "./request-context.js";
 
-// ─── Per-Request Port Override ───
-// When multiple agents share a single MCP process (e.g. parallel Cowork tasks),
-// the per-agent state above can get overwritten between sequential requests.
-// The port override provides a stateless routing mechanism: each tool call can
-// include a `port` parameter, and ALL HTTP requests during that handler execution
-// will be routed to that port — bypassing the shared agent state entirely.
-// This is safe because stdio transport is sequential (one request at a time).
-let _portOverride = null;
+const _agentInstances = new Map();
+const _agentSelectionRequired = new Map();
 
-/**
- * Set a per-request port override. All bridge URL lookups will use this port
- * until clearPortOverride() is called. Must be called before the tool handler
- * and cleared in a finally block after it completes.
- * @param {number} port - The port to route to for this request.
- */
 export function setPortOverride(port) {
-  _portOverride = port;
-  debugLog(`setPortOverride: routing to port ${port} for this request`);
+  getRequestContext().portOverride = port;
 }
 
-/**
- * Clear the per-request port override. Must be called after tool handler completes.
- */
 export function clearPortOverride() {
-  if (_portOverride !== null) {
-    debugLog(`clearPortOverride: cleared (was ${_portOverride})`);
-    _portOverride = null;
-  }
+  getRequestContext().portOverride = null;
 }
 
-/**
- * Set the current agent context for subsequent state operations.
- * Must be called before any tool handler execution.
- * @param {string} agentId - The agent ID for the current request.
- */
 export function setCurrentAgent(agentId) {
-  _currentAgentId = agentId || "default";
+  getRequestContext().agentId = agentId || "default";
 }
 
 /**
@@ -68,7 +31,7 @@ export function setCurrentAgent(agentId) {
  * @returns {object|null} Selected instance info, or null if none selected.
  */
 export function getSelectedInstance() {
-  return _agentInstances.get(_currentAgentId) || null;
+  return _agentInstances.get(getCurrentAgentId()) || null;
 }
 
 /**
@@ -86,7 +49,7 @@ export function getSelectedInstance() {
  * @returns {object|null} Validated instance, or null if validation cleared the selection.
  */
 export async function validateSelectedInstance() {
-  const currentInstance = _agentInstances.get(_currentAgentId);
+  const currentInstance = _agentInstances.get(getCurrentAgentId());
   if (!currentInstance) {
     return null;
   }
@@ -96,9 +59,8 @@ export async function validateSelectedInstance() {
   const savedPort = saved.port;
 
   // Ping the saved port and check what project is actually there
-  const alive = await pingInstance(savedPort);
-  if (alive) {
-    const info = await getInstanceInfo(savedPort);
+  const info = await getInstanceInfo(savedPort);
+  if (info) {
     if (info && info.projectPath && info.projectPath === savedPath) {
       return currentInstance;
     }
@@ -147,8 +109,8 @@ export async function validateSelectedInstance() {
 
   if (match) {
     debugLog(`Re-selected ${saved.projectName} on new port ${match.port} (was ${savedPort})`);
-    _agentInstances.set(_currentAgentId, match);
-    _agentSelectionRequired.set(_currentAgentId, false);
+    _agentInstances.set(getCurrentAgentId(), match);
+    _agentSelectionRequired.set(getCurrentAgentId(), false);
     return match;
   }
 
@@ -166,7 +128,7 @@ export async function validateSelectedInstance() {
         `Project "${saved.projectName}" found in registry on port ${registryFallback.port} (fresh) — likely compiling. Keeping selection.`
       );
       const updated = { ...saved, port: registryFallback.port };
-      _agentInstances.set(_currentAgentId, updated);
+      _agentInstances.set(getCurrentAgentId(), updated);
       return updated;
     }
   }
@@ -177,9 +139,9 @@ export async function validateSelectedInstance() {
   // which in any multi-project session is a DIFFERENT live Unity — so a write intended for
   // project A silently landed in project B and still reported success. Require an explicit
   // re-selection instead.
-  debugLog(`Project "${saved.projectName}" no longer found. Clearing selection for agent ${_currentAgentId} and requiring re-selection.`);
-  _agentInstances.delete(_currentAgentId);
-  _agentSelectionRequired.set(_currentAgentId, true);
+  debugLog(`Project "${saved.projectName}" no longer found. Clearing selection for agent ${getCurrentAgentId()} and requiring re-selection.`);
+  _agentInstances.delete(getCurrentAgentId());
+  _agentSelectionRequired.set(getCurrentAgentId(), true);
   return null;
 }
 
@@ -187,14 +149,14 @@ export async function validateSelectedInstance() {
  * Check whether the session still needs the user to select an instance.
  */
 export function isInstanceSelectionRequired() {
-  return _agentSelectionRequired.get(_currentAgentId) || false;
+  return _agentSelectionRequired.get(getCurrentAgentId()) || false;
 }
 
 /**
  * Mark that instance selection is required (multiple instances found, none selected).
  */
 export function setInstanceSelectionRequired(required) {
-  _agentSelectionRequired.set(_currentAgentId, required);
+  _agentSelectionRequired.set(getCurrentAgentId(), required);
 }
 
 /**
@@ -223,9 +185,9 @@ export async function selectInstance(port) {
     };
   }
 
-  _agentInstances.set(_currentAgentId, match);
-  _agentSelectionRequired.set(_currentAgentId, false);
-  debugLog(`selectInstance: agent ${_currentAgentId} selected port ${port} (${match.projectName})`);
+  _agentInstances.set(getCurrentAgentId(), match);
+  _agentSelectionRequired.set(getCurrentAgentId(), false);
+  debugLog(`selectInstance: agent ${getCurrentAgentId()} selected port ${port} (${match.projectName})`);
 
   return {
     success: true,
@@ -240,12 +202,14 @@ export async function selectInstance(port) {
  * @returns {string} The base URL for HTTP bridge commands.
  */
 export function getActiveBridgeUrl() {
+  const { bridgeUrl, portOverride } = getRequestContext();
+  if (bridgeUrl) return bridgeUrl;
   const host = CONFIG.editorBridgeHost;
   // Per-request override takes highest priority (stateless routing for parallel agents)
-  if (_portOverride !== null) {
-    return `http://${host}:${_portOverride}`;
+  if (portOverride !== null) {
+    return `http://${host}:${portOverride}`;
   }
-  const selected = _agentInstances.get(_currentAgentId);
+  const selected = _agentInstances.get(getCurrentAgentId());
   if (selected) {
     return `http://${host}:${selected.port}`;
   }
@@ -279,6 +243,11 @@ export async function discoverInstances() {
           if (info === null) return null;
           return {
             ...entry,
+            projectName: info.projectName || entry.projectName,
+            projectPath: info.projectPath || entry.projectPath,
+            unityVersion: info.unityVersion || entry.unityVersion,
+            isClone: info.isClone,
+            cloneIndex: info.cloneIndex,
             protocolVersion: info.protocolVersion,
             pluginVersion: info.pluginVersion,
             alive: true,
@@ -302,10 +271,8 @@ export async function discoverInstances() {
 
     scanPromises.push(
       (async () => {
-        const alive = await pingInstance(port);
-        if (alive) {
-          // Try to get project info from the instance
-          const info = await getInstanceInfo(port);
+        const info = await getInstanceInfo(port);
+        if (info) {
           return {
             port,
             projectName: info?.projectName || `Unknown (port ${port})`,
@@ -358,9 +325,9 @@ export async function autoSelectInstance() {
         alive: true,
         source: "default",
       };
-      _agentInstances.set(_currentAgentId, defaultInstance);
-      _agentSelectionRequired.set(_currentAgentId, false);
-      debugLog(`autoSelect: agent ${_currentAgentId} → single default instance on port ${CONFIG.editorBridgePort}`);
+      _agentInstances.set(getCurrentAgentId(), defaultInstance);
+      _agentSelectionRequired.set(getCurrentAgentId(), false);
+      debugLog(`autoSelect: agent ${getCurrentAgentId()} → single default instance on port ${CONFIG.editorBridgePort}`);
       return {
         autoSelected: true,
         instance: defaultInstance,
@@ -369,7 +336,7 @@ export async function autoSelectInstance() {
       };
     }
 
-    _agentSelectionRequired.set(_currentAgentId, false);
+    _agentSelectionRequired.set(getCurrentAgentId(), false);
     return {
       autoSelected: false,
       instances: [],
@@ -379,9 +346,9 @@ export async function autoSelectInstance() {
 
   if (instances.length === 1) {
     // Exactly one instance — auto-select it
-    _agentInstances.set(_currentAgentId, instances[0]);
-    _agentSelectionRequired.set(_currentAgentId, false);
-    debugLog(`autoSelect: agent ${_currentAgentId} → single instance on port ${instances[0].port}`);
+    _agentInstances.set(getCurrentAgentId(), instances[0]);
+    _agentSelectionRequired.set(getCurrentAgentId(), false);
+    debugLog(`autoSelect: agent ${getCurrentAgentId()} → single instance on port ${instances[0].port}`);
     return {
       autoSelected: true,
       instance: instances[0],
@@ -391,10 +358,10 @@ export async function autoSelectInstance() {
   }
 
   // Multiple instances — require user selection (but only if none already selected for this agent)
-  const agentSelected = _agentInstances.get(_currentAgentId);
+  const agentSelected = _agentInstances.get(getCurrentAgentId());
   if (!agentSelected) {
-    _agentSelectionRequired.set(_currentAgentId, true);
-    debugLog(`autoSelect: agent ${_currentAgentId} → ${instances.length} instances found, selection required`);
+    _agentSelectionRequired.set(getCurrentAgentId(), true);
+    debugLog(`autoSelect: agent ${getCurrentAgentId()} → ${instances.length} instances found, selection required`);
   }
   return {
     autoSelected: false,

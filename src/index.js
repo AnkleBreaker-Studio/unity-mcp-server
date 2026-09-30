@@ -42,12 +42,12 @@ import {
   getSelectedInstance,
   isInstanceSelectionRequired,
   validateSelectedInstance,
-  setCurrentAgent,
   setPortOverride,
-  clearPortOverride,
+  getActiveBridgeUrl,
 } from "./instance-discovery.js";
 import { debugLog } from "./state-persistence.js";
 import { isErrorText, firstSentence, stripSchemaDescriptions } from "./response-format.js";
+import { getRequestContext, getCurrentAgentId, runWithRequestContext } from "./request-context.js";
 import { CONFIG } from "./config.js";
 
 // ─── Response size protection ───
@@ -132,19 +132,20 @@ console.error(
 
 // Context auto-inject: each agent gets project context on their first tool call.
 const _contextInjectedPerAgent = new Map(); // agentId → boolean
-let _contextCache = null; // Shared cache (same project context for all agents)
+
 
 // Instance auto-discovery: each agent discovers instances on their first tool call.
 const _discoveryDonePerAgent = new Map(); // agentId → boolean
+const pendingDiscovery = new Map();
 
 async function getContextSummaryOnce() {
-  if (_contextInjectedPerAgent.get(PROCESS_AGENT_ID)) return null;
-  _contextInjectedPerAgent.set(PROCESS_AGENT_ID, true);
+  const key = JSON.stringify([getCurrentAgentId(), getActiveBridgeUrl(), getSelectedInstance()?.projectPath]);
+  if (_contextInjectedPerAgent.has(key)) return null;
+  _contextInjectedPerAgent.set(key, true);
 
   try {
-    if (!_contextCache) {
-      _contextCache = await getProjectContext();
-    }
+    const _contextCache = await getProjectContext();
+    if (_contextCache?.error) _contextInjectedPerAgent.delete(key);
 
     // Only inject if context is enabled and has content
     if (
@@ -172,6 +173,7 @@ async function getContextSummaryOnce() {
     summary += "=== END PROJECT CONTEXT ===";
     return summary;
   } catch {
+    _contextInjectedPerAgent.delete(key);
     // Context fetch failed (Unity not connected yet, etc.) — silently skip
     return null;
   }
@@ -182,7 +184,19 @@ async function getContextSummaryOnce() {
  * Returns a prompt string if user needs to select an instance, or null.
  */
 async function ensureInstanceDiscovery() {
-  const _instanceDiscoveryDone = _discoveryDonePerAgent.get(PROCESS_AGENT_ID) || false;
+  const agentId = getCurrentAgentId();
+  if (pendingDiscovery.has(agentId)) return pendingDiscovery.get(agentId);
+  const pending = discoverForCurrentAgent();
+  pendingDiscovery.set(agentId, pending);
+  try {
+    return await pending;
+  } finally {
+    pendingDiscovery.delete(agentId);
+  }
+}
+
+async function discoverForCurrentAgent() {
+  const _instanceDiscoveryDone = _discoveryDonePerAgent.get(getCurrentAgentId()) || false;
   debugLog(`ensureInstanceDiscovery: _instanceDiscoveryDone=${_instanceDiscoveryDone}, selectedPort=${getSelectedInstance()?.port || 'null'}, selectionRequired=${isInstanceSelectionRequired()}`);
 
   if (_instanceDiscoveryDone) {
@@ -196,12 +210,12 @@ async function ensureInstanceDiscovery() {
       // Validation cleared the selection (project no longer running).
       // Re-run discovery on next call.
       debugLog(`Persisted selection invalidated — project no longer found. Will re-discover.`);
-      _discoveryDonePerAgent.set(PROCESS_AGENT_ID, false);
+      _discoveryDonePerAgent.set(getCurrentAgentId(), false);
     }
     return null;
   }
 
-  _discoveryDonePerAgent.set(PROCESS_AGENT_ID, true);
+  _discoveryDonePerAgent.set(getCurrentAgentId(), true);
 
   try {
     const result = await autoSelectInstance();
@@ -355,7 +369,7 @@ server.setRequestHandler(ListToolsRequestSchema, async () => {
 });
 
 // ─── Call Tool Handler ───
-server.setRequestHandler(CallToolRequestSchema, async (request) => {
+server.setRequestHandler(CallToolRequestSchema, async (request) => runWithRequestContext({ agentId: PROCESS_AGENT_ID }, async () => {
   const { name, arguments: args } = request.params;
 
   const tool = ALL_TOOLS.find((t) => t.name === name);
@@ -367,40 +381,27 @@ server.setRequestHandler(CallToolRequestSchema, async (request) => {
   }
 
   try {
-    // Allow per-request agent ID override from MCP metadata, but default to
-    // the process-level ID which is more reliable for multi-agent scheduling.
     const meta = request.params._meta || {};
-    if (meta.agentId || meta.agent_id) {
-      const overrideId = meta.agentId || meta.agent_id;
-      setAgentId(overrideId);
-      setCurrentAgent(overrideId);
-    } else {
-      // Reset BOTH the bridge agent id and the discovery agent to this process. Without
-      // the setAgentId reset, a prior request's _meta.agentId override leaked into the
-      // X-Agent-Id header of every later request (wrong queue attribution).
-      setAgentId(PROCESS_AGENT_ID);
-      setCurrentAgent(PROCESS_AGENT_ID);
+    const agentId = meta.agentId || meta.agent_id || PROCESS_AGENT_ID;
+    if (typeof agentId !== "string") {
+      throw new Error("agentId must be a string");
     }
+    setAgentId(agentId);
 
-    // ─── Per-request port override (parallel-agent safe routing) ───
-    // When multiple agents share this MCP process, the per-agent state can get
-    // overwritten between sequential requests. If the caller provides a `port`
-    // parameter (or _meta.port), we bypass the shared state entirely and route
-    // directly to that port for the duration of this request.
-    const portOverride = (args && typeof args.port === "number" && args.port)
-      || (meta && typeof meta.port === "number" && meta.port)
-      || null;
+    const portOverride = args?.port ?? meta.port ?? null;
+    if (portOverride !== null && (!Number.isInteger(portOverride) || portOverride < 1 || portOverride > 65535)) {
+      throw new Error("port must be an integer between 1 and 65535");
+    }
 
     if (portOverride) {
       setPortOverride(portOverride);
       debugLog(`Port override active: ${portOverride} for tool ${name}`);
     }
 
-    try {
     // Auto-discover instances on first tool call (unless it's an instance tool itself)
     // Skip auto-discovery when port override is active — the caller already knows where to route.
     let instancePrompt = null;
-    if (!portOverride && name !== "unity_list_instances" && name !== "unity_select_instance") {
+    if (!portOverride && !name.startsWith("unity_hub_") && !TOOLS_SKIP_PORT_INJECT.has(name)) {
       instancePrompt = await ensureInstanceDiscovery();
     }
 
@@ -408,13 +409,12 @@ server.setRequestHandler(CallToolRequestSchema, async (request) => {
     // Skip this check when port override is active — the caller is explicitly routing.
     const _selReq = !portOverride && isInstanceSelectionRequired();
     const _selInst = getSelectedInstance();
-    debugLog(`Tool=${name}, portOverride=${portOverride || 'null'}, selectionRequired=${_selReq}, selectedPort=${_selInst?.port || 'null'}, instancePrompt=${instancePrompt ? 'SET' : 'null'}, discoveryDone=${_discoveryDonePerAgent.get(PROCESS_AGENT_ID) || false}`);
+    debugLog(`Tool=${name}, portOverride=${portOverride || 'null'}, selectionRequired=${_selReq}, selectedPort=${_selInst?.port || 'null'}, instancePrompt=${instancePrompt ? 'SET' : 'null'}, discoveryDone=${_discoveryDonePerAgent.get(getCurrentAgentId()) || false}`);
     if (
       _selReq &&
       !name.startsWith("unity_hub_") &&
       name !== "unity_list_instances" &&
-      name !== "unity_select_instance" &&
-      name !== "unity_get_project_context"
+      name !== "unity_select_instance"
     ) {
       debugLog(`BLOCKING tool ${name} due to selectionRequired=true`);
       return {
@@ -438,6 +438,8 @@ server.setRequestHandler(CallToolRequestSchema, async (request) => {
       delete handlerArgs.port;
     }
 
+    // Freeze this call's target even if another call switches the same agent's selection.
+    if (name !== "unity_select_instance") getRequestContext().bridgeUrl = getActiveBridgeUrl();
     const result = await tool.handler(handlerArgs);
 
     // Build response content blocks
@@ -449,7 +451,8 @@ server.setRequestHandler(CallToolRequestSchema, async (request) => {
     }
 
     // Auto-inject project context on the first successful tool call
-    const contextSummary = await getContextSummaryOnce();
+    const contextSummary = !name.startsWith("unity_hub_") && !TOOLS_SKIP_PORT_INJECT.has(name)
+      ? await getContextSummaryOnce() : null;
     if (contextSummary) {
       contentBlocks.push({ type: "text", text: contextSummary });
     }
@@ -469,13 +472,7 @@ server.setRequestHandler(CallToolRequestSchema, async (request) => {
     }
     return response;
 
-    } finally {
-      // Always clear port override after request completes, even on error
-      clearPortOverride();
-    }
   } catch (error) {
-    // Safety: ensure port override is always cleared, even on unexpected errors
-    clearPortOverride();
     return {
       content: [
         {
@@ -486,7 +483,7 @@ server.setRequestHandler(CallToolRequestSchema, async (request) => {
       isError: true,
     };
   }
-});
+}));
 
 // ─── MCP Resources: Expose project context files ───
 
@@ -545,7 +542,7 @@ server.setRequestHandler(ReadResourceRequestSchema, async (request) => {
 async function main() {
   const transport = new StdioServerTransport();
   await server.connect(transport);
-  debugLog(`=== SERVER START === v${PACKAGE_VERSION}, agent=${PROCESS_AGENT_ID}, discoveryDone=${_discoveryDonePerAgent.get(PROCESS_AGENT_ID) || false}, selectedPort=${getSelectedInstance()?.port || 'null'}`);
+  debugLog(`=== SERVER START === v${PACKAGE_VERSION}, agent=${PROCESS_AGENT_ID}, discoveryDone=${_discoveryDonePerAgent.get(getCurrentAgentId()) || false}, selectedPort=${getSelectedInstance()?.port || 'null'}`);
   console.error(
     `Unity MCP Server running on stdio (agent: ${PROCESS_AGENT_ID})`
   );
@@ -555,3 +552,4 @@ main().catch((error) => {
   console.error("Fatal error:", error);
   process.exit(1);
 });
+
