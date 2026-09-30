@@ -49,6 +49,7 @@ import { debugLog } from "./state-persistence.js";
 import { isErrorText, firstSentence, stripSchemaDescriptions } from "./response-format.js";
 import { getRequestContext, getCurrentAgentId, runWithRequestContext } from "./request-context.js";
 import { limitToolResponse, checkResourceResponse } from "./response-limits.js";
+import { shareRequestWork, throwIfRequestCancelled } from "./request-cancellation.js";
 
 // ─── Per-process agent identity ───
 // Each MCP stdio process = one Cowork agent.
@@ -134,14 +135,14 @@ async function getContextSummaryOnce() {
  */
 async function ensureInstanceDiscovery() {
   const agentId = getCurrentAgentId();
-  if (pendingDiscovery.has(agentId)) return pendingDiscovery.get(agentId);
-  const pending = discoverForCurrentAgent();
-  pendingDiscovery.set(agentId, pending);
-  try {
-    return await pending;
-  } finally {
-    pendingDiscovery.delete(agentId);
-  }
+  return shareRequestWork(pendingDiscovery, agentId, async () => {
+    try {
+      return await discoverForCurrentAgent();
+    } catch (error) {
+      _discoveryDonePerAgent.delete(agentId);
+      throw error;
+    }
+  });
 }
 
 async function discoverForCurrentAgent() {
@@ -238,6 +239,7 @@ async function discoverForCurrentAgent() {
 
     return prompt;
   } catch (err) {
+    throwIfRequestCancelled();
     console.error(`[MCP] Instance discovery failed: ${err.message}`);
     return null;
   }
@@ -346,11 +348,12 @@ async function prepareResourceTarget(port) {
       throw new Error("Select a Unity instance with unity_select_instance before reading project resources.");
     }
   }
+  throwIfRequestCancelled();
   getRequestContext().bridgeUrl = getActiveBridgeUrl();
 }
 
 // ─── Call Tool Handler ───
-server.setRequestHandler(CallToolRequestSchema, async (request) => runWithRequestContext({ agentId: PROCESS_AGENT_ID }, async () => {
+server.setRequestHandler(CallToolRequestSchema, async (request, extra) => runWithRequestContext({ agentId: PROCESS_AGENT_ID, signal: extra.signal }, async () => {
   const { name, arguments: args } = request.params;
   const finish = response => limitToolResponse(response, name);
 
@@ -411,7 +414,9 @@ server.setRequestHandler(CallToolRequestSchema, async (request) => runWithReques
 
     // Freeze this call's target even if another call switches the same agent's selection.
     if (name !== "unity_select_instance") getRequestContext().bridgeUrl = getActiveBridgeUrl();
+    throwIfRequestCancelled();
     const result = await tool.handler(handlerArgs);
+    throwIfRequestCancelled();
 
     // Build response content blocks
     const contentBlocks = [];
@@ -447,6 +452,7 @@ server.setRequestHandler(CallToolRequestSchema, async (request) => runWithReques
     return finish(response);
 
   } catch (error) {
+    throwIfRequestCancelled();
     return finish({
       content: [
         {
@@ -461,7 +467,7 @@ server.setRequestHandler(CallToolRequestSchema, async (request) => runWithReques
 
 // ─── MCP Resources: Expose project context files ───
 
-server.setRequestHandler(ListResourcesRequestSchema, async (request) => runWithRequestContext({ agentId: PROCESS_AGENT_ID }, async () => {
+server.setRequestHandler(ListResourcesRequestSchema, async (request, extra) => runWithRequestContext({ agentId: PROCESS_AGENT_ID, signal: extra.signal }, async () => {
   const port = configureRequestRouting(request);
   try {
     await prepareResourceTarget(port);
@@ -488,7 +494,7 @@ server.setRequestHandler(ListResourcesRequestSchema, async (request) => runWithR
   }
 }));
 
-server.setRequestHandler(ReadResourceRequestSchema, async (request) => runWithRequestContext({ agentId: PROCESS_AGENT_ID }, async () => {
+server.setRequestHandler(ReadResourceRequestSchema, async (request, extra) => runWithRequestContext({ agentId: PROCESS_AGENT_ID, signal: extra.signal }, async () => {
   const port = configureRequestRouting(request);
   const uri = request.params.uri;
   const match = uri.match(/^unity-context:\/\/(.+)$/);

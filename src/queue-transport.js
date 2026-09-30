@@ -1,11 +1,11 @@
 import { randomUUID } from "node:crypto";
 import { CONFIG } from "./config.js";
 import { pluginSupports } from "./capabilities.js";
+import { requestFetch, requestSleep as sleep, shareRequestWork, throwIfRequestCancelled } from "./request-cancellation.js";
 
 const MAX_RETRIES = 4;
 const queueModes = new Map();
 const negotiations = new Map();
-const sleep = ms => new Promise(resolve => setTimeout(resolve, ms));
 const backoff = attempt => 800 * 2 ** attempt;
 
 function notSent(error) {
@@ -26,9 +26,8 @@ function unknownOutcome(command, detail, identifiers = {}) {
 }
 
 async function fetchJson(url, options, timeoutMs = CONFIG.editorBridgeTimeout) {
-  const response = await fetch(url, { ...options, signal: AbortSignal.timeout(Math.max(1, Math.ceil(timeoutMs))) });
-  // Keep the deadline active until the entire response body has arrived.
-  const text = await response.text();
+  const response = await requestFetch(url, options, timeoutMs);
+  const text = response.text;
   if (!response.ok) {
     let body;
     try { body = JSON.parse(text); } catch { body = null; }
@@ -41,8 +40,7 @@ async function fetchJson(url, options, timeoutMs = CONFIG.editorBridgeTimeout) {
 }
 
 function negotiate(bridgeUrl, agentId) {
-  if (negotiations.has(bridgeUrl)) return negotiations.get(bridgeUrl);
-  const pending = (async () => {
+  return shareRequestWork(negotiations, bridgeUrl, async () => {
     for (let attempt = 0; ; attempt++) {
       try {
         const info = await fetchJson(`${bridgeUrl}/api/queue/info`, { headers: { "X-Agent-Id": agentId } });
@@ -53,15 +51,13 @@ function negotiate(bridgeUrl, agentId) {
             || info.queueRetryWindowMs > 120000) throw new Error("Invalid queue retry capability metadata");
         return info;
       } catch (error) {
+        throwIfRequestCancelled();
         if (error.status === 404) return null;
         if (!transient(error) || attempt >= MAX_RETRIES) throw error;
         await sleep(backoff(attempt));
       }
     }
-  })();
-  negotiations.set(bridgeUrl, pending);
-  pending.finally(() => negotiations.delete(bridgeUrl)).catch(() => {});
-  return pending;
+  });
 }
 
 async function legacy(command, body, bridgeUrl, agentId) {
@@ -72,6 +68,7 @@ async function legacy(command, body, bridgeUrl, agentId) {
       });
       return { success: true, data };
     } catch (error) {
+      throwIfRequestCancelled();
       if (notSent(error) && attempt < MAX_RETRIES) { await sleep(backoff(attempt)); continue; }
       if (notSent(error) || (error.status >= 400 && error.status < 500))
         return { success: false, error: error.message };
@@ -102,6 +99,7 @@ async function poll(command, ticketId, bridgeUrl, agentId, guard) {
       if (ticket.status !== "Queued" && ticket.status !== "Executing")
         return unknownOutcome(command, "Invalid queue status response", identifiers);
     } catch (error) {
+      throwIfRequestCancelled();
       if (error.status === 404 && ++missing < 5) {
         // Older plugins briefly lost visibility between dequeue and execution tracking.
       } else if (!transient(error)) {
@@ -115,12 +113,16 @@ async function poll(command, ticketId, bridgeUrl, agentId, guard) {
 }
 
 export async function sendQueuedCommand(command, params, bridgeUrl, agentId) {
+  throwIfRequestCancelled();
   const body = JSON.stringify(params);
   if (queueModes.get(bridgeUrl) === false) return legacy(command, body, bridgeUrl, agentId);
 
   let info;
   try { info = await negotiate(bridgeUrl, agentId); }
-  catch (error) { return { success: false, queueTransportError: true, error: `Queue capability check failed: ${error.message}. No command was submitted.` }; }
+  catch (error) {
+    throwIfRequestCancelled();
+    return { success: false, queueTransportError: true, error: `Queue capability check failed: ${error.message}. No command was submitted.` };
+  }
 
   const guard = info ? {
     requestId: randomUUID().replaceAll("-", ""),
@@ -142,6 +144,7 @@ export async function sendQueuedCommand(command, params, bridgeUrl, agentId) {
           && !(Number.isSafeInteger(id) && id > 0)) throw new Error("Missing or invalid queue ticket ID");
       if (guard && ticket.queueSessionId !== guard.queueSessionId) throw new Error("Queue acknowledgement session mismatch");
     } catch (error) {
+      throwIfRequestCancelled();
       lastError = error;
       if (error.status === 404 && !uncertain && !guard) {
         queueModes.set(bridgeUrl, false);

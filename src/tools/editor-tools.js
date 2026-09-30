@@ -2,6 +2,7 @@
 import * as bridge from "../unity-editor-bridge.js";
 import { formatResult, looksLikeErrorObject } from "../response-format.js";
 import { isUnknownRouteResult } from "../capabilities.js";
+import { requestSleep } from "../request-cancellation.js";
 
 // Shared shaping for image-returning graphics tools.
 // The bridge wraps plugin payloads as { success, data: { ..., base64 } } (queue mode)
@@ -4494,7 +4495,7 @@ export const editorTools = [
       // live under .data. Reading the top level made this early-feedback branch dead.
       const started = result.data ?? result;
       if (started.jobId && started.status === "running") {
-        await new Promise((r) => setTimeout(r, 2000));
+        await requestSleep(2000);
         try {
           return formatResult(await bridge.getTestJob({ jobId: started.jobId }));
         } catch (_) {
@@ -4548,7 +4549,7 @@ export const editorTools = [
           if (TERMINAL.has(status)) {
             return formatResult(lastResult);
           }
-          await new Promise((r) => setTimeout(r, 2000));
+          await requestSleep(2000);
         }
         // Timeout — return last known state
         return formatResult(lastResult || (await bridge.getTestJob(params)));

@@ -38,4 +38,4 @@ $env:UNITY_MCP_RESPONSE_PROJECT = 'C:/UnityMcpValidation/Queue66'
 npm run test:responses
 ```
 
-The live suite verifies the canonical project path and uses its discovered port explicitly. It writes `Library/UnityMcpResponseLimits.json`. Without the environment variable, it skips without contacting Unity. This work does not change request cancellation or certify every tool result on every Unity version.
+The live suite verifies the canonical project path and uses its discovered port explicitly. It writes `Library/UnityMcpResponseLimits.json`. Without the environment variable, it skips without contacting Unity. Response limiting is separate from [request cancellation](cancellation.md); these checks do not certify every tool result on every Unity version.

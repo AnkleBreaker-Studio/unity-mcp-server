@@ -148,6 +148,7 @@ Code execution reuses bounded compiler metadata and reports cache activity in `u
 - **Compilation in progress:** wait for `isCompiling: false`, then inspect compilation errors. An empty error list during compilation is inconclusive.
 - **Tool unavailable:** check category switches and optional packages in the dashboard. Advanced route discovery supports newer plugins without expanding the initial tool list.
 - **Response too large:** request smaller read results; inspect the effects before repeating a write. [Response budgets and image handling](docs/response-limits.md).
+- **Stopped a request:** the server stops waiting and polling; accepted Unity work can still finish. [Cancellation behavior](docs/cancellation.md).
 - **Client registry limit:** set `UNITY_MCP_COMPACT_TOOLS=1`. Full parameter documentation remains available through advanced discovery.
 
 ## Support and license

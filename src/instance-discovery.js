@@ -8,6 +8,7 @@
 import { readFileSync } from "fs";
 import { CONFIG } from "./config.js";
 import { debugLog } from "./state-persistence.js";
+import { requestFetch, throwIfRequestCancelled } from "./request-cancellation.js";
 
 import { getRequestContext, getCurrentAgentId } from "./request-context.js";
 
@@ -267,6 +268,7 @@ export async function discoverInstances() {
       instances = validated.filter((inst) => inst !== null);
     }
   } catch (err) {
+    throwIfRequestCancelled();
     console.error(`[MCP Discovery] Error reading registry: ${err.message}`);
   }
 
@@ -445,12 +447,12 @@ function readRegistryFile() {
 async function pingInstance(port) {
   try {
     const url = `http://${CONFIG.editorBridgeHost}:${port}/api/ping`;
-    const response = await fetch(url, {
+    const response = await requestFetch(url, {
       method: "GET",
-      signal: AbortSignal.timeout(1500), // Short timeout for discovery
-    });
+    }, 1500);
     return response.ok;
   } catch {
+    throwIfRequestCancelled();
     return false;
   }
 }
@@ -463,14 +465,13 @@ async function pingInstance(port) {
 async function getInstanceInfo(port) {
   try {
     const url = `http://${CONFIG.editorBridgeHost}:${port}/api/ping`;
-    const response = await fetch(url, {
+    const response = await requestFetch(url, {
       method: "GET",
-      signal: AbortSignal.timeout(2000),
-    });
+    }, 2000);
 
     if (!response.ok) return null;
 
-    const data = await response.json();
+    const data = JSON.parse(response.text);
     return {
       projectName: data.projectName || data.project || null,
       projectPath: data.projectPath || null,
@@ -485,6 +486,7 @@ async function getInstanceInfo(port) {
       pluginVersion: typeof data.pluginVersion === "string" ? data.pluginVersion : undefined,
     };
   } catch {
+    throwIfRequestCancelled();
     return null;
   }
 }

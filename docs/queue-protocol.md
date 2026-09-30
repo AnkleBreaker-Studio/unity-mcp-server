@@ -15,6 +15,8 @@ Both updated components are needed for protected submission retries. A timeout n
 
 The [live compatibility matrix](compatibility.md) verifies routine workflows with all four released/current server-plugin combinations on Unity 6.6, plus simultaneous commands to editors using different plugin versions. It preserves the older server's retry limitations and does not imply older-Unity runtime coverage.
 
+MCP client cancellation ends server-owned observation, pending retry delays and HTTP reads. It does not remove an accepted Unity ticket or roll back its effects. Shared capability negotiation remains alive for other callers. See [cancellation behavior and tests](cancellation.md).
+
 ## Handshake and endpoints
 
 `GET /api/queue/info` advertises `protocolVersion` (at least 2; currently 3), a 32-character `queueSessionId`, monotonic `queueSessionTimeMs`, and `queueRetryWindowMs: 120000`. It runs on the listener thread. The server performs this read before each queued operation and shares concurrent negotiations for one endpoint. This adds one local read, allowing a fresh session/deadline without waiting for Unity's main thread.

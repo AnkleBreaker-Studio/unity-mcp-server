@@ -2,7 +2,7 @@ import { AsyncLocalStorage } from "node:async_hooks";
 
 // Stdio requests can overlap at every await; process globals cannot carry routing state.
 const requests = new AsyncLocalStorage();
-const defaults = { agentId: "default", portOverride: null, bridgeUrl: null };
+const defaults = { agentId: "default", portOverride: null, bridgeUrl: null, signal: undefined };
 
 export function getRequestContext() {
   return requests.getStore() || defaults;

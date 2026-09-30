@@ -21,7 +21,7 @@ Legacy waiters expire after 30 seconds. Unstarted work is removed or skipped; an
 
 | State | Owner and lifetime |
 |---|---|
-| Agent ID, explicit port, pinned bridge URL | One asynchronous MCP call |
+| Agent ID, explicit port, pinned bridge URL, cancellation signal | One asynchronous MCP call |
 | Selected editor and selection requirement | Agent within a Node process |
 | Automatic context injection | Agent + target URL + known project path |
 | Queue protocol support | Bridge endpoint within a Node process |
@@ -33,6 +33,8 @@ Legacy waiters expire after 30 seconds. Unstarted work is removed or skipped; an
 Stdio does **not** serialize handler completion. Handlers overlap whenever they await I/O. Agent/port globals are therefore unsuitable for carrying request identity. The regression suite overlaps two real MCP calls and checks the returned project, injected context and polling headers.
 
 Project-context resources use the same routing isolation while retaining their category-relative URIs. A missing selection cannot read another project's default-port context; a vanished selected project keeps requiring explicit reselection. See [resource semantics and validation](resources.md).
+
+Per-request cancellation reaches editor HTTP reads and observation loops. Shared discovery/negotiation remains active for other observers and is aborted when none remain. See [cancellation and accepted-operation semantics](cancellation.md).
 
 ## Plugin subsystems
 

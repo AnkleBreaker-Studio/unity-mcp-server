@@ -4,6 +4,7 @@ import { CONFIG } from "./config.js";
 import { getActiveBridgeUrl } from "./instance-discovery.js";
 import { sendQueuedCommand } from "./queue-transport.js";
 import { pluginSupports } from "./capabilities.js";
+import { requestFetch, throwIfRequestCancelled } from "./request-cancellation.js";
 
 function getBridgeUrl() { return getActiveBridgeUrl(); }
 
@@ -22,22 +23,22 @@ export async function sendCommand(command, params = {}) {
 export async function getQueueInfo() {
   try {
     const url = `${getBridgeUrl()}/api/queue/info`;
-    const response = await fetch(url, {
+    const response = await requestFetch(url, {
       method: "GET",
       headers: {
         "X-Agent-Id": getCurrentAgentId(),
       },
-      signal: AbortSignal.timeout(CONFIG.editorBridgeTimeout),
-    });
+    }, CONFIG.editorBridgeTimeout);
 
     if (!response.ok) {
-      const text = await response.text();
+      const text = response.text;
       return { success: false, error: `HTTP ${response.status}: ${text}` };
     }
 
-    const data = await response.json();
+    const data = JSON.parse(response.text);
     return { success: true, data };
   } catch (error) {
+    throwIfRequestCancelled();
     return {
       success: false,
       error: `Failed to get queue info: ${error.message}`,
@@ -52,22 +53,22 @@ export async function getQueueInfo() {
 export async function getTicketStatus(ticketId) {
   try {
     const url = `${getBridgeUrl()}/api/queue/status?ticketId=${ticketId}`;
-    const response = await fetch(url, {
+    const response = await requestFetch(url, {
       method: "GET",
       headers: {
         "X-Agent-Id": getCurrentAgentId(),
       },
-      signal: AbortSignal.timeout(CONFIG.editorBridgeTimeout),
-    });
+    }, CONFIG.editorBridgeTimeout);
 
     if (!response.ok) {
-      const text = await response.text();
+      const text = response.text;
       return { success: false, error: `HTTP ${response.status}: ${text}` };
     }
 
-    const data = await response.json();
+    const data = JSON.parse(response.text);
     return { success: true, data };
   } catch (error) {
+    throwIfRequestCancelled();
     return {
       success: false,
       error: `Failed to get ticket status: ${error.message}`,
@@ -80,16 +81,16 @@ export async function getTicketStatus(ticketId) {
  */
 export async function ping() {
   try {
-    const response = await fetch(`${getBridgeUrl()}/api/ping`, {
+    const response = await requestFetch(`${getBridgeUrl()}/api/ping`, {
       method: "GET",
-      signal: AbortSignal.timeout(3000),
-    });
+    }, 3000);
     if (response.ok) {
-      const data = await response.json();
+      const data = JSON.parse(response.text);
       return { connected: true, ...data };
     }
     return { connected: false, error: `HTTP ${response.status}` };
   } catch {
+    throwIfRequestCancelled();
     return { connected: false, error: "Unity Editor bridge not reachable" };
   }
 }
@@ -1353,17 +1354,16 @@ export async function getProjectContext(category = null) {
     ? `${getBridgeUrl()}/api/context/${encodeURIComponent(category)}`
     : `${getBridgeUrl()}/api/context`;
 
-  const response = await fetch(url, {
+  const response = await requestFetch(url, {
     method: "GET",
     headers: { "X-Agent-Id": getCurrentAgentId() },
-    signal: AbortSignal.timeout(5000),
-  });
+  }, 5000);
 
   if (!response.ok) {
     throw new Error(`Context request failed: HTTP ${response.status}`);
   }
 
-  return response.json();
+  return JSON.parse(response.text);
 }
 
 // ─── Testing ───

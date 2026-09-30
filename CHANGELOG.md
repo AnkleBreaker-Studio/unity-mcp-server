@@ -4,6 +4,11 @@ All notable changes to this package will be documented in this file.
 
 ## [Unreleased]
 
+### Request cancellation
+- Propagate SDK cancellation through editor HTTP/body reads, discovery, queue negotiation, retry delays, ticket polling and test-job waits. Do not submit deferred commands or fetch automatic context after cancellation.
+- Keep shared work alive for remaining callers; abort and evict it when its last observer leaves. Preserve selections after cancelled validation and remove completed timers/listeners.
+- Add 16 behavior regressions and three cleanup/cache checks; 15 behavior failures reproduce on the prior server. All 137 tests pass locally on Node 18 and 22. Live Unity 6.6 checks prove observation stops while accepted work executes once. See `docs/cancellation.md` for the distinction from cancelling Unity operations.
+
 ### Response budgets and image outcomes
 - Count serialized UTF-8 bytes, including JSON escaping and image/metadata overhead; validate limit settings and cover early errors and project-context reads.
 - Return an explicit bounded error for oversized tool results, retaining recovery details when they fit. Prepend soft warnings without exceeding the hard limit or replacing the final structured result.
