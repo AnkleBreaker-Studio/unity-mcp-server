@@ -4,6 +4,10 @@ All notable changes to this package will be documented in this file.
 
 ## [Unreleased]
 
+### Dashboard evidence
+- Document the companion plugin's card reuse, project-scoped section preferences, corrected narrow-window layout and accurate latest-request label.
+- Record baseline/corrected refresh measurements, attached-window geometry and script-reload checks, monitoring regressions and compiler-only minimum-version validation. The changing-agent workload records 83% fewer allocation events; see `docs/dashboard.md` for measurement limits.
+
 ### Code execution evidence
 - Document the companion plugin's bounded metadata reuse, in-memory compilation, source-relative diagnostics and additive compiler counters in editor state.
 - Record baseline failures and a local twenty-call measurement of 15.85 s before / 1.01 s after, with cache-pressure and live workflow checks. See `docs/code-execution.md` for runtime and measurement limits.

@@ -1,0 +1,151 @@
+{
+  "recordedAt": "2026-09-30T20:55:31.099Z",
+  "platform": "Windows",
+  "unityVersion": "6000.6.2f1",
+  "baselinePluginCommit": "f5f5bac7e3e662acee42aa4b670abb69bdff3a13",
+  "baseline": {
+    "unityVersion": "6000.6.2f1",
+    "idle": {
+      "iterations": 100,
+      "elapsedMs": 38.4829,
+      "allocations": 33700,
+      "allocatedBytes": 1043300,
+      "profilerControlAllocations": 1
+    },
+    "twentyStableAgents": {
+      "iterations": 100,
+      "elapsedMs": 75.1241,
+      "allocations": 96000,
+      "allocatedBytes": 2483600,
+      "profilerControlAllocations": 1
+    },
+    "unshownActivityDoesNotRebuild": false,
+    "visibleMetricsRefresh": true,
+    "changingAgents": {
+      "iterations": 100,
+      "elapsedMs": 274.8611,
+      "allocations": 210000,
+      "allocatedBytes": 5624400,
+      "profilerControlAllocations": 1
+    },
+    "scrollRootsBefore": 1,
+    "scrollRootsAfter": 2,
+    "recreateGuiDoesNotDuplicateControls": false,
+    "failures": [
+      "unshownActivityDoesNotRebuild",
+      "recreateGuiDoesNotDuplicateControls"
+    ],
+    "passed": false,
+    "fixtureSessionsRemoved": true
+  },
+  "corrected": {
+    "unityVersion": "6000.6.2f1",
+    "idle": {
+      "iterations": 100,
+      "elapsedMs": 44.6819,
+      "allocations": 33400,
+      "allocatedBytes": 996300,
+      "profilerControlAllocations": 1
+    },
+    "twentyStableAgents": {
+      "iterations": 100,
+      "elapsedMs": 36.7563,
+      "allocations": 33400,
+      "allocatedBytes": 876800,
+      "profilerControlAllocations": 1
+    },
+    "unshownActivityDoesNotRebuild": true,
+    "visibleMetricsRefresh": true,
+    "changingAgents": {
+      "iterations": 100,
+      "elapsedMs": 47.7809,
+      "allocations": 34800,
+      "allocatedBytes": 1077700,
+      "profilerControlAllocations": 1
+    },
+    "changedAndUnchangedCardsReused": true,
+    "oldOutstandingSessionVisible": true,
+    "idleSessionExpiresWithoutRebuildingOthers": true,
+    "returningSessionVisible": true,
+    "emptyStateRestored": true,
+    "newAgentReplacesEmptyState": true,
+    "scrollRootsBefore": 1,
+    "scrollRootsAfter": 1,
+    "recreateGuiDoesNotDuplicateControls": true,
+    "savedFoldoutStateRestored": true,
+    "failures": [],
+    "passed": true,
+    "fixtureSessionsRemoved": true
+  },
+  "live": {
+    "nestedToggleIgnored": true,
+    "oldSchedulePaused": true,
+    "newScheduleActive": true,
+    "foldoutsSurviveGuiRecreation": true,
+    "foldoutsSurviveScriptReload": true,
+    "geometryFixtureCreated": true,
+    "narrowWindowWidth": 360,
+    "horizontalOverflow": [],
+    "longAgentNameLength": 223,
+    "longRequestLength": 300,
+    "fullValuesInTooltips": true,
+    "longTextEllipsis": true,
+    "geometryFixtureRemoved": true,
+    "preferencesRestored": true,
+    "restoredWindowBounds": "(x:0.00, y:26.00, width:1024.00, height:843.00)"
+  },
+  "monitoringRegression": {
+    "unityVersion": "6000.6.2f1",
+    "passed": true,
+    "resultCases": 15,
+    "classificationMismatches": 0,
+    "rawResultsPreserved": true,
+    "commandErrors": 7,
+    "exceptions": 1,
+    "duplicateCallbacks": 20,
+    "deferredHistoryRecords": 1,
+    "timedOutHistoryRecords": 1,
+    "lateCallbackIgnored": true,
+    "legacyResultPreserved": true,
+    "dashboardShowsCommandError": true,
+    "dashboardShowsExceptionCount": true,
+    "dashboardErrorRow": true,
+    "historyEndpointError": true,
+    "diagnosticBounded": true,
+    "undoPreserved": true,
+    "undoWithHistoryBacklog": true,
+    "pendingHistorySavedBeforeReload": true,
+    "clearIncludesPendingHistory": true,
+    "historyRoundTrip": true,
+    "oldHistoryLoads": true,
+    "maximumPendingHistory": 10000,
+    "historyRecordsDropped": 1,
+    "backlogDrained": true,
+    "error": ""
+  },
+  "minimumVersionCompilation": {
+    "unityVersion": "2021.3.18f1",
+    "sourceCount": 70,
+    "referenceCount": 211,
+    "passed": true,
+    "check": "C# compilation against installed Unity assemblies; no editor execution or package import",
+    "excludedIntegrations": [
+      "UMA",
+      "ProBuilder"
+    ]
+  },
+  "limitations": [
+    "The batch measurements invoke 100 warmed RefreshAll calls on an unattached EditorWindow; they exclude panel layout and rendering.",
+    "The changing workload updates one of twenty agent sessions before each refresh. Allocation recording uses current-thread GC.Alloc with a positive control.",
+    "Elapsed times and byte readings vary across local runs; idle CPU improvement and whole-editor allocation reductions are not established.",
+    "The live check inspects UI Toolkit geometry at 360 pixels, preferences across GUI recreation and script reload, and schedule replacement. It is not a pixel-level visual review.",
+    "Original 1024 by 843 window size restored; Unity reports clamped x/y coordinates after assigning the original rectangle.",
+    "Real Unity 2021 editor execution remains deferred; the minimum-version check compiles against installed API assemblies only."
+  ],
+  "correctedPluginCommit": "631b5d264b11f5e9af7b3cc1c15a0f6c4ae4956b",
+  "pluginCi": {
+    "url": "https://github.com/AnkleBreaker-Studio/unity-mcp-plugin/actions/runs/36776145255",
+    "conclusion": "success",
+    "routes": 338
+  }
+}
