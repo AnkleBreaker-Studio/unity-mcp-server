@@ -1,5 +1,7 @@
 # Tools and demonstrations
 
+For serialized enum values, asset-result limits, capture cleanup and repeatable live validation, see [editor workflow contracts](editor-workflows.md).
+
 ### Neon Brick Breaker — Built from scratch by AI in under 5 minutes
 > Claude creates the entire game: scene setup, neon materials with bloom post-processing, brick grid layout, game scripts, VFX, and UI — all through Unity MCP commands.
 

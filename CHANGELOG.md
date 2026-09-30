@@ -15,6 +15,7 @@ All notable changes to this package will be documented in this file.
 - Scope protected polling to the editor queue session, retry transient GET failures, and include response-body reads in per-request and overall polling deadlines.
 
 ### Changed
+- Document explicit stored enum values while retaining numeric indices. Expose asset-result and Scene screenshot bounds used by the updated companion plugin; keep the rich tool registry under its existing 48 KB budget.
 - Preserve MPPM virtual-player identity through registry discovery, port scanning and instance listings. Add `isVirtualPlayer`, `mainProjectPath` and `virtualPlayerId` without changing ParrelSync fields; older plugins may omit the new metadata.
 - Expose optional `managedCodeVariant` for Unity 6.6 builds and require plugin protocol 3 before submitting an explicit variant; older plugins keep accepting existing build arguments.
 - Remove duplicate identity/liveness pings from discovery and selection validation.
@@ -23,6 +24,8 @@ All notable changes to this package will be documented in this file.
 - Isolate queue transport in `queue-transport.js` and document the bounded retry contract and old/new compatibility matrix.
 
 ### Validation
+- Add opt-in `test:features` for scenes, sparse enums/flags, references, materials, prefabs, asset/hierarchy limits and Scene captures. Verify invalid writes preserve data and failed captures restore render targets without retaining capture textures.
+- Record a compiler-only Unity 2021.3.18f1 check and the Dashboard namespace correction it exposed. Actual older-editor execution is deferred; this does not certify package import or runtime behavior.
 - Add opt-in `test:multiplayer` for MPPM 3.0 on Unity 6.6: native scenario settings, Host/Client launch, invalid-create rejection, two sets of 12 concurrent commands across separate processes, shared script recompilation and fixture restoration.
 - The ordinary Node suite now has 83 passing tests, including BOM registry reading and MPPM identity through both discovery paths.
 - Document and retain companion-plugin command-outcome evidence: distinct command errors, exceptions and timeouts; exactly-once callback history; legacy result and history compatibility; bounded history backlog and preserved undo behavior.

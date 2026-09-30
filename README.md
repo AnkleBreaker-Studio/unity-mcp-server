@@ -120,9 +120,11 @@ Discover advanced capabilities with `unity_list_advanced_tools`. Filter by categ
 
 ## Compatibility and validation
 
-The plugin declares **Unity 2021.3+** support and retains version-gated object identity APIs. Server and plugin versions advance independently; they do not need matching version numbers.
+The plugin declares **Unity 2021.3.18f1+** support and retains version-gated object identity APIs. Server and plugin versions advance independently; they do not need matching version numbers.
 
 The current modernization branch has been compiled and exercised in **Unity 6000.6.2f1**: queue lifecycle, concurrent commands to two real editors, four Play Mode reload configurations and compiled build diagnostics. MPPM 3.0 live tests also cover Host/Client launch, isolated agent routing and shared script recompilation. Older Unity/MPPM versions, ParrelSync lifecycle and game networking still need separate validation. [Evidence, limits and remaining work →](docs/modernization.md)
+
+Live scene, component, reference, prefab and screenshot workflows verify data preservation after rejected operations and texture cleanup after capture failures. The minimum Unity version also passes a compiler-only API check; actual older-editor execution is deferred. [Workflow contracts and repeatable checks →](docs/editor-workflows.md)
 
 On Unity 6.6, Development builds default to Checked managed diagnostics. Optional `managedCodeVariant` selects Release, Instrumented, Checked or Debug for one build, then restores the project setting. [Build behavior and compatibility →](docs/builds.md)
 

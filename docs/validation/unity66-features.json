@@ -1,0 +1,111 @@
+{
+  "recordedAt": "2026-09-30T19:23:22.461Z",
+  "unityVersion": "6000.6.2f1",
+  "platform": "Windows Editor",
+  "serverBaseCommit": "5ba5df8e8bdf219a45752f7e31b871c1f813a6f9",
+  "pluginBaseCommit": "42437f0f1a7a59d637580d656852f3b2195e7e38",
+  "baseline": {
+    "combinedEnumFlags": {
+      "storedValue": 3,
+      "enumValueIndex": -1,
+      "error": "Index was outside the bounds of the array."
+    },
+    "invalidEnumName": {
+      "input": "DefinitelyNotAnEnumValue",
+      "reportedSuccess": true,
+      "readback": "None",
+      "changed": false
+    },
+    "assetLimit": {
+      "requestedMaxResults": 1,
+      "returnedCount": 4
+    },
+    "failedSceneCapture": {
+      "error": "UnauthorizedAccessException",
+      "targetRestored": false,
+      "activeRestored": false,
+      "extraRenderTextures": 2,
+      "extraTextures": 1,
+      "scope": "Initial un-warmed count includes Unity rendering caches; not all extra render textures are attributable to the plugin."
+    }
+  },
+  "validation": {
+    "ordinaryNodeTests": 83,
+    "nodeVersions": [
+      "v18.20.8",
+      "v22.18.0"
+    ],
+    "screenshotMeasurement": "Warm Camera.Render at matching dimensions before snapshots; inspect new live textures after a directory-write failure and a successful Library PNG. Preserve existing render targets; never destroy Unity temporary buffers."
+  },
+  "runs": [
+    {
+      "nodeVersion": "v18.20.8",
+      "checks": [
+        "Unsaved scene guards reject without dialogs; explicit scene save and string object IDs work",
+        "Sparse enum names and legacy numeric indices, combined flags, unknown stored values and eleven invalid writes with unchanged data",
+        "Scene and material references survive prefab save/instantiate; missing references and asset overwrites preserve data",
+        "Asset and hierarchy limits report truncation; folder deletion requires explicit recursion",
+        "Scene screenshot writes a valid PNG with the requested dimensions",
+        "Successful and failed screenshots restore render targets and release their textures; invalid dimensions fail before rendering",
+        "Scene reopening preserves serialized prefab data"
+      ],
+      "unityVersion": "6000.6.2f1",
+      "screenshotState": [
+        {
+          "error": "UnauthorizedAccessException",
+          "targetRestored": true,
+          "activeRestored": true,
+          "extraTargets": [],
+          "extraTextures": 0
+        },
+        {
+          "error": "",
+          "targetRestored": true,
+          "activeRestored": true,
+          "extraTargets": [],
+          "extraTextures": 0
+        }
+      ],
+      "passed": true,
+      "restored": true
+    },
+    {
+      "nodeVersion": "v22.18.0",
+      "checks": [
+        "Unsaved scene guards reject without dialogs; explicit scene save and string object IDs work",
+        "Sparse enum names and legacy numeric indices, combined flags, unknown stored values and eleven invalid writes with unchanged data",
+        "Scene and material references survive prefab save/instantiate; missing references and asset overwrites preserve data",
+        "Asset and hierarchy limits report truncation; folder deletion requires explicit recursion",
+        "Scene screenshot writes a valid PNG with the requested dimensions",
+        "Successful and failed screenshots restore render targets and release their textures; invalid dimensions fail before rendering",
+        "Scene reopening preserves serialized prefab data"
+      ],
+      "unityVersion": "6000.6.2f1",
+      "screenshotState": [
+        {
+          "error": "UnauthorizedAccessException",
+          "targetRestored": true,
+          "activeRestored": true,
+          "extraTargets": [],
+          "extraTextures": 0
+        },
+        {
+          "error": "",
+          "targetRestored": true,
+          "activeRestored": true,
+          "extraTargets": [],
+          "extraTextures": 0
+        }
+      ],
+      "passed": true,
+      "restored": true
+    }
+  ],
+  "limits": [
+    "One disposable editor with the built-in render pipeline",
+    "Scene view capture only; Game view and native window captures are outside this suite",
+    "No total editor/GPU allocation claim",
+    "Asset search still enumerates matching GUIDs before limiting metadata",
+    "Optional package integrations are outside this suite"
+  ]
+}

@@ -30,6 +30,8 @@ The objective remains a broad improvement of the existing MCP and plugin: backwa
 | Live command monitoring | A real missing-object lookup reports MCP `isError`, one session command error and one flagged history record, with Node 18 and 22 | One open Unity 6000.6.2f1 editor; separate opt-in `npm run test:monitoring`, not ordinary CI |
 | Unity 6.6 | Package compiled and validation runner passed on `6000.6.2f1` | Isolated projects; optional integrations need individual verification |
 | Native MPPM 3.0 | Host/Client scenario, 12 overlapping commands before and after shared script recompilation, settings and player cleanup | Node 18 and 22 on Windows; older MPPM, ParrelSync lifecycle and game networking untested |
+| Editor data workflows | Scenes, sparse enums/flags, references, materials, prefabs, asset/hierarchy limits and successful/failed captures | Real Unity 6.6 editor on Node 18 and 22; unique fixtures removed and original scene restored |
+| Minimum-version API compilation | All 66 editor source files compile against installed Unity 2021.3.18f1 assemblies after a Dashboard namespace fix | Compiler-only; bundled template package DLLs; no editor execution/UPM resolution; UMA/ProBuilder excluded |
 | Minimal project installation | Second import exposed missing uGUI; declare uGUI and Test Framework in the package | Validation manifest now depends only on the plugin; Unity 6.6 resolves uGUI 2.6.0 and Test Framework 1.8.0 |
 | README | New vector architecture visual, installation flow, workflow tables, detailed linked guides | Existing demo media retained; competitor claims corrected against sources |
 
@@ -78,13 +80,13 @@ npm run test:lifecycle
 
 This opt-in suite selects by project name and verifies each actual project path. It enters/exits Play Mode in the first project, requests a script reload, checks that the second project remains unaffected, and restores the original Play Mode options. It writes `Library/UnityMcpEditorLifecycle.json` in the first project. The build and lifecycle suites are separate from `npm test` and ordinary CI because they operate real disposable editors.
 
-Local evidence for this iteration lives in the sibling workspace directory `../validation/Queue66/`. Only Unity 6.6.2 has an executable installed: the folders named 6000.0.26f1 and 6000.3.3f1 are incomplete installations. Older-version tests have **not** passed yet.
+Local live-editor evidence lives in the sibling workspace directory `../validation/Queue66/`. Unity 6.6.2 runs there. The official Unity 2021.3.18f1 editor was installed separately and used for a passing compiler-only API check, but its batch startup stopped at license initialization. At the maintainer's request, further older-editor execution is deferred and will be revisited for reported compatibility issues. The folders named 6000.0.26f1 and 6000.3.3f1 remain incomplete installations.
 
 ## Remaining work before completion
 
-1. Complete route-family review and real editor tests: scene/component/asset operations, screenshots, code execution, undo, packages, tests, builds and optional integrations.
+1. Continue route-family review beyond the passing scene/component/reference/prefab/asset/Scene-capture workflow: code execution boundaries, undo, packages, tests, remaining screenshots, builds and optional integrations.
 2. Expand monitoring end to end: reload counters and interactive dashboard review. Command-result errors and terminal history now have regression coverage, alongside session retention and empty queue allocation fixes. Continue measuring dashboard and active-work costs.
-3. Test old/new server-plugin combinations and older supported Unity versions, not just the new server's legacy mock transport. Add repeatable CI coverage where feasible.
+3. Test old/new server-plugin combinations, not just the new server's legacy mock transport. Actual older-Unity execution is deferred by maintainer direction; retain the minimum-version compiler check and revisit runtime compatibility for reported issues. Add repeatable CI coverage where feasible.
 4. Extend multiplayer validation to older MPPM versions, ParrelSync lifecycle and game networking. Unity 6.6 / MPPM 3.0 now passes native Host/Client launch, two sets of 12 overlapping commands through separate agent selections, virtual-player stop/start and shared script recompilation.
 5. Extend actual reload/lost-ticket recovery to other editor versions and client/plugin combinations. Unity 6.6 script reload now confirms one execution plus an unknown result, and Play/Stop recover by readback. Never infer that a timeout means a write did not occur.
 6. Continue reviewing Unity 6.6 semantic changes and optional-package APIs. Managed Code Variant builds now have compiled evidence on Windows Mono; other build platforms and IL2CPP remain untested. Play Mode tests cover the four existing reload combinations, not all scene restoration semantics or new Unity 6.6 optimizations.
@@ -99,5 +101,7 @@ The command-outcome/history changes are published in plugin commit `b3dbef2`. Lo
 The [MPPM guide](multiplayer.md) and [raw multiplayer report](validation/unity66-multiplayer.json) record the native Unity 6.6 findings and live verification. Scenario creation now writes the settings Unity executes, activation selects the native Play Mode scenario, and discovery preserves virtual-player identity. A registry BOM parsing regression is covered outside the fallback scan range. The ordinary server suite has 83 tests. Live MPPM runs pass on Node 18 and 22. A separate package-absent fixture reports native API availability, package installation and player initialization independently. These checks cover editor orchestration and isolation, not network connections in a game. Parent ports changed across some Play Mode reloads; identity-based rediscovery passes, while listener rebinding latency remains a review item.
 
 ## Version references
+
+The [editor workflow guide](editor-workflows.md) records enum compatibility, asset result limits and capture resource ownership. Its [live report](validation/unity66-features.json) preserves the reproduced failures and successful Node 18/22 runs. The [minimum-version report](validation/unity2021-api.json) distinguishes C# compilation from the deferred real-editor check. The normal server suite remains 83 passing tests on Node 18 and 22.
 
 The [Unity 6.6 upgrade guide](https://docs.unity.com/en-us/engine/6000.6/manual/upgrade-guides/upgrade-guide-unity66) is the current reference for version-specific behavior. The [architecture map](architecture.md) records the actual ownership of state and the execution chain. Product comparisons use [first-party sources](comparison.md), with no inferred claims of competitors lacking capabilities.

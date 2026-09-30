@@ -260,14 +260,14 @@ export const editorTools = [
   },
   {
     name: "unity_component_set_property",
-    description: "Set a property value on a component. Supports floats, ints, strings, bools, vectors, colors, and object references. For ObjectReference properties, pass value as: an asset path string, a scene object name string, null to clear, or an object with {assetPath}, {instanceId}, or {gameObject, componentType}.",
+    description: "Set a serialized component property: numbers, strings, bools, vectors, colors, enums or object references.",
     inputSchema: {
       type: "object",
       properties: {
         gameObjectPath: { type: "string", description: "Path or name of target GameObject" },
         componentType: { type: "string", description: "Component type name" },
         propertyName: { type: "string", description: "Name of the property to set" },
-        value: { type: ["string", "number", "boolean", "object", "array", "null"], description: "Value to set. ObjectReference accepts: asset path, scene object name, null, or {assetPath?, instanceId?, gameObject?, componentType?}" },
+        value: { type: ["string", "number", "boolean", "object", "array", "null"], description: "ObjectReference: asset path, scene name, null, or {assetPath?,instanceId?,gameObject?,componentType?}. Enum: name, index (0-based), or {enumValue:int} for flags/raw values." },
       },
       required: ["gameObjectPath", "componentType", "propertyName", "value"],
     },
@@ -396,7 +396,7 @@ export const editorTools = [
         type: { type: "string", description: "Asset type filter: Script, Scene, Prefab, Material, Texture, AudioClip, AnimationClip, Shader, Font, Mesh, Model" },
         search: { type: "string", description: "Search query string" },
         recursive: { type: "boolean", description: "Search recursively in subfolders (default: true)" },
-        maxResults: { type: "number", description: "Maximum assets to return (default: 500). Use lower values for large projects." },
+        maxResults: { type: "number", minimum: 1, maximum: 10000, description: "Limit 1-10000 (default 500). Returns totalCount and truncated." },
       },
     },
     handler: async (params) => formatResult(await bridge.getAssetList(params)),
@@ -2903,8 +2903,8 @@ export const editorTools = [
       type: "object",
       properties: {
         path: { type: "string", description: "Save path (default: Assets/Screenshots/SceneView_timestamp.png)" },
-        width: { type: "number", description: "Image width (default: 1920)" },
-        height: { type: "number", description: "Image height (default: 1080)" },
+        width: { type: "number", minimum: 1, maximum: 8192, description: "Width 1-8192 (default 1920), at most 33554432 pixels total." },
+        height: { type: "number", minimum: 1, maximum: 8192, description: "Height 1-8192 (default 1080)." },
       },
     },
     handler: async (params) => formatResult(await bridge.captureSceneView(params)),
