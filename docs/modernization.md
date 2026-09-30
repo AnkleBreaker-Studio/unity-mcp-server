@@ -46,6 +46,8 @@ Build and live-editor checkpoints: server `843088b`, plugin `98b6d11`. [All eigh
 
 The [queue health report](validation/unity66-queue-health.json) adds retention, visibility, scheduling and controlled allocation measurements. The [full queue regression report after these changes](validation/unity66-queue-health-regressions.json) passes all ten check groups, including actual HTTP dispatch, duplicate callbacks and real timeout races. See [queue monitoring](queue-monitoring.md) for policy semantics, measurement limits and reproduction with `-Suite Health`.
 
+Queue health checkpoints: plugin `ca3233e`, server documentation `d4a1966`. The [plugin CI check passed](https://github.com/AnkleBreaker-Studio/unity-mcp-plugin/actions/runs/36752412519), validating 338 routes and the 92-entry read policy. Local health and full queue suites passed on Unity 6000.6.2f1; both open validation editors also compiled without errors. Server runtime code is unchanged from the 80-test checkpoint above.
+
 ## Reproduce
 
 Server:
