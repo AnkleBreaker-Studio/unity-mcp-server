@@ -34,7 +34,8 @@
     <text x="404" y="406" font-size="17" fill="#afc1d8">Core tools + on-demand discovery</text>
     <text x="404" y="440" font-size="17" fill="#afc1d8">Queue tickets + result polling</text>
 
-    <path d="M711 368H745V306H780M745 368V436H780" fill="none" stroke="#66eed4" stroke-width="2" marker-end="url(#arrow)"/>
+    <path d="M711 368H745V306H780" fill="none" stroke="#66eed4" stroke-width="2" marker-end="url(#arrow)"/>
+    <path d="M745 368V436H780" fill="none" stroke="#66eed4" stroke-width="2" marker-end="url(#arrow)"/>
     <text x="803" y="238" font-size="13" fill="#8ba4c2" letter-spacing="2">03 / WORK ACROSS PROJECTS</text>
     <rect x="803" y="260" width="349" height="103" rx="15" fill="#102238" stroke="#28415b"/>
     <text x="825" y="299" font-size="22" fill="#f2f7ff" font-weight="600">Unity / Project A</text>

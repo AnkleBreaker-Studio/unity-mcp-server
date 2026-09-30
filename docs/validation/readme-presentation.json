@@ -1,0 +1,159 @@
+{
+  "checkedOn": "2026-09-30",
+  "scope": "Documentation and SVG presentation only. Server and plugin runtime code is unchanged.",
+  "renderer": {
+    "engine": "Chromium through Playwright",
+    "mode": "headless",
+    "markdown": "marked 18 with a local GitHub-style stylesheet",
+    "note": "This is a local preview, not a screenshot of GitHub's hosted renderer or Unity's Dashboard."
+  },
+  "viewports": [
+    {
+      "width": 1280,
+      "height": 960
+    },
+    {
+      "width": 390,
+      "height": 844
+    }
+  ],
+  "checks": [
+    {
+      "document": "readme",
+      "viewport": 1280,
+      "pageWidth": 1280,
+      "details": [
+        {
+          "summary": "Watch a scene-building demo",
+          "open": true
+        }
+      ],
+      "images": [
+        {
+          "src": "docs/hero.svg",
+          "loaded": true
+        },
+        {
+          "src": "docs/unity-mcp-showcase-village.gif",
+          "loaded": true
+        }
+      ],
+      "brokenAnchors": [],
+      "scrollingTables": 0
+    },
+    {
+      "document": "readme",
+      "viewport": 390,
+      "pageWidth": 390,
+      "details": [
+        {
+          "summary": "Watch a scene-building demo",
+          "open": true
+        }
+      ],
+      "images": [
+        {
+          "src": "docs/hero.svg",
+          "loaded": true
+        },
+        {
+          "src": "docs/unity-mcp-showcase-village.gif",
+          "loaded": true
+        }
+      ],
+      "brokenAnchors": [],
+      "scrollingTables": 0
+    },
+    {
+      "document": "plugin",
+      "viewport": 1280,
+      "pageWidth": 1280,
+      "details": [
+        {
+          "summary": "See a scene built with Unity MCP",
+          "open": true
+        },
+        {
+          "summary": "Reproduce the Unity checks",
+          "open": true
+        }
+      ],
+      "images": [
+        {
+          "src": "Documentation~/hero.svg",
+          "loaded": true
+        },
+        {
+          "src": "docs/unity-mcp-showcase-village.gif",
+          "loaded": true
+        }
+      ],
+      "brokenAnchors": [],
+      "scrollingTables": 0
+    },
+    {
+      "document": "plugin",
+      "viewport": 390,
+      "pageWidth": 390,
+      "details": [
+        {
+          "summary": "See a scene built with Unity MCP",
+          "open": true
+        },
+        {
+          "summary": "Reproduce the Unity checks",
+          "open": true
+        }
+      ],
+      "images": [
+        {
+          "src": "Documentation~/hero.svg",
+          "loaded": true
+        },
+        {
+          "src": "docs/unity-mcp-showcase-village.gif",
+          "loaded": true
+        }
+      ],
+      "brokenAnchors": [],
+      "scrollingTables": 1
+    }
+  ],
+  "manualReview": [
+    "Desktop and narrow README headers",
+    "Server installation commands and configuration example",
+    "Plugin installation and monitoring sections",
+    "Expanded plugin reproduction instructions at 390 px"
+  ],
+  "links": {
+    "checkedLocalOrBranchMapped": 66,
+    "broken": 0,
+    "scope": "Both READMEs and docs/comparison.md; includes local images, Markdown anchors and links into the companion modernization branch."
+  },
+  "registries": {
+    "namedOperations": 347,
+    "exposedMcpTools": 80,
+    "advancedTools": 269,
+    "pluginRoutes": 338,
+    "toolTierTestsPassed": 9
+  },
+  "assets": {
+    "heroCopiesMatch": true,
+    "workflowCopiesMatch": true,
+    "workflowChange": "Render an arrowhead on each project branch."
+  },
+  "comparison": {
+    "primarySourcesRechecked": [
+      "https://coplaydev.github.io/unity-mcp/guides/multi-instance",
+      "https://coplaydev.github.io/unity-mcp/architecture/transports",
+      "https://docs.unity.cn/Packages/com.unity.ai.assistant@2.9/manual/integration/ai-gateway-intro.html"
+    ],
+    "scope": "Documented scheduling and retry mechanisms; no competitor execution benchmark."
+  },
+  "limitations": [
+    "One plugin feature table scrolls horizontally within its own container at 390 px; the document itself does not overflow.",
+    "Long code blocks scroll within their containers.",
+    "Unity Dashboard pixel review remains separate and pending.",
+    "Ordinary runtime suites were not repeated for documentation-only edits; their existing 89-test and eight-job CI evidence remains unchanged."
+  ]
+}

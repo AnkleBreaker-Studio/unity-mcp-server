@@ -114,6 +114,8 @@ The [MPPM guide](multiplayer.md) and [raw multiplayer report](validation/unity66
 
 ## Version references
 
+Both READMEs now use a shorter shared banner and explicit modernization-branch installation commands. Capability, monitoring and validation summaries link to the detailed contracts. The [presentation report](validation/readme-presentation.json) records local Chromium previews at 390 and 1,280 px, 66 checked links, matching SVG copies and current registry counts. Primary comparison sources were rechecked for the documented scheduling and retry differences. Hosted GitHub rendering and Unity Dashboard pixel review are separate from these local previews; runtime code and release status are unchanged.
+
 The [resource guide](resources.md) and [report](validation/resource-routing.json) add isolated resource handlers, explicit selection requirements and custom-port selection retention. Six stdio regressions reproduce the failures, including stale registry identity after port reuse. Live checks exercise actual Markdown reads in two Unity 6.6 editors with settings/fixture restoration. The ordinary suite now has 89 tests.
 
 Resource/discovery checkpoint: server `acf10cf`; all eight Node 18/20/22/24 jobs on Windows/Linux [passed](https://github.com/AnkleBreaker-Studio/unity-mcp-server/actions/runs/36780224199). The preceding `1cc33ea` checkpoint also has [passing CI](https://github.com/AnkleBreaker-Studio/unity-mcp-server/actions/runs/36779733155) and live resource checks on Node 18/22. These are server changes; plugin runtime remains at `631b5d2`.

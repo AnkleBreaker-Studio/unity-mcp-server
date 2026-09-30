@@ -1,0 +1,24 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="800" height="280" viewBox="0 0 800 280" role="img" aria-labelledby="title desc">
+  <title id="title">AnkleBreaker Unity MCP</title>
+  <desc id="desc">One workflow. Many Unity worlds. Multiple agents, independent editors and multiplayer tools.</desc>
+  <defs>
+    <linearGradient id="bg" x2="1" y2="1"><stop stop-color="#081622"/><stop offset="1" stop-color="#152c42"/></linearGradient>
+    <pattern id="grid" width="32" height="32" patternUnits="userSpaceOnUse"><path d="M32 0H0V32" fill="none" stroke="#84a7cb" stroke-opacity=".07"/></pattern>
+  </defs>
+  <rect width="800" height="280" rx="20" fill="url(#bg)"/>
+  <rect width="800" height="280" rx="20" fill="url(#grid)"/>
+  <g font-family="Segoe UI, Arial, sans-serif">
+    <rect x="32" y="30" width="4" height="23" rx="2" fill="#66eed4"/>
+    <text x="49" y="49" font-size="23" letter-spacing="1" fill="#afc1d8">ANKLEBREAKER / UNITY MCP</text>
+    <text x="32" y="120" font-size="48" font-weight="700" fill="#f2f7ff">One workflow.</text>
+    <text x="32" y="178" font-size="48" font-weight="700" fill="#f2f7ff">Many Unity worlds.</text>
+    <circle cx="543" cy="141" r="9" fill="#66eed4"/>
+    <path d="M552 141H570V105H596M570 141V177H596" fill="none" stroke="#66eed4" stroke-width="2"/>
+    <rect x="596" y="79" width="173" height="52" rx="10" fill="#102b37" stroke="#4da59f"/>
+    <text x="682" y="114" text-anchor="middle" font-size="25" fill="#f2f7ff">Project A</text>
+    <rect x="596" y="151" width="173" height="52" rx="10" fill="#102238" stroke="#577ca1"/>
+    <text x="682" y="186" text-anchor="middle" font-size="25" fill="#f2f7ff">Project B</text>
+    <path d="M32 223H768" stroke="#385168"/>
+    <text x="32" y="256" font-size="24" fill="#afc1d8">Multiple agents / Independent editors / Multiplayer</text>
+  </g>
+</svg>

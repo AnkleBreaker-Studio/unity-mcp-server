@@ -1,5 +1,5 @@
 <p align="center">
-  <img src="docs/workflow.svg" alt="AnkleBreaker Unity MCP: independent AI requests routed to multiple Unity projects, each with its own fair agent queue" width="1200" />
+  <img src="docs/hero.svg" alt="AnkleBreaker Unity MCP: one workflow, many Unity worlds. Multiple agents, independent editors and multiplayer tools." width="960" />
 </p>
 
 # AnkleBreaker Unity MCP
@@ -18,27 +18,24 @@ Counts reflect the checked-in definitions; optional tools require their correspo
 
 | Your workflow | What AnkleBreaker provides |
 |---|---|
-| **Several projects open** | Registry discovery, live project identity, per-agent selection and explicit routing on each call. |
-| **Several agents working** | Request-local agent and port state; the plugin schedules each agent's FIFO queue in round-robin order. |
-| **Multiplayer iteration** | MPPM scenarios, player controls and parent/virtual-player discovery; retained ParrelSync identity. [Workflow and live tests](docs/multiplayer.md) |
-| **Long editor operations** | Ticket submission and polling, in-flight status and domain-reload recovery paths. Unity work runs on the main thread; an expensive action can still occupy it. |
-| **Changes you can inspect** | Per-agent history, named undo groups for supported actions, compilation diagnostics and scene/game captures. |
-| **Results you can diagnose** | Separate command errors, exceptions and timeouts; one history record per terminal outcome, including deferred callbacks. [Monitoring guide](docs/queue-monitoring.md) |
-| **Large tool catalogs** | Core tools immediately available; advanced discovery returns counts, search results or one full schema. Compact mode retains schema structure. |
-| **Mixed plugin versions** | Per-instance queue detection, legacy synchronous fallback and an additive capability handshake. |
-| **Interrupted responses** | Protocol-2 retries recover the original ticket. With older plugins, the server reports uncertain outcomes without repeating writes. [Retry contract](docs/queue-protocol.md) |
-| **A game production stack** | Terrain, animation, physics, audio, navigation, UI, builds, profiling, Shader Graph, ProBuilder, Amplify and UMA tools. |
+| **Several projects and agents** | Independent request routing, explicit project selection and a fair queue for each editor. [Architecture](docs/architecture.md) |
+| **Multiplayer iteration** | MPPM scenario/player controls and parent/virtual-player discovery, plus ParrelSync identity. [Workflow and live tests](docs/multiplayer.md) |
+| **Work you can inspect** | Agent history, named undo for supported actions, queue timings, command errors and the Unity Dashboard. [Monitoring](docs/queue-monitoring.md) |
+| **Mixed versions and interrupted calls** | Per-editor capability detection, legacy fallback and protected retries when both components support them. [Compatibility](docs/compatibility.md) / [Retry contract](docs/queue-protocol.md) |
+| **A full production toolset** | Scene authoring, builds, profiling, packages and optional integrations, with advanced schemas discovered on demand. [Tool guide](docs/features.md) |
 
-For a comparison grounded in current documentation, see [choosing a Unity integration](docs/comparison.md). Our strengths are the combined workflow, explicit routing, fair scheduling, per-action history and broad editor coverage.
+The combination is the strength: routing, scheduling, multiplayer controls and observable results in one workflow. See [choosing a Unity integration](docs/comparison.md) for a sourced comparison.
 
 ## Get started
+
+**Development preview:** this README describes `Development-Unity66-Modernization`, which has not been released. The commands below install that branch in both repositories. For the existing release line, use the [default-branch instructions](https://github.com/AnkleBreaker-Studio/unity-mcp-server).
 
 ### 1. Add the Unity plugin
 
 In Unity, open **Window → Package Manager → Add package from git URL**:
 
 ```text
-https://github.com/AnkleBreaker-Studio/unity-mcp-plugin.git
+https://github.com/AnkleBreaker-Studio/unity-mcp-plugin.git#Development-Unity66-Modernization
 ```
 
 The plugin dashboard is at **Window → AB Unity MCP → Dashboard**. Verify the bridge is running there.
@@ -48,7 +45,7 @@ The plugin dashboard is at **Window → AB Unity MCP → Dashboard**. Verify the
 Use Node.js 18 or newer; a maintained Node.js LTS is recommended.
 
 ```bash
-git clone https://github.com/AnkleBreaker-Studio/unity-mcp-server.git
+git clone --branch Development-Unity66-Modernization https://github.com/AnkleBreaker-Studio/unity-mcp-server.git
 cd unity-mcp-server
 npm ci
 ```
@@ -120,24 +117,25 @@ Discover advanced capabilities with `unity_list_advanced_tools`. Filter by categ
 
 ## Compatibility and validation
 
-UMA V3.1f1 workflows now pass on Unity 6.6: slot/overlay/recipe creation, race changes and renames across legacy recipe formats. The integration is isolated from the core bridge and preserves unrelated files during generation. [UMA setup, validation and limits](docs/uma.md).
+The plugin declares **Unity 2021.3.18f1+** support. Server and plugin versions advance independently and do not need matching version numbers. Current live validation uses **Unity 6000.6.2f1 on Windows**; minimum-version C# compilation also passes. Actual older-editor execution is deferred.
 
-The plugin declares **Unity 2021.3.18f1+** support and retains version-gated object identity APIs. Server and plugin versions advance independently; they do not need matching version numbers.
+| Verified workflow | Evidence and limits |
+|---|---|
+| Released/current components | All four server-plugin pairs on Node 18 and 22, plus concurrent agents across mixed plugin versions. [Version matrix](docs/compatibility.md) |
+| Multiple editors and reloads | Overlapping calls to two editors, four Play Mode reload configurations and lost-result handling after script reload. [Validation record](docs/modernization.md) |
+| Multiplayer Play Mode 3.0 | Host/Client launch, separate agent routing and shared script recompilation. Game networking and ParrelSync lifecycle need separate validation. [Multiplayer guide](docs/multiplayer.md) |
+| Scene and asset editing | Enums, references, prefabs, rejected-write preservation and Scene capture cleanup. [Editor workflows](docs/editor-workflows.md) |
+| Unity 6.6 builds | Five Windows Mono builds verify managed diagnostics and restoration of project settings. Other platforms and IL2CPP remain untested. [Build guide](docs/builds.md) |
+| UMA V3.1f1 | Asset creation, race changes and recipe renames, with the integration isolated from the core bridge. [UMA guide](docs/uma.md) |
 
-The current modernization branch has been compiled and exercised in **Unity 6000.6.2f1**: queue lifecycle, concurrent commands to two real editors, four Play Mode reload configurations and compiled build diagnostics. MPPM 3.0 live tests also cover Host/Client launch, isolated agent routing and shared script recompilation. Older Unity/MPPM versions, ParrelSync lifecycle and game networking still need separate validation. [Evidence, limits and remaining work →](docs/modernization.md)
-
-Live scene, component, reference, prefab and screenshot workflows verify data preservation after rejected operations and texture cleanup after capture failures. The minimum Unity version also passes a compiler-only API check; actual older-editor execution is deferred. [Workflow contracts and repeatable checks →](docs/editor-workflows.md)
-
-On Unity 6.6, Development builds default to Checked managed diagnostics. Optional `managedCodeVariant` selects Release, Instrumented, Checked or Debug for one build, then restores the project setting. [Build behavior and compatibility →](docs/builds.md)
+Run the server's ordinary regression suite:
 
 ```bash
 npm ci
 npm test
 ```
 
-The server tests run the real MCP stdio process against isolated mock bridges, including overlapping calls to different projects and mixed old/new plugins. The companion plugin includes a reproducible Unity batch validation runner under `tools~/validate-unity.ps1`.
-
-An opt-in [live compatibility matrix](docs/compatibility.md) also passes all four released/current server-plugin combinations on Unity 6.6, with Node 18 and 22. A mixed-plugin concurrency check verifies four agents across two actual editors.
+These tests run the real MCP stdio process against isolated mock bridges. The companion plugin's Unity runner and the server's opt-in live suites are documented with their prerequisites and results in the linked guides. [Full evidence and remaining work](docs/modernization.md).
 
 ## Monitor and troubleshoot
 
