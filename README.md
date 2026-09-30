@@ -98,7 +98,7 @@ Within an editor, the plugin serializes writes and batches up to five reads per 
 |---|---|---|
 | Scenes, GameObjects, components | Console and compilation errors | Multiplayer Play Mode |
 | Prefabs, materials, ScriptableObjects | EditMode / PlayMode test jobs | ParrelSync instances |
-| Animation curves and controllers | Physics queries, scene statistics | Unity Hub editors and modules |
+| Animation curves and controllers | Physics queries, scene statistics | [Unity Hub editors and modules](docs/hub.md) |
 | Terrain, navigation, particles | Profiler, memory, Frame Debugger | ProBuilder, UMA, Amplify |
 | UI, audio, input actions | Screenshots and action history | [Project-specific context resources](docs/resources.md) |
 

@@ -30,7 +30,7 @@ For serialized enum values, asset-result limits, capture cleanup and repeatable 
 
 | Category | Tools |
 |----------|-------|
-| **Unity Hub** | List/install editors, manage modules, set install paths |
+| **Unity Hub** | List/install editors, manage modules, set install paths. [Results and failure handling](hub.md) |
 | **Scenes** | Open, save, create scenes, get full hierarchy tree with pagination |
 | **GameObjects** | Create (primitives/empty), delete, duplicate, reparent, activate/deactivate, transform (world/local) |
 | **Components** | Add, remove, get/set any serialized property, wire object references, batch wire |

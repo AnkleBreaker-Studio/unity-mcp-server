@@ -1,0 +1,166 @@
+{
+  "checkedOn": "2026-10-01",
+  "baselineServer": "9874595",
+  "pluginRuntimeChanged": false,
+  "reproduction": {
+    "method": "Actual MCP stdio server and real fixture child processes; only the Hub execFile target/options are redirected by a test entry point.",
+    "baselineTests": 11,
+    "baselineFailures": 11,
+    "correctedHubTests": 15,
+    "failedBaselineChecks": [
+      "Hub nonzero exit remains an MCP error even with progress on stdout",
+      "Hub failed module installation is never retried with another CLI prefix",
+      "Hub silent successful writes execute once and remain successful",
+      "Hub timeout after progress reports an unknown outcome without replay",
+      "Hub silent timeout does not start a second installation",
+      "Hub output buffer failure is not a successful or timed-out install",
+      "Hub installed-editor data on stderr is parsed and returned",
+      "Hub available releases on stderr are preserved",
+      "Hub list failure preserves process diagnostics without returning an empty success",
+      "Hub missing executable is reported once with path guidance",
+      "Hub arguments remain separate and use the documented platform prefix"
+    ],
+    "controlsAddedAfterReproduction": [
+      "All six successful response shapes and original timeout/buffer options",
+      "Ordinary stderr warnings with zero exit",
+      "Duplicate editor lines across streams",
+      "Empty successful lists"
+    ],
+    "testTimeoutMs": 1500,
+    "testOutputLimitBytes": 4096
+  },
+  "localTests": {
+    "node18": {
+      "tests": 104,
+      "passed": 104,
+      "failed": 0
+    },
+    "node22": {
+      "tests": 104,
+      "passed": 104,
+      "failed": 0
+    }
+  },
+  "nodeVersions": {
+    "node18": "v18.20.8",
+    "node22": "v22.18.0"
+  },
+  "liveHub": {
+    "version": "3.16.2",
+    "platform": "Windows",
+    "mutationsAttempted": false,
+    "before": {
+      "results": [
+        {
+          "name": "unity_hub_get_install_path",
+          "elapsedMs": 5155,
+          "isError": false,
+          "payload": {
+            "success": true,
+            "stdout": "C:\\Program Files\\Unity\\Hub\\Editor",
+            "stderr": ""
+          }
+        },
+        {
+          "name": "unity_hub_list_editors",
+          "elapsedMs": 3601,
+          "isError": false,
+          "payload": {
+            "editors": [
+              {
+                "version": "6000.6.2f1",
+                "path": "C:\\Program Files\\Unity\\Hub\\Editor\\6000.6.2f1\\Editor\\Unity.exe"
+              }
+            ],
+            "raw": "6000.6.2f1 installed at C:\\Program Files\\Unity\\Hub\\Editor\\6000.6.2f1\\Editor\\Unity.exe"
+          }
+        }
+      ],
+      "stdoutViolations": []
+    },
+    "afterNode22": {
+      "results": [
+        {
+          "name": "unity_hub_get_install_path",
+          "elapsedMs": 3948,
+          "isError": false,
+          "payload": {
+            "success": true,
+            "stdout": "C:\\Program Files\\Unity\\Hub\\Editor",
+            "stderr": ""
+          }
+        },
+        {
+          "name": "unity_hub_list_editors",
+          "elapsedMs": 3668,
+          "isError": false,
+          "payload": {
+            "editors": [
+              {
+                "version": "6000.6.2f1",
+                "path": "C:\\Program Files\\Unity\\Hub\\Editor\\6000.6.2f1\\Editor\\Unity.exe"
+              }
+            ],
+            "raw": "6000.6.2f1 installed at C:\\Program Files\\Unity\\Hub\\Editor\\6000.6.2f1\\Editor\\Unity.exe"
+          }
+        }
+      ],
+      "stdoutViolations": []
+    },
+    "afterNode18": {
+      "node": "v18.20.8",
+      "results": [
+        {
+          "name": "unity_hub_get_install_path",
+          "elapsedMs": 3579,
+          "isError": false,
+          "payload": {
+            "success": true,
+            "stdout": "C:\\Program Files\\Unity\\Hub\\Editor",
+            "stderr": ""
+          }
+        },
+        {
+          "name": "unity_hub_list_editors",
+          "elapsedMs": 3428,
+          "isError": false,
+          "payload": {
+            "editors": [
+              {
+                "version": "6000.6.2f1",
+                "path": "C:\\Program Files\\Unity\\Hub\\Editor\\6000.6.2f1\\Editor\\Unity.exe"
+              }
+            ],
+            "raw": "6000.6.2f1 installed at C:\\Program Files\\Unity\\Hub\\Editor\\6000.6.2f1\\Editor\\Unity.exe"
+          }
+        }
+      ],
+      "stdoutViolations": []
+    },
+    "successfulResultShapesAndValuesUnchanged": true
+  },
+  "behavior": {
+    "oneInvocationPerCall": true,
+    "nonzeroExitWithStdoutIsError": true,
+    "silentZeroExitIsSuccess": true,
+    "mutatingFailuresAfterLaunchHaveUnknownOutcome": true,
+    "stderrListDataPreserved": true,
+    "successSchemaAndToolArgumentsRetained": true,
+    "processTimeoutsMs": {
+      "queriesAndSetPath": 30000,
+      "installEditor": 600000,
+      "installModules": 300000
+    },
+    "maxOutputBytesPerStream": 10485760
+  },
+  "sources": [
+    "https://docs.unity.com/en-us/hub/cli-overview",
+    "https://docs.unity.com/en-us/hub/hub-cli-reference"
+  ],
+  "limitations": [
+    "No real installation, module download or setting change performed for this review.",
+    "Other Hub versions and real macOS/Linux Hub execution remain unverified.",
+    "Exit zero is a successful process result; it does not prove all requested installation work completed or interpret every vendor log message.",
+    "Client disconnect and CLI process termination do not guarantee cancellation or rollback of installer work."
+  ]
+}

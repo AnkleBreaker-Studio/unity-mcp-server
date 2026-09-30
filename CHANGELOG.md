@@ -4,6 +4,12 @@ All notable changes to this package will be documented in this file.
 
 ## [Unreleased]
 
+### Unity Hub command outcomes
+- Preserve nonzero exits, timeouts and output-buffer failures as MCP errors even when Hub prints progress. Retain process diagnostics and identify unknown outcomes after failed writes.
+- Execute each command once, including silent success, with the documented platform headless prefix. Remove retries that could repeat an installation or setting change.
+- Preserve editor/release data from stderr and deduplicate identical installed-editor lines. Keep the six tool schemas, successful result fields and process timeout values.
+- Add 15 stdio/child-process regressions; all 104 ordinary tests pass locally on Node 18 and 22. Read-only Hub 3.16.2 checks preserve actual path/editor results. See `docs/hub.md` for scope and limits.
+
 ### Live version compatibility
 - Add an opt-in `test:compatibility` suite using separate released/current server checkouts and real Unity editors with old/new plugins.
 - Verify four combinations, object/undo/error/history workflows, 384 retained tool names, and four-agent concurrency across mixed plugin versions. Record Node 18/22 evidence and restore fixture scenes/counters.
@@ -47,10 +53,10 @@ All notable changes to this package will be documented in this file.
 - Add opt-in `test:features` for scenes, sparse enums/flags, references, materials, prefabs, asset/hierarchy limits and Scene captures. Verify invalid writes preserve data and failed captures restore render targets without retaining capture textures.
 - Record a compiler-only Unity 2021.3.18f1 check and the Dashboard namespace correction it exposed. Actual older-editor execution is deferred; this does not certify package import or runtime behavior.
 - Add opt-in `test:multiplayer` for MPPM 3.0 on Unity 6.6: native scenario settings, Host/Client launch, invalid-create rejection, two sets of 12 concurrent commands across separate processes, shared script recompilation and fixture restoration.
-- The ordinary Node suite now has 83 passing tests, including BOM registry reading and MPPM identity through both discovery paths.
+- Cover BOM registry reading and MPPM identity through both discovery paths.
 - Document and retain companion-plugin command-outcome evidence: distinct command errors, exceptions and timeouts; exactly-once callback history; legacy result and history compatibility; bounded history backlog and preserved undo behavior.
 - Add opt-in `test:monitoring` for a real handler error across stdio MCP, session counters and the plugin history endpoint.
-- 80 Node tests, including concurrency/discovery, nine transport fault regressions, build capability gates and Play Mode recovery. The companion plugin's Unity 6000.6.2f1 runner also exercises its actual HTTP dispatcher and guarded retries; full cross-version and multiplayer validation remains in progress.
+- Cover concurrency/discovery, nine transport fault regressions, build capability gates and Play Mode recovery. The companion plugin's Unity 6000.6.2f1 runner also exercises its actual HTTP dispatcher and guarded retries.
 - Add opt-in live build and editor lifecycle suites: compiled diagnostics and restoration after success/failure, two real editors, four reload configurations and a lost result across actual script reload.
 
 ## [2.35.6] - 2026-07-27

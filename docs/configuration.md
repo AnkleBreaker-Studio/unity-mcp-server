@@ -49,7 +49,7 @@ Features for uninstalled packages return helpful messages explaining what to ins
 
 ## Troubleshooting
 
-**"Outcome unknown"** — A command may already have executed. Inspect the project or original ticket before issuing it again. Updating both components enables protected submission retries; old clients remain supported. See the [retry and session contract](queue-protocol.md).
+**"Outcome unknown"** - An Editor command may already have executed: inspect the project or original ticket before issuing it again. Updating both components enables protected submission retries; see the [retry and session contract](queue-protocol.md). For a Hub command, inspect Hub installations/settings before retrying; Hub operations run once and have [separate process diagnostics](hub.md).
 
 **"Connection failed" errors** — Make sure Unity Editor is open and the plugin is installed. Check the Unity Console for `[MCP Bridge] Server started on port 7890`.
 
