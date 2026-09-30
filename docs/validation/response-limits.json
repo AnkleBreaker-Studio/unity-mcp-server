@@ -110,5 +110,52 @@
     "New budgets cover tools/call and resources/read; tools/list and resources/list remain outside this change.",
     "Live Scene capture tested; Game capture proxy parity is covered by the isolated regression.",
     "Client cancellation is unchanged; older-editor runtime validation remains deferred."
-  ]
+  ],
+  "ci": {
+    "runId": 36786300833,
+    "url": "https://github.com/AnkleBreaker-Studio/unity-mcp-server/actions/runs/36786300833",
+    "commit": "7fb73c9ecb9add21ae5e6353811dc13af132244c",
+    "jobs": [
+      {
+        "name": "node 24 on ubuntu-latest",
+        "status": "completed",
+        "conclusion": "success"
+      },
+      {
+        "name": "node 24 on windows-latest",
+        "status": "completed",
+        "conclusion": "success"
+      },
+      {
+        "name": "node 18 on windows-latest",
+        "status": "completed",
+        "conclusion": "success"
+      },
+      {
+        "name": "node 22 on windows-latest",
+        "status": "completed",
+        "conclusion": "success"
+      },
+      {
+        "name": "node 18 on ubuntu-latest",
+        "status": "completed",
+        "conclusion": "success"
+      },
+      {
+        "name": "node 20 on windows-latest",
+        "status": "completed",
+        "conclusion": "success"
+      },
+      {
+        "name": "node 20 on ubuntu-latest",
+        "status": "completed",
+        "conclusion": "success"
+      },
+      {
+        "name": "node 22 on ubuntu-latest",
+        "status": "completed",
+        "conclusion": "success"
+      }
+    ]
+  }
 }
