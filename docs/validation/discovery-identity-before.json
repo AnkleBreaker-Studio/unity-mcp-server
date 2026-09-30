@@ -1,0 +1,27 @@
+{
+  "checkedOn": "2026-10-01",
+  "status": "reproduced; correction pending",
+  "serverCommit": "c9060e8387402235acf077c944474b3ddf75f5d2",
+  "source": "https://github.com/AnkleBreaker-Studio/unity-mcp-server/pull/39",
+  "method": "Actual MCP stdio process and isolated foreign-service stubs; no Unity editor contacted",
+  "cases": [
+    {
+      "staleRegistry": false,
+      "listedAsUnity": true,
+      "listedName": "Unknown (port 22333)",
+      "listedPath": "",
+      "writeReportedSuccess": true,
+      "foreignServiceReceivedCommand": true,
+      "stdoutViolations": []
+    },
+    {
+      "staleRegistry": true,
+      "listedAsUnity": true,
+      "listedName": "OldUnityProject",
+      "listedPath": "C:/OldUnityProject",
+      "writeReportedSuccess": true,
+      "foreignServiceReceivedCommand": true,
+      "stdoutViolations": []
+    }
+  ]
+}

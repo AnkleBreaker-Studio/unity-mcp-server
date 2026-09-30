@@ -140,5 +140,52 @@
     "Already-started Hub processes retain their process deadlines; installers are not terminated by client cancellation.",
     "Synchronous JavaScript cannot be interrupted while it occupies the event loop.",
     "Live evidence uses Windows and Unity 6000.6.2f1; older-editor runtime validation remains deferred."
-  ]
+  ],
+  "ci": {
+    "runId": 36787885862,
+    "url": "https://github.com/AnkleBreaker-Studio/unity-mcp-server/actions/runs/36787885862",
+    "commit": "c9060e8387402235acf077c944474b3ddf75f5d2",
+    "jobs": [
+      {
+        "name": "node 20 on ubuntu-latest",
+        "status": "completed",
+        "conclusion": "success"
+      },
+      {
+        "name": "node 18 on ubuntu-latest",
+        "status": "completed",
+        "conclusion": "success"
+      },
+      {
+        "name": "node 18 on windows-latest",
+        "status": "completed",
+        "conclusion": "success"
+      },
+      {
+        "name": "node 20 on windows-latest",
+        "status": "completed",
+        "conclusion": "success"
+      },
+      {
+        "name": "node 24 on windows-latest",
+        "status": "completed",
+        "conclusion": "success"
+      },
+      {
+        "name": "node 22 on windows-latest",
+        "status": "completed",
+        "conclusion": "success"
+      },
+      {
+        "name": "node 24 on ubuntu-latest",
+        "status": "completed",
+        "conclusion": "success"
+      },
+      {
+        "name": "node 22 on ubuntu-latest",
+        "status": "completed",
+        "conclusion": "success"
+      }
+    ]
+  }
 }

@@ -106,6 +106,8 @@ UMA implementation checkpoint: plugin `00090f6`, with a [passing 338-route regis
 8. Keep both READMEs and release notes aligned as implementation expands. Review the final cross-repository diff and refresh validation evidence before release.
 9. Prepare versioning and reviewable changes with test evidence. Publish feature branches per studio workflow when the set is ready; merge/release only within authorized scope.
 
+Community review on 2026-10-01: [server PR #39](https://github.com/AnkleBreaker-Studio/unity-mcp-server/pull/39) identifies an additional discovery defect. Two isolated stdio reproductions against `c9060e8` show that an unrelated service returning JSON HTTP 200 can be adopted through port scanning or a stale registry entry and receive a command. The [baseline report](validation/discovery-identity-before.json) records both cases. This remains to be corrected while preserving older plugin identity formats; no real foreign service or Unity project was contacted by this reproduction.
+
 The queue review's concrete retention, route-classification and command-outcome/history findings are now fixed and tested. The [monitoring guide](queue-monitoring.md) and [outcome report](validation/unity66-command-outcomes.json) describe the additive contract and its limits. Dashboard refresh allocations now have separate evidence; HTTP allocations and other long-lived server/plugin caches remain in scope.
 
 The command-outcome/history changes are published in plugin commit `b3dbef2`. Local validation includes the focused monitoring suite, the full queue/HTTP suite with real timeout history checks, the health regression suite and the live stdio monitoring path on Node 18 and 22. The 80 ordinary server tests pass. Interactive dashboard layout, older Unity versions and actual multiplayer clones remain outside this checkpoint's evidence.
@@ -115,6 +117,8 @@ The [MPPM guide](multiplayer.md) and [raw multiplayer report](validation/unity66
 ## Version references
 
 The [cancellation guide](cancellation.md) and [report](validation/cancellation.json) record 15 reproduced behavior failures, one unchanged control and three cleanup/cache checks. All 137 ordinary tests pass on Node 18 and 22. Live Unity 6.6 checks on both versions stop ticket polling after one request while the accepted snippet executes exactly once; the temporary counter is removed. Shared callers remain independent, selected-project validation is preserved and abandoned I/O is released. Plugin execution cancellation and external installer termination are outside this change.
+
+Cancellation checkpoint: server `c9060e8`; [all eight Node 18/20/22/24 jobs on Windows and Linux passed](https://github.com/AnkleBreaker-Studio/unity-mcp-server/actions/runs/36787885862). Plugin runtime and published versions are unchanged.
 
 The [response guide](response-limits.md) and [report](validation/response-limits.json) record 14 baseline failures corrected by serialized UTF-8 accounting, bounded errors, safe soft-warning placement and image-result fixes. All 118 ordinary tests pass on Node 18 and 22. Live Unity 6.6 checks verify Unicode limits, retained structured results, a proxied Scene image and missing-preview errors on both versions. Plugin runtime is unchanged; cancellation and upstream memory bounds are outside this work.
 
