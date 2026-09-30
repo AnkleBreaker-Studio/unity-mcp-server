@@ -1,0 +1,462 @@
+{
+  "unityVersion": "6000.6.2f1",
+  "packageVersion": "3.0.0",
+  "baseline": {
+    "create": {
+      "success": true,
+      "data": {
+        "error": "Required MPPM types not found; incompatible Unity version?",
+        "mppmAvailable": true
+      }
+    },
+    "mainInfo": {
+      "success": true,
+      "data": {
+        "mppmAvailable": true,
+        "mppmVersion": "3.0.0"
+      }
+    },
+    "cloneInfo": {
+      "success": true,
+      "data": {
+        "mppmAvailable": true,
+        "mppmVersion": "3.0.0"
+      }
+    },
+    "instances": {
+      "instances": [
+        {
+          "port": 7890,
+          "projectName": "Unity66",
+          "projectPath": "C:/Users/Francois/orca/workspaces/unity-mcp-server/validation/Unity66",
+          "unityVersion": "6000.6.2f1",
+          "isClone": false,
+          "cloneIndex": -1,
+          "pluginVersion": "2.39.7",
+          "source": "portscan",
+          "isSelected": false
+        },
+        {
+          "port": 7891,
+          "projectName": "Queue66",
+          "projectPath": "C:/Users/Francois/orca/workspaces/unity-mcp-server/validation/Queue66",
+          "unityVersion": "6000.6.2f1",
+          "isClone": false,
+          "cloneIndex": -1,
+          "pluginVersion": "2.39.7",
+          "source": "portscan",
+          "isSelected": false
+        },
+        {
+          "port": 7892,
+          "projectName": "Unity66",
+          "projectPath": "C:/Users/Francois/orca/workspaces/unity-mcp-server/validation/Unity66/Library/VP/mppmc7c1904a",
+          "unityVersion": "6000.6.2f1",
+          "isClone": false,
+          "cloneIndex": -1,
+          "pluginVersion": "2.39.7",
+          "source": "portscan",
+          "isSelected": true
+        }
+      ],
+      "totalCount": 3,
+      "selectedPort": 7892,
+      "selectedProject": "Unity66",
+      "message": "Found 3 Unity instance(s). Currently targeting: Unity66 (port 7892)"
+    }
+  },
+  "nativeSettingsFinding": "Unity 6.6 retains legacy description fields but executes m_Settings instance items. The list now reports native settings.",
+  "nativeSelectionFinding": "The loaded runner graph did not replace Unity Default scenario. Activation now also selects the native scenario manager, and start/stop use it.",
+  "registryFinding": {
+    "oldWriterUtf8Bom": true,
+    "oldJsonParseRejected": true,
+    "newReaderAcceptsOldWriter": true,
+    "newWriterOmitsBom": true,
+    "outsideScanRangeRegression": true,
+    "finalRegistryFirstBytes": [
+      91,
+      123,
+      34
+    ],
+    "finalRegistryParsesWithoutBomHandling": true
+  },
+  "runs": [
+    {
+      "nodeVersion": "v18.20.8",
+      "scenario": "Assets/__McpValidation/Mppm592750fb1a05476188c9291fba6f1b52.asset",
+      "checks": {
+        "scenario": {
+          "name": "Mppm592750fb1a05476188c9291fba6f1b52",
+          "path": "Assets/__McpValidation/Mppm592750fb1a05476188c9291fba6f1b52.asset",
+          "description": "Owned multiplayer MCP validation",
+          "hasEditorInstance": true,
+          "virtualInstanceCount": 1,
+          "localInstanceCount": 0,
+          "instances": [
+            {
+              "type": "Editor",
+              "instanceTypeName": "MainEditorController",
+              "name": "Main Editor",
+              "runModeState": "ScenarioControl",
+              "role": "ClientAndServer",
+              "playerInstanceIndex": 0
+            },
+            {
+              "type": "VirtualEditor0",
+              "instanceTypeName": "CloneEditorController",
+              "name": "Virtual Editor 1",
+              "runModeState": "ScenarioControl",
+              "role": "Client",
+              "playerInstanceIndex": 1
+            }
+          ]
+        },
+        "nativeInstanceSettings": [
+          {
+            "m_Id": "a743a2f3422049b9ac41488f85b0c388",
+            "m_Name": "Main Editor",
+            "m_RunMode": 0,
+            "m_Settings": {
+              "PlayerTag": "",
+              "RoleMask": 3,
+              "InitialScene": {
+                "instanceID": 0
+              }
+            },
+            "m_Decorators": [],
+            "references": {
+              "version": 2,
+              "RefIds": []
+            }
+          },
+          {
+            "m_Id": "6b13d3dd16754232943ffb9238f688df",
+            "m_Name": "Virtual Editor 1",
+            "m_RunMode": 0,
+            "m_Settings": {
+              "PlayerTag": "",
+              "RoleMask": 1,
+              "PlayerInstanceIndex": 1,
+              "StreamLogsToMainEditor": false,
+              "LogsColor": {
+                "r": 0.364300012588501,
+                "g": 0.5809999704360962,
+                "b": 0.867900013923645,
+                "a": 1
+              }
+            },
+            "m_Decorators": [],
+            "references": {
+              "version": 2,
+              "RefIds": []
+            }
+          }
+        ],
+        "invalidCreatesRejected": 5,
+        "runtimeRoles": [
+          {
+            "isMain": true,
+            "role": "ClientAndServer"
+          },
+          {
+            "isMain": false,
+            "role": "Client"
+          }
+        ],
+        "playModeRouting": {
+          "overlappingCalls": 12,
+          "perEditor": 6,
+          "distinctProcesses": true,
+          "exactCounts": true,
+          "explicitCommandPorts": false
+        },
+        "sharedRecompile": {
+          "before": [
+            "c9ee51e13d3e4c19bbfaafb72f708e0e",
+            "f8452af5cbcf4e5fbe105c09dff08fb5"
+          ],
+          "after": [
+            "a13ad455660a4df2b6b15d6196594ec9",
+            "d35a7d5ad2284365ad811a122604c2ea"
+          ],
+          "bothReloaded": true,
+          "compiledValueVisibleInBoth": true
+        },
+        "afterRecompileRouting": {
+          "overlappingCalls": 12,
+          "perEditor": 6,
+          "distinctProcesses": true,
+          "exactCounts": true,
+          "explicitCommandPorts": false
+        }
+      },
+      "main": {
+        "port": 7890,
+        "projectName": "Unity66",
+        "projectPath": "C:/Users/Francois/orca/workspaces/unity-mcp-server/validation/Unity66",
+        "unityVersion": "6000.6.2f1",
+        "isClone": false,
+        "cloneIndex": -1,
+        "isVirtualPlayer": false,
+        "mainProjectPath": "C:/Users/Francois/orca/workspaces/unity-mcp-server/validation/Unity66",
+        "virtualPlayerId": "",
+        "pluginVersion": "2.39.7",
+        "source": "registry",
+        "isSelected": false
+      },
+      "info": {
+        "mppmAvailable": true,
+        "mppmVersion": "3.0.0",
+        "packageInstalled": true,
+        "playerWorkflowInitialized": true,
+        "multiplayerRolesEnabled": false,
+        "activeMultiplayerRole": "ClientAndServer",
+        "isMainEditor": true,
+        "tags": []
+      },
+      "start": {
+        "isError": false,
+        "payload": {
+          "success": true,
+          "data": {
+            "success": true,
+            "message": "Scenario started and Play mode entered",
+            "enteredPlayMode": true,
+            "playModeAlreadyActive": false
+          }
+        }
+      },
+      "clone": {
+        "port": 7892,
+        "projectName": "Unity66",
+        "projectPath": "C:/Users/Francois/orca/workspaces/unity-mcp-server/validation/Unity66/Library/VP/mppmc7c1904a",
+        "unityVersion": "6000.6.2f1",
+        "isClone": false,
+        "cloneIndex": -1,
+        "isVirtualPlayer": true,
+        "mainProjectPath": "C:/Users/Francois/orca/workspaces/unity-mcp-server/validation/Unity66",
+        "virtualPlayerId": "mppmc7c1904a",
+        "pluginVersion": "2.39.7",
+        "source": "registry",
+        "isSelected": true
+      },
+      "stop": {
+        "isError": false,
+        "payload": {
+          "success": true,
+          "data": {
+            "success": true,
+            "message": "Scenario stopped and Play mode exited",
+            "exitedPlayMode": true
+          }
+        }
+      },
+      "passed": true,
+      "restored": true
+    },
+    {
+      "nodeVersion": "v22.18.0",
+      "scenario": "Assets/__McpValidation/Mppm76828d77f1a74cee8c5f55256ebc7f2c.asset",
+      "checks": {
+        "scenario": {
+          "name": "Mppm76828d77f1a74cee8c5f55256ebc7f2c",
+          "path": "Assets/__McpValidation/Mppm76828d77f1a74cee8c5f55256ebc7f2c.asset",
+          "description": "Owned multiplayer MCP validation",
+          "hasEditorInstance": true,
+          "virtualInstanceCount": 1,
+          "localInstanceCount": 0,
+          "instances": [
+            {
+              "type": "Editor",
+              "instanceTypeName": "MainEditorController",
+              "name": "Main Editor",
+              "runModeState": "ScenarioControl",
+              "role": "ClientAndServer",
+              "playerInstanceIndex": 0
+            },
+            {
+              "type": "VirtualEditor0",
+              "instanceTypeName": "CloneEditorController",
+              "name": "Virtual Editor 1",
+              "runModeState": "ScenarioControl",
+              "role": "Client",
+              "playerInstanceIndex": 1
+            }
+          ]
+        },
+        "nativeInstanceSettings": [
+          {
+            "m_Id": "45bf60c289fe4cb68614306c03990c9a",
+            "m_Name": "Main Editor",
+            "m_RunMode": 0,
+            "m_Settings": {
+              "PlayerTag": "",
+              "RoleMask": 3,
+              "InitialScene": {
+                "instanceID": 0
+              }
+            },
+            "m_Decorators": [],
+            "references": {
+              "version": 2,
+              "RefIds": []
+            }
+          },
+          {
+            "m_Id": "0605647036464dee9bca6b69e546259e",
+            "m_Name": "Virtual Editor 1",
+            "m_RunMode": 0,
+            "m_Settings": {
+              "PlayerTag": "",
+              "RoleMask": 1,
+              "PlayerInstanceIndex": 1,
+              "StreamLogsToMainEditor": false,
+              "LogsColor": {
+                "r": 0.364300012588501,
+                "g": 0.5809999704360962,
+                "b": 0.867900013923645,
+                "a": 1
+              }
+            },
+            "m_Decorators": [],
+            "references": {
+              "version": 2,
+              "RefIds": []
+            }
+          }
+        ],
+        "invalidCreatesRejected": 5,
+        "runtimeRoles": [
+          {
+            "isMain": true,
+            "role": "ClientAndServer"
+          },
+          {
+            "isMain": false,
+            "role": "Client"
+          }
+        ],
+        "playModeRouting": {
+          "overlappingCalls": 12,
+          "perEditor": 6,
+          "distinctProcesses": true,
+          "exactCounts": true,
+          "explicitCommandPorts": false
+        },
+        "sharedRecompile": {
+          "before": [
+            "4ae114d795cb42a780fb690c2e3778af",
+            "e009b6bfdb3d4f1984e4869f8fcdf62d"
+          ],
+          "after": [
+            "a1331c422a9b4d08a83dc0e82c6719a1",
+            "072254bd0d8548c297f9f46429fe069d"
+          ],
+          "bothReloaded": true,
+          "compiledValueVisibleInBoth": true
+        },
+        "afterRecompileRouting": {
+          "overlappingCalls": 12,
+          "perEditor": 6,
+          "distinctProcesses": true,
+          "exactCounts": true,
+          "explicitCommandPorts": false
+        }
+      },
+      "main": {
+        "port": 7890,
+        "projectName": "Unity66",
+        "projectPath": "C:/Users/Francois/orca/workspaces/unity-mcp-server/validation/Unity66",
+        "unityVersion": "6000.6.2f1",
+        "isClone": false,
+        "cloneIndex": -1,
+        "isVirtualPlayer": false,
+        "mainProjectPath": "C:/Users/Francois/orca/workspaces/unity-mcp-server/validation/Unity66",
+        "virtualPlayerId": "",
+        "pluginVersion": "2.39.7",
+        "source": "registry",
+        "isSelected": false
+      },
+      "info": {
+        "mppmAvailable": true,
+        "mppmVersion": "3.0.0",
+        "packageInstalled": true,
+        "playerWorkflowInitialized": true,
+        "multiplayerRolesEnabled": false,
+        "activeMultiplayerRole": "ClientAndServer",
+        "isMainEditor": true,
+        "tags": []
+      },
+      "start": {
+        "isError": false,
+        "payload": {
+          "success": true,
+          "data": {
+            "success": true,
+            "message": "Scenario started and Play mode entered",
+            "enteredPlayMode": true,
+            "playModeAlreadyActive": false
+          }
+        }
+      },
+      "clone": {
+        "port": 7892,
+        "projectName": "Unity66",
+        "projectPath": "C:/Users/Francois/orca/workspaces/unity-mcp-server/validation/Unity66/Library/VP/mppmc7c1904a",
+        "unityVersion": "6000.6.2f1",
+        "isClone": false,
+        "cloneIndex": -1,
+        "isVirtualPlayer": true,
+        "mainProjectPath": "C:/Users/Francois/orca/workspaces/unity-mcp-server/validation/Unity66",
+        "virtualPlayerId": "mppmc7c1904a",
+        "pluginVersion": "2.39.7",
+        "source": "registry",
+        "isSelected": true
+      },
+      "stop": {
+        "isError": false,
+        "payload": {
+          "success": true,
+          "data": {
+            "success": true,
+            "message": "Scenario stopped and Play mode exited",
+            "exitedPlayMode": true
+          }
+        }
+      },
+      "passed": true,
+      "restoredSettings": {
+        "rolesEnabled": false,
+        "scenarioPath": ""
+      },
+      "restored": true
+    }
+  ],
+  "limits": [
+    "Unity 6000.6.2f1 on Windows with MPPM 3.0.0 only",
+    "Editor orchestration and agent isolation, not game network connections",
+    "Legacy reflection path retained but not executed on an older Unity installation",
+    "ParrelSync lifecycle not covered"
+  ],
+  "packageAbsent": {
+    "project": "Queue66",
+    "unityVersion": "6000.6.2f1",
+    "mppmAvailable": true,
+    "mppmVersion": "not installed",
+    "packageInstalled": false,
+    "playerWorkflowInitialized": false,
+    "multiplayerRolesEnabled": false,
+    "isMainEditor": true,
+    "tags": [],
+    "currentPlayerErrorAbsent": true
+  },
+  "nodeRegressionTests": {
+    "node18": 83,
+    "node22": 83,
+    "failed": 0
+  },
+  "routeRegistryCount": 338,
+  "observations": [
+    "Parent ports changed across some Play Mode reloads; fresh discovery by project identity recovered the editor. Listener rebinding latency remains under review."
+  ]
+}

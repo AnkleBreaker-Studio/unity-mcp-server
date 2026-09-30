@@ -20,7 +20,7 @@ Counts reflect the checked-in definitions; optional tools require their correspo
 |---|---|
 | **Several projects open** | Registry discovery, live project identity, per-agent selection and explicit routing on each call. |
 | **Several agents working** | Request-local agent and port state; the plugin schedules each agent's FIFO queue in round-robin order. |
-| **Multiplayer iteration** | MPPM scenario creation, activation, start/stop and player controls; discovery of ParrelSync editor clones. |
+| **Multiplayer iteration** | MPPM scenarios, player controls and parent/virtual-player discovery; retained ParrelSync identity. [Workflow and live tests](docs/multiplayer.md) |
 | **Long editor operations** | Ticket submission and polling, in-flight status and domain-reload recovery paths. Unity work runs on the main thread; an expensive action can still occupy it. |
 | **Changes you can inspect** | Per-agent history, named undo groups for supported actions, compilation diagnostics and scene/game captures. |
 | **Results you can diagnose** | Separate command errors, exceptions and timeouts; one history record per terminal outcome, including deferred callbacks. [Monitoring guide](docs/queue-monitoring.md) |
@@ -122,7 +122,7 @@ Discover advanced capabilities with `unity_list_advanced_tools`. Filter by categ
 
 The plugin declares **Unity 2021.3+** support and retains version-gated object identity APIs. Server and plugin versions advance independently; they do not need matching version numbers.
 
-The current modernization branch has been compiled and exercised in **Unity 6000.6.2f1**: queue lifecycle, concurrent commands to two real editors, four Play Mode reload configurations and compiled build diagnostics. Optional multiplayer packages and older Unity versions still need their own validation. [Evidence, limits and remaining work →](docs/modernization.md)
+The current modernization branch has been compiled and exercised in **Unity 6000.6.2f1**: queue lifecycle, concurrent commands to two real editors, four Play Mode reload configurations and compiled build diagnostics. MPPM 3.0 live tests also cover Host/Client launch, isolated agent routing and shared script recompilation. Older Unity/MPPM versions, ParrelSync lifecycle and game networking still need separate validation. [Evidence, limits and remaining work →](docs/modernization.md)
 
 On Unity 6.6, Development builds default to Checked managed diagnostics. Optional `managedCodeVariant` selects Release, Instrumented, Checked or Debug for one build, then restores the project setting. [Build behavior and compatibility →](docs/builds.md)
 

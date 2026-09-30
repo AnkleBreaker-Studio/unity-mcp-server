@@ -248,6 +248,9 @@ export async function discoverInstances() {
             unityVersion: info.unityVersion || entry.unityVersion,
             isClone: info.isClone,
             cloneIndex: info.cloneIndex,
+            isVirtualPlayer: info.isVirtualPlayer,
+            mainProjectPath: info.mainProjectPath,
+            virtualPlayerId: info.virtualPlayerId,
             protocolVersion: info.protocolVersion,
             pluginVersion: info.pluginVersion,
             alive: true,
@@ -280,6 +283,9 @@ export async function discoverInstances() {
             unityVersion: info?.unityVersion || "",
             isClone: info?.isClone || false,
             cloneIndex: info?.cloneIndex ?? -1,
+            isVirtualPlayer: info?.isVirtualPlayer,
+            mainProjectPath: info?.mainProjectPath,
+            virtualPlayerId: info?.virtualPlayerId,
             protocolVersion: info?.protocolVersion,
             pluginVersion: info?.pluginVersion,
             alive: true,
@@ -416,7 +422,8 @@ function isRegistryEntryStale(entry) {
 function readRegistryFile() {
   try {
     const raw = readFileSync(CONFIG.instanceRegistryPath, "utf-8");
-    const data = JSON.parse(raw);
+    // Older Unity plugins write a UTF-8 marker; JSON.parse rejects it before any registry entry can be read.
+    const data = JSON.parse(raw.charCodeAt(0) === 0xFEFF ? raw.slice(1) : raw);
     if (Array.isArray(data)) return data;
     return [];
   } catch {
@@ -465,6 +472,9 @@ async function getInstanceInfo(port) {
       unityVersion: data.unityVersion || data.version || null,
       isClone: data.isClone || false,
       cloneIndex: data.cloneIndex ?? -1,
+      isVirtualPlayer: typeof data.isVirtualPlayer === "boolean" ? data.isVirtualPlayer : undefined,
+      mainProjectPath: typeof data.mainProjectPath === "string" ? data.mainProjectPath : undefined,
+      virtualPlayerId: typeof data.virtualPlayerId === "string" ? data.virtualPlayerId : undefined,
       // Capability handshake fields (plugins >= protocolVersion 1; else undefined)
       protocolVersion: typeof data.protocolVersion === "number" ? data.protocolVersion : undefined,
       pluginVersion: typeof data.pluginVersion === "string" ? data.pluginVersion : undefined,

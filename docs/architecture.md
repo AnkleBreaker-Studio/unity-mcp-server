@@ -63,6 +63,8 @@ The plugin batch runner compiles the actual package and exercises object IDs, sc
 
 Separate opt-in stdio suites drive two actual Unity editors, four Play Mode reload configurations, and script reload with a lost result. Build validation inspects constants in Windows Mono player assemblies and verifies restoration of project settings. These use disposable marked projects and are not part of ordinary mock-based CI.
 
+The [multiplayer suite](multiplayer.md) adds real MPPM 3.0 parent/virtual-player processes on Unity 6.6, native scenario selection, Host/Client roles, per-agent routing and shared script recompilation. This verifies editor orchestration; networking inside a game remains separate.
+
 The plugin's `-Suite Health` checks inactive-session eviction, preservation of outstanding work, read/write scheduling and empty queue allocation counts with a positive control. See [queue monitoring](queue-monitoring.md) for the measurements and their scope.
 
 See [modernization evidence and remaining work](modernization.md) before interpreting either suite as complete product coverage.

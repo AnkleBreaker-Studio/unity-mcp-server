@@ -4386,6 +4386,7 @@ export const editorTools = [
         virtualEditors: {
           type: "integer",
           minimum: 0,
+          maximum: 3,
           description: "Number of Virtual Editor instances (clones) to add. Default 1.",
         },
         virtualRole: {

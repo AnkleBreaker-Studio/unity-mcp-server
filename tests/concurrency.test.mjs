@@ -80,6 +80,54 @@ test("invalid routing ports fail without contacting Unity", async () => {
   }
 });
 
+test("discovery accepts the UTF-8 marker written by Unity outside the scan range", async () => {
+  const bridge = await new MockBridge({ instance: { projectName: "CustomPort", projectPath: "C:/CustomPort" } }).start();
+  const env = bridge.env();
+  env.UNITY_PORT_RANGE_START = "1";
+  env.UNITY_PORT_RANGE_END = "0";
+  writeFileSync(env.UNITY_INSTANCE_REGISTRY, "\uFEFF" + JSON.stringify([{ port: bridge.port }]));
+  const client = new McpTestClient({ env }).start();
+  try {
+    await client.initialize();
+    const result = await client.callTool("unity_list_instances");
+    assert.equal(result.payload.totalCount, 1);
+    assert.equal(result.payload.instances[0].source, "registry");
+    assert.equal(result.payload.instances[0].projectName, "CustomPort");
+  } finally {
+    await client.close();
+    await bridge.stop();
+  }
+});
+
+for (const source of ["registry", "portscan"]) {
+  test(`MPPM identity survives ${source} discovery without changing ParrelSync fields`, async () => {
+    const instance = { projectName: "SharedGame", projectPath: "C:/SharedGame/Library/VP/mppm1234",
+      isVirtualPlayer: true, mainProjectPath: "C:/SharedGame", virtualPlayerId: "mppm1234", isClone: false, cloneIndex: -1 };
+    const bridge = await new MockBridge({ instance }).start();
+    const env = bridge.env();
+    writeFileSync(env.UNITY_INSTANCE_REGISTRY, JSON.stringify([{ port: bridge.port }]));
+    if (source === "portscan") {
+      writeFileSync(env.UNITY_INSTANCE_REGISTRY, "[]");
+      env.UNITY_PORT_RANGE_START = String(bridge.port);
+      env.UNITY_PORT_RANGE_END = String(bridge.port);
+    }
+    const client = new McpTestClient({ env }).start();
+    try {
+      await client.initialize();
+      const result = await client.callTool("unity_list_instances");
+      const discovered = result.payload.instances[0];
+      assert.equal(discovered.source, source);
+      for (const key of ["isVirtualPlayer", "mainProjectPath", "virtualPlayerId", "isClone", "cloneIndex"])
+        assert.equal(discovered[key], instance[key], key);
+      const selected = await client.callTool("unity_select_instance", { port: bridge.port });
+      assert.equal(selected.payload.instance.virtualPlayerId, instance.virtualPlayerId);
+    } finally {
+      await client.close();
+      await bridge.stop();
+    }
+  });
+}
+
 test("concurrent first calls wait for discovery and require a selection", async () => {
   const bridges = [await new MockBridge().start(), await new MockBridge().start()];
   const env = bridges[0].env();

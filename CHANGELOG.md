@@ -5,6 +5,7 @@ All notable changes to this package will be documented in this file.
 ## [Unreleased]
 
 ### Fixed
+- Accept the UTF-8 BOM written by older Unity instance registries, including discovery outside the fallback port-scan range.
 - Verify the requested Play/Stop state after protocol-2+ session loss instead of reporting a false failure or repeating the command. Ambiguous Pause toggles remain unknown.
 - Isolate project routing and agent identity per asynchronous MCP request. Overlapping calls retain their own target through submission, polling and context injection.
 - Cache queue support per bridge endpoint so a legacy plugin cannot downgrade other open projects.
@@ -14,6 +15,7 @@ All notable changes to this package will be documented in this file.
 - Scope protected polling to the editor queue session, retry transient GET failures, and include response-body reads in per-request and overall polling deadlines.
 
 ### Changed
+- Preserve MPPM virtual-player identity through registry discovery, port scanning and instance listings. Add `isVirtualPlayer`, `mainProjectPath` and `virtualPlayerId` without changing ParrelSync fields; older plugins may omit the new metadata.
 - Expose optional `managedCodeVariant` for Unity 6.6 builds and require plugin protocol 3 before submitting an explicit variant; older plugins keep accepting existing build arguments.
 - Remove duplicate identity/liveness pings from discovery and selection validation.
 - Pin the existing MCP SDK version and refresh compatible transitive dependencies; the current npm audit reports no known vulnerabilities.
@@ -21,6 +23,8 @@ All notable changes to this package will be documented in this file.
 - Isolate queue transport in `queue-transport.js` and document the bounded retry contract and old/new compatibility matrix.
 
 ### Validation
+- Add opt-in `test:multiplayer` for MPPM 3.0 on Unity 6.6: native scenario settings, Host/Client launch, invalid-create rejection, two sets of 12 concurrent commands across separate processes, shared script recompilation and fixture restoration.
+- The ordinary Node suite now has 83 passing tests, including BOM registry reading and MPPM identity through both discovery paths.
 - Document and retain companion-plugin command-outcome evidence: distinct command errors, exceptions and timeouts; exactly-once callback history; legacy result and history compatibility; bounded history backlog and preserved undo behavior.
 - Add opt-in `test:monitoring` for a real handler error across stdio MCP, session counters and the plugin history endpoint.
 - 80 Node tests, including concurrency/discovery, nine transport fault regressions, build capability gates and Play Mode recovery. The companion plugin's Unity 6000.6.2f1 runner also exercises its actual HTTP dispatcher and guarded retries; full cross-version and multiplayer validation remains in progress.
