@@ -11,7 +11,7 @@ The objective remains a broad improvement of the existing MCP and plugin: backwa
 | Request-local routing, agent identity and project context | New stdio test failed on baseline with `Beta !== Alpha`; passes after isolation | Overlapping requests to two mock bridges, including polling headers |
 | Queue capability per endpoint | New mixed-version test failed on baseline with `legacy !== queue`; passes after fix | Legacy plugin and queue plugin in one MCP process |
 | Live discovery identity, fewer pings | Reused-port registry test; one ping for identity and liveness | Registry path and successful port probing |
-| Existing MCP contracts | 80 tests pass locally on Node 18 and 22; the previous 74-test checkpoint passed all eight CI jobs | Full tested surface, not every Unity route; current CI status is recorded below |
+| Existing MCP contracts | 80 tests pass locally on Node 18 and 22 and in all eight CI jobs (Node 18/20/22/24, Windows/Linux) | Full tested surface, not every Unity route; CI does not run the opt-in real-editor suites |
 | Dependency refresh | SDK pinned to existing tested 1.27.1; compatible transitive upgrades; `npm audit` reports zero | Advisory database at validation time; not a security certification |
 | Indexed pending-ticket lookup | Actual plugin tested with 100 and 10,000 queued tickets | O(1) ticket lookup replaces FIFO scans; output allocation remains |
 | Separate wait and processing timings | Monotonic timestamps and session averages; old `executionTimeMs` retained | Dashboard includes wait/processing averages and exception/timeout counters; command-result errors are not queue exceptions |
@@ -38,6 +38,8 @@ The [retry validation report](validation/unity66-retries.json) adds concurrent p
 Retry implementation checkpoints: server `0c3b7f9`, plugin `9b56fa8`. [All eight server CI jobs passed](https://github.com/AnkleBreaker-Studio/unity-mcp-server/actions/runs/36745758831), as did the [plugin route registry check](https://github.com/AnkleBreaker-Studio/unity-mcp-plugin/actions/runs/36745752296). Both README introductions were rendered and inspected after the documentation update.
 
 The [build report](validation/unity66-builds.json) preserves the reproduced baseline and five corrected builds, including restoration after a failed build. The [live editor report](validation/unity66-editor-lifecycle.json) records two independent editors, the default/scene-only/no-reload/domain-only configurations, and actual script-reload result loss. The initial live run exposed false Play failures after session changes; the corrected run verifies success by readback without another Play command. Both reports are from Windows with Unity 6000.6.2f1.
+
+Build and live-editor checkpoints: server `843088b`, plugin `98b6d11`. [All eight server CI jobs passed with 80 tests](https://github.com/AnkleBreaker-Studio/unity-mcp-server/actions/runs/36749833896), and the [338-route plugin registry check passed](https://github.com/AnkleBreaker-Studio/unity-mcp-plugin/actions/runs/36749793560). Both actual editors finished out of Play Mode with `isCompiling: false` and zero compilation errors. Versions remain unchanged; these are feature-branch checkpoints, not releases.
 
 ## Reproduce
 
@@ -79,6 +81,8 @@ Local evidence for this iteration lives in the sibling workspace directory `../v
 7. Review long-lived caches, request cancellation, response byte accounting, discovery identity transitions and resource routing under concurrency.
 8. Keep both READMEs and release notes aligned as implementation expands. Review the final cross-repository diff and refresh validation evidence before release.
 9. Prepare versioning and reviewable changes with test evidence. Publish feature branches per studio workflow when the set is ready; merge/release only within authorized scope.
+
+Concrete follow-up findings from the queue review: agent sessions remain in `_sessions` after inactivity, even though each individual action log is capped; read/write classification is a route-name heuristic and currently includes all `profiler/*` and `debugger/*` routes, including state-changing enable operations and snapshot creation. Measure retention/idle cost and verify scheduling/undo behavior before changing these policies.
 
 ## Version references
 
