@@ -9,6 +9,125 @@ function payload(response) {
   return JSON.parse(response.content.at(-1).text);
 }
 
+test("resources retain each agent's selected project and explicit port", async () => {
+  const bridges = ["Alpha", "Beta"].map(projectName => {
+    const bridge = new MockBridge({ instance: { projectName, projectPath: `C:/${projectName}` } });
+    bridge.contextProvider = category => category
+      ? { enabled: true, content: `${projectName} rules` }
+      : { enabled: true, categories: [{ category: `${projectName} Rules` }] };
+    return bridge;
+  });
+  let client;
+  try {
+    await Promise.all(bridges.map(bridge => bridge.start()));
+    const env = bridges[0].env();
+    writeFileSync(env.UNITY_INSTANCE_REGISTRY, JSON.stringify(bridges.map(bridge => ({ port: bridge.port }))));
+    client = new McpTestClient({ env }).start();
+    await client.initialize();
+    for (let index = 0; index < bridges.length; index++) {
+      const selected = payload(await client.request("tools/call", { name: "unity_select_instance", arguments: { port: bridges[index].port }, _meta: { agentId: `resource-${index}` } }));
+      assert.equal(selected.success, true);
+    }
+    const responses = await Promise.all(bridges.map((bridge, index) => client.request("resources/list", { _meta: { agentId: `resource-${index}` } })));
+    for (let index = 0; index < responses.length; index++) {
+      assert.equal(responses[index].resources[0].uri, `unity-context://${bridges[index].instance.projectName}%20Rules`);
+    }
+    const reads = await Promise.all(bridges.map((bridge, index) => client.request("resources/read", {
+      uri: responses[index].resources[0].uri, _meta: { agent_id: `resource-${index}` },
+    })));
+    for (let index = 0; index < reads.length; index++) assert.equal(reads[index].contents[0].text, `${bridges[index].instance.projectName} rules`);
+    const override = await client.request("resources/read", { uri: "unity-context://Rules", _meta: { agentId: "resource-0", port: bridges[1].port } });
+    assert.equal(override.contents[0].text, "Beta rules");
+    const retained = await client.request("resources/read", { uri: "unity-context://Rules", _meta: { agentId: "resource-0" } });
+    assert.equal(retained.contents[0].text, "Alpha rules");
+    await client.callTool("unity_select_instance", { port: bridges[1].port });
+    assert.equal((await client.request("resources/read", { uri: "unity-context://Rules" })).contents[0].text, "Beta rules");
+    for (const method of ["resources/list", "resources/read"]) {
+      await assert.rejects(client.request(method, { uri: "unity-context://Rules", _meta: { port: 65536 } }), /port must be an integer/);
+      await assert.rejects(client.request(method, { uri: "unity-context://Rules", _meta: { agentId: 123 } }), /agentId must be a string/);
+    }
+    assert.deepEqual(client.stdoutViolations, []);
+  } finally {
+    await client?.close();
+    await Promise.all(bridges.map(bridge => bridge.stop()));
+  }
+});
+
+test("resources never choose an arbitrary project before instance selection", async () => {
+  const bridges = ["Alpha", "Beta"].map(projectName => new MockBridge({ instance: { projectName, projectPath: `C:/${projectName}` } }));
+  let client;
+  let contextReads = 0;
+  try {
+    await Promise.all(bridges.map(bridge => bridge.start()));
+    for (const bridge of bridges) bridge.contextProvider = () => { contextReads++; return { enabled: true, categories: [{ category: "Rules" }], content: "private rules" }; };
+    const env = bridges[0].env();
+    writeFileSync(env.UNITY_INSTANCE_REGISTRY, JSON.stringify(bridges.map(bridge => ({ port: bridge.port }))));
+    client = new McpTestClient({ env }).start();
+    await client.initialize();
+    assert.deepEqual(await client.request("resources/list"), { resources: [] });
+    await assert.rejects(client.request("resources/read", { uri: "unity-context://Rules" }), /select.*instance|instance.*select/i);
+    assert.equal(contextReads, 0);
+  } finally {
+    await client?.close();
+    await Promise.all(bridges.map(bridge => bridge.stop()));
+  }
+});
+
+test("first discovery preserves a selected instance outside the scan range", async () => {
+  const bridges = ["Alpha", "Beta"].map(projectName => {
+    const bridge = new MockBridge({ instance: { projectName, projectPath: `C:/${projectName}` } });
+    bridge.on("editor/state", () => ({ projectName }));
+    bridge.contextProvider = () => ({ enabled: true, content: `${projectName} rules` });
+    return bridge;
+  });
+  let client;
+  try {
+    await Promise.all(bridges.map(bridge => bridge.start()));
+    const env = bridges[0].env();
+    writeFileSync(env.UNITY_INSTANCE_REGISTRY, JSON.stringify(bridges.map(bridge => ({ port: bridge.port }))));
+    client = new McpTestClient({ env }).start();
+    await client.initialize();
+    const selected = await client.callTool("unity_select_instance", { port: bridges[1].port });
+    assert.equal(selected.isError, false, selected.payloadText);
+    assert.equal(selected.payload.instance.projectName, "Beta");
+    writeFileSync(env.UNITY_INSTANCE_REGISTRY, "[]");
+    const result = await client.callTool("unity_editor_state");
+    assert.equal(result.payload.data.projectName, "Beta");
+    assert.equal((await client.request("resources/read", { uri: "unity-context://Rules" })).contents[0].text, "Beta rules");
+    assert.equal(bridges[0].seen.length, 0);
+  } finally {
+    await client?.close();
+    await Promise.all(bridges.map(bridge => bridge.stop()));
+  }
+});
+
+test("a vanished selection stays blocked across repeated tool and resource calls", async () => {
+  const bridges = ["Alpha", "Beta"].map(projectName => new MockBridge({ instance: { projectName, projectPath: `C:/${projectName}` } }));
+  let client;
+  try {
+    await Promise.all(bridges.map(bridge => bridge.start()));
+    const env = bridges[0].env();
+    writeFileSync(env.UNITY_INSTANCE_REGISTRY, JSON.stringify(bridges.map(bridge => ({ port: bridge.port }))));
+    client = new McpTestClient({ env }).start();
+    await client.initialize();
+    assert.equal((await client.callTool("unity_select_instance", { port: bridges[1].port })).isError, false);
+    await bridges[1].stop();
+    writeFileSync(env.UNITY_INSTANCE_REGISTRY, JSON.stringify([{ port: bridges[0].port }]));
+    for (let attempt = 0; attempt < 3; attempt++) {
+      const response = await client.callTool("unity_editor_state");
+      assert.equal(response.isError, true, response.payloadText);
+      assert.deepEqual(await client.request("resources/list"), { resources: [] });
+      await assert.rejects(client.request("resources/read", { uri: "unity-context://Rules" }), /select.*instance|instance.*select/i);
+    }
+    assert.equal(bridges[0].seen.length, 0);
+    assert.equal((await client.callTool("unity_select_instance", { port: bridges[0].port })).isError, false);
+    assert.equal((await client.callTool("unity_editor_state")).isError, false);
+  } finally {
+    await client?.close();
+    await Promise.all(bridges.map(bridge => bridge.stop()));
+  }
+});
+
 test("overlapping calls keep their project, agent and context throughout polling", async () => {
   const bridges = ["Alpha", "Beta"].map((projectName, i) => {
     const bridge = new MockBridge({ processingDelayMs: 120 + i * 40,

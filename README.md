@@ -103,7 +103,7 @@ Within an editor, the plugin serializes writes and batches up to five reads per 
 | Prefabs, materials, ScriptableObjects | EditMode / PlayMode test jobs | ParrelSync instances |
 | Animation curves and controllers | Physics queries, scene statistics | Unity Hub editors and modules |
 | Terrain, navigation, particles | Profiler, memory, Frame Debugger | ProBuilder, UMA, Amplify |
-| UI, audio, input actions | Screenshots and action history | Project-specific context resources |
+| UI, audio, input actions | Screenshots and action history | [Project-specific context resources](docs/resources.md) |
 
 Discover advanced capabilities with `unity_list_advanced_tools`. Filter by category or search, retrieve the schema for the tool you need, then call it through `unity_advanced_tool`. [Full category guide and examples →](docs/features.md)
 

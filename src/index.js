@@ -199,6 +199,14 @@ async function discoverForCurrentAgent() {
   const _instanceDiscoveryDone = _discoveryDonePerAgent.get(getCurrentAgentId()) || false;
   debugLog(`ensureInstanceDiscovery: _instanceDiscoveryDone=${_instanceDiscoveryDone}, selectedPort=${getSelectedInstance()?.port || 'null'}, selectionRequired=${isInstanceSelectionRequired()}`);
 
+  // A manually selected custom-port editor may be absent from the registry and scan range.
+  if (!_instanceDiscoveryDone && getSelectedInstance()) {
+    _discoveryDonePerAgent.set(getCurrentAgentId(), true);
+    await validateSelectedInstance();
+    return null;
+  }
+  if (!getSelectedInstance() && isInstanceSelectionRequired()) return null;
+
   if (_instanceDiscoveryDone) {
     // Discovery already done (likely restored from persistence).
     // Validate that the persisted instance selection still points to the correct project.
@@ -368,6 +376,30 @@ server.setRequestHandler(ListToolsRequestSchema, async () => {
   };
 });
 
+function configureRequestRouting(request, requestedPort) {
+  const meta = request.params?._meta || {};
+  const agentId = meta.agentId || meta.agent_id || PROCESS_AGENT_ID;
+  if (typeof agentId !== "string") throw new Error("agentId must be a string");
+  setAgentId(agentId);
+
+  const port = requestedPort ?? meta.port ?? null;
+  if (port !== null && (!Number.isInteger(port) || port < 1 || port > 65535)) {
+    throw new Error("port must be an integer between 1 and 65535");
+  }
+  if (port) setPortOverride(port);
+  return port;
+}
+
+async function prepareResourceTarget(port) {
+  if (!port) {
+    await ensureInstanceDiscovery();
+    if (isInstanceSelectionRequired() || !getSelectedInstance()) {
+      throw new Error("Select a Unity instance with unity_select_instance before reading project resources.");
+    }
+  }
+  getRequestContext().bridgeUrl = getActiveBridgeUrl();
+}
+
 // ─── Call Tool Handler ───
 server.setRequestHandler(CallToolRequestSchema, async (request) => runWithRequestContext({ agentId: PROCESS_AGENT_ID }, async () => {
   const { name, arguments: args } = request.params;
@@ -381,20 +413,9 @@ server.setRequestHandler(CallToolRequestSchema, async (request) => runWithReques
   }
 
   try {
-    const meta = request.params._meta || {};
-    const agentId = meta.agentId || meta.agent_id || PROCESS_AGENT_ID;
-    if (typeof agentId !== "string") {
-      throw new Error("agentId must be a string");
-    }
-    setAgentId(agentId);
-
-    const portOverride = args?.port ?? meta.port ?? null;
-    if (portOverride !== null && (!Number.isInteger(portOverride) || portOverride < 1 || portOverride > 65535)) {
-      throw new Error("port must be an integer between 1 and 65535");
-    }
+    const portOverride = configureRequestRouting(request, args?.port);
 
     if (portOverride) {
-      setPortOverride(portOverride);
       debugLog(`Port override active: ${portOverride} for tool ${name}`);
     }
 
@@ -423,7 +444,7 @@ server.setRequestHandler(CallToolRequestSchema, async (request) => runWithReques
             type: "text",
             text:
               instancePrompt ||
-              "Multiple Unity instances are running. You must call unity_list_instances and then unity_select_instance before using other Unity tools.",
+              "Select a Unity instance with unity_select_instance before using other Unity tools. Use unity_list_instances to see available projects.",
           },
         ],
         isError: true,
@@ -487,8 +508,10 @@ server.setRequestHandler(CallToolRequestSchema, async (request) => runWithReques
 
 // ─── MCP Resources: Expose project context files ───
 
-server.setRequestHandler(ListResourcesRequestSchema, async () => {
+server.setRequestHandler(ListResourcesRequestSchema, async (request) => runWithRequestContext({ agentId: PROCESS_AGENT_ID }, async () => {
+  const port = configureRequestRouting(request);
   try {
+    await prepareResourceTarget(port);
     const contextData = await getProjectContext();
 
     if (
@@ -510,9 +533,10 @@ server.setRequestHandler(ListResourcesRequestSchema, async () => {
   } catch {
     return { resources: [] };
   }
-});
+}));
 
-server.setRequestHandler(ReadResourceRequestSchema, async (request) => {
+server.setRequestHandler(ReadResourceRequestSchema, async (request) => runWithRequestContext({ agentId: PROCESS_AGENT_ID }, async () => {
+  const port = configureRequestRouting(request);
   const uri = request.params.uri;
   const match = uri.match(/^unity-context:\/\/(.+)$/);
 
@@ -521,6 +545,7 @@ server.setRequestHandler(ReadResourceRequestSchema, async (request) => {
   }
 
   const category = decodeURIComponent(match[1]);
+  await prepareResourceTarget(port);
   const contextData = await getProjectContext(category);
 
   if (contextData.error) {
@@ -536,7 +561,7 @@ server.setRequestHandler(ReadResourceRequestSchema, async (request) => {
       },
     ],
   };
-});
+}));
 
 // ─── Start Server ───
 async function main() {

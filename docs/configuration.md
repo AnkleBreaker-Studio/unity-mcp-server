@@ -23,6 +23,8 @@
 
 The Unity plugin also has its own settings accessible via the Dashboard (`Window > AB Unity MCP > Dashboard`) for port, auto-start, and per-category feature toggles.
 
+Project-context resources follow the selected editor and optional agent/port request metadata. Their existing category URIs remain relative to that selection. See [resource routing and multi-project behavior](resources.md).
+
 ## Optional Package Support
 
 Some tools activate automatically when their packages are detected in the Unity project:

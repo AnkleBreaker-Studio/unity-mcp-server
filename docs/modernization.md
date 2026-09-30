@@ -9,6 +9,7 @@ The objective remains a broad improvement of the existing MCP and plugin: backwa
 | Change | Evidence | Scope / limit |
 |---|---|---|
 | Request-local routing, agent identity and project context | New stdio test failed on baseline with `Beta !== Alpha`; passes after isolation | Overlapping requests to two mock bridges, including polling headers |
+| Resource routing and selection loss | Reproduced cross-project resource reads; lists/reads now retain agent identity and target; lost selections remain blocked | Four stdio regressions plus live context-file reads in two Unity 6.6 editors; legacy category-relative URIs retained |
 | Queue capability per endpoint | New mixed-version test failed on baseline with `legacy !== queue`; passes after fix | Legacy plugin and queue plugin in one MCP process |
 | Live discovery identity, fewer pings | Reused-port registry test; one ping for identity and liveness | Registry path and successful port probing |
 | Existing MCP contracts | 80 tests pass locally on Node 18 and 22 and in all eight CI jobs (Node 18/20/22/24, Windows/Linux) | Full tested surface, not every Unity route; CI does not run the opt-in real-editor suites |
@@ -101,7 +102,7 @@ UMA implementation checkpoint: plugin `00090f6`, with a [passing 338-route regis
 4. Extend multiplayer validation to older MPPM versions, ParrelSync lifecycle and game networking. Unity 6.6 / MPPM 3.0 now passes native Host/Client launch, two sets of 12 overlapping commands through separate agent selections, virtual-player stop/start and shared script recompilation.
 5. Extend actual reload/lost-ticket recovery to other editor versions and client/plugin combinations. Unity 6.6 script reload now confirms one execution plus an unknown result, and Play/Stop recover by readback. Never infer that a timeout means a write did not occur.
 6. Continue reviewing Unity 6.6 semantic changes and optional-package APIs. Managed Code Variant builds now have compiled evidence on Windows Mono; other build platforms and IL2CPP remain untested. Play Mode tests cover the four existing reload combinations, not all scene restoration semantics or new Unity 6.6 optimizations.
-7. Review long-lived caches, request cancellation, response byte accounting, discovery identity transitions and resource routing under concurrency.
+7. Review long-lived caches, request cancellation and response byte accounting. Resource routing and selection-loss defects now have regression coverage; continue assessing other discovery identity transitions under concurrency.
 8. Keep both READMEs and release notes aligned as implementation expands. Review the final cross-repository diff and refresh validation evidence before release.
 9. Prepare versioning and reviewable changes with test evidence. Publish feature branches per studio workflow when the set is ready; merge/release only within authorized scope.
 
@@ -112,6 +113,8 @@ The command-outcome/history changes are published in plugin commit `b3dbef2`. Lo
 The [MPPM guide](multiplayer.md) and [raw multiplayer report](validation/unity66-multiplayer.json) record the native Unity 6.6 findings and live verification. Scenario creation now writes the settings Unity executes, activation selects the native Play Mode scenario, and discovery preserves virtual-player identity. A registry BOM parsing regression is covered outside the fallback scan range. The ordinary server suite has 83 tests. Live MPPM runs pass on Node 18 and 22. A separate package-absent fixture reports native API availability, package installation and player initialization independently. These checks cover editor orchestration and isolation, not network connections in a game. Parent ports changed across some Play Mode reloads; identity-based rediscovery passes, while listener rebinding latency remains a review item.
 
 ## Version references
+
+The [resource guide](resources.md) and [report](validation/resource-routing.json) add isolated resource handlers, explicit selection requirements and custom-port selection retention. Four stdio regressions reproduce the failures, and live checks exercise actual Markdown reads in two Unity 6.6 editors with settings/fixture restoration. The ordinary suite now has 87 tests.
 
 The [compatibility guide](compatibility.md) and [report](validation/unity66-version-compatibility.json) record four real server-plugin combinations, unchanged baseline checkouts, schema/name continuity and concurrent agents across mixed plugin versions. The existing 83 ordinary server tests also pass after making the test client's server entry configurable. Live editor validation remains opt-in and separate from ordinary CI.
 

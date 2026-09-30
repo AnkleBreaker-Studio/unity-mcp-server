@@ -7,7 +7,7 @@ The Node server and Unity package are independently versioned components. The MC
 ## Request lifecycle
 
 1. `src/index.js` registers MCP tool and project-context resource handlers. It exposes core tools plus two advanced discovery/dispatch tools.
-2. A tool call creates an `AsyncLocalStorage` context. The default agent ID is unique to the server process; `_meta.agentId` and `_meta.agent_id` remain supported. `arguments.port` takes precedence over `_meta.port`.
+2. Tool calls and project-resource requests create an `AsyncLocalStorage` context. The default agent ID is unique to the server process; `_meta.agentId` and `_meta.agent_id` remain supported. Tools accept `arguments.port` ahead of `_meta.port`; resources accept `_meta.port`.
 3. `instance-discovery.js` reads the shared registry and probes the configured port range. Selection is stored per agent. Concurrent discovery for the same agent shares a promise; an editor target is pinned for the operation after selection checks.
 4. `tool-tiers.js` either dispatches a known handler or derives an advanced route. Route overrides preserve names whose public tool name differs from the plugin endpoint. Optional integrations have their own bridge modules.
 5. `unity-editor-bridge.js` captures the target and agent; `queue-transport.js` negotiates protocol-2 protection through queue info, submits and polls on that target. Queue support is cached by endpoint, allowing old and new plugin versions to coexist. Protected retries retain one request ID and deadline; scoped polling refuses a different editor queue session.
@@ -31,6 +31,8 @@ Legacy waiters expire after 30 seconds. Unstarted work is removed or skipped; an
 | Test jobs and compilation diagnostics | Dedicated plugin command classes |
 
 Stdio does **not** serialize handler completion. Handlers overlap whenever they await I/O. Agent/port globals are therefore unsuitable for carrying request identity. The regression suite overlaps two real MCP calls and checks the returned project, injected context and polling headers.
+
+Project-context resources use the same routing isolation while retaining their category-relative URIs. A missing selection cannot read another project's default-port context; a vanished selected project keeps requiring explicit reselection. See [resource semantics and validation](resources.md).
 
 ## Plugin subsystems
 
