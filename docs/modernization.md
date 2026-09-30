@@ -11,7 +11,7 @@ The objective remains a broad improvement of the existing MCP and plugin: backwa
 | Request-local routing, agent identity and project context | New stdio test failed on baseline with `Beta !== Alpha`; passes after isolation | Overlapping requests to two mock bridges, including polling headers |
 | Queue capability per endpoint | New mixed-version test failed on baseline with `legacy !== queue`; passes after fix | Legacy plugin and queue plugin in one MCP process |
 | Live discovery identity, fewer pings | Reused-port registry test; one ping for identity and liveness | Registry path and successful port probing |
-| Existing MCP contracts | Initial 65 tests passed on Node 18, 20, 22 and 24, Windows and Linux; expanded 74 tests pass locally on Node 18 and 22 | Full tested surface, not every Unity route |
+| Existing MCP contracts | 74 tests; CI passes on Node 18, 20, 22 and 24, Windows and Linux | Full tested surface, not every Unity route |
 | Dependency refresh | SDK pinned to existing tested 1.27.1; compatible transitive upgrades; `npm audit` reports zero | Advisory database at validation time; not a security certification |
 | Indexed pending-ticket lookup | Actual plugin tested with 100 and 10,000 queued tickets | O(1) ticket lookup replaces FIFO scans; output allocation remains |
 | Separate wait and processing timings | Monotonic timestamps and session averages; old `executionTimeMs` retained | Dashboard includes wait/processing averages and exception/timeout counters; command-result errors are not queue exceptions |
@@ -31,6 +31,8 @@ Published checkpoints: server `509979b`, plugin `bb173d6`. [All eight server CI 
 The plugin lifecycle/monitoring follow-up is published as `bc947f9`, with the expanded local Unity report linked above and a [passing route registry CI check](https://github.com/AnkleBreaker-Studio/unity-mcp-plugin/actions/runs/36742844003).
 
 The [retry validation report](validation/unity66-retries.json) adds concurrent protected admission, real HTTP dispatch and bounded retry-cache checks. Its polling measurements are 2.84 ms and 5.39 ms. See the [wire contract and compatibility matrix](queue-protocol.md) for guarantees and limits.
+
+Retry implementation checkpoints: server `0c3b7f9`, plugin `9b56fa8`. [All eight server CI jobs passed](https://github.com/AnkleBreaker-Studio/unity-mcp-server/actions/runs/36745758831), as did the [plugin route registry check](https://github.com/AnkleBreaker-Studio/unity-mcp-plugin/actions/runs/36745752296). Both README introductions were rendered and inspected after the documentation update.
 
 ## Reproduce
 

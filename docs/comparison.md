@@ -5,6 +5,7 @@ Compare the workflows you will actually use: several editors, several agents, mu
 | Evaluation criterion | AnkleBreaker implementation | Evidence to inspect |
 |---|---|---|
 | Overlapping requests to different projects | Request-local routing and agent identity, target pinned through polling | `tests/concurrency.test.mjs`, `src/request-context.js` |
+| Lost submission responses | Protocol-2 retries recover the original ticket within one session and retry window; old plugins return uncertainty without write replay | `tests/retry-safety.test.mjs`, [wire contract](queue-protocol.md), actual Unity HTTP validation |
 | Agents sharing an editor | Per-agent FIFO and fair round-robin execution, grouped reads | Plugin `MCPRequestQueue.cs`, Unity validation runner |
 | Multiplayer workflows | MPPM scenarios and virtual player operations, ParrelSync clone discovery | Plugin `MCPScenarioCommands.cs`, `MCPInstanceRegistry.cs` |
 | Reversible scene work | Supported write operations receive named undo groups and action records | Plugin queue, `MCPActionHistory.cs`, `MCPUndoCommands.cs` |
