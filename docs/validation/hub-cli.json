@@ -27,7 +27,8 @@
       "Empty successful lists"
     ],
     "testTimeoutMs": 1500,
-    "testOutputLimitBytes": 4096
+    "testOutputLimitBytes": 4096,
+    "platform": "Windows"
   },
   "localTests": {
     "node18": {
@@ -162,5 +163,52 @@
     "Other Hub versions and real macOS/Linux Hub execution remain unverified.",
     "Exit zero is a successful process result; it does not prove all requested installation work completed or interpret every vendor log message.",
     "Client disconnect and CLI process termination do not guarantee cancellation or rollback of installer work."
-  ]
+  ],
+  "ci": {
+    "runId": 36783679968,
+    "url": "https://github.com/AnkleBreaker-Studio/unity-mcp-server/actions/runs/36783679968",
+    "commit": "fe9ad9ab87e62e1785508fd2ec34c6789b230264",
+    "jobs": [
+      {
+        "name": "node 24 on windows-latest",
+        "status": "completed",
+        "conclusion": "success"
+      },
+      {
+        "name": "node 18 on windows-latest",
+        "status": "completed",
+        "conclusion": "success"
+      },
+      {
+        "name": "node 22 on ubuntu-latest",
+        "status": "completed",
+        "conclusion": "success"
+      },
+      {
+        "name": "node 20 on windows-latest",
+        "status": "completed",
+        "conclusion": "success"
+      },
+      {
+        "name": "node 18 on ubuntu-latest",
+        "status": "completed",
+        "conclusion": "success"
+      },
+      {
+        "name": "node 20 on ubuntu-latest",
+        "status": "completed",
+        "conclusion": "success"
+      },
+      {
+        "name": "node 24 on ubuntu-latest",
+        "status": "completed",
+        "conclusion": "success"
+      },
+      {
+        "name": "node 22 on windows-latest",
+        "status": "completed",
+        "conclusion": "success"
+      }
+    ]
+  }
 }
