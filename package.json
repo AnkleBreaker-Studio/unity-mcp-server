@@ -16,7 +16,8 @@
     "pack": "npx @anthropic-ai/mcpb pack . unity-mcp.mcpb && npx @anthropic-ai/mcpb clean unity-mcp.mcpb",
     "test:live": "node --test tests/live-smoke.test.mjs tests/live-probuilder-level.test.mjs",
     "test:builds": "node --test tests/live-build-variants.test.mjs",
-    "test:lifecycle": "node --test tests/live-editor-lifecycle.test.mjs"
+    "test:lifecycle": "node --test tests/live-editor-lifecycle.test.mjs",
+    "test:monitoring": "node --test tests/live-monitoring.test.mjs"
   },
   "dependencies": {
     "@modelcontextprotocol/sdk": "1.27.1"

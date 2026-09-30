@@ -21,6 +21,8 @@ All notable changes to this package will be documented in this file.
 - Isolate queue transport in `queue-transport.js` and document the bounded retry contract and old/new compatibility matrix.
 
 ### Validation
+- Document and retain companion-plugin command-outcome evidence: distinct command errors, exceptions and timeouts; exactly-once callback history; legacy result and history compatibility; bounded history backlog and preserved undo behavior.
+- Add opt-in `test:monitoring` for a real handler error across stdio MCP, session counters and the plugin history endpoint.
 - 80 Node tests, including concurrency/discovery, nine transport fault regressions, build capability gates and Play Mode recovery. The companion plugin's Unity 6000.6.2f1 runner also exercises its actual HTTP dispatcher and guarded retries; full cross-version and multiplayer validation remains in progress.
 - Add opt-in live build and editor lifecycle suites: compiled diagnostics and restoration after success/failure, two real editors, four reload configurations and a lost result across actual script reload.
 

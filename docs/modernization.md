@@ -26,6 +26,8 @@ The objective remains a broad improvement of the existing MCP and plugin: backwa
 | Explicit read/write policy | Four state-changing profiler/debugger routes and an unknown route execute one per update; compilation-error and existing state reads batch five | Real queue callbacks; native profiler/debugger feature behavior is outside this scheduling test |
 | Session retention and visibility | 5,000 stale sessions removed, newest 256 inactive sessions retained, busy/fresh sessions survive, returning agent starts new statistics | Monotonic idle expiry; active/busy sessions have no forced eviction; about 8.5 MiB released in the synthetic retention case |
 | Empty queue allocations | Positive-control ProfilerRecorder measures 3,000 allocations before scratch reuse and zero after, over 100,000 warmed updates | Queue processor only, not the entire plugin/editor; the runtime's allocated-byte counter failed its control test |
+| Command errors and terminal history | 15 result shapes, seven baseline classification failures corrected; duplicate callbacks, timeout history, persistence, history endpoint and create/undo checks pass | Additive outcome fields; original completed status/results retained. Pending history is capped and reports dropped records; custom computed getters are not evaluated |
+| Live command monitoring | A real missing-object lookup reports MCP `isError`, one session command error and one flagged history record, with Node 18 and 22 | One open Unity 6000.6.2f1 editor; separate opt-in `npm run test:monitoring`, not ordinary CI |
 | Unity 6.6 | Package compiled and validation runner passed on `6000.6.2f1` | Isolated project, no optional-package or real multiplayer certification |
 | Minimal project installation | Second import exposed missing uGUI; declare uGUI and Test Framework in the package | Validation manifest now depends only on the plugin; Unity 6.6 resolves uGUI 2.6.0 and Test Framework 1.8.0 |
 | README | New vector architecture visual, installation flow, workflow tables, detailed linked guides | Existing demo media retained; competitor claims corrected against sources |
@@ -80,7 +82,7 @@ Local evidence for this iteration lives in the sibling workspace directory `../v
 ## Remaining work before completion
 
 1. Complete route-family review and real editor tests: scene/component/asset operations, screenshots, code execution, undo, packages, tests, builds and optional integrations.
-2. Expand monitoring end to end: command-result error/reload counters and interactive dashboard review. Session retention and empty queue allocations now have measured fixes; session wait/processing aggregates and exception/timeout counts exist. Continue measuring dashboard and active-work costs.
+2. Expand monitoring end to end: reload counters and interactive dashboard review. Command-result errors and terminal history now have regression coverage, alongside session retention and empty queue allocation fixes. Continue measuring dashboard and active-work costs.
 3. Test old/new server-plugin combinations and older supported Unity versions, not just the new server's legacy mock transport. Add repeatable CI coverage where feasible.
 4. Exercise actual MPPM/ParrelSync workflows, clone lifecycle and recompile. Independent simultaneous editors and four Play Mode reload configurations now pass on Unity 6.6; this is not yet a multiplayer-clone validation.
 5. Extend actual reload/lost-ticket recovery to other editor versions and client/plugin combinations. Unity 6.6 script reload now confirms one execution plus an unknown result, and Play/Stop recover by readback. Never infer that a timeout means a write did not occur.
@@ -89,7 +91,9 @@ Local evidence for this iteration lives in the sibling workspace directory `../v
 8. Keep both READMEs and release notes aligned as implementation expands. Review the final cross-repository diff and refresh validation evidence before release.
 9. Prepare versioning and reviewable changes with test evidence. Publish feature branches per studio workflow when the set is ready; merge/release only within authorized scope.
 
-The queue review's concrete retention and route-classification findings are now fixed and tested. Further review must distinguish transport completion from logical command failure, and cover dashboard/HTTP allocations beyond the measured empty queue loop. Other long-lived server/plugin caches remain in scope.
+The queue review's concrete retention, route-classification and command-outcome/history findings are now fixed and tested. The [monitoring guide](queue-monitoring.md) and [outcome report](validation/unity66-command-outcomes.json) describe the additive contract and its limits. Further review must cover dashboard/HTTP allocations beyond the measured empty queue loop. Other long-lived server/plugin caches remain in scope.
+
+The command-outcome/history changes are published in plugin commit `b3dbef2`. Local validation includes the focused monitoring suite, the full queue/HTTP suite with real timeout history checks, the health regression suite and the live stdio monitoring path on Node 18 and 22. The 80 ordinary server tests pass. Interactive dashboard layout, older Unity versions and actual multiplayer clones remain outside this checkpoint's evidence.
 
 ## Version references
 

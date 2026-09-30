@@ -23,6 +23,7 @@ Counts reflect the checked-in definitions; optional tools require their correspo
 | **Multiplayer iteration** | MPPM scenario creation, activation, start/stop and player controls; discovery of ParrelSync editor clones. |
 | **Long editor operations** | Ticket submission and polling, in-flight status and domain-reload recovery paths. Unity work runs on the main thread; an expensive action can still occupy it. |
 | **Changes you can inspect** | Per-agent history, named undo groups for supported actions, compilation diagnostics and scene/game captures. |
+| **Results you can diagnose** | Separate command errors, exceptions and timeouts; one history record per terminal outcome, including deferred callbacks. [Monitoring guide](docs/queue-monitoring.md) |
 | **Large tool catalogs** | Core tools immediately available; advanced discovery returns counts, search results or one full schema. Compact mode retains schema structure. |
 | **Mixed plugin versions** | Per-instance queue detection, legacy synchronous fallback and an additive capability handshake. |
 | **Interrupted responses** | Protocol-2 retries recover the original ticket. With older plugins, the server reports uncertain outcomes without repeating writes. [Retry contract](docs/queue-protocol.md) |
