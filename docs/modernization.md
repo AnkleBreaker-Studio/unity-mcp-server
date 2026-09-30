@@ -118,6 +118,8 @@ The [MPPM guide](multiplayer.md) and [raw multiplayer report](validation/unity66
 
 The [discovery identity guide](discovery.md) and [report](validation/discovery-identity.json) record 22 baseline failures and four passing controls, followed by 26 passing corrected checks. All 163 ordinary tests pass on Node 18 and 22. Live read-only checks preserve discovery, selection and repeated implicit routing with current/released plugins in Unity 6.6; the temporary released-plugin editor is closed afterward. This validates discovery, not authentication, and explicit-port routing retains its existing contract.
 
+Discovery checkpoint: server `04a3686`; [all eight Node 18/20/22/24 jobs on Windows and Linux passed](https://github.com/AnkleBreaker-Studio/unity-mcp-server/actions/runs/36789841044). Plugin runtime remains at `631b5d2`; versions and release status are unchanged.
+
 The [cancellation guide](cancellation.md) and [report](validation/cancellation.json) record 15 reproduced behavior failures, one unchanged control and three cleanup/cache checks. All 137 ordinary tests pass on Node 18 and 22. Live Unity 6.6 checks on both versions stop ticket polling after one request while the accepted snippet executes exactly once; the temporary counter is removed. Shared callers remain independent, selected-project validation is preserved and abandoned I/O is released. Plugin execution cancellation and external installer termination are outside this change.
 
 Cancellation checkpoint: server `c9060e8`; [all eight Node 18/20/22/24 jobs on Windows and Linux passed](https://github.com/AnkleBreaker-Studio/unity-mcp-server/actions/runs/36787885862). Plugin runtime and published versions are unchanged.

@@ -228,5 +228,52 @@
     "Pathless legacy identity matching relies on project names and cannot distinguish identical names.",
     "Fresh-registry recovery for unavailable or non-successful HTTP responses preserves existing behavior but cannot prove current endpoint ownership.",
     "Live checks use Windows and Unity 6000.6.2f1; older Unity runtime remains deferred."
-  ]
+  ],
+  "ci": {
+    "runId": 36789841044,
+    "url": "https://github.com/AnkleBreaker-Studio/unity-mcp-server/actions/runs/36789841044",
+    "commit": "04a3686280b76ab3c4c22a8b082b2fd619016c35",
+    "jobs": [
+      {
+        "name": "node 24 on ubuntu-latest",
+        "status": "completed",
+        "conclusion": "success"
+      },
+      {
+        "name": "node 22 on ubuntu-latest",
+        "status": "completed",
+        "conclusion": "success"
+      },
+      {
+        "name": "node 20 on ubuntu-latest",
+        "status": "completed",
+        "conclusion": "success"
+      },
+      {
+        "name": "node 24 on windows-latest",
+        "status": "completed",
+        "conclusion": "success"
+      },
+      {
+        "name": "node 22 on windows-latest",
+        "status": "completed",
+        "conclusion": "success"
+      },
+      {
+        "name": "node 18 on ubuntu-latest",
+        "status": "completed",
+        "conclusion": "success"
+      },
+      {
+        "name": "node 20 on windows-latest",
+        "status": "completed",
+        "conclusion": "success"
+      },
+      {
+        "name": "node 18 on windows-latest",
+        "status": "completed",
+        "conclusion": "success"
+      }
+    ]
+  }
 }
