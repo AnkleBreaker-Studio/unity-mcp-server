@@ -241,5 +241,7 @@
       "metadataCacheMisses": 0,
       "loadedSnippetAssembliesSinceReload": 0
     }
-  }
+  },
+  "verifiedPluginCommit": "f5f5bac7e3e662acee42aa4b670abb69bdff3a13",
+  "pluginRegistryCi": "https://github.com/AnkleBreaker-Studio/unity-mcp-plugin/actions/runs/36772959080"
 }
