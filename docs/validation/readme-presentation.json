@@ -5,7 +5,7 @@
     "engine": "Chromium through Playwright",
     "mode": "headless",
     "markdown": "marked 18 with a local GitHub-style stylesheet",
-    "note": "This is a local preview, not a screenshot of GitHub's hosted renderer or Unity's Dashboard."
+    "note": "Local previews were followed by checks of both hosted GitHub READMEs at both viewport widths. Unity's Dashboard is outside this review."
   },
   "viewports": [
     {
@@ -151,9 +151,57 @@
     "scope": "Documented scheduling and retry mechanisms; no competitor execution benchmark."
   },
   "limitations": [
-    "One plugin feature table scrolls horizontally within its own container at 390 px; the document itself does not overflow.",
-    "Long code blocks scroll within their containers.",
+    "Wide tables and long code blocks use GitHub's horizontal scroll containers on narrow viewports; the README articles themselves do not overflow.",
     "Unity Dashboard pixel review remains separate and pending.",
     "Ordinary runtime suites were not repeated for documentation-only edits; their existing 89-test and eight-job CI evidence remains unchanged."
-  ]
+  ],
+  "hosted": {
+    "refs": {
+      "unity-mcp-server": "e38f3df",
+      "unity-mcp-plugin": "efbc3ab"
+    },
+    "checks": [
+      {
+        "repo": "unity-mcp-server",
+        "url": "https://github.com/AnkleBreaker-Studio/unity-mcp-server/tree/Development-Unity66-Modernization",
+        "viewport": 1280,
+        "articleWidth": 838,
+        "articleScrollWidth": 838,
+        "imagesLoaded": true,
+        "previewNotice": true,
+        "openDetails": 1
+      },
+      {
+        "repo": "unity-mcp-server",
+        "url": "https://github.com/AnkleBreaker-Studio/unity-mcp-server/tree/Development-Unity66-Modernization",
+        "viewport": 390,
+        "articleWidth": 324,
+        "articleScrollWidth": 324,
+        "imagesLoaded": true,
+        "previewNotice": true,
+        "openDetails": 1
+      },
+      {
+        "repo": "unity-mcp-plugin",
+        "url": "https://github.com/AnkleBreaker-Studio/unity-mcp-plugin/tree/Development-Unity66-Modernization",
+        "viewport": 1280,
+        "articleWidth": 838,
+        "articleScrollWidth": 838,
+        "imagesLoaded": true,
+        "previewNotice": true,
+        "openDetails": 2
+      },
+      {
+        "repo": "unity-mcp-plugin",
+        "url": "https://github.com/AnkleBreaker-Studio/unity-mcp-plugin/tree/Development-Unity66-Modernization",
+        "viewport": 390,
+        "articleWidth": 324,
+        "articleScrollWidth": 324,
+        "imagesLoaded": true,
+        "previewNotice": true,
+        "openDetails": 2
+      }
+    ],
+    "visualReview": "Hosted README headers; images, preview notice, opened details and article widths also checked through the DOM."
+  }
 }
