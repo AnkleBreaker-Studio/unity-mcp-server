@@ -15,8 +15,8 @@
 | `UNITY_QUEUE_POLL_MAX` | `1500` | Maximum polling interval in ms |
 | `UNITY_QUEUE_POLL_TIMEOUT` | `120000` | Total ticket observation timeout in ms; expiration does not undo a command |
 | `UNITY_REGISTRY_STALENESS_TIMEOUT` | `300000` | Registry entry staleness timeout in ms (crash detection) |
-| `UNITY_RESPONSE_SOFT_LIMIT` | `2097152` | Response size soft limit in bytes (warning) |
-| `UNITY_RESPONSE_HARD_LIMIT` | `4194304` | Response size hard limit in bytes (truncation) |
+| `UNITY_RESPONSE_SOFT_LIMIT` | `2097152` | Serialized UTF-8 tool-result warning threshold; minimum 1 byte |
+| `UNITY_RESPONSE_HARD_LIMIT` | `4194304` | Serialized UTF-8 tool/resource-result limit; minimum 1024 bytes; oversized results fail explicitly |
 | `UNITY_MCP_DEBUG` | unset | Set to `1` to append diagnostics to `UnityMCP/mcp-debug.log` (5MB rotation) |
 | `UNITY_MCP_PRETTY_JSON` | unset | Set to `1` to pretty-print tool responses (default is compact JSON — 20-50% fewer tokens) |
 | `UNITY_MCP_COMPACT_TOOLS` | unset | Set to `1` for a smaller tool registry: keeps all 80 exposed tools and schema structure, drops per-parameter prose. For clients with registry size limits. |
@@ -24,6 +24,8 @@
 The Unity plugin also has its own settings accessible via the Dashboard (`Window > AB Unity MCP > Dashboard`) for port, auto-start, and per-category feature toggles.
 
 Project-context resources follow the selected editor and optional agent/port request metadata. Their existing category URIs remain relative to that selection. See [resource routing and multi-project behavior](resources.md).
+
+Response budgets include JSON escaping and metadata. Invalid values fall back to defaults; the soft limit is clamped to the hard limit. See [response limits, image results and recovery](response-limits.md).
 
 ## Optional Package Support
 
@@ -48,6 +50,8 @@ Features for uninstalled packages return helpful messages explaining what to ins
 - Unity Editor with [unity-mcp-plugin](https://github.com/AnkleBreaker-Studio/unity-mcp-plugin) installed (for Editor tools)
 
 ## Troubleshooting
+
+**"response_too_large"** - The result could not be delivered within the configured byte limit. Inspect the effects before repeating a write; request smaller results for reads. See [response handling](response-limits.md).
 
 **"Outcome unknown"** - An Editor command may already have executed: inspect the project or original ticket before issuing it again. Updating both components enables protected submission retries; see the [retry and session contract](queue-protocol.md). For a Hub command, inspect Hub installations/settings before retrying; Hub operations run once and have [separate process diagnostics](hub.md).
 

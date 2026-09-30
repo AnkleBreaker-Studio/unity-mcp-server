@@ -24,6 +24,8 @@ Because legacy URIs are relative, reading the same URI after deliberately changi
 
 A fresh registry timestamp cannot override a conflicting live project identity. If another project reuses the selected port, calls require a new selection even when the registry still names the original project. Fresh registry entries remain useful when an editor is temporarily unreachable during compilation, provided no live identity conflict has been observed.
 
+Oversized reads fail explicitly under the configured hard byte limit. See [response budgets and recovery](response-limits.md) for accounting and scope.
+
 ## Evidence
 
 The [routing report](validation/resource-routing.json) preserves a reproduction against server commit `9461c66`: with successful selections for Alpha and Beta, both agents received Alpha's resource list and text. Resources could also read Alpha before any selection, and first discovery could replace an explicit Beta selection when its registry entry disappeared. The corrected server preserves the intended project.

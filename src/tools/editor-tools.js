@@ -13,7 +13,7 @@ function imageResultBlocks(result, noImageError) {
   const imageData = result.data?.base64 || result.base64;
   if (!imageData || typeof imageData !== "string") {
     // noImageError last so an empty-string result.error can't clobber the message.
-    return formatResult({ ...result, error: noImageError });
+    return formatResult({ ...result, success: false, error: noImageError });
   }
   const metadata = { ...result };
   delete metadata.base64;

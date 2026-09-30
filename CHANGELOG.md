@@ -4,6 +4,12 @@ All notable changes to this package will be documented in this file.
 
 ## [Unreleased]
 
+### Response budgets and image outcomes
+- Count serialized UTF-8 bytes, including JSON escaping and image/metadata overhead; validate limit settings and cover early errors and project-context reads.
+- Return an explicit bounded error for oversized tool results, retaining recovery details when they fit. Prepend soft warnings without exceeding the hard limit or replacing the final structured result.
+- Preserve image blocks for Scene/Game captures through the advanced proxy, including future parameters. Report missing images and image-metadata failures as MCP errors.
+- Add 14 reproduced stdio regressions and an opt-in live response suite. All 118 ordinary tests and live Unity 6.6 checks pass on Node 18 and 22. See `docs/response-limits.md` for recovery and measurement limits.
+
 ### Unity Hub command outcomes
 - Preserve nonzero exits, timeouts and output-buffer failures as MCP errors even when Hub prints progress. Retain process diagnostics and identify unknown outcomes after failed writes.
 - Execute each command once, including silent success, with the documented platform headless prefix. Remove retries that could repeat an installation or setting change.

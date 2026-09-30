@@ -478,7 +478,9 @@ export function splitToolTiers(allEditorTools) {
         return "Error: 'tool' parameter is required. Use unity_list_advanced_tools to see available tools.";
       }
 
-      const targetTool = advancedMap.get(tool);
+      // Capture handlers forward arbitrary params and keep base64 out of the text result.
+      const coreCapture = tool === "unity_graphics_scene_capture" || tool === "unity_graphics_game_capture";
+      const targetTool = advancedMap.get(tool) || (coreCapture ? coreMap.get(tool) : undefined);
       if (targetTool) {
         return await targetTool.handler(params || {});
       }

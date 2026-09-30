@@ -4,6 +4,19 @@
 import { homedir } from "os";
 import { join } from "path";
 
+function byteLimit(name, fallback, minimum) {
+  const raw = process.env[name];
+  if (raw === undefined) return fallback;
+  const value = /^\d+$/.test(raw.trim()) ? Number(raw) : NaN;
+  if (Number.isSafeInteger(value) && value >= minimum) return value;
+  console.error(`[MCP] Invalid ${name}; using ${fallback} bytes (minimum ${minimum}).`);
+  return fallback;
+}
+
+// Reserve enough space to return a useful bounded error when a result cannot be delivered.
+const responseHardLimitBytes = byteLimit("UNITY_RESPONSE_HARD_LIMIT", 4 * 1024 * 1024, 1024);
+const responseSoftLimitBytes = Math.min(byteLimit("UNITY_RESPONSE_SOFT_LIMIT", 2 * 1024 * 1024, 1), responseHardLimitBytes);
+
 // Determine the instance registry path based on platform
 function getRegistryPath() {
   if (process.platform === "win32") {
@@ -41,11 +54,9 @@ export const CONFIG = {
   // The plugin sends a heartbeat every 30s, so 5 minutes gives plenty of margin.
   registryStalenessTimeoutMs: parseInt(process.env.UNITY_REGISTRY_STALENESS_TIMEOUT || "300000"), // 5 minutes
 
-  // Response size limits (bytes) — protects against Write EOF errors on large projects
-  // Soft limit: log a warning but still return the response
-  responseSoftLimitBytes: parseInt(process.env.UNITY_RESPONSE_SOFT_LIMIT || String(2 * 1024 * 1024)),   // 2 MB
-  // Hard limit: truncate the response and return pagination guidance instead
-  responseHardLimitBytes: parseInt(process.env.UNITY_RESPONSE_HARD_LIMIT || String(4 * 1024 * 1024)),   // 4 MB
+  // Budget serialized UTF-8 tool/resource results, excluding the JSON-RPC envelope and request ID.
+  responseSoftLimitBytes,
+  responseHardLimitBytes,
 
   // Logging
   logLevel: process.env.LOG_LEVEL || "info",

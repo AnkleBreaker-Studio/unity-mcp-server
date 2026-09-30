@@ -147,6 +147,7 @@ Code execution reuses bounded compiler metadata and reports cache activity in `u
 - **Slow calls:** inspect `unity_queue_info`, `unity_agents_list` and `unity_agent_log`. Ticket status separates queue wait and processing time; queue info also exposes inactive-session retention and evictions. [Monitoring fields and measurements →](docs/queue-monitoring.md)
 - **Compilation in progress:** wait for `isCompiling: false`, then inspect compilation errors. An empty error list during compilation is inconclusive.
 - **Tool unavailable:** check category switches and optional packages in the dashboard. Advanced route discovery supports newer plugins without expanding the initial tool list.
+- **Response too large:** request smaller read results; inspect the effects before repeating a write. [Response budgets and image handling](docs/response-limits.md).
 - **Client registry limit:** set `UNITY_MCP_COMPACT_TOOLS=1`. Full parameter documentation remains available through advanced discovery.
 
 ## Support and license
