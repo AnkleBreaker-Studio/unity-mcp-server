@@ -5,6 +5,7 @@ All notable changes to this package will be documented in this file.
 ## [Unreleased]
 
 ### Fixed
+- Verify the requested Play/Stop state after protocol-2+ session loss instead of reporting a false failure or repeating the command. Ambiguous Pause toggles remain unknown.
 - Isolate project routing and agent identity per asynchronous MCP request. Overlapping calls retain their own target through submission, polling and context injection.
 - Cache queue support per bridge endpoint so a legacy plugin cannot downgrade other open projects.
 - Use the live ping identity when a registry port has been reused; reject invalid routing ports before contacting an editor.
@@ -13,13 +14,15 @@ All notable changes to this package will be documented in this file.
 - Scope protected polling to the editor queue session, retry transient GET failures, and include response-body reads in per-request and overall polling deadlines.
 
 ### Changed
+- Expose optional `managedCodeVariant` for Unity 6.6 builds and require plugin protocol 3 before submitting an explicit variant; older plugins keep accepting existing build arguments.
 - Remove duplicate identity/liveness pings from discovery and selection validation.
 - Pin the existing MCP SDK version and refresh compatible transitive dependencies; the current npm audit reports no known vulnerabilities.
 - Rebuild the README around multi-project workflows, an original vector diagram and linked architecture, configuration, feature and validation guides.
 - Isolate queue transport in `queue-transport.js` and document the bounded retry contract and old/new compatibility matrix.
 
 ### Validation
-- 74 Node tests, including concurrency/discovery and nine transport fault regressions. The companion plugin's Unity 6000.6.2f1 runner also exercises its actual HTTP dispatcher and guarded retries; full cross-version and multiplayer validation remains in progress.
+- 80 Node tests, including concurrency/discovery, nine transport fault regressions, build capability gates and Play Mode recovery. The companion plugin's Unity 6000.6.2f1 runner also exercises its actual HTTP dispatcher and guarded retries; full cross-version and multiplayer validation remains in progress.
+- Add opt-in live build and editor lifecycle suites: compiled diagnostics and restoration after success/failure, two real editors, four reload configurations and a lost result across actual script reload.
 
 ## [2.35.6] - 2026-07-27
 

@@ -1,0 +1,325 @@
+{
+  "scenario": "Two independent Unity 6.6 editors, Play Mode configurations and result loss across reload",
+  "beforePlayRecovery": {
+    "nodeVersion": "v22.18.0",
+    "projects": [
+      {
+        "name": "Queue66",
+        "unityVersion": "6000.6.2f1",
+        "initialPort": 7891
+      },
+      {
+        "name": "Unity66",
+        "unityVersion": "6000.6.2f1",
+        "initialPort": 7890
+      }
+    ],
+    "concurrency": {
+      "calls": 24,
+      "perProject": 12,
+      "routedBy": "per-agent selection, no explicit ports",
+      "correctProjects": true,
+      "countsExactlyOnce": true
+    },
+    "transitions": [
+      {
+        "mode": "default",
+        "domainReload": true,
+        "before": "96a0b4a963134ff1bba3237a2afba104",
+        "playResponse": {
+          "payload": {
+            "success": false,
+            "outcomeUnknown": true,
+            "error": "Outcome unknown for editor/play-mode: HTTP 409: Queue session changed; the original ticket outcome is unknown. The original request may have executed. Inspect Unity before retrying.",
+            "ticketId": 80,
+            "requestId": "252d765aba214274b4cc10c716cf9c75",
+            "queueSessionId": "96a0b4a963134ff1bba3237a2afba104"
+          },
+          "isError": true
+        },
+        "during": "dc2edf7a2dfd4e7f904281319f65755d",
+        "otherProjectUnaffected": true,
+        "stopResponse": {
+          "payload": {
+            "success": true,
+            "data": {
+              "success": true,
+              "action": "stop"
+            }
+          },
+          "isError": false
+        },
+        "after": "dc2edf7a2dfd4e7f904281319f65755d"
+      },
+      {
+        "mode": "scene-only",
+        "domainReload": false,
+        "before": "dc2edf7a2dfd4e7f904281319f65755d",
+        "playResponse": {
+          "payload": {
+            "success": true,
+            "data": {
+              "success": true,
+              "action": "play"
+            }
+          },
+          "isError": false
+        },
+        "during": "dc2edf7a2dfd4e7f904281319f65755d",
+        "otherProjectUnaffected": true,
+        "stopResponse": {
+          "payload": {
+            "success": true,
+            "data": {
+              "success": true,
+              "action": "stop"
+            }
+          },
+          "isError": false
+        },
+        "after": "dc2edf7a2dfd4e7f904281319f65755d"
+      },
+      {
+        "mode": "no-reload",
+        "domainReload": false,
+        "before": "dc2edf7a2dfd4e7f904281319f65755d",
+        "playResponse": {
+          "payload": {
+            "success": true,
+            "data": {
+              "success": true,
+              "action": "play"
+            }
+          },
+          "isError": false
+        },
+        "during": "dc2edf7a2dfd4e7f904281319f65755d",
+        "otherProjectUnaffected": true,
+        "stopResponse": {
+          "payload": {
+            "success": true,
+            "data": {
+              "success": true,
+              "action": "stop"
+            }
+          },
+          "isError": false
+        },
+        "after": "dc2edf7a2dfd4e7f904281319f65755d"
+      },
+      {
+        "mode": "domain-only",
+        "domainReload": true,
+        "before": "dc2edf7a2dfd4e7f904281319f65755d",
+        "playResponse": {
+          "payload": {
+            "success": false,
+            "outcomeUnknown": true,
+            "error": "Outcome unknown for editor/play-mode: HTTP 409: Queue session changed; the original ticket outcome is unknown. The original request may have executed. Inspect Unity before retrying.",
+            "ticketId": 39,
+            "requestId": "cf9e21a41de84ffc90b91f65959661e4",
+            "queueSessionId": "dc2edf7a2dfd4e7f904281319f65755d"
+          },
+          "isError": true
+        },
+        "during": "ee79e563329b4a29a7f3e4762123ba40",
+        "otherProjectUnaffected": true,
+        "stopResponse": {
+          "payload": {
+            "success": true,
+            "data": {
+              "success": true,
+              "action": "stop"
+            }
+          },
+          "isError": false
+        },
+        "after": "ee79e563329b4a29a7f3e4762123ba40"
+      }
+    ],
+    "reload": {
+      "before": "ee79e563329b4a29a7f3e4762123ba40",
+      "response": {
+        "payload": {
+          "success": false,
+          "outcomeUnknown": true,
+          "error": "Outcome unknown for editor/execute-code: HTTP 409: Queue session changed; the original ticket outcome is unknown. The original request may have executed. Inspect Unity before retrying.",
+          "ticketId": 15,
+          "requestId": "b30f2e3824944cb3b8314f59c55de58b",
+          "queueSessionId": "ee79e563329b4a29a7f3e4762123ba40"
+        },
+        "isError": true
+      },
+      "after": "f030a609df8143f59afbabb235938249",
+      "executionCount": 1
+    },
+    "passed": true,
+    "restoredOptions": {
+      "enabled": false,
+      "options": 0
+    }
+  },
+  "verified": {
+    "nodeVersion": "v22.18.0",
+    "projects": [
+      {
+        "name": "Queue66",
+        "unityVersion": "6000.6.2f1",
+        "initialPort": 7891
+      },
+      {
+        "name": "Unity66",
+        "unityVersion": "6000.6.2f1",
+        "initialPort": 7890
+      }
+    ],
+    "concurrency": {
+      "calls": 24,
+      "perProject": 12,
+      "routedBy": "per-agent selection, no explicit ports",
+      "correctProjects": true,
+      "countsExactlyOnce": true
+    },
+    "transitions": [
+      {
+        "mode": "default",
+        "domainReload": true,
+        "before": "f030a609df8143f59afbabb235938249",
+        "playResponse": {
+          "payload": {
+            "success": true,
+            "data": {
+              "action": "play",
+              "isPlaying": true,
+              "isPaused": false,
+              "verifiedViaEditorState": true,
+              "note": "The command result was unavailable; the editor state confirms the requested Play Mode state."
+            }
+          },
+          "isError": false
+        },
+        "during": "77729e706e724f07a0f0787895eee914",
+        "otherProjectUnaffected": true,
+        "stopResponse": {
+          "payload": {
+            "success": true,
+            "data": {
+              "success": true,
+              "action": "stop"
+            }
+          },
+          "isError": false
+        },
+        "after": "77729e706e724f07a0f0787895eee914"
+      },
+      {
+        "mode": "scene-only",
+        "domainReload": false,
+        "before": "77729e706e724f07a0f0787895eee914",
+        "playResponse": {
+          "payload": {
+            "success": true,
+            "data": {
+              "success": true,
+              "action": "play"
+            }
+          },
+          "isError": false
+        },
+        "during": "77729e706e724f07a0f0787895eee914",
+        "otherProjectUnaffected": true,
+        "stopResponse": {
+          "payload": {
+            "success": true,
+            "data": {
+              "success": true,
+              "action": "stop"
+            }
+          },
+          "isError": false
+        },
+        "after": "77729e706e724f07a0f0787895eee914"
+      },
+      {
+        "mode": "no-reload",
+        "domainReload": false,
+        "before": "77729e706e724f07a0f0787895eee914",
+        "playResponse": {
+          "payload": {
+            "success": true,
+            "data": {
+              "success": true,
+              "action": "play"
+            }
+          },
+          "isError": false
+        },
+        "during": "77729e706e724f07a0f0787895eee914",
+        "otherProjectUnaffected": true,
+        "stopResponse": {
+          "payload": {
+            "success": true,
+            "data": {
+              "success": true,
+              "action": "stop"
+            }
+          },
+          "isError": false
+        },
+        "after": "77729e706e724f07a0f0787895eee914"
+      },
+      {
+        "mode": "domain-only",
+        "domainReload": true,
+        "before": "77729e706e724f07a0f0787895eee914",
+        "playResponse": {
+          "payload": {
+            "success": true,
+            "data": {
+              "action": "play",
+              "isPlaying": true,
+              "isPaused": false,
+              "verifiedViaEditorState": true,
+              "note": "The command result was unavailable; the editor state confirms the requested Play Mode state."
+            }
+          },
+          "isError": false
+        },
+        "during": "81cddf934c7c41589ab219a614d2fc58",
+        "otherProjectUnaffected": true,
+        "stopResponse": {
+          "payload": {
+            "success": true,
+            "data": {
+              "success": true,
+              "action": "stop"
+            }
+          },
+          "isError": false
+        },
+        "after": "81cddf934c7c41589ab219a614d2fc58"
+      }
+    ],
+    "reload": {
+      "before": "81cddf934c7c41589ab219a614d2fc58",
+      "response": {
+        "payload": {
+          "success": false,
+          "outcomeUnknown": true,
+          "error": "Outcome unknown for editor/execute-code: HTTP 409: Queue session changed; the original ticket outcome is unknown. The original request may have executed. Inspect Unity before retrying.",
+          "ticketId": 16,
+          "requestId": "18b6c852a98347928ffcf9bca01c0495",
+          "queueSessionId": "81cddf934c7c41589ab219a614d2fc58"
+        },
+        "isError": true
+      },
+      "after": "9c631e13f94d47109e8d099e5f803efd",
+      "executionCount": 1
+    },
+    "passed": true,
+    "restoredOptions": {
+      "enabled": false,
+      "options": 0
+    }
+  }
+}

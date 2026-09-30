@@ -11,10 +11,12 @@
   "scripts": {
     "start": "node src/index.js",
     "dev": "node --watch src/index.js",
-    "test": "node --test tests/protocol.test.mjs tests/concurrency.test.mjs tests/retry-safety.test.mjs tests/unit/tool-tiers.test.mjs tests/unit/capabilities.test.mjs",
+    "test": "node --test tests/protocol.test.mjs tests/concurrency.test.mjs tests/retry-safety.test.mjs tests/build-variants.test.mjs tests/play-mode-recovery.test.mjs tests/unit/tool-tiers.test.mjs tests/unit/capabilities.test.mjs",
     "test:stress": "node tests/multi-agent-stress-test.mjs --mock",
     "pack": "npx @anthropic-ai/mcpb pack . unity-mcp.mcpb && npx @anthropic-ai/mcpb clean unity-mcp.mcpb",
-    "test:live": "node --test tests/live-smoke.test.mjs tests/live-probuilder-level.test.mjs"
+    "test:live": "node --test tests/live-smoke.test.mjs tests/live-probuilder-level.test.mjs",
+    "test:builds": "node --test tests/live-build-variants.test.mjs",
+    "test:lifecycle": "node --test tests/live-editor-lifecycle.test.mjs"
   },
   "dependencies": {
     "@modelcontextprotocol/sdk": "1.27.1"

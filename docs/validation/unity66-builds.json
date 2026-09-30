@@ -1,0 +1,205 @@
+{
+  "scenario": "Windows x64 Mono build diagnostics and setting restoration",
+  "baseline": {
+    "phase": "before-build-variant-fix",
+    "project": "Queue66",
+    "setup": {
+      "scene": "Assets/__McpValidation/BuildScene.unity",
+      "variant": "Release",
+      "backend": "Mono2x"
+    },
+    "build": {
+      "success": true,
+      "data": {
+        "success": true,
+        "result": "Succeeded",
+        "totalErrors": 0,
+        "totalWarnings": 0,
+        "totalTime": 9.3929581,
+        "outputPath": "C:/Users/Francois/orca/workspaces/unity-mcp-server/validation/Queue66/Builds/Dev/Validation.exe",
+        "totalSize": 158313962,
+        "platform": "StandaloneWindows64"
+      }
+    },
+    "compiledConstants": {
+      "Checks": false,
+      "Instrumentation": false,
+      "DebugSymbols": true
+    }
+  },
+  "verified": {
+    "unityVersion": "6000.6.2f1",
+    "nodeVersion": "v22.18.0",
+    "project": "Queue66",
+    "builds": [
+      {
+        "options": {
+          "target": "StandaloneWindows64",
+          "outputPath": "C:/Users/Francois/orca/workspaces/unity-mcp-server/validation/Queue66/Builds/Dev/Validation.exe",
+          "scenes": [
+            "Assets/__McpValidation/BuildScene.unity"
+          ],
+          "developmentBuild": true
+        },
+        "build": {
+          "success": true,
+          "result": "Succeeded",
+          "totalErrors": 0,
+          "totalWarnings": 0,
+          "totalTime": 4.7033173999999995,
+          "outputPath": "C:/Users/Francois/orca/workspaces/unity-mcp-server/validation/Queue66/Builds/Dev/Validation.exe",
+          "totalSize": 158314158,
+          "platform": "StandaloneWindows64",
+          "developmentBuild": true,
+          "managedCodeVariant": "Checked"
+        },
+        "compiledConstants": {
+          "Checks": true,
+          "Instrumentation": true,
+          "DebugSymbols": true
+        },
+        "restoredVariant": "Instrumented"
+      },
+      {
+        "options": {
+          "target": "StandaloneWindows64",
+          "outputPath": "C:/Users/Francois/orca/workspaces/unity-mcp-server/validation/Queue66/Builds/Dist/Validation.exe",
+          "scenes": [
+            "Assets/__McpValidation/BuildScene.unity"
+          ],
+          "developmentBuild": false
+        },
+        "build": {
+          "success": true,
+          "result": "Succeeded",
+          "totalErrors": 0,
+          "totalWarnings": 0,
+          "totalTime": 4.6849735,
+          "outputPath": "C:/Users/Francois/orca/workspaces/unity-mcp-server/validation/Queue66/Builds/Dist/Validation.exe",
+          "totalSize": 96547760,
+          "platform": "StandaloneWindows64",
+          "developmentBuild": false,
+          "managedCodeVariant": "Release"
+        },
+        "compiledConstants": {
+          "Checks": false,
+          "Instrumentation": false,
+          "DebugSymbols": false
+        },
+        "restoredVariant": "Instrumented"
+      },
+      {
+        "options": {
+          "target": "StandaloneWindows64",
+          "outputPath": "C:/Users/Francois/orca/workspaces/unity-mcp-server/validation/Queue66/Builds/Dist/Validation.exe",
+          "scenes": [
+            "Assets/__McpValidation/BuildScene.unity"
+          ],
+          "developmentBuild": false,
+          "managedCodeVariant": "Instrumented"
+        },
+        "build": {
+          "success": true,
+          "result": "Succeeded",
+          "totalErrors": 0,
+          "totalWarnings": 0,
+          "totalTime": 3.9394411999999996,
+          "outputPath": "C:/Users/Francois/orca/workspaces/unity-mcp-server/validation/Queue66/Builds/Dist/Validation.exe",
+          "totalSize": 96552880,
+          "platform": "StandaloneWindows64",
+          "developmentBuild": false,
+          "managedCodeVariant": "Instrumented"
+        },
+        "compiledConstants": {
+          "Checks": false,
+          "Instrumentation": true,
+          "DebugSymbols": false
+        },
+        "restoredVariant": "Instrumented"
+      },
+      {
+        "options": {
+          "target": "StandaloneWindows64",
+          "outputPath": "C:/Users/Francois/orca/workspaces/unity-mcp-server/validation/Queue66/Builds/Dist/Validation.exe",
+          "scenes": [
+            "Assets/__McpValidation/BuildScene.unity"
+          ],
+          "developmentBuild": false,
+          "managedCodeVariant": "Debug"
+        },
+        "build": {
+          "success": true,
+          "result": "Succeeded",
+          "totalErrors": 0,
+          "totalWarnings": 0,
+          "totalTime": 4.0303968,
+          "outputPath": "C:/Users/Francois/orca/workspaces/unity-mcp-server/validation/Queue66/Builds/Dist/Validation.exe",
+          "totalSize": 96641968,
+          "platform": "StandaloneWindows64",
+          "developmentBuild": false,
+          "managedCodeVariant": "Debug"
+        },
+        "compiledConstants": {
+          "Checks": true,
+          "Instrumentation": true,
+          "DebugSymbols": true
+        },
+        "restoredVariant": "Instrumented"
+      },
+      {
+        "options": {
+          "target": "StandaloneWindows64",
+          "outputPath": "C:/Users/Francois/orca/workspaces/unity-mcp-server/validation/Queue66/Builds/Dev/Validation.exe",
+          "scenes": [
+            "Assets/__McpValidation/BuildScene.unity"
+          ],
+          "developmentBuild": true,
+          "managedCodeVariant": "Release"
+        },
+        "build": {
+          "success": true,
+          "result": "Succeeded",
+          "totalErrors": 0,
+          "totalWarnings": 0,
+          "totalTime": 2.5466314,
+          "outputPath": "C:/Users/Francois/orca/workspaces/unity-mcp-server/validation/Queue66/Builds/Dev/Validation.exe",
+          "totalSize": 158313962,
+          "platform": "StandaloneWindows64",
+          "developmentBuild": true,
+          "managedCodeVariant": "Release"
+        },
+        "compiledConstants": {
+          "Checks": false,
+          "Instrumentation": false,
+          "DebugSymbols": true
+        },
+        "restoredVariant": "Instrumented"
+      }
+    ],
+    "setup": {
+      "variant": "Release",
+      "backend": "Mono2x"
+    },
+    "failure": {
+      "success": true,
+      "data": {
+        "success": false,
+        "result": "Failed",
+        "totalErrors": 2,
+        "totalWarnings": 0,
+        "totalTime": 0.032467699999999995,
+        "outputPath": "C:/Users/Francois/orca/workspaces/unity-mcp-server/validation/Queue66/Builds/Dev/Validation.exe",
+        "totalSize": 0,
+        "platform": "StandaloneWindows64",
+        "developmentBuild": true,
+        "managedCodeVariant": "Checked"
+      }
+    },
+    "failureRestoration": {
+      "attempted": "Checked",
+      "restored": "Instrumented"
+    },
+    "passed": true,
+    "finalVariant": "Release"
+  }
+}

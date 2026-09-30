@@ -15,6 +15,7 @@ export const PLUGIN_FEATURES = {
   // unknown routes return HTTP 404 on the legacy path.
   UNKNOWN_ROUTE_404: 1,
   IDEMPOTENT_QUEUE: 2,
+  MANAGED_CODE_VARIANT: 3,
 };
 
 /**

@@ -121,7 +121,9 @@ Discover advanced capabilities with `unity_list_advanced_tools`. Filter by categ
 
 The plugin declares **Unity 2021.3+** support and retains version-gated object identity APIs. Server and plugin versions advance independently; they do not need matching version numbers.
 
-The current modernization branch has been compiled and exercised in **Unity 6000.6.2f1**: object ID round-trips, queue ordering, read batching, deferred completion and legacy synchronous calls. This is a focused validation, not certification of every optional package or multiplayer configuration. [Evidence, limits and remaining work →](docs/modernization.md)
+The current modernization branch has been compiled and exercised in **Unity 6000.6.2f1**: queue lifecycle, concurrent commands to two real editors, four Play Mode reload configurations and compiled build diagnostics. Optional multiplayer packages and older Unity versions still need their own validation. [Evidence, limits and remaining work →](docs/modernization.md)
+
+On Unity 6.6, Development builds default to Checked managed diagnostics. Optional `managedCodeVariant` selects Release, Instrumented, Checked or Debug for one build, then restores the project setting. [Build behavior and compatibility →](docs/builds.md)
 
 ```bash
 npm ci

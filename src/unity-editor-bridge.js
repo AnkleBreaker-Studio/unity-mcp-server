@@ -3,6 +3,7 @@ import { getRequestContext, getCurrentAgentId } from "./request-context.js";
 import { CONFIG } from "./config.js";
 import { getActiveBridgeUrl } from "./instance-discovery.js";
 import { sendQueuedCommand } from "./queue-transport.js";
+import { pluginSupports } from "./capabilities.js";
 
 function getBridgeUrl() { return getActiveBridgeUrl(); }
 
@@ -195,6 +196,12 @@ export async function updateScript(params) {
 }
 
 export async function buildProject(params) {
+  if (params?.managedCodeVariant !== undefined) {
+    const info = await getQueueInfo();
+    if (!info.success) return info;
+    if (!pluginSupports(info.data, "MANAGED_CODE_VARIANT"))
+      return { success: false, error: "managedCodeVariant requires a plugin supporting protocol 3 or newer. Update the plugin before building with this option." };
+  }
   return sendCommand("build/start", params);
 }
 

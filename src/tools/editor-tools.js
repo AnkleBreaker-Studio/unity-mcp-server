@@ -550,22 +550,27 @@ export const editorTools = [
   // â”€â”€â”€ Build â”€â”€â”€
   {
     name: "unity_build",
-    description: "Start a build of the Unity project for a target platform.",
+    description: "Build the project for a target platform.",
     inputSchema: {
       type: "object",
       properties: {
         target: {
           type: "string",
-          description: "Build target platform",
+          description: "Platform",
           enum: ["StandaloneWindows64", "StandaloneOSX", "StandaloneLinux64", "Android", "iOS", "WebGL"],
         },
-        outputPath: { type: "string", description: "Output path for the build" },
+        outputPath: { type: "string", description: "Build output path" },
         scenes: {
           type: "array",
           items: { type: "string" },
-          description: "Scene paths to include (default: scenes in build settings)",
+          description: "Scene paths; default: enabled Build Settings scenes",
         },
-        developmentBuild: { type: "boolean", description: "Enable development build (default: false)" },
+        developmentBuild: { type: "boolean", description: "Development build (default: false)" },
+        managedCodeVariant: {
+          type: "string",
+          enum: ["Release", "Instrumented", "Checked", "Debug"],
+          description: "Unity 6.6+, protocol 3. Default: Checked for Development, Release otherwise. This build only.",
+        },
       },
       required: ["target", "outputPath"],
     },
@@ -632,21 +637,18 @@ export const editorTools = [
     },
     handler: async ({ action }) => {
       const result = await bridge.playMode(action);
-      // Entering/exiting play mode triggers a domain reload that evicts queue tickets —
-      // the status poll then 404s while the mode switch actually happened (a false
-      // negative). Before propagating that specific failure, verify the editor state:
-      // if it matches the requested action, the operation succeeded.
-      const ticketLost =
+      // Reload can lose the result after a successful switch. Read back; never replay it.
+      // Pause toggles state, so its intended final value cannot be inferred here.
+      const needsVerification = (action === "play" || action === "stop") &&
         result && result.success === false &&
-        /HTTP 404|not found or expired/i.test(result.error || "");
-      if (ticketLost) {
+        (result.outcomeUnknown === true || /HTTP 404|not found or expired/i.test(result.error || ""));
+      if (needsVerification) {
         try {
           const state = await bridge.getEditorState();
           const s = state && state.data !== undefined ? state.data : state;
           const confirmed =
             (action === "play" && s.isPlaying === true) ||
-            (action === "stop" && s.isPlaying === false) ||
-            (action === "pause" && s.isPaused === true);
+            (action === "stop" && s.isPlaying === false);
           if (confirmed) {
             return formatResult({
               success: true,
@@ -655,7 +657,7 @@ export const editorTools = [
                 isPlaying: s.isPlaying,
                 isPaused: s.isPaused,
                 verifiedViaEditorState: true,
-                note: "The play-mode domain reload evicted the queue ticket; the editor state confirms the switch happened.",
+                note: "The command result was unavailable; the editor state confirms the requested Play Mode state.",
               },
             });
           }
