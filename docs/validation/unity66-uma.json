@@ -685,5 +685,7 @@
       }
     ],
     "passed": true
-  }
+  },
+  "verifiedPluginCommit": "00090f67b9bbcfee0881ede58eb3b0b4a5534259",
+  "pluginRegistryCi": "https://github.com/AnkleBreaker-Studio/unity-mcp-plugin/actions/runs/36770864337"
 }
