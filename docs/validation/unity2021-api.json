@@ -20,10 +20,10 @@
     "UMA",
     "ProBuilder"
   ],
-  "sourceCount": 69,
+  "sourceCount": 70,
   "check": "C# compilation against installed Unity assemblies; no editor execution or package import",
   "exitCode": 0,
-  "recordedAt": "2026-09-30T20:06:01.055Z",
+  "recordedAt": "2026-09-30T20:27:11.209Z",
   "platform": "Windows Editor assemblies",
   "compiler": "Official editor DotNetSdkRoslyn/csc.dll through its bundled NetCoreRuntime; C# 9",
   "packageAssemblySource": "Official editor Resources/PackageManager/ProjectTemplates/libcache/com.unity.template.universal-2d-1.1.4/ScriptAssemblies",

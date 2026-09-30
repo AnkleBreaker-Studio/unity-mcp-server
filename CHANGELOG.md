@@ -4,6 +4,10 @@ All notable changes to this package will be documented in this file.
 
 ## [Unreleased]
 
+### Code execution evidence
+- Document the companion plugin's bounded metadata reuse, in-memory compilation, source-relative diagnostics and additive compiler counters in editor state.
+- Record baseline failures and a local twenty-call measurement of 15.85 s before / 1.01 s after, with cache-pressure and live workflow checks. See `docs/code-execution.md` for runtime and measurement limits.
+
 ### Optional integration validation
 - Document and record actual UMA V3.1f1 compatibility, asset generation and rename validation in the companion plugin. Keep existing tool names and schemas; unavailable UMA integration now gives explicit installation/define diagnostics.
 - Record reproduced compiler errors, unrelated-folder deletion, stale name hashes, skipped legacy recipe references and rename-collision changes, with passing corrected checks. See `docs/uma.md` for scope, reproduction and UMA 2/runtime limitations.

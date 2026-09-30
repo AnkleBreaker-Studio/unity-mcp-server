@@ -1,0 +1,245 @@
+{
+  "recordedAt": "2026-09-30T20:27:11.206Z",
+  "platform": "Windows",
+  "unityVersion": "6000.6.2f1",
+  "runtime": "Mono 6.13.0 (Visual Studio built mono)",
+  "baselinePluginCommit": "00090f67b9bbcfee0881ede58eb3b0b4a5534259",
+  "baseline": {
+    "unityVersion": "6000.6.2f1",
+    "runtime": "Mono 6.13.0 (Visual Studio built mono)",
+    "simple": {
+      "success": true,
+      "result": {
+        "number": 7,
+        "flag": true,
+        "position": {
+          "x": 1,
+          "y": 2,
+          "z": 3
+        }
+      }
+    },
+    "simpleExecution": true,
+    "compilationError": {
+      "error": "Compilation failed",
+      "errors": [
+        "Line 14: The name 'MissingMcpValidationSymbol' does not exist in the current context"
+      ],
+      "code": "int first = 1;\nreturn MissingMcpValidationSymbol;"
+    },
+    "diagnosticUsesSnippetLine": false,
+    "runtimeError": {
+      "error": "__McpExecutionExpected",
+      "stackTrace": "  at MCPDynamicCode.Execute () [0x00001] in <155caf111a8f43a3aea800725a27be49>:0 \r\n  at (wrapper managed-to-native) System.Reflection.RuntimeMethodInfo.InternalInvoke(System.Reflection.RuntimeMethodInfo,object,object[],System.Exception&)\r\n  at System.Reflection.RuntimeMethodInfo.Invoke (System.Object obj, System.Reflection.BindingFlags invokeAttr, System.Reflection.Binder binder, System.Object[] parameters, System.Globalization.CultureInfo culture) [0x0006a] in <c5ae8a4eeb824526b5df2932bc2395e0>:0 "
+    },
+    "runtimeExceptionPreserved": true,
+    "listContract": true,
+    "repeatedExecution": {
+      "iterations": 20,
+      "elapsedMs": 15846.261600000002,
+      "executions": 20,
+      "distinctAssemblies": 20
+    },
+    "everyCallExecutesWithFreshAssembly": true,
+    "references": {
+      "count": 204,
+      "reused": 0
+    },
+    "metadataReferencesReused": false,
+    "twentyReferenceCollectionsMs": 2148.1032,
+    "temporaryDllsLeft": [
+      "mcp_dynamic_5cccd28a503e48eb99cc78b6155c58e4.dll",
+      "mcp_dynamic_e4707dbab34646108f5cefc9bbb734b2.dll"
+    ],
+    "noTemporaryDllsAfterFailures": false,
+    "editorState": {
+      "isPlaying": false,
+      "isPaused": false,
+      "isCompiling": false,
+      "activeScene": "",
+      "activeScenePath": "",
+      "sceneDirty": false,
+      "unityVersion": "6000.6.2f1",
+      "platform": "StandaloneWindows64"
+    },
+    "failures": [
+      "diagnosticUsesSnippetLine",
+      "metadataReferencesReused",
+      "noTemporaryDllsAfterFailures"
+    ],
+    "passed": false
+  },
+  "updated": {
+    "unityVersion": "6000.6.2f1",
+    "runtime": "Mono 6.13.0 (Visual Studio built mono)",
+    "simple": {
+      "success": true,
+      "result": {
+        "number": 7,
+        "flag": true,
+        "position": {
+          "x": 1,
+          "y": 2,
+          "z": 3
+        }
+      }
+    },
+    "simpleExecution": true,
+    "compilationError": {
+      "error": "Compilation failed",
+      "errors": [
+        "Line 2: The name 'MissingMcpValidationSymbol' does not exist in the current context"
+      ],
+      "code": "int first = 1;\nreturn MissingMcpValidationSymbol;"
+    },
+    "diagnosticUsesSnippetLine": true,
+    "runtimeError": {
+      "error": "__McpExecutionExpected",
+      "stackTrace": "  at MCPDynamicCode.Execute () [0x00001] in <db426ff95e1341a8b782dc6757af0ba5>:0 \r\n  at (wrapper managed-to-native) System.Reflection.RuntimeMethodInfo.InternalInvoke(System.Reflection.RuntimeMethodInfo,object,object[],System.Exception&)\r\n  at System.Reflection.RuntimeMethodInfo.Invoke (System.Object obj, System.Reflection.BindingFlags invokeAttr, System.Reflection.Binder binder, System.Object[] parameters, System.Globalization.CultureInfo culture) [0x0006a] in <c5ae8a4eeb824526b5df2932bc2395e0>:0 "
+    },
+    "runtimeExceptionPreserved": true,
+    "listContract": true,
+    "repeatedExecution": {
+      "iterations": 20,
+      "elapsedMs": 1008.4577,
+      "executions": 20,
+      "distinctAssemblies": 20
+    },
+    "everyCallExecutesWithFreshAssembly": true,
+    "references": {
+      "count": 201,
+      "reused": 201
+    },
+    "metadataReferencesReused": true,
+    "twentyReferenceCollectionsMs": 456.2004,
+    "temporaryDllsLeft": [],
+    "noTemporaryDllsAfterFailures": true,
+    "editorState": {
+      "isPlaying": false,
+      "isPaused": false,
+      "isCompiling": false,
+      "activeScene": "",
+      "activeScenePath": "",
+      "sceneDirty": false,
+      "unityVersion": "6000.6.2f1",
+      "platform": "StandaloneWindows64",
+      "codeExecution": {
+        "metadataCacheEntries": 201,
+        "metadataReferenceImageBytes": 64309944,
+        "maxMetadataCacheEntries": 512,
+        "maxMetadataReferenceImageBytes": 134217728,
+        "metadataCacheHits": 9043,
+        "metadataCacheMisses": 201,
+        "loadedSnippetAssembliesSinceReload": 23
+      }
+    },
+    "unchangedReferenceReused": true,
+    "changedReferenceInvalidated": true,
+    "referenceCountBoundAndEviction": true,
+    "oversizedReferenceNotRetained": true,
+    "cacheAfterPressure": {
+      "metadataCacheEntries": 512,
+      "metadataReferenceImageBytes": 34603008,
+      "maxMetadataCacheEntries": 512,
+      "maxMetadataReferenceImageBytes": 134217728,
+      "metadataCacheHits": 9044,
+      "metadataCacheMisses": 718,
+      "loadedSnippetAssembliesSinceReload": 23
+    },
+    "executionAfterCacheEviction": true,
+    "referenceFixtureRemoved": true,
+    "failures": [],
+    "passed": true
+  },
+  "liveWorkflows": {
+    "node22": {
+      "nodeVersion": "v22.18.0",
+      "checks": [
+        "Unsaved scene guards reject without dialogs; explicit scene save and string object IDs work",
+        "Sparse enum names and legacy numeric indices, combined flags, unknown stored values and eleven invalid writes with unchanged data",
+        "Scene and material references survive prefab save/instantiate; missing references and asset overwrites preserve data",
+        "Asset and hierarchy limits report truncation; folder deletion requires explicit recursion",
+        "Scene screenshot writes a valid PNG with the requested dimensions",
+        "Successful and failed screenshots restore render targets and release their textures; invalid dimensions fail before rendering",
+        "Scene reopening preserves serialized prefab data"
+      ],
+      "unityVersion": "6000.6.2f1",
+      "screenshotState": [
+        {
+          "error": "UnauthorizedAccessException",
+          "targetRestored": true,
+          "activeRestored": true,
+          "extraTargets": [],
+          "extraTextures": 0
+        },
+        {
+          "error": "",
+          "targetRestored": true,
+          "activeRestored": true,
+          "extraTargets": [],
+          "extraTextures": 0
+        }
+      ],
+      "passed": true,
+      "restored": true
+    },
+    "node18": {
+      "nodeVersion": "v18.20.8",
+      "checks": [
+        "Unsaved scene guards reject without dialogs; explicit scene save and string object IDs work",
+        "Sparse enum names and legacy numeric indices, combined flags, unknown stored values and eleven invalid writes with unchanged data",
+        "Scene and material references survive prefab save/instantiate; missing references and asset overwrites preserve data",
+        "Asset and hierarchy limits report truncation; folder deletion requires explicit recursion",
+        "Scene screenshot writes a valid PNG with the requested dimensions",
+        "Successful and failed screenshots restore render targets and release their textures; invalid dimensions fail before rendering",
+        "Scene reopening preserves serialized prefab data"
+      ],
+      "unityVersion": "6000.6.2f1",
+      "screenshotState": [
+        {
+          "error": "UnauthorizedAccessException",
+          "targetRestored": true,
+          "activeRestored": true,
+          "extraTargets": [],
+          "extraTextures": 0
+        },
+        {
+          "error": "",
+          "targetRestored": true,
+          "activeRestored": true,
+          "extraTargets": [],
+          "extraTextures": 0
+        }
+      ],
+      "passed": true,
+      "restored": true
+    }
+  },
+  "limits": [
+    "Local warmed workload; not an end-to-end latency guarantee",
+    "Unity 6.6 Mono tested; CoreCLR editor and macOS/Linux not executed",
+    "Fresh snippet assemblies remain loaded until code-context/domain unload",
+    "Image-byte cache bound is not a managed/native memory measurement",
+    "Unity 2021 API compilation only; optional integrations excluded"
+  ],
+  "unityApi": "https://docs.unity.com/en-us/engine/6000.6/script-reference/unityengine/assemblies/currentassemblies/loadfrombytes",
+  "afterLiveScriptReload": {
+    "isPlaying": false,
+    "isPaused": false,
+    "isCompiling": false,
+    "activeScene": "BuildScene",
+    "activeScenePath": "Assets/__McpValidation/BuildScene.unity",
+    "sceneDirty": false,
+    "unityVersion": "6000.6.2f1",
+    "platform": "StandaloneWindows64",
+    "codeExecution": {
+      "metadataCacheEntries": 0,
+      "metadataReferenceImageBytes": 0,
+      "maxMetadataCacheEntries": 512,
+      "maxMetadataReferenceImageBytes": 134217728,
+      "metadataCacheHits": 0,
+      "metadataCacheMisses": 0,
+      "loadedSnippetAssembliesSinceReload": 0
+    }
+  }
+}

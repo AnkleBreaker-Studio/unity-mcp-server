@@ -51,6 +51,8 @@ The policy bounds inactive session retention, not all memory used by active requ
 
 ## Evidence and limits
 
+Compilation has separate [code-execution diagnostics](code-execution.md) in `unity_editor_state.codeExecution`. These describe retained Roslyn metadata and loaded snippets for the current editor, rather than per-agent queue statistics. The image-byte counter is not total editor memory.
+
 The [command-outcome report](validation/unity66-command-outcomes.json) reproduces seven missed errors across 15 result shapes and missing deferred/timeout history on the baseline. The corrected run preserves raw results and legacy synchronous responses, records one action for 20 concurrent duplicate callbacks, ignores late completion after timeout, and round-trips new and old history records. It also checks dashboard labels/status styling, the history endpoint, a real create/undo cycle, the 2,048-character diagnostic limit, and draining pending history through the pre-reload save hook. A 10,001-callback backlog retains 10,000 records and reports one dropped history entry while preserving all 10,001 terminal counts. An additional undo check places the newest edit behind 1,000 callbacks and verifies that only that edit is reverted; clearing pending history is also covered. These are batch-mode behavior checks, not an interactive layout review or an actual domain reload in this suite.
 
 The opt-in live test sends a missing-object lookup through the stdio MCP server to an open editor. The client receives `isError`, the session counts one command error with zero exceptions/timeouts, and `unity_undo_history` returns one flagged record with the original `Completed` status. This verifies the complete response/monitoring path for a real command.
