@@ -47,6 +47,8 @@ Features for uninstalled packages return helpful messages explaining what to ins
 
 ## Troubleshooting
 
+**"Outcome unknown"** — A command may already have executed. Inspect the project or original ticket before issuing it again. Updating both components enables protected submission retries; old clients remain supported. See the [retry and session contract](queue-protocol.md).
+
 **"Connection failed" errors** — Make sure Unity Editor is open and the plugin is installed. Check the Unity Console for `[MCP Bridge] Server started on port 7890`.
 
 **"Unity Hub not found"** — Update `UNITY_HUB_PATH` in your config to match your installation.

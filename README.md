@@ -25,6 +25,7 @@ Counts reflect the checked-in definitions; optional tools require their correspo
 | **Changes you can inspect** | Per-agent history, named undo groups for supported actions, compilation diagnostics and scene/game captures. |
 | **Large tool catalogs** | Core tools immediately available; advanced discovery returns counts, search results or one full schema. Compact mode retains schema structure. |
 | **Mixed plugin versions** | Per-instance queue detection, legacy synchronous fallback and an additive capability handshake. |
+| **Interrupted responses** | Protocol-2 retries recover the original ticket; older plugins report uncertain outcomes without repeating accepted writes. [Retry contract](docs/queue-protocol.md) |
 | **A game production stack** | Terrain, animation, physics, audio, navigation, UI, builds, profiling, Shader Graph, ProBuilder, Amplify and UMA tools. |
 
 For a comparison grounded in current documentation, see [choosing a Unity integration](docs/comparison.md). Our strengths are the combined workflow, explicit routing, fair scheduling, per-action history and broad editor coverage.

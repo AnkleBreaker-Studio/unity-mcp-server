@@ -9,14 +9,17 @@ All notable changes to this package will be documented in this file.
 - Cache queue support per bridge endpoint so a legacy plugin cannot downgrade other open projects.
 - Use the live ping identity when a registry port has been reused; reject invalid routing ports before contacting an editor.
 - Share concurrent initial discovery for an agent so a second call cannot bypass required instance selection.
+- Prevent lost queue acknowledgements and legacy HTTP server errors from repeating accepted commands. Use protocol-2 protected retries when available; report unknown outcomes on older plugins without replaying writes.
+- Scope protected polling to the editor queue session, retry transient GET failures, and include response-body reads in per-request and overall polling deadlines.
 
 ### Changed
 - Remove duplicate identity/liveness pings from discovery and selection validation.
 - Pin the existing MCP SDK version and refresh compatible transitive dependencies; the current npm audit reports no known vulnerabilities.
 - Rebuild the README around multi-project workflows, an original vector diagram and linked architecture, configuration, feature and validation guides.
+- Isolate queue transport in `queue-transport.js` and document the bounded retry contract and old/new compatibility matrix.
 
 ### Validation
-- 65 Node tests, including five new concurrency/discovery regression tests. The companion plugin has a focused Unity 6000.6.2f1 batch validation runner; full cross-version and multiplayer validation remains in progress.
+- 74 Node tests, including concurrency/discovery and nine transport fault regressions. The companion plugin's Unity 6000.6.2f1 runner also exercises its actual HTTP dispatcher and guarded retries; full cross-version and multiplayer validation remains in progress.
 
 ## [2.35.6] - 2026-07-27
 

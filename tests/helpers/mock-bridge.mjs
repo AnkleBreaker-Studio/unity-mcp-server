@@ -12,6 +12,7 @@ import http from "node:http";
 import { mkdtempSync } from "node:fs";
 import { tmpdir } from "node:os";
 import { join } from "node:path";
+import { randomUUID } from "node:crypto";
 
 /** @typedef {{ route: string, params: object, headers: object, via: "queue"|"legacy" }} SeenRequest */
 
@@ -42,6 +43,10 @@ export class MockBridge {
     this.seen = [];
     this.polls = [];
     this.pingCount = 0;
+    this.queueSessionId = randomUUID().replaceAll("-", "");
+    this.queueStartedAt = performance.now();
+    this.submissions = [];
+    this._replays = new Map();
     /** @type {(cat: string|null) => object|null} return null → 404 (project without context) */
     this.contextProvider = () => null;
     this._tickets = new Map();
@@ -128,9 +133,27 @@ export class MockBridge {
         return this._json(res, 200, this.instance);
       }
 
-      if (path === "queue/submit" && req.method === "POST") {
+      if ((path === "queue/submit-once" || path === "queue/status-scoped") && this.instance.protocolVersion < 2)
+        return this._json(res, 404, { error: "Unknown route" });
+
+      if ((path === "queue/submit" || path === "queue/submit-once") && req.method === "POST") {
         if (this.mode === "legacy") return this._json(res, 404, { error: "Unknown route" });
         const payload = JSON.parse(body || "{}");
+        this.submissions.push({ path, payload });
+        let replayKey;
+        if (path === "queue/submit-once") {
+          if (payload.queueSessionId !== this.queueSessionId)
+            return this._json(res, 409, { error: "Queue session changed", code: "queue_session_changed" });
+          if (payload.expiresAtMs <= Math.floor(performance.now() - this.queueStartedAt))
+            return this._json(res, 410, { error: "Submission expired", code: "request_expired" });
+          replayKey = `${payload.agentId}:${payload.requestId}`;
+          const previous = this._replays.get(replayKey);
+          if (previous) {
+            if (previous.payload !== JSON.stringify(payload)) return this._json(res, 409, { error: "Request conflict", code: "request_conflict" });
+            if (!this._tickets.has(previous.ticketId)) return this._json(res, 410, { error: "Result expired", code: "result_expired" });
+            return this._json(res, 202, { ticketId: previous.ticketId, queueSessionId: this.queueSessionId });
+          }
+        }
         const route = String(payload.apiPath || "").replace(/^\/?api\//, "").replace(/^\//, "");
         const params = payload.body ? JSON.parse(payload.body) : {};
         this.seen.push({ route, params, headers: req.headers, via: "queue" });
@@ -140,6 +163,7 @@ export class MockBridge {
         // 59-test suite never caught the server reading the wrong field for every route.
         const ticket = { ticketId, status: "Queued", agentId: payload.agentId || "unknown", result: null, errorMessage: "" };
         this._tickets.set(ticketId, ticket);
+        if (replayKey) this._replays.set(replayKey, { payload: JSON.stringify(payload), ticketId });
         const complete = () => {
           try {
             const outcome = this._resolve(route, params);
@@ -164,18 +188,24 @@ export class MockBridge {
           }
         };
         this.processingDelayMs > 0 ? setTimeout(complete, this.processingDelayMs) : complete();
-        return this._json(res, 202, { ticketId, status: "Queued", position: this._tickets.size });
+        return this._json(res, 202, { ticketId, status: "Queued", position: this._tickets.size, queueSessionId: this.queueSessionId });
       }
 
-      if (path === "queue/status") {
-        this.polls.push({ ticketId: url.searchParams.get("ticketId"), headers: req.headers });
+      if (path === "queue/status" || path === "queue/status-scoped") {
+        this.polls.push({ ticketId: url.searchParams.get("ticketId"), queueSessionId: url.searchParams.get("queueSessionId"), headers: req.headers });
+        if (path === "queue/status-scoped" && url.searchParams.get("queueSessionId") !== this.queueSessionId)
+          return this._json(res, 409, { error: "Queue session changed", code: "queue_session_changed" });
         const ticket = this._tickets.get(url.searchParams.get("ticketId"));
         if (!ticket) return this._json(res, 404, { error: "Ticket not found" });
         return this._json(res, 200, ticket);
       }
 
       if (path === "queue/info") {
-        return this._json(res, 200, { totalPending: 0, activeAgents: 0, perAgent: {}, completedCacheSize: this._tickets.size });
+        const capability = this.instance.protocolVersion >= 2 ? {
+          protocolVersion: this.instance.protocolVersion, queueSessionId: this.queueSessionId,
+          queueSessionTimeMs: Math.floor(performance.now() - this.queueStartedAt), queueRetryWindowMs: 120000,
+        } : {};
+        return this._json(res, 200, { totalPending: 0, activeAgents: 0, perAgent: {}, completedCacheSize: this._tickets.size, ...capability });
       }
 
       if (path === "context" || path.startsWith("context/")) {

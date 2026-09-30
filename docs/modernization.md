@@ -11,13 +11,15 @@ The objective remains a broad improvement of the existing MCP and plugin: backwa
 | Request-local routing, agent identity and project context | New stdio test failed on baseline with `Beta !== Alpha`; passes after isolation | Overlapping requests to two mock bridges, including polling headers |
 | Queue capability per endpoint | New mixed-version test failed on baseline with `legacy !== queue`; passes after fix | Legacy plugin and queue plugin in one MCP process |
 | Live discovery identity, fewer pings | Reused-port registry test; one ping for identity and liveness | Registry path and successful port probing |
-| Existing MCP contracts | 65 passing Node tests on Node 18, 20, 22 and 24, Windows and Linux | Eight CI jobs; full tested surface, not every Unity route |
+| Existing MCP contracts | Initial 65 tests passed on Node 18, 20, 22 and 24, Windows and Linux; expanded 74 tests pass locally on Node 18 and 22 | Full tested surface, not every Unity route |
 | Dependency refresh | SDK pinned to existing tested 1.27.1; compatible transitive upgrades; `npm audit` reports zero | Advisory database at validation time; not a security certification |
 | Indexed pending-ticket lookup | Actual plugin tested with 100 and 10,000 queued tickets | O(1) ticket lookup replaces FIFO scans; output allocation remains |
 | Separate wait and processing timings | Monotonic timestamps and session averages; old `executionTimeMs` retained | Dashboard includes wait/processing averages and exception/timeout counters; command-result errors are not queue exceptions |
 | Synchronous waiter lifecycle | 50 normal calls plus real 30-second timeouts while work is running, batched and queued | Completed outcomes are stable; expired unstarted work is skipped; already-started work cannot be canceled |
 | Deferred lifecycle and retention | Duplicate callback failed before fix; concurrent duplicates, expiration, late callback after eviction, exception and long queue wait pass | Deadlines/retention use monotonic time; reload recovery remains open |
 | Dashboard state | UI Toolkit labels report running-only work, failure/timeout counts and timing breakdown | Batch-mode state checks; interactive layout review remains open |
+| Protected submission retries | Old transport reproduced two writes after response loss/HTTP 503; nine new fault tests pass | Protocol-2 session/deadline protection; older endpoints do not replay ambiguous writes |
+| Actual plugin HTTP protocol | Repeated protected submissions create one GameObject; scoped polling and old queue/sync requests pass in Unity | Validation-owned listener invokes the real dispatcher; stale-session rejection is tested, actual domain reload remains open |
 | Unity 6.6 | Package compiled and validation runner passed on `6000.6.2f1` | Isolated project, no optional-package or real multiplayer certification |
 | Minimal project installation | Second import exposed missing uGUI; declare uGUI and Test Framework in the package | Validation manifest now depends only on the plugin; Unity 6.6 resolves uGUI 2.6.0 and Test Framework 1.8.0 |
 | README | New vector architecture visual, installation flow, workflow tables, detailed linked guides | Existing demo media retained; competitor claims corrected against sources |
@@ -27,6 +29,8 @@ Measured in Unity 6000.6.2f1 on this Windows workstation: 1,000 status queries t
 Published checkpoints: server `509979b`, plugin `bb173d6`. [All eight server CI jobs passed](https://github.com/AnkleBreaker-Studio/unity-mcp-server/actions/runs/36741080230); the [plugin route registry check passed](https://github.com/AnkleBreaker-Studio/unity-mcp-plugin/actions/runs/36741086044). The plugin CI only checks route drift; the actual Unity run was local.
 
 The plugin lifecycle/monitoring follow-up is published as `bc947f9`, with the expanded local Unity report linked above and a [passing route registry CI check](https://github.com/AnkleBreaker-Studio/unity-mcp-plugin/actions/runs/36742844003).
+
+The [retry validation report](validation/unity66-retries.json) adds concurrent protected admission, real HTTP dispatch and bounded retry-cache checks. Its polling measurements are 2.84 ms and 5.39 ms. See the [wire contract and compatibility matrix](queue-protocol.md) for guarantees and limits.
 
 ## Reproduce
 
@@ -54,7 +58,7 @@ Local evidence for this iteration lives in the sibling workspace directory `../v
 2. Expand monitoring end to end: command-result error/reload counters, bounded history and interactive dashboard review. Session wait/processing aggregates and exception/timeout counts now exist. Review idle allocations and main-thread work with measurements.
 3. Test old/new server-plugin combinations and older supported Unity versions, not just the new server's legacy mock transport. Add repeatable CI coverage where feasible.
 4. Exercise actual simultaneous editors and MPPM/ParrelSync workflows. Verify selection, clone lifecycle, recompile, play-mode transitions and domain reload disabled.
-5. Address remaining fault semantics: ambiguous write submission, retry deduplication and lost/reloaded tickets. Deferred timeouts, late callbacks and result retention now have focused Unity coverage. Never infer that a timeout means a write did not occur.
+5. Exercise actual reload/lost-ticket recovery across editor versions and client/plugin combinations. Protected retry admission, ambiguous old-plugin responses, session mismatches, deferred timeouts, late callbacks and result retention now have focused tests. Never infer that a timeout means a write did not occur.
 6. Review Unity 6.6 semantic changes, especially scene-only reload and Managed Code Variant build diagnostics. Compilation alone does not cover them.
 7. Review long-lived caches, request cancellation, response byte accounting, discovery identity transitions and resource routing under concurrency.
 8. Keep both READMEs and release notes aligned as implementation expands. Review the final cross-repository diff and refresh validation evidence before release.

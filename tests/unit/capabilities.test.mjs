@@ -9,6 +9,8 @@ describe("pluginSupports", () => {
   test("new plugins advertising protocolVersion pass the gate", () => {
     assert.equal(pluginSupports({ protocolVersion: 1 }, "UNKNOWN_ROUTE_404"), true);
     assert.equal(pluginSupports({ protocolVersion: 7 }, "UNKNOWN_ROUTE_404"), true);
+    assert.equal(pluginSupports({ protocolVersion: 2 }, "IDEMPOTENT_QUEUE"), true);
+    assert.equal(pluginSupports({ protocolVersion: 1 }, "IDEMPOTENT_QUEUE"), false);
   });
 
   test("pre-handshake plugins (no protocolVersion) are treated as unsupporting", () => {
@@ -42,6 +44,8 @@ describe("isUnknownRouteResult", () => {
     assert.equal(isUnknownRouteResult({ success: false, error: "Timeout after 30s" }), false);
     assert.equal(isUnknownRouteResult(null), false);
     assert.equal(isUnknownRouteResult("Unknown route"), false);
+    assert.equal(isUnknownRouteResult({ outcomeUnknown: true, error: "HTTP 404: Ticket not found" }), false);
+    assert.equal(isUnknownRouteResult({ queueTransportError: true, error: "HTTP 404: Unknown route" }), false);
   });
 });
 
