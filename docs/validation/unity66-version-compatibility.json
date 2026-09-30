@@ -195,5 +195,12 @@
     "Tool name/schema checks are not execution coverage for every route. Dynamic entries without schemas contribute name coverage only.",
     "Mixed-plugin concurrency uses the current server. It does not certify the baseline server concurrent routing or its ambiguous-write retry behavior.",
     "Pre-queue plugins and other historical releases remain outside this real-editor matrix. Legacy mock transport tests remain separate."
-  ]
+  ],
+  "suiteCommit": "9461c668467ae198c7c420c9dfa6d4f89bd8fa9d",
+  "suiteCi": {
+    "url": "https://github.com/AnkleBreaker-Studio/unity-mcp-server/actions/runs/36777911057",
+    "conclusion": "success",
+    "jobs": 8,
+    "ordinaryTests": 83
+  }
 }

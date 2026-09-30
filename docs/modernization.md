@@ -116,7 +116,11 @@ The [MPPM guide](multiplayer.md) and [raw multiplayer report](validation/unity66
 
 The [resource guide](resources.md) and [report](validation/resource-routing.json) add isolated resource handlers, explicit selection requirements and custom-port selection retention. Six stdio regressions reproduce the failures, including stale registry identity after port reuse. Live checks exercise actual Markdown reads in two Unity 6.6 editors with settings/fixture restoration. The ordinary suite now has 89 tests.
 
+Resource/discovery checkpoint: server `acf10cf`; all eight Node 18/20/22/24 jobs on Windows/Linux [passed](https://github.com/AnkleBreaker-Studio/unity-mcp-server/actions/runs/36780224199). The preceding `1cc33ea` checkpoint also has [passing CI](https://github.com/AnkleBreaker-Studio/unity-mcp-server/actions/runs/36779733155) and live resource checks on Node 18/22. These are server changes; plugin runtime remains at `631b5d2`.
+
 The [compatibility guide](compatibility.md) and [report](validation/unity66-version-compatibility.json) record four real server-plugin combinations, unchanged baseline checkouts, schema/name continuity and concurrent agents across mixed plugin versions. The existing 83 ordinary server tests also pass after making the test client's server entry configurable. Live editor validation remains opt-in and separate from ordinary CI.
+
+Compatibility-suite checkpoint: server `9461c66`, with [eight passing CI jobs](https://github.com/AnkleBreaker-Studio/unity-mcp-server/actions/runs/36777911057). Plugin documentation checkpoint `f4fcf24` links the matrix without changing plugin runtime. Versions remain unchanged and no release has been published.
 
 The [Dashboard guide](dashboard.md) and [report](validation/unity66-dashboard.json) add reproduced reconstruction/width defects, typed session snapshots, card lifecycle tests and measured refresh costs. Attached-window checks cover long text, foldout persistence through script reload and schedule replacement. Monitoring regressions and the 70-file minimum-version compiler check pass. Actual older-editor execution remains deferred as requested.
 

@@ -200,5 +200,22 @@
       "selectionRequested": true
     },
     "warmAndColdSelectionTestsPassed": true
+  },
+  "correctedServerCommit": "acf10cf5f1a64a08192123cb3926bdd452a75004",
+  "ci": {
+    "url": "https://github.com/AnkleBreaker-Studio/unity-mcp-server/actions/runs/36780224199",
+    "conclusion": "success",
+    "jobs": 8,
+    "nodeVersions": [
+      18,
+      20,
+      22,
+      24
+    ],
+    "operatingSystems": [
+      "Windows",
+      "Linux"
+    ],
+    "ordinaryTests": 89
   }
 }
