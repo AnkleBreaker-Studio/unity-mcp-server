@@ -21,6 +21,7 @@ All notable changes to this package will be documented in this file.
 - Record reproduced compiler errors, unrelated-folder deletion, stale name hashes, skipped legacy recipe references and rename-collision changes, with passing corrected checks. See `docs/uma.md` for scope, reproduction and UMA 2/runtime limitations.
 
 ### Fixed
+- A fresh registry entry could override a conflicting live identity after another project reused the selected port. Reject that fallback and require a new selection before dispatching a command.
 - Resource list/read requests ignored agent identity and could return another project's documentation. Apply request-local identity, validated port overrides and selection checks while preserving existing category URIs.
 - Initial discovery could replace an explicit custom-port selection after its registry entry vanished. Validate that selection before auto-discovery.
 - Repeated calls after a selected project disappeared could eventually auto-select another editor. Keep the selection requirement until an explicit new choice, for tools and resources.

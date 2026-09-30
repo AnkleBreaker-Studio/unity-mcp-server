@@ -119,7 +119,12 @@ export async function validateSelectedInstance() {
     (entry) => entry.projectPath && entry.projectPath === savedPath
   );
   if (registryFallback && registryFallback.port) {
-    if (isRegistryEntryStale(registryFallback)) {
+    const liveIdentity = instances.find(instance => instance.port === registryFallback.port);
+    const knownConflict = (registryFallback.port === savedPort && info?.projectPath && info.projectPath !== savedPath)
+      || (liveIdentity?.projectPath && liveIdentity.projectPath !== savedPath);
+    if (knownConflict) {
+      debugLog(`Registry fallback for "${saved.projectName}" conflicts with the live editor identity. Requiring re-selection.`);
+    } else if (isRegistryEntryStale(registryFallback)) {
       debugLog(
         `Project "${saved.projectName}" found in registry but entry is STALE. Clearing selection.`
       );

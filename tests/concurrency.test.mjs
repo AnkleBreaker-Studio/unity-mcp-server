@@ -128,6 +128,33 @@ test("a vanished selection stays blocked across repeated tool and resource calls
   }
 });
 
+for (const warmSelection of [false, true]) {
+  test(`live port reuse overrides stale registry identity (warm selection: ${warmSelection})`, async () => {
+    const bridge = await new MockBridge({ instance: { projectName: "Original", projectPath: "C:/Original" } }).start();
+    const env = bridge.env();
+    writeFileSync(env.UNITY_INSTANCE_REGISTRY, JSON.stringify([{ port: bridge.port, projectName: "Original",
+      projectPath: "C:/Original", lastSeen: new Date().toISOString() }]));
+    const client = new McpTestClient({ env }).start();
+    try {
+      await client.initialize();
+      assert.equal((await client.callTool("unity_select_instance", { port: bridge.port })).isError, false);
+      if (warmSelection) assert.equal((await client.callTool("unity_editor_state")).isError, false);
+      bridge.seen.length = 0;
+      bridge.instance.projectName = "Replacement";
+      bridge.instance.projectPath = "C:/Replacement";
+      assert.equal((await client.callTool("unity_editor_state")).isError, true);
+      assert.deepEqual(await client.request("resources/list"), { resources: [] });
+      await assert.rejects(client.request("resources/read", { uri: "unity-context://Rules" }), /select.*instance|instance.*select/i);
+      assert.equal(bridge.seen.length, 0, "a command reached the replacement project");
+      assert.equal((await client.callTool("unity_select_instance", { port: bridge.port })).payload.instance.projectName, "Replacement");
+      assert.equal((await client.callTool("unity_editor_state")).isError, false);
+    } finally {
+      await client.close();
+      await bridge.stop();
+    }
+  });
+}
+
 test("overlapping calls keep their project, agent and context throughout polling", async () => {
   const bridges = ["Alpha", "Beta"].map((projectName, i) => {
     const bridge = new MockBridge({ processingDelayMs: 120 + i * 40,

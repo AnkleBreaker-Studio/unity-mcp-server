@@ -112,12 +112,12 @@
   "ordinaryTests": {
     "node18": {
       "version": "18.20.8",
-      "passed": 87,
+      "passed": 89,
       "failed": 0
     },
     "node22": {
       "version": "22.18.0",
-      "passed": 87,
+      "passed": 89,
       "failed": 0
     }
   },
@@ -128,7 +128,8 @@
     "Both agent metadata aliases and invalid port/agent inputs",
     "Unselected clients cannot read an arbitrary project",
     "Explicit custom-port selection survives a missing registry entry",
-    "Three repeated tool/resource attempts after project loss require explicit reselection"
+    "Three repeated tool/resource attempts after project loss require explicit reselection",
+    "A fresh registry entry cannot override a live identity conflict, before or after the first command"
   ],
   "liveNode22": {
     "nodeVersion": "v22.18.0",
@@ -177,5 +178,27 @@
     "Resource URIs remain relative to the current selection, not globally bound to project identity",
     "Agent and port metadata route requests; they do not authenticate or authorize agents",
     "Other editor versions and operating systems were not exercised by the live fixture"
-  ]
+  ],
+  "liveValidatedServerCommit": "1cc33ea56f9c37bb68275382b13ac01fe4928f85",
+  "liveValidatedServerCi": "https://github.com/AnkleBreaker-Studio/unity-mcp-server/actions/runs/36779733155",
+  "reusedPort": {
+    "baselineServerCommit": "1cc33ea56f9c37bb68275382b13ac01fe4928f85",
+    "baseline": {
+      "blocked": false,
+      "response": {
+        "success": true,
+        "data": {
+          "projectName": "Replacement"
+        }
+      },
+      "replacementCommands": 1
+    },
+    "corrected": {
+      "blocked": true,
+      "response": null,
+      "replacementCommands": 0,
+      "selectionRequested": true
+    },
+    "warmAndColdSelectionTestsPassed": true
+  }
 }

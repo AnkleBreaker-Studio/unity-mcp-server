@@ -22,11 +22,13 @@ When multiple editors are available and no editor has been selected, listing ret
 
 Because legacy URIs are relative, reading the same URI after deliberately changing the selection reads the newly selected project's category. Consumers that need to pin a particular read should pass the freshly discovered port in `_meta.port` and verify project identity during selection. The plugin still applies its existing context enablement, category validation and file-reading rules.
 
+A fresh registry timestamp cannot override a conflicting live project identity. If another project reuses the selected port, calls require a new selection even when the registry still names the original project. Fresh registry entries remain useful when an editor is temporarily unreachable during compilation, provided no live identity conflict has been observed.
+
 ## Evidence
 
 The [routing report](validation/resource-routing.json) preserves a reproduction against server commit `9461c66`: with successful selections for Alpha and Beta, both agents received Alpha's resource list and text. Resources could also read Alpha before any selection, and first discovery could replace an explicit Beta selection when its registry entry disappeared. The corrected server preserves the intended project.
 
-The stdio regression suite covers concurrent lists/reads, encoded category names, both agent metadata spellings, explicit-port overrides, default-client selection and invalid identity/port inputs. It also verifies that three repeated tool/resource attempts after a selected editor disappears remain blocked until an explicit new selection. The ordinary server suite contains 87 passing tests on Node 18 and 22 at this checkpoint.
+The stdio regression suite covers concurrent lists/reads, encoded category names, both agent metadata spellings, explicit-port overrides, default-client selection and invalid identity/port inputs. It also verifies that three repeated tool/resource attempts after a selected editor disappears remain blocked until an explicit new selection. Two additional cases exercise a conflicting live identity before and after the selection's first command. The ordinary server suite contains 89 passing tests on Node 18 and 22 at this checkpoint.
 
 An opt-in live test uses two marked Unity 6.6 projects. It temporarily points each context configuration at its own uniquely named `Library` directory, verifies different Markdown contents through concurrent MCP resource requests, and restores both original context settings and removes the fixture directories. This verifies the actual plugin read path without changing scene assets. The [cross-version matrix](compatibility.md) is separate evidence for routine tool workflows.
 

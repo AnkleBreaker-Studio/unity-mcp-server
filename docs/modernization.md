@@ -9,7 +9,7 @@ The objective remains a broad improvement of the existing MCP and plugin: backwa
 | Change | Evidence | Scope / limit |
 |---|---|---|
 | Request-local routing, agent identity and project context | New stdio test failed on baseline with `Beta !== Alpha`; passes after isolation | Overlapping requests to two mock bridges, including polling headers |
-| Resource routing and selection loss | Reproduced cross-project resource reads; lists/reads now retain agent identity and target; lost selections remain blocked | Four stdio regressions plus live context-file reads in two Unity 6.6 editors; legacy category-relative URIs retained |
+| Resource routing and selection loss | Reproduced cross-project resource reads; lists/reads now retain agent identity and target; lost/conflicting identities require reselection | Six stdio regressions plus live context-file reads in two Unity 6.6 editors; legacy category-relative URIs retained |
 | Queue capability per endpoint | New mixed-version test failed on baseline with `legacy !== queue`; passes after fix | Legacy plugin and queue plugin in one MCP process |
 | Live discovery identity, fewer pings | Reused-port registry test; one ping for identity and liveness | Registry path and successful port probing |
 | Existing MCP contracts | 80 tests pass locally on Node 18 and 22 and in all eight CI jobs (Node 18/20/22/24, Windows/Linux) | Full tested surface, not every Unity route; CI does not run the opt-in real-editor suites |
@@ -114,7 +114,7 @@ The [MPPM guide](multiplayer.md) and [raw multiplayer report](validation/unity66
 
 ## Version references
 
-The [resource guide](resources.md) and [report](validation/resource-routing.json) add isolated resource handlers, explicit selection requirements and custom-port selection retention. Four stdio regressions reproduce the failures, and live checks exercise actual Markdown reads in two Unity 6.6 editors with settings/fixture restoration. The ordinary suite now has 87 tests.
+The [resource guide](resources.md) and [report](validation/resource-routing.json) add isolated resource handlers, explicit selection requirements and custom-port selection retention. Six stdio regressions reproduce the failures, including stale registry identity after port reuse. Live checks exercise actual Markdown reads in two Unity 6.6 editors with settings/fixture restoration. The ordinary suite now has 89 tests.
 
 The [compatibility guide](compatibility.md) and [report](validation/unity66-version-compatibility.json) record four real server-plugin combinations, unchanged baseline checkouts, schema/name continuity and concurrent agents across mixed plugin versions. The existing 83 ordinary server tests also pass after making the test client's server entry configurable. Live editor validation remains opt-in and separate from ordinary CI.
 
