@@ -1,0 +1,689 @@
+{
+  "recordedAt": "2026-09-30T20:10:48.272Z",
+  "platform": "Windows",
+  "unityVersion": "6000.6.2f1",
+  "baseline": {
+    "recordedAt": "2026-09-30T19:35:28.254Z",
+    "unityVersion": "6000.6.2f1",
+    "platform": "Windows",
+    "pluginCommit": "af499f101fbe61fb925992d5256ab207f8280480",
+    "source": "https://github.com/umasteeringgroup/UMA/releases/tag/V3.1f1",
+    "archive": "UMA31_f1.unitypackage",
+    "archiveBytes": 1170694098,
+    "vendoredLocation": "Assets/UMA",
+    "releaseTag": "V3.1f1",
+    "bundledManifestVersion": "3.0.4",
+    "withoutIntegrationDefine": {
+      "editorExitCode": 0,
+      "compilerErrorCount": 0
+    },
+    "withIntegrationDefine": {
+      "define": "UMA_INSTALLED",
+      "editorExitCode": 1,
+      "uniqueCompilerErrors": 42,
+      "errors": [
+        "MCPUMACommands.cs(184,29): error CS0029: Cannot implicitly convert type 'UMA.Editors.UMASlotProcessingUtil.SlotBuildResult' to 'UMA.SlotDataAsset'",
+        "MCPUMACommands.cs(199,27): error CS1061: 'SlotDataAsset' does not contain a definition for 'material' and no accessible extension method 'material' accepting a first argument of type 'SlotDataAsset' could be found (are you missing a using directive or an assembly reference?)",
+        "MCPUMACommands.cs(200,27): error CS1061: 'SlotDataAsset' does not contain a definition for 'materialName' and no accessible extension method 'materialName' accepting a first argument of type 'SlotDataAsset' could be found (are you missing a using directive or an assembly reference?)",
+        "MCPUMACommands.cs(200,52): error CS1061: 'SlotDataAsset' does not contain a definition for 'material' and no accessible extension method 'material' accepting a first argument of type 'SlotDataAsset' could be found (are you missing a using directive or an assembly reference?)",
+        "MCPUMACommands.cs(248,46): error CS1061: 'SlotDataAsset' does not contain a definition for 'materialName' and no accessible extension method 'materialName' accepting a first argument of type 'SlotDataAsset' could be found (are you missing a using directive or an assembly reference?)",
+        "MCPUMACommands.cs(250,25): error CS1061: 'SlotDataAsset' does not contain a definition for 'materialName' and no accessible extension method 'materialName' accepting a first argument of type 'SlotDataAsset' could be found (are you missing a using directive or an assembly reference?)",
+        "MCPUMACommands.cs(268,43): error CS1061: 'SlotDataAsset' does not contain a definition for 'materialName' and no accessible extension method 'materialName' accepting a first argument of type 'SlotDataAsset' could be found (are you missing a using directive or an assembly reference?)",
+        "MCPUMACommands.cs(365,13): error CS0200: Property or indexer 'OverlayDataAsset.overlayName' cannot be assigned to -- it is read only",
+        "MCPUMACommands.cs(776,37): error CS1501: No overload for method 'GetAllAssets' takes 1 arguments",
+        "MCPUMACommands.cs(866,38): error CS1501: No overload for method 'GetAllAssets' takes 1 arguments",
+        "MCPUMACommands.cs(978,33): error CS0103: The name 'Newtonsoft' does not exist in the current context",
+        "MCPUMACommands.cs(979,55): error CS0246: The type or namespace name 'Newtonsoft' could not be found (are you missing a using directive or an assembly reference?)",
+        "MCPUMACommands.cs(980,40): error CS0019: Operator '==' cannot be applied to operands of type 'method group' and 'int'",
+        "MCPUMACommands.cs(991,64): error CS0246: The type or namespace name 'Newtonsoft' could not be found (are you missing a using directive or an assembly reference?)",
+        "MCPUMACommands.cs(1033,55): error CS1061: 'SlotDataAsset' does not contain a definition for 'materialName' and no accessible extension method 'materialName' accepting a first argument of type 'SlotDataAsset' could be found (are you missing a using directive or an assembly reference?)",
+        "MCPUMACommands.cs(1060,37): error CS0103: The name 'Newtonsoft' does not exist in the current context",
+        "MCPUMACommands.cs(1086,47): error CS0103: The name 'Newtonsoft' does not exist in the current context",
+        "MCPUMACommands.cs(1087,73): error CS0246: The type or namespace name 'Newtonsoft' could not be found (are you missing a using directive or an assembly reference?)",
+        "MCPUMACommands.cs(1354,31): error CS0029: Cannot implicitly convert type 'UMA.Editors.UMASlotProcessingUtil.SlotBuildResult' to 'UMA.SlotDataAsset'",
+        "MCPUMACommands.cs(1365,25): error CS1061: 'SlotDataAsset' does not contain a definition for 'material' and no accessible extension method 'material' accepting a first argument of type 'SlotDataAsset' could be found (are you missing a using directive or an assembly reference?)",
+        "MCPUMACommands.cs(1366,25): error CS1061: 'SlotDataAsset' does not contain a definition for 'materialName' and no accessible extension method 'materialName' accepting a first argument of type 'SlotDataAsset' could be found (are you missing a using directive or an assembly reference?)",
+        "MCPUMACommands.cs(1401,21): error CS1061: 'SlotDataAsset' does not contain a definition for 'material' and no accessible extension method 'material' accepting a first argument of type 'SlotDataAsset' could be found (are you missing a using directive or an assembly reference?)",
+        "MCPUMACommands.cs(1402,46): error CS1061: 'SlotDataAsset' does not contain a definition for 'materialName' and no accessible extension method 'materialName' accepting a first argument of type 'SlotDataAsset' could be found (are you missing a using directive or an assembly reference?)",
+        "MCPUMACommands.cs(1403,25): error CS1061: 'SlotDataAsset' does not contain a definition for 'materialName' and no accessible extension method 'materialName' accepting a first argument of type 'SlotDataAsset' could be found (are you missing a using directive or an assembly reference?)",
+        "MCPUMACommands.cs(1460,21): error CS0200: Property or indexer 'OverlayDataAsset.overlayName' cannot be assigned to -- it is read only",
+        "MCPUMACommands.cs(1659,92): error CS1061: 'SlotDataAsset' does not contain a definition for 'materialName' and no accessible extension method 'materialName' accepting a first argument of type 'SlotDataAsset' could be found (are you missing a using directive or an assembly reference?)",
+        "MCPUMACommands.cs(2286,21): error CS0200: Property or indexer 'RaceData.raceName' cannot be assigned to -- it is read only",
+        "MCPUMACommands.cs(2616,17): error CS0200: Property or indexer 'RaceData.raceName' cannot be assigned to -- it is read only",
+        "MCPUMACommands.cs(2801,45): error CS0029: Cannot implicitly convert type 'UMA.Editors.UMASlotProcessingUtil.SlotBuildResult' to 'UMA.SlotDataAsset'",
+        "MCPUMACommands.cs(2815,37): error CS1061: 'SlotDataAsset' does not contain a definition for 'material' and no accessible extension method 'material' accepting a first argument of type 'SlotDataAsset' could be found (are you missing a using directive or an assembly reference?)",
+        "MCPUMACommands.cs(2816,37): error CS1061: 'SlotDataAsset' does not contain a definition for 'materialName' and no accessible extension method 'materialName' accepting a first argument of type 'SlotDataAsset' could be found (are you missing a using directive or an assembly reference?)",
+        "MCPUMACommands.cs(2865,29): error CS1061: 'SlotDataAsset' does not contain a definition for 'material' and no accessible extension method 'material' accepting a first argument of type 'SlotDataAsset' could be found (are you missing a using directive or an assembly reference?)",
+        "MCPUMACommands.cs(2866,54): error CS1061: 'SlotDataAsset' does not contain a definition for 'materialName' and no accessible extension method 'materialName' accepting a first argument of type 'SlotDataAsset' could be found (are you missing a using directive or an assembly reference?)",
+        "MCPUMACommands.cs(2866,73): error CS1061: 'SlotDataAsset' does not contain a definition for 'materialName' and no accessible extension method 'materialName' accepting a first argument of type 'SlotDataAsset' could be found (are you missing a using directive or an assembly reference?)",
+        "MCPUMACommands.cs(2885,25): error CS0200: Property or indexer 'OverlayDataAsset.overlayName' cannot be assigned to -- it is read only",
+        "MCPUMACommands.cs(3385,40): error CS0103: The name 'Newtonsoft' does not exist in the current context",
+        "MCPUMACommands.cs(3390,83): error CS0246: The type or namespace name 'Newtonsoft' could not be found (are you missing a using directive or an assembly reference?)",
+        "MCPUMACommands.cs(3405,83): error CS0246: The type or namespace name 'Newtonsoft' could not be found (are you missing a using directive or an assembly reference?)",
+        "MCPUMACommands.cs(3410,81): error CS0246: The type or namespace name 'Newtonsoft' could not be found (are you missing a using directive or an assembly reference?)",
+        "MCPUMACommands.cs(3426,68): error CS0103: The name 'Newtonsoft' does not exist in the current context",
+        "MCPUMACommands.cs(3575,25): error CS0200: Property or indexer 'SlotDataAsset.slotName' cannot be assigned to -- it is read only",
+        "MCPUMACommands.cs(3583,25): error CS0200: Property or indexer 'OverlayDataAsset.overlayName' cannot be assigned to -- it is read only"
+      ]
+    },
+    "absentUmaTool": {
+      "tool": "unity_uma_get_project_config",
+      "project": "Unity66",
+      "isError": true,
+      "error": "Unknown API endpoint: uma/get-project-config"
+    },
+    "issues": [
+      "https://github.com/AnkleBreaker-Studio/unity-mcp-plugin/issues/27",
+      "https://github.com/AnkleBreaker-Studio/unity-mcp-plugin/issues/25"
+    ],
+    "notes": [
+      "Baseline only; no UMA compatibility fix implemented yet",
+      "Primary source shows SlotBuildResult, removed slot material fields, read-only logical names and changed GetAllAssets overloads",
+      "No dependency or file changes in production projects"
+    ]
+  },
+  "additionalReproductions": {
+    "cleanup": {
+      "passed": false,
+      "error": "System.Exception: CreateSlot deleted an unrelated asset folder\r\n  at McpUmaValidation.Run () [0x0056b] in <validation>/UMA66\\Assets\\Editor\\McpUmaValidation.cs:68 ",
+      "unrelatedAssetsPreserved": false
+    },
+    "rename": {
+      "passed": false,
+      "failures": [
+        "overlayHashUpdated",
+        "legacyOverlayPropagation",
+        "slotHashUpdated",
+        "legacySlotPropagation",
+        "collisionLeavesReferencesIntact"
+      ]
+    }
+  },
+  "workflow": {
+    "unityVersion": "6000.6.2f1",
+    "inspect": {
+      "fbxPath": "Assets/__McpUmaValidation/Model.prefab",
+      "smrCount": 1,
+      "skinnedMeshRenderers": [
+        {
+          "smrName": "Body",
+          "vertexCount": 6,
+          "triangleCount": 2,
+          "totalBones": 1,
+          "weightedBoneCount": 1,
+          "weightedBones": [
+            "Root"
+          ],
+          "subMeshCount": 2,
+          "blendShapeCount": 0
+        }
+      ]
+    },
+    "created": {
+      "success": true,
+      "slotName": "__McpSlot",
+      "slotAssetPath": "Assets/__McpUmaValidation/Slots/__McpSlot_slot.asset",
+      "slotCount": 2,
+      "allSlots": [
+        {
+          "slotName": "__McpSlot",
+          "slotAssetPath": "Assets/__McpUmaValidation/Slots/__McpSlot_slot.asset",
+          "materialName": ""
+        },
+        {
+          "slotName": "__McpSlot_1",
+          "slotAssetPath": "Assets/__McpUmaValidation/Slots/__McpSlot_1_slot.asset",
+          "materialName": ""
+        }
+      ],
+      "vertexCount": 6
+    },
+    "unrelatedAssetsPreserved": true,
+    "createdSlotPaths": [
+      "Assets/__McpUmaValidation/Slots/__McpSlot_1_slot.asset",
+      "Assets/__McpUmaValidation/Slots/__McpSlot_slot.asset"
+    ],
+    "slotNames": [
+      "__McpSlot_1",
+      "__McpSlot"
+    ],
+    "slotCollisionError": "Generated asset remains at 'Assets/__McpUmaValidation/Slots/__McpSlot/__McpSlot_1_slot.asset': Cannot move asset from Assets/__McpUmaValidation/Slots/__McpSlot/__McpSlot_1_slot.asset to Assets/__McpUmaValidation/Slots/__McpSlot_1_slot.asset: Destination path name does already exist",
+    "slotCollisionPreservesFiles": true,
+    "overlay": {
+      "success": true,
+      "overlayName": "__McpOverlay",
+      "overlayAssetPath": "Assets/__McpUmaValidation/Overlays/__McpOverlay_Overlay.asset",
+      "channelCount": 1,
+      "texturesAssigned": 0
+    },
+    "recipe": {
+      "success": true,
+      "recipeName": "__McpRecipe",
+      "recipePath": "Assets/__McpUmaValidation/Recipes/__McpRecipe.asset",
+      "wardrobeSlot": "Chest",
+      "race": "Human Male 3.0",
+      "slotCount": 2,
+      "overlayCount": 2,
+      "recipeJsonLength": 1537
+    },
+    "registered": {
+      "success": true,
+      "registeredCount": 4,
+      "registered": [
+        {
+          "path": "Assets/__McpUmaValidation/Slots/__McpSlot_1_slot.asset",
+          "type": "SlotDataAsset",
+          "name": "__McpSlot_1"
+        },
+        {
+          "path": "Assets/__McpUmaValidation/Slots/__McpSlot_slot.asset",
+          "type": "SlotDataAsset",
+          "name": "__McpSlot"
+        },
+        {
+          "path": "Assets/__McpUmaValidation/Overlays/__McpOverlay_Overlay.asset",
+          "type": "OverlayDataAsset",
+          "name": "__McpOverlay"
+        },
+        {
+          "path": "Assets/__McpUmaValidation/Recipes/__McpRecipe.asset",
+          "type": "UMAWardrobeRecipe",
+          "name": "__McpRecipe"
+        }
+      ],
+      "errors": []
+    },
+    "verification": {
+      "valid": true,
+      "issueCount": 0,
+      "criticalCount": 0,
+      "warningCount": 0,
+      "issues": [],
+      "recipeInfo": {
+        "recipeName": "__McpRecipe",
+        "wardrobeSlot": "Chest",
+        "compatibleRaces": [
+          "Human Male 3.0"
+        ],
+        "slotCount": 2,
+        "overlayCount": 2,
+        "slots": [
+          "__McpSlot_1",
+          "__McpSlot"
+        ],
+        "overlays": [
+          "__McpOverlay",
+          "__McpOverlay"
+        ],
+        "fColorCount": 1
+      }
+    },
+    "recipeValid": true,
+    "overlayHashBefore": -1750577075,
+    "slotHashBefore": -1192058204,
+    "dryRun": {
+      "oldName": "__McpOverlay",
+      "newName": "__McpRenamedOverlay",
+      "assetType": "overlay",
+      "dryRun": true,
+      "assetPath": "Assets/__McpUmaValidation/Overlays/__McpOverlay_Overlay.asset",
+      "steps": [
+        {
+          "action": "rename_file",
+          "from": "Assets/__McpUmaValidation/Overlays/__McpOverlay_Overlay.asset",
+          "to": "Assets/__McpUmaValidation/Overlays/__McpRenamedOverlay.asset"
+        },
+        {
+          "action": "update_overlayName",
+          "from": "__McpOverlay",
+          "to": "__McpRenamedOverlay"
+        }
+      ],
+      "propagation": [
+        {
+          "action": "update_recipeString",
+          "recipe": "__McpLegacy1",
+          "recipePath": "Assets/__McpUmaValidation/Recipes/__McpLegacy1.asset"
+        },
+        {
+          "action": "update_recipeString",
+          "recipe": "__McpLegacy2",
+          "recipePath": "Assets/__McpUmaValidation/Recipes/__McpLegacy2.asset"
+        },
+        {
+          "action": "update_recipeString",
+          "recipe": "__McpRecipe",
+          "recipePath": "Assets/__McpUmaValidation/Recipes/__McpRecipe.asset"
+        }
+      ],
+      "propagationCount": 3,
+      "success": true,
+      "message": "[DRY RUN] Would rename overlay '__McpOverlay' → '__McpRenamedOverlay' with 3 propagation(s)."
+    },
+    "legacyDryRunPreserved": true,
+    "renamed": {
+      "oldName": "__McpOverlay",
+      "newName": "__McpRenamedOverlay",
+      "assetType": "overlay",
+      "dryRun": false,
+      "assetPath": "Assets/__McpUmaValidation/Overlays/__McpOverlay_Overlay.asset",
+      "steps": [
+        {
+          "action": "rename_file",
+          "from": "Assets/__McpUmaValidation/Overlays/__McpOverlay_Overlay.asset",
+          "to": "Assets/__McpUmaValidation/Overlays/__McpRenamedOverlay.asset"
+        },
+        {
+          "action": "update_overlayName",
+          "from": "__McpOverlay",
+          "to": "__McpRenamedOverlay"
+        }
+      ],
+      "propagation": [
+        {
+          "action": "update_recipeString",
+          "recipe": "__McpLegacy1",
+          "recipePath": "Assets/__McpUmaValidation/Recipes/__McpLegacy1.asset"
+        },
+        {
+          "action": "update_recipeString",
+          "recipe": "__McpLegacy2",
+          "recipePath": "Assets/__McpUmaValidation/Recipes/__McpLegacy2.asset"
+        },
+        {
+          "action": "update_recipeString",
+          "recipe": "__McpRecipe",
+          "recipePath": "Assets/__McpUmaValidation/Recipes/__McpRecipe.asset"
+        }
+      ],
+      "propagationCount": 3,
+      "success": true,
+      "message": "Renamed overlay '__McpOverlay' → '__McpRenamedOverlay' with 3 propagation(s). Global Library rebuilt."
+    },
+    "overlayHashUpdated": true,
+    "legacyOverlayPropagation": true,
+    "renamedSlot": {
+      "oldName": "__McpSlot",
+      "newName": "__McpRenamedSlot",
+      "assetType": "slot",
+      "dryRun": false,
+      "assetPath": "Assets/__McpUmaValidation/Slots/__McpSlot_slot.asset",
+      "steps": [
+        {
+          "action": "rename_file",
+          "from": "Assets/__McpUmaValidation/Slots/__McpSlot_slot.asset",
+          "to": "Assets/__McpUmaValidation/Slots/__McpRenamedSlot.asset"
+        },
+        {
+          "action": "update_slotName",
+          "from": "__McpSlot",
+          "to": "__McpRenamedSlot"
+        },
+        {
+          "action": "update_meshData_SlotName",
+          "from": "__McpSlot",
+          "to": "__McpRenamedSlot"
+        }
+      ],
+      "propagation": [
+        {
+          "action": "update_recipeString",
+          "recipe": "__McpLegacy1",
+          "recipePath": "Assets/__McpUmaValidation/Recipes/__McpLegacy1.asset"
+        },
+        {
+          "action": "update_recipeString",
+          "recipe": "__McpLegacy2",
+          "recipePath": "Assets/__McpUmaValidation/Recipes/__McpLegacy2.asset"
+        },
+        {
+          "action": "update_recipeString",
+          "recipe": "__McpRecipe",
+          "recipePath": "Assets/__McpUmaValidation/Recipes/__McpRecipe.asset"
+        }
+      ],
+      "propagationCount": 3,
+      "success": true,
+      "message": "Renamed slot '__McpSlot' → '__McpRenamedSlot' with 3 propagation(s). Global Library rebuilt."
+    },
+    "slotHashUpdated": true,
+    "legacySlotPropagation": true,
+    "wardrobeFromModel": {
+      "success": true,
+      "pieceName": "Model",
+      "subMeshCount": 2,
+      "materials": [
+        {
+          "index": 0,
+          "name": "Material"
+        },
+        {
+          "index": 1,
+          "name": "Material"
+        }
+      ],
+      "created": {
+        "slots": [
+          "Assets/__McpUmaValidation/Wardrobe/Model_1_slot.asset",
+          "Assets/__McpUmaValidation/Wardrobe/Model_slot.asset"
+        ],
+        "overlays": [
+          "Assets/__McpUmaValidation/Wardrobe/Model_Default_sub0_Overlay.asset",
+          "Assets/__McpUmaValidation/Wardrobe/Model_Default_sub1_Overlay.asset"
+        ],
+        "recipes": [
+          "Assets/__McpUmaValidation/Wardrobe/Model_Default_Recipe.asset"
+        ]
+      },
+      "registeredInGlobalLibrary": true,
+      "verification": {
+        "allSlotsFound": true,
+        "allOverlaysFound": true,
+        "allRecipesValid": true,
+        "allMaterialNamesSet": true,
+        "fColorsValid": true,
+        "allTexturesExist": true,
+        "errors": []
+      }
+    },
+    "wardrobeVerified": true,
+    "clonedRace": {
+      "success": true,
+      "mode": "duplicate",
+      "race": {
+        "raceName": "__McpRace",
+        "assetPath": "Assets/__McpUmaValidation/Race/__McpRace.asset",
+        "wardrobeSlots": [
+          "None",
+          "Face",
+          "Eyes",
+          "Hair",
+          "Ears",
+          "Complexion",
+          "Scar",
+          "Eyebrows",
+          "Tattoo",
+          "TopUnderlayer",
+          "BottomUnderlayer",
+          "Beard",
+          "Helmet",
+          "Shoulders",
+          "Chest",
+          "Arms",
+          "Hands",
+          "Waist",
+          "Legs",
+          "Feet"
+        ],
+        "umaTarget": "Humanoid",
+        "fixupRotations": true,
+        "tags": [],
+        "raceHeight": 2,
+        "raceRadius": 0.25,
+        "raceMass": 50,
+        "baseRaceRecipePath": "Assets/__McpUmaValidation/Race/__McpRaceBaseRaceData.asset"
+      },
+      "sourceRace": "Human Male 3.0",
+      "baseRecipe": {
+        "created": true,
+        "path": "Assets/__McpUmaValidation/Race/__McpRaceBaseRaceData.asset"
+      },
+      "bodySlots": [],
+      "bodyOverlays": [],
+      "tposePath": "Assets/UMA/UMA3/TPose/MalePose_TPose.asset",
+      "registeredInLibrary": true
+    },
+    "editedRace": {
+      "success": true,
+      "race": {
+        "raceName": "__McpRenamedRace",
+        "assetPath": "Assets/__McpUmaValidation/Race/__McpRenamedRace.asset",
+        "wardrobeSlots": [
+          "None",
+          "Face",
+          "Eyes",
+          "Hair",
+          "Ears",
+          "Complexion",
+          "Scar",
+          "Eyebrows",
+          "Tattoo",
+          "TopUnderlayer",
+          "BottomUnderlayer",
+          "Beard",
+          "Helmet",
+          "Shoulders",
+          "Chest",
+          "Arms",
+          "Hands",
+          "Waist",
+          "Legs",
+          "Feet",
+          "__McpWardrobeSlot"
+        ],
+        "umaTarget": "Humanoid",
+        "fixupRotations": true,
+        "tags": [],
+        "raceHeight": 2,
+        "raceRadius": 0.25,
+        "raceMass": 50,
+        "baseRaceRecipePath": "Assets/__McpUmaValidation/Race/__McpRaceBaseRaceData.asset"
+      },
+      "cascade": {
+        "baseRecipeUpdated": true,
+        "baseRecipePath": "Assets/__McpUmaValidation/Race/__McpRaceBaseRaceData.asset",
+        "recipesUpdated": 0,
+        "recipePaths": [],
+        "dcaUpdated": 0,
+        "dcaPaths": [],
+        "assetRenamed": true,
+        "libraryRebuilt": true
+      }
+    },
+    "raceUpdated": true,
+    "raceFromModel": {
+      "success": true,
+      "mode": "fbx",
+      "race": {
+        "raceName": "__McpBodyRace",
+        "assetPath": "Assets/__McpUmaValidation/BodyRace/__McpBodyRace.asset",
+        "wardrobeSlots": [
+          "None",
+          "Face",
+          "Hair",
+          "Complexion",
+          "Eyebrows",
+          "Beard",
+          "Ears",
+          "Helmet",
+          "Shoulders",
+          "Chest",
+          "Arms",
+          "Hands",
+          "Waist",
+          "Legs",
+          "Feet"
+        ],
+        "umaTarget": "Humanoid",
+        "fixupRotations": true,
+        "tags": [],
+        "raceHeight": 2,
+        "raceRadius": 0.25,
+        "raceMass": 50,
+        "baseRaceRecipePath": "Assets/__McpUmaValidation/BodyRace/__McpBodyRaceBaseRaceData.asset"
+      },
+      "sourceRace": "",
+      "baseRecipe": {
+        "created": true,
+        "path": "Assets/__McpUmaValidation/BodyRace/__McpBodyRaceBaseRaceData.asset"
+      },
+      "bodySlots": [
+        "Assets/__McpUmaValidation/BodyRace/BodyBase/Body_1_slot.asset",
+        "Assets/__McpUmaValidation/BodyRace/BodyBase/Body_slot.asset"
+      ],
+      "bodyOverlays": [
+        "Assets/__McpUmaValidation/BodyRace/BodyBase/Body_Overlay.asset",
+        "Assets/__McpUmaValidation/BodyRace/BodyBase/Body_1_Overlay.asset"
+      ],
+      "tposePath": "",
+      "registeredInLibrary": true
+    },
+    "raceBodySlotsCreated": true,
+    "collisionLeavesReferencesIntact": true,
+    "failures": [],
+    "unrelatedAssetsPreservedAtEnd": true,
+    "passed": true,
+    "libraryRestored": true,
+    "fixtureRemoved": true
+  },
+  "withoutUma": {
+    "unityVersion": "6000.6.2f1",
+    "isCompiling": false,
+    "methods": [
+      {
+        "method": "InspectFbx",
+        "passed": true
+      },
+      {
+        "method": "CreateSlot",
+        "passed": true
+      },
+      {
+        "method": "CreateOverlay",
+        "passed": true
+      },
+      {
+        "method": "CreateWardrobeRecipe",
+        "passed": true
+      },
+      {
+        "method": "RegisterAssets",
+        "passed": true
+      },
+      {
+        "method": "ListGlobalLibrary",
+        "passed": true
+      },
+      {
+        "method": "ListWardrobeSlots",
+        "passed": true
+      },
+      {
+        "method": "ListUMAMaterials",
+        "passed": true
+      },
+      {
+        "method": "VerifyRecipe",
+        "passed": true
+      },
+      {
+        "method": "CreateWardrobeFromFbx",
+        "passed": true
+      },
+      {
+        "method": "RebuildGlobalLibrary",
+        "passed": true
+      },
+      {
+        "method": "WardrobeEquip",
+        "passed": true
+      },
+      {
+        "method": "GetProjectConfig",
+        "passed": true
+      },
+      {
+        "method": "EditRace",
+        "passed": true
+      },
+      {
+        "method": "CreateRace",
+        "passed": true
+      },
+      {
+        "method": "RenameAsset",
+        "passed": true
+      }
+    ]
+  },
+  "queueHealth": {
+    "passed": true
+  },
+  "limitations": [
+    "UMA V3.1f1 archive, embedded manifest 3.0.4",
+    "Synthetic two-submesh prefab, not a humanoid FBX or rendered avatar",
+    "UMA 2 source compatibility reviewed; no actual UMA 2 editor execution",
+    "Unity 2021 compiler-only, optional UMA code excluded",
+    "Direct facade workflow; separate missing-package MCP route check, not all UMA tools over stdio"
+  ],
+  "installedButDisabled": {
+    "unityVersion": "6000.6.2f1",
+    "checks": [
+      {
+        "method": "InspectFbx",
+        "passed": true
+      },
+      {
+        "method": "CreateSlot",
+        "passed": true
+      },
+      {
+        "method": "CreateOverlay",
+        "passed": true
+      },
+      {
+        "method": "CreateWardrobeRecipe",
+        "passed": true
+      },
+      {
+        "method": "RegisterAssets",
+        "passed": true
+      },
+      {
+        "method": "ListGlobalLibrary",
+        "passed": true
+      },
+      {
+        "method": "ListWardrobeSlots",
+        "passed": true
+      },
+      {
+        "method": "ListUMAMaterials",
+        "passed": true
+      },
+      {
+        "method": "VerifyRecipe",
+        "passed": true
+      },
+      {
+        "method": "CreateWardrobeFromFbx",
+        "passed": true
+      },
+      {
+        "method": "RebuildGlobalLibrary",
+        "passed": true
+      },
+      {
+        "method": "WardrobeEquip",
+        "passed": true
+      },
+      {
+        "method": "GetProjectConfig",
+        "passed": true
+      },
+      {
+        "method": "EditRace",
+        "passed": true
+      },
+      {
+        "method": "CreateRace",
+        "passed": true
+      },
+      {
+        "method": "RenameAsset",
+        "passed": true
+      }
+    ],
+    "passed": true
+  }
+}

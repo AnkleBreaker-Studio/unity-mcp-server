@@ -120,6 +120,8 @@ Discover advanced capabilities with `unity_list_advanced_tools`. Filter by categ
 
 ## Compatibility and validation
 
+UMA V3.1f1 workflows now pass on Unity 6.6: slot/overlay/recipe creation, race changes and renames across legacy recipe formats. The integration is isolated from the core bridge and preserves unrelated files during generation. [UMA setup, validation and limits](docs/uma.md).
+
 The plugin declares **Unity 2021.3.18f1+** support and retains version-gated object identity APIs. Server and plugin versions advance independently; they do not need matching version numbers.
 
 The current modernization branch has been compiled and exercised in **Unity 6000.6.2f1**: queue lifecycle, concurrent commands to two real editors, four Play Mode reload configurations and compiled build diagnostics. MPPM 3.0 live tests also cover Host/Client launch, isolated agent routing and shared script recompilation. Older Unity/MPPM versions, ParrelSync lifecycle and game networking still need separate validation. [Evidence, limits and remaining work →](docs/modernization.md)

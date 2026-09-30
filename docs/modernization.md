@@ -31,7 +31,8 @@ The objective remains a broad improvement of the existing MCP and plugin: backwa
 | Unity 6.6 | Package compiled and validation runner passed on `6000.6.2f1` | Isolated projects; optional integrations need individual verification |
 | Native MPPM 3.0 | Host/Client scenario, 12 overlapping commands before and after shared script recompilation, settings and player cleanup | Node 18 and 22 on Windows; older MPPM, ParrelSync lifecycle and game networking untested |
 | Editor data workflows | Scenes, sparse enums/flags, references, materials, prefabs, asset/hierarchy limits and successful/failed captures | Real Unity 6.6 editor on Node 18 and 22; unique fixtures removed and original scene restored |
-| Minimum-version API compilation | All 66 editor source files compile against installed Unity 2021.3.18f1 assemblies after a Dashboard namespace fix | Compiler-only; bundled template package DLLs; no editor execution/UPM resolution; UMA/ProBuilder excluded |
+| Minimum-version API compilation | All 69 editor source files compile against installed Unity 2021.3.18f1 assemblies after a Dashboard namespace fix | Compiler-only; bundled template package DLLs; no editor execution/UPM resolution; UMA/ProBuilder excluded |
+| Optional UMA integration | UMA V3.1f1 creation, registration, verification, race editing and rename checks pass; 16 absent-package facade errors pass | Unity 6.6; synthetic skinned model; UMA 2 execution and rendered/runtime avatars unverified |
 | Minimal project installation | Second import exposed missing uGUI; declare uGUI and Test Framework in the package | Validation manifest now depends only on the plugin; Unity 6.6 resolves uGUI 2.6.0 and Test Framework 1.8.0 |
 | README | New vector architecture visual, installation flow, workflow tables, detailed linked guides | Existing demo media retained; competitor claims corrected against sources |
 
@@ -83,6 +84,8 @@ This opt-in suite selects by project name and verifies each actual project path.
 Local live-editor evidence lives in the sibling workspace directory `../validation/Queue66/`. Unity 6.6.2 runs there. The official Unity 2021.3.18f1 editor was installed separately and used for a passing compiler-only API check, but its batch startup stopped at license initialization. At the maintainer's request, further older-editor execution is deferred and will be revisited for reported compatibility issues. The folders named 6000.0.26f1 and 6000.3.3f1 remain incomplete installations.
 
 ## Remaining work before completion
+
+The [UMA guide](uma.md) and [report](validation/unity66-uma.json) add a tested optional assembly boundary and fixes for the reproduced UMA 3 compiler/API failures. Generation preserves unrelated folders and existing assets after collisions; renames cover recipe JSON v1/v2/v3 and cached names. The minimal-project health suite and minimum-version compiler check still pass. Unity 6.6 also reports assembly-loading analyzer warnings in code execution; inspect their actual runtime implications in the remaining route review.
 
 1. Continue route-family review beyond the passing scene/component/reference/prefab/asset/Scene-capture workflow: code execution boundaries, undo, packages, tests, remaining screenshots, builds and optional integrations.
 2. Expand monitoring end to end: reload counters and interactive dashboard review. Command-result errors and terminal history now have regression coverage, alongside session retention and empty queue allocation fixes. Continue measuring dashboard and active-work costs.

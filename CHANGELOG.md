@@ -4,6 +4,10 @@ All notable changes to this package will be documented in this file.
 
 ## [Unreleased]
 
+### Optional integration validation
+- Document and record actual UMA V3.1f1 compatibility, asset generation and rename validation in the companion plugin. Keep existing tool names and schemas; unavailable UMA integration now gives explicit installation/define diagnostics.
+- Record reproduced compiler errors, unrelated-folder deletion, stale name hashes, skipped legacy recipe references and rename-collision changes, with passing corrected checks. See `docs/uma.md` for scope, reproduction and UMA 2/runtime limitations.
+
 ### Fixed
 - Accept the UTF-8 BOM written by older Unity instance registries, including discovery outside the fallback port-scan range.
 - Verify the requested Play/Stop state after protocol-2+ session loss instead of reporting a false failure or repeating the command. Ambiguous Pause toggles remain unknown.
