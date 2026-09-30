@@ -13,7 +13,9 @@ The Node server and Unity package are independently versioned components. The MC
 5. `unity-editor-bridge.js` captures the target and agent for queue submission and all subsequent polls. Queue support is cached by endpoint, allowing old and new plugin versions to coexist.
 6. The plugin's `MCPBridgeServer` accepts HTTP on a loopback listener. Its request guards run before dispatch. It handles queue control endpoints separately; ordinary operations enter `MCPRequestQueue`, including legacy synchronous calls.
 7. `EditorApplication.update` drains one write or up to five reads. Agent queues are FIFO and visited in round-robin order. Work executes outside the queue lock, on Unity's main thread. The queue lock protects indexes and scheduling state.
-8. Completed tickets remain available for polling. Deferred Unity APIs complete through callbacks. Node translates results into MCP text or image blocks and marks recognized logical failures with `isError`.
+8. Deferred Unity APIs complete through callbacks. A shared transition under the queue lock finalizes tickets exactly once within the current editor domain, updates session counters, releases work closures and signals legacy waiters. Duplicate or late callbacks cannot replace a terminal result. Node translates results into MCP text or image blocks and marks recognized logical failures with `isError`.
+
+Legacy waiters expire after 30 seconds. Unstarted work is removed or skipped; an already-started operation cannot be canceled. Deferred execution expires after 120 seconds measured from its start when cleanup runs. Completed/failed results are retained for 60 seconds, timed-out results for 30 seconds, until periodic cleanup. Deadlines and retention use monotonic time. These rules do not guarantee exactly-once execution across HTTP retries or domain reloads.
 
 ## State ownership
 
@@ -56,6 +58,6 @@ Stdio does **not** serialize handler completion. Handlers overlap whenever they 
 
 The Node suite validates public MCP framing, schemas, byte budgets, response formatting, discovery and selected error/recovery behaviors against mock plugins. It does not run Unity code.
 
-The plugin batch runner compiles the actual package and exercises object IDs, scheduling, deferred completion and synchronous waiters inside Unity 6.6.2. Its polling measurements cover status lookup and serialization, not HTTP latency, scene execution or total editor responsiveness.
+The plugin batch runner compiles the actual package and exercises object IDs, scheduling, duplicate/late callbacks, deferred expiration and retention, normal synchronous calls and real 30-second timeout races inside Unity 6.6.2. It also checks dashboard labels for running-only activity and failure/timing metrics. This is a state check, not an interactive visual review. Its polling measurements cover dictionary construction for status responses, not HTTP latency, scene execution or total editor responsiveness.
 
 See [modernization evidence and remaining work](modernization.md) before interpreting either suite as complete product coverage.

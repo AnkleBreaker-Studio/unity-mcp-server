@@ -1,0 +1,16 @@
+{
+    "unityVersion": "6000.6.2f1",
+    "passed": true,
+    "checks": [
+        "Object identity round-trip without JSON number conversion",
+        "Agent FIFO, round-robin writes, read batching and ticket results",
+        "Deferred completion is atomic, single-shot and stable after timeout",
+        "Legacy synchronous callers are signaled without lost wakeups",
+        "Legacy timeout preserves running outcomes and skips expired batched and queued work",
+        "Dashboard shows running-only work and separates failures from finished requests",
+        "1000 status polls at queue depths 100 and 10000"
+    ],
+    "polling100Ms": 6.2408,
+    "polling10000Ms": 3.8653000000000004,
+    "error": ""
+}
