@@ -4,6 +4,10 @@ All notable changes to this package will be documented in this file.
 
 ## [Unreleased]
 
+### Package Manager validation
+- Add an opt-in live package workflow covering list/info/search, overlapping reads, command errors and a local package add/remove cycle with manifest restoration.
+- Validate the plugin's deferred package scheduler on Node 18 and 22, including sequential compatibility with the released server. See `docs/packages.md` for measured editor waits, timeouts and remaining coverage.
+
 ### Editor identity and discovery
 - Reject unrecognized successful ping bodies across scans, registry validation, default-port fallback and explicit selection. Fresh registry entries cannot override a live foreign identity.
 - Recheck recovery ports and selection identity, retain legacy project/version formats, and stop copying stale project paths into live pathless responses. Reuse probes within one discovery attempt.
