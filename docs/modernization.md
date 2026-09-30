@@ -23,6 +23,9 @@ The objective remains a broad improvement of the existing MCP and plugin: backwa
 | Unity 6.6 build diagnostics | Baseline Development build lacked checks/instrumentation; five corrected Windows Mono builds cover all four variants | Compiled assembly constants inspected; project setting restored after success and intentional failure; other platforms/IL2CPP untested |
 | Two real editors | 24 overlapping commands through one stdio server, two agent selections, no explicit command ports | Each project's counter advances exactly 12 times; independent projects, not multiplayer clones |
 | Play Mode and actual reload | Four reload configurations pass; Play/Stop readback recovers lost results; script reload reports an unknown result with execution count one | Unity 6000.6.2f1; Pause is a toggle and does not infer success from a final state |
+| Explicit read/write policy | Four state-changing profiler/debugger routes and an unknown route execute one per update; compilation-error and existing state reads batch five | Real queue callbacks; native profiler/debugger feature behavior is outside this scheduling test |
+| Session retention and visibility | 5,000 stale sessions removed, newest 256 inactive sessions retained, busy/fresh sessions survive, returning agent starts new statistics | Monotonic idle expiry; active/busy sessions have no forced eviction; about 8.5 MiB released in the synthetic retention case |
+| Empty queue allocations | Positive-control ProfilerRecorder measures 3,000 allocations before scratch reuse and zero after, over 100,000 warmed updates | Queue processor only, not the entire plugin/editor; the runtime's allocated-byte counter failed its control test |
 | Unity 6.6 | Package compiled and validation runner passed on `6000.6.2f1` | Isolated project, no optional-package or real multiplayer certification |
 | Minimal project installation | Second import exposed missing uGUI; declare uGUI and Test Framework in the package | Validation manifest now depends only on the plugin; Unity 6.6 resolves uGUI 2.6.0 and Test Framework 1.8.0 |
 | README | New vector architecture visual, installation flow, workflow tables, detailed linked guides | Existing demo media retained; competitor claims corrected against sources |
@@ -40,6 +43,8 @@ Retry implementation checkpoints: server `0c3b7f9`, plugin `9b56fa8`. [All eight
 The [build report](validation/unity66-builds.json) preserves the reproduced baseline and five corrected builds, including restoration after a failed build. The [live editor report](validation/unity66-editor-lifecycle.json) records two independent editors, the default/scene-only/no-reload/domain-only configurations, and actual script-reload result loss. The initial live run exposed false Play failures after session changes; the corrected run verifies success by readback without another Play command. Both reports are from Windows with Unity 6000.6.2f1.
 
 Build and live-editor checkpoints: server `843088b`, plugin `98b6d11`. [All eight server CI jobs passed with 80 tests](https://github.com/AnkleBreaker-Studio/unity-mcp-server/actions/runs/36749833896), and the [338-route plugin registry check passed](https://github.com/AnkleBreaker-Studio/unity-mcp-plugin/actions/runs/36749793560). Both actual editors finished out of Play Mode with `isCompiling: false` and zero compilation errors. Versions remain unchanged; these are feature-branch checkpoints, not releases.
+
+The [queue health report](validation/unity66-queue-health.json) adds retention, visibility, scheduling and controlled allocation measurements. The [full queue regression report after these changes](validation/unity66-queue-health-regressions.json) passes all ten check groups, including actual HTTP dispatch, duplicate callbacks and real timeout races. See [queue monitoring](queue-monitoring.md) for policy semantics, measurement limits and reproduction with `-Suite Health`.
 
 ## Reproduce
 
@@ -73,7 +78,7 @@ Local evidence for this iteration lives in the sibling workspace directory `../v
 ## Remaining work before completion
 
 1. Complete route-family review and real editor tests: scene/component/asset operations, screenshots, code execution, undo, packages, tests, builds and optional integrations.
-2. Expand monitoring end to end: command-result error/reload counters, bounded history and interactive dashboard review. Session wait/processing aggregates and exception/timeout counts now exist. Review idle allocations and main-thread work with measurements.
+2. Expand monitoring end to end: command-result error/reload counters and interactive dashboard review. Session retention and empty queue allocations now have measured fixes; session wait/processing aggregates and exception/timeout counts exist. Continue measuring dashboard and active-work costs.
 3. Test old/new server-plugin combinations and older supported Unity versions, not just the new server's legacy mock transport. Add repeatable CI coverage where feasible.
 4. Exercise actual MPPM/ParrelSync workflows, clone lifecycle and recompile. Independent simultaneous editors and four Play Mode reload configurations now pass on Unity 6.6; this is not yet a multiplayer-clone validation.
 5. Extend actual reload/lost-ticket recovery to other editor versions and client/plugin combinations. Unity 6.6 script reload now confirms one execution plus an unknown result, and Play/Stop recover by readback. Never infer that a timeout means a write did not occur.
@@ -82,7 +87,7 @@ Local evidence for this iteration lives in the sibling workspace directory `../v
 8. Keep both READMEs and release notes aligned as implementation expands. Review the final cross-repository diff and refresh validation evidence before release.
 9. Prepare versioning and reviewable changes with test evidence. Publish feature branches per studio workflow when the set is ready; merge/release only within authorized scope.
 
-Concrete follow-up findings from the queue review: agent sessions remain in `_sessions` after inactivity, even though each individual action log is capped; read/write classification is a route-name heuristic and currently includes all `profiler/*` and `debugger/*` routes, including state-changing enable operations and snapshot creation. Measure retention/idle cost and verify scheduling/undo behavior before changing these policies.
+The queue review's concrete retention and route-classification findings are now fixed and tested. Further review must distinguish transport completion from logical command failure, and cover dashboard/HTTP allocations beyond the measured empty queue loop. Other long-lived server/plugin caches remain in scope.
 
 ## Version references
 

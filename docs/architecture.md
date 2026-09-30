@@ -43,6 +43,7 @@ Stdio does **not** serialize handler completion. Handlers overlap whenever they 
 | Settings and diagnostics UI | `MCPSettingsManager.cs`, dashboard/toolbar/self-test classes | Categories, startup policy, agent visibility and safe feature probes. |
 | Multiplayer | `MCPScenarioCommands.cs` | Package-dependent scenario and player APIs resolved at runtime; MPPM virtual-player startup policy. |
 | Unity API compatibility | `MCPObjectId.cs`, version-gated command implementations | Decimal string identity on the wire; EntityId APIs on newer Unity and instance-ID APIs on older Unity. |
+| Read/write policy | `MCPCommandPolicy.cs` | Explicit eligibility for read batching; unknown commands stay on the write path. |
 | Feature families | `MCP*Commands.cs` | Scenes, assets, code, animation, rendering, builds, packages, tests and optional integrations. These still require individual runtime coverage. |
 
 ## Compatibility contracts
@@ -61,5 +62,7 @@ The Node suite validates public MCP framing, schemas, byte budgets, response for
 The plugin batch runner compiles the actual package and exercises object IDs, scheduling, duplicate/late callbacks, deferred expiration and retention, normal synchronous calls and real 30-second timeout races inside Unity 6.6.2. It also checks dashboard labels for running-only activity and failure/timing metrics. This is a state check, not an interactive visual review. Its polling measurements cover dictionary construction for status responses, not HTTP latency, scene execution or total editor responsiveness.
 
 Separate opt-in stdio suites drive two actual Unity editors, four Play Mode reload configurations, and script reload with a lost result. Build validation inspects constants in Windows Mono player assemblies and verifies restoration of project settings. These use disposable marked projects and are not part of ordinary mock-based CI.
+
+The plugin's `-Suite Health` checks inactive-session eviction, preservation of outstanding work, read/write scheduling and empty queue allocation counts with a positive control. See [queue monitoring](queue-monitoring.md) for the measurements and their scope.
 
 See [modernization evidence and remaining work](modernization.md) before interpreting either suite as complete product coverage.
