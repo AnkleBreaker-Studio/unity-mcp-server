@@ -4,6 +4,10 @@ All notable changes to this package will be documented in this file.
 
 ## [Unreleased]
 
+### Live version compatibility
+- Add an opt-in `test:compatibility` suite using separate released/current server checkouts and real Unity editors with old/new plugins.
+- Verify four combinations, object/undo/error/history workflows, 384 retained tool names, and four-agent concurrency across mixed plugin versions. Record Node 18/22 evidence and restore fixture scenes/counters.
+
 ### Dashboard evidence
 - Document the companion plugin's card reuse, project-scoped section preferences, corrected narrow-window layout and accurate latest-request label.
 - Record baseline/corrected refresh measurements, attached-window geometry and script-reload checks, monitoring regressions and compiler-only minimum-version validation. The changing-agent workload records 83% fewer allocation events; see `docs/dashboard.md` for measurement limits.

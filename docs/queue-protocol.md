@@ -13,6 +13,8 @@ Protocol version 2 adds protected submission and polling to the existing local b
 
 Both updated components are needed for protected submission retries. A timeout never proves that a started command made no changes.
 
+The [live compatibility matrix](compatibility.md) verifies routine workflows with all four released/current server-plugin combinations on Unity 6.6, plus simultaneous commands to editors using different plugin versions. It preserves the older server's retry limitations and does not imply older-Unity runtime coverage.
+
 ## Handshake and endpoints
 
 `GET /api/queue/info` advertises `protocolVersion` (at least 2; currently 3), a 32-character `queueSessionId`, monotonic `queueSessionTimeMs`, and `queueRetryWindowMs: 120000`. It runs on the listener thread. The server performs this read before each queued operation and shares concurrent negotiations for one endpoint. This adds one local read, allowing a fresh session/deadline without waiting for Unity's main thread.

@@ -1,0 +1,199 @@
+{
+  "recordedAt": "2026-09-30T21:11:03.336Z",
+  "platform": "Windows",
+  "unityVersion": "6000.6.2f1",
+  "baseline": {
+    "serverCommit": "826af5ce61db7e2d2d675fe90d24c941a83f3924",
+    "pluginCommit": "0b8e76f7c50ed8c0bd5f359d893653211d0f2abe",
+    "serverVersion": "2.35.6",
+    "pluginVersion": "2.39.7",
+    "sdkVersion": "1.27.1",
+    "workingTreesUnmodified": true
+  },
+  "current": {
+    "serverRuntimeCommit": "279990d4577fafe7eb934262d59408e5c16f19b5",
+    "pluginCommit": "631b5d264b11f5e9af7b3cc1c15a0f6c4ae4956b",
+    "serverVersion": "2.35.6",
+    "pluginVersion": "2.39.7",
+    "sdkVersion": "1.27.1"
+  },
+  "projectDependenciesForOldPlugin": {
+    "com.unity.ugui": "2.6.0",
+    "com.unity.test-framework": "1.8.0"
+  },
+  "node18": {
+    "nodeVersion": "v18.20.8",
+    "baselineServerVersion": "2.35.6",
+    "combinations": [
+      {
+        "server": "baseline",
+        "plugin": "baseline",
+        "unityVersion": "6000.6.2f1",
+        "pluginVersion": "2.39.7",
+        "protocolVersion": null,
+        "createReadTransformUndo": true,
+        "executionResultPreserved": true,
+        "deleteAndErrorContract": true,
+        "agentAttribution": true,
+        "commandErrors": null,
+        "historyAvailable": true,
+        "passed": true,
+        "sceneRestored": true
+      },
+      {
+        "server": "baseline",
+        "plugin": "current",
+        "unityVersion": "6000.6.2f1",
+        "pluginVersion": "2.39.7",
+        "protocolVersion": 3,
+        "createReadTransformUndo": true,
+        "executionResultPreserved": true,
+        "deleteAndErrorContract": true,
+        "agentAttribution": true,
+        "commandErrors": 1,
+        "historyAvailable": true,
+        "passed": true,
+        "sceneRestored": true
+      },
+      {
+        "server": "current",
+        "plugin": "baseline",
+        "unityVersion": "6000.6.2f1",
+        "pluginVersion": "2.39.7",
+        "protocolVersion": null,
+        "createReadTransformUndo": true,
+        "executionResultPreserved": true,
+        "deleteAndErrorContract": true,
+        "agentAttribution": true,
+        "commandErrors": null,
+        "historyAvailable": true,
+        "passed": true,
+        "sceneRestored": true
+      },
+      {
+        "server": "current",
+        "plugin": "current",
+        "unityVersion": "6000.6.2f1",
+        "pluginVersion": "2.39.7",
+        "protocolVersion": 3,
+        "createReadTransformUndo": true,
+        "executionResultPreserved": true,
+        "deleteAndErrorContract": true,
+        "agentAttribution": true,
+        "commandErrors": 1,
+        "historyAvailable": true,
+        "passed": true,
+        "sceneRestored": true
+      }
+    ],
+    "toolRegistry": {
+      "baselineCount": 384,
+      "currentCount": 384,
+      "currentCoreCount": 80,
+      "namesPreserved": true,
+      "noNewRequiredArgumentsInPublishedSchemas": true
+    },
+    "mixedConcurrency": {
+      "calls": 12,
+      "agents": 4,
+      "callsPerProject": 6,
+      "callsPerAgent": 3,
+      "explicitPorts": false,
+      "correctRouting": true,
+      "correctAgentAttribution": true,
+      "exactlyOnceCounts": true
+    },
+    "passed": true
+  },
+  "node22": {
+    "nodeVersion": "v22.18.0",
+    "baselineServerVersion": "2.35.6",
+    "combinations": [
+      {
+        "server": "baseline",
+        "plugin": "baseline",
+        "unityVersion": "6000.6.2f1",
+        "pluginVersion": "2.39.7",
+        "protocolVersion": null,
+        "createReadTransformUndo": true,
+        "executionResultPreserved": true,
+        "deleteAndErrorContract": true,
+        "agentAttribution": true,
+        "commandErrors": null,
+        "historyAvailable": true,
+        "passed": true,
+        "sceneRestored": true
+      },
+      {
+        "server": "baseline",
+        "plugin": "current",
+        "unityVersion": "6000.6.2f1",
+        "pluginVersion": "2.39.7",
+        "protocolVersion": 3,
+        "createReadTransformUndo": true,
+        "executionResultPreserved": true,
+        "deleteAndErrorContract": true,
+        "agentAttribution": true,
+        "commandErrors": 1,
+        "historyAvailable": true,
+        "passed": true,
+        "sceneRestored": true
+      },
+      {
+        "server": "current",
+        "plugin": "baseline",
+        "unityVersion": "6000.6.2f1",
+        "pluginVersion": "2.39.7",
+        "protocolVersion": null,
+        "createReadTransformUndo": true,
+        "executionResultPreserved": true,
+        "deleteAndErrorContract": true,
+        "agentAttribution": true,
+        "commandErrors": null,
+        "historyAvailable": true,
+        "passed": true,
+        "sceneRestored": true
+      },
+      {
+        "server": "current",
+        "plugin": "current",
+        "unityVersion": "6000.6.2f1",
+        "pluginVersion": "2.39.7",
+        "protocolVersion": 3,
+        "createReadTransformUndo": true,
+        "executionResultPreserved": true,
+        "deleteAndErrorContract": true,
+        "agentAttribution": true,
+        "commandErrors": 1,
+        "historyAvailable": true,
+        "passed": true,
+        "sceneRestored": true
+      }
+    ],
+    "toolRegistry": {
+      "baselineCount": 384,
+      "currentCount": 384,
+      "currentCoreCount": 80,
+      "namesPreserved": true,
+      "noNewRequiredArgumentsInPublishedSchemas": true
+    },
+    "mixedConcurrency": {
+      "calls": 12,
+      "agents": 4,
+      "callsPerProject": 6,
+      "callsPerAgent": 3,
+      "explicitPorts": false,
+      "correctRouting": true,
+      "correctAgentAttribution": true,
+      "exactlyOnceCounts": true
+    },
+    "passed": true
+  },
+  "limits": [
+    "Real Unity editors on Windows only, both at 6000.6.2f1. Older Unity execution remains deferred.",
+    "Runtime command checks cover discovery, queue info, compilation status, object create/read/edit/delete, undo, execution results, one handler error and action history.",
+    "Tool name/schema checks are not execution coverage for every route. Dynamic entries without schemas contribute name coverage only.",
+    "Mixed-plugin concurrency uses the current server. It does not certify the baseline server concurrent routing or its ambiguous-write retry behavior.",
+    "Pre-queue plugins and other historical releases remain outside this real-editor matrix. Legacy mock transport tests remain separate."
+  ]
+}

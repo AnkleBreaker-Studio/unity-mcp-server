@@ -137,6 +137,8 @@ npm test
 
 The server tests run the real MCP stdio process against isolated mock bridges, including overlapping calls to different projects and mixed old/new plugins. The companion plugin includes a reproducible Unity batch validation runner under `tools~/validate-unity.ps1`.
 
+An opt-in [live compatibility matrix](docs/compatibility.md) also passes all four released/current server-plugin combinations on Unity 6.6, with Node 18 and 22. A mixed-plugin concurrency check verifies four agents across two actual editors.
+
 ## Monitor and troubleshoot
 
 The plugin Dashboard puts queue activity, agent sessions and recent actions first. Agent cards update in place, sections remember their state, and long request text stays readable through tooltips. [Dashboard behavior and measured refresh costs](docs/dashboard.md).

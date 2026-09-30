@@ -15,6 +15,7 @@ export class McpTestClient {
    * @param {number} [options.timeoutMs] Per-request timeout (default 20s).
    */
   constructor(options = {}) {
+    this.serverEntry = options.serverEntry ?? SERVER_ENTRY;
     this.extraEnv = options.env || {};
     this.timeoutMs = options.timeoutMs ?? 20_000;
     this._id = 0;
@@ -29,7 +30,7 @@ export class McpTestClient {
   }
 
   start() {
-    this._child = spawn(process.execPath, [SERVER_ENTRY], {
+    this._child = spawn(process.execPath, [this.serverEntry], {
       env: { ...process.env, ...this.extraEnv },
       stdio: ["pipe", "pipe", "pipe"],
       windowsHide: true,
