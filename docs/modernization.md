@@ -4,6 +4,8 @@ Working branch: `Development-Unity66-Modernization` in both repositories. Baseli
 
 The objective remains a broad improvement of the existing MCP and plugin: backwards compatibility, Unity 6.6, performance, monitoring, multiplayer/multiple projects and documentation with stronger visuals. The current architecture is retained. Improvements must follow understanding and evidence, not assumptions that existing behavior is broken.
 
+Package Manager checkpoint: plugin `0037578`, server validation `2286392`. The [package guide](packages.md) and [report](validation/unity66-packages.json) record editor waits, sequential native requests, timeout handling and live current/released-server checks. The [plugin route check passed](https://github.com/AnkleBreaker-Studio/unity-mcp-plugin/actions/runs/36792327619), as did [all eight Node 18/20/22/24 jobs on Windows/Linux](https://github.com/AnkleBreaker-Studio/unity-mcp-server/actions/runs/36792330921), with 163 ordinary server tests. Local Unity suites cover the real plugin; CI does not execute Unity. The temporary package project is cleaned and closed; both persistent validation editors compile cleanly with saved scenes and Play Mode stopped.
+
 ## Verified in this iteration
 
 | Change | Evidence | Scope / limit |

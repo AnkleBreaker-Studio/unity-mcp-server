@@ -140,5 +140,51 @@
     "Registry/Git installation failure and script-bearing package reloads",
     "Other editor operating systems",
     "Package Manager operations started outside the MCP scheduler"
-  ]
+  ],
+  "published": {
+    "pluginCommit": "003757859b50331816ce20f31db4cf599818afc8",
+    "serverValidationCommit": "2286392918cdde9a7082b01c84c038b692a8f7fe",
+    "pluginCi": {
+      "url": "https://github.com/AnkleBreaker-Studio/unity-mcp-plugin/actions/runs/36792327619",
+      "conclusion": "success",
+      "scope": "338-route registry; Unity validation is local"
+    },
+    "serverCi": {
+      "url": "https://github.com/AnkleBreaker-Studio/unity-mcp-server/actions/runs/36792330921",
+      "conclusion": "success",
+      "jobs": 8,
+      "nodeVersions": [
+        18,
+        20,
+        22,
+        24
+      ],
+      "platforms": [
+        "Windows",
+        "Linux"
+      ],
+      "testsPerJob": 163
+    },
+    "releasePublished": false
+  },
+  "cleanup": {
+    "temporaryEditor": "Health66",
+    "temporaryEditorClosed": true,
+    "fixturePackageRemoved": true,
+    "manifestDependenciesRestored": true,
+    "persistentEditors": [
+      {
+        "project": "Queue66",
+        "compilationErrors": 0,
+        "isPlaying": false,
+        "sceneDirty": false
+      },
+      {
+        "project": "Unity66",
+        "compilationErrors": 0,
+        "isPlaying": false,
+        "sceneDirty": false
+      }
+    ]
+  }
 }
