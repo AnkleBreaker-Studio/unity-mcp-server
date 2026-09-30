@@ -11,7 +11,7 @@ The objective remains a broad improvement of the existing MCP and plugin: backwa
 | Request-local routing, agent identity and project context | New stdio test failed on baseline with `Beta !== Alpha`; passes after isolation | Overlapping requests to two mock bridges, including polling headers |
 | Queue capability per endpoint | New mixed-version test failed on baseline with `legacy !== queue`; passes after fix | Legacy plugin and queue plugin in one MCP process |
 | Live discovery identity, fewer pings | Reused-port registry test; one ping for identity and liveness | Registry path and successful port probing |
-| Existing MCP contracts | 65 passing Node tests on Node 18 and 22, including the previous 60 | Full tested surface, not every Unity route |
+| Existing MCP contracts | 65 passing Node tests on Node 18, 20, 22 and 24, Windows and Linux | Eight CI jobs; full tested surface, not every Unity route |
 | Dependency refresh | SDK pinned to existing tested 1.27.1; compatible transitive upgrades; `npm audit` reports zero | Advisory database at validation time; not a security certification |
 | Indexed pending-ticket lookup | Actual plugin tested with 100 and 10,000 queued tickets | O(1) ticket lookup replaces FIFO scans; output allocation remains |
 | Separate wait and processing timings | Monotonic timestamps; old `executionTimeMs` retained | Additive ticket fields; dashboard aggregation remains to be expanded |
@@ -20,7 +20,9 @@ The objective remains a broad improvement of the existing MCP and plugin: backwa
 | Minimal project installation | Second import exposed missing uGUI; declare uGUI and Test Framework in the package | Validation manifest now depends only on the plugin; Unity 6.6 resolves uGUI 2.6.0 and Test Framework 1.8.0 |
 | README | New vector architecture visual, installation flow, workflow tables, detailed linked guides | Existing demo media retained; competitor claims corrected against sources |
 
-Measured in Unity 6000.6.2f1 on this Windows workstation: 1,000 status queries took **2.89 ms** with 100 queued requests and **4.03 ms** with 10,000 queued requests in the minimal-dependency validation run. These are single-run microbenchmarks, affected by JIT and scheduling; they demonstrate behavior under queue depth, not a claimed speedup against another product or a baseline measurement.
+Measured in Unity 6000.6.2f1 on this Windows workstation: 1,000 status queries took **2.96 ms** with 100 queued requests and **2.91 ms** with 10,000 queued requests in the final minimal-dependency validation run. These are single-run microbenchmarks, affected by JIT and scheduling; they demonstrate behavior under queue depth, not a claimed speedup against another product or a baseline measurement. The [raw Unity report](validation/unity66-queue.json) preserves the result.
+
+Published checkpoints: server `509979b`, plugin `bb173d6`. [All eight server CI jobs passed](https://github.com/AnkleBreaker-Studio/unity-mcp-server/actions/runs/36741080230); the [plugin route registry check passed](https://github.com/AnkleBreaker-Studio/unity-mcp-plugin/actions/runs/36741086044). The plugin CI only checks route drift; the actual Unity run was local.
 
 ## Reproduce
 
