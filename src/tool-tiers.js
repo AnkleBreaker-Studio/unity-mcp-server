@@ -17,6 +17,8 @@
 import { sendCommand } from "./unity-editor-bridge.js";
 import { formatResult, firstSentence } from "./response-format.js";
 import { isUnknownRouteResult } from "./capabilities.js";
+import { getSelectedInstance } from "./instance-discovery.js";
+import { getRequestContext } from "./request-context.js";
 
 /**
  * Explicit route overrides for tools whose API endpoints
@@ -290,13 +292,14 @@ export function splitToolTiers(allEditorTools) {
         }
       }
 
-      // Fetch dynamic routes from the Unity plugin so lazy-loadable tools (added to the
-      // C# plugin after this server started) are discoverable in every view.
+      // Cached schemas remain available offline without querying an unverified default endpoint.
       let dynamicRoutes = null;
-      try {
-        dynamicRoutes = await sendCommand("_meta/routes", {});
-      } catch (_) {
-        // Plugin might not support _meta/routes yet, use cached list only
+      if (getSelectedInstance() || getRequestContext().portOverride !== null) {
+        try {
+          dynamicRoutes = await sendCommand("_meta/routes", {});
+        } catch (_) {
+          // Older plugins can omit dynamic route discovery.
+        }
       }
 
       // Dynamic-only tool names (not cached, not core), grouped and flat.

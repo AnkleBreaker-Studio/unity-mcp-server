@@ -193,6 +193,7 @@ async function discoverForCurrentAgent() {
     }
 
     if (result.instances.length === 0) {
+      _discoveryDonePerAgent.delete(getCurrentAgentId());
       return (
         `=== UNITY MCP WARNING ===\n` +
         `No Unity Editor instances were detected.\n` +
@@ -388,6 +389,7 @@ server.setRequestHandler(CallToolRequestSchema, async (request, extra) => runWit
       _selReq &&
       !name.startsWith("unity_hub_") &&
       name !== "unity_list_instances" &&
+      name !== "unity_list_advanced_tools" &&
       name !== "unity_select_instance"
     ) {
       debugLog(`BLOCKING tool ${name} due to selectionRequired=true`);
@@ -400,6 +402,15 @@ server.setRequestHandler(CallToolRequestSchema, async (request, extra) => runWit
               "Select a Unity instance with unity_select_instance before using other Unity tools. Use unity_list_instances to see available projects.",
           },
         ],
+        isError: true,
+      });
+    }
+
+    const diagnosticWithoutEditor = name === "unity_list_advanced_tools" || name === "unity_editor_ping";
+    if (!portOverride && !name.startsWith("unity_hub_") && !TOOLS_SKIP_PORT_INJECT.has(name)
+        && !diagnosticWithoutEditor && !getSelectedInstance()) {
+      return finish({
+        content: [{ type: "text", text: "No verified Unity Editor is selected. Start the plugin, then use unity_list_instances and unity_select_instance." }],
         isError: true,
       });
     }
@@ -417,6 +428,9 @@ server.setRequestHandler(CallToolRequestSchema, async (request, extra) => runWit
     throwIfRequestCancelled();
     const result = await tool.handler(handlerArgs);
     throwIfRequestCancelled();
+    const resultHasError = Array.isArray(result)
+      ? result.some(block => block.type === "text" && isErrorText(block.text))
+      : isErrorText(result);
 
     // Build response content blocks
     const contentBlocks = [];
@@ -427,7 +441,8 @@ server.setRequestHandler(CallToolRequestSchema, async (request, extra) => runWit
     }
 
     // Auto-inject project context on the first successful tool call
-    const contextSummary = !name.startsWith("unity_hub_") && !TOOLS_SKIP_PORT_INJECT.has(name)
+    const contextSummary = !resultHasError && (portOverride || getSelectedInstance())
+      && !name.startsWith("unity_hub_") && !TOOLS_SKIP_PORT_INJECT.has(name)
       ? await getContextSummaryOnce() : null;
     if (contextSummary) {
       contentBlocks.push({ type: "text", text: contextSummary });
@@ -443,9 +458,6 @@ server.setRequestHandler(CallToolRequestSchema, async (request, extra) => runWit
     // Logical failures come back as HTTP 200 payloads ({success:false}, {error}, ...)
     // — surface them through the MCP isError flag so clients don't read them as success.
     const response = { content: contentBlocks };
-    const resultHasError = Array.isArray(result)
-      ? result.some(block => block.type === "text" && isErrorText(block.text))
-      : isErrorText(result);
     if (resultHasError) {
       response.isError = true;
     }
@@ -536,4 +548,3 @@ main().catch((error) => {
   console.error("Fatal error:", error);
   process.exit(1);
 });
-

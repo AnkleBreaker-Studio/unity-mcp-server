@@ -27,6 +27,8 @@ Project-context resources follow the selected editor and optional agent/port req
 
 Response budgets include JSON escaping and metadata. Invalid values fall back to defaults; the soft limit is clamped to the hard limit. See [response limits, image results and recovery](response-limits.md).
 
+Discovery validates successful ping bodies before adopting editor ports; a registry entry cannot turn an unrelated service into a Unity instance. See [identity checks and routing limits](discovery.md).
+
 ## Optional Package Support
 
 Some tools activate automatically when their packages are detected in the Unity project:

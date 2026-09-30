@@ -60,9 +60,11 @@ export async function validateSelectedInstance() {
   const savedPort = saved.port;
 
   // Ping the saved port and check what project is actually there
-  const info = await getInstanceInfo(savedPort);
+  const probes = new Map();
+  const probe = await probeInstance(savedPort, probes);
+  const info = probe.info;
   if (info) {
-    if (info && info.projectPath && info.projectPath === savedPath) {
+    if (sameProject(info, saved)) {
       return currentInstance;
     }
 
@@ -74,7 +76,7 @@ export async function validateSelectedInstance() {
       );
     }
     // Fall through to re-discovery (swap or info unavailable)
-  } else {
+  } else if (probe.status === "unavailable") {
     // Port not responding — could be compiling, could be shut down.
     // Check the registry file as a secondary signal before assuming the worst.
     const registryEntries = readRegistryFile();
@@ -102,10 +104,10 @@ export async function validateSelectedInstance() {
     debugLog(`Port ${savedPort} unresponsive and not in registry — re-discovering...`);
   }
 
-  // Re-discover all instances and find the one matching our saved projectPath
-  const instances = await discoverInstances();
+  // Find the selected project's current port before considering registry recovery.
+  const instances = await discoverInstances(probes);
   const match = instances.find(
-    (inst) => inst.projectPath && inst.projectPath === savedPath
+    (inst) => sameProject(inst, saved)
   );
 
   if (match) {
@@ -120,9 +122,9 @@ export async function validateSelectedInstance() {
     (entry) => entry.projectPath && entry.projectPath === savedPath
   );
   if (registryFallback && registryFallback.port) {
-    const liveIdentity = instances.find(instance => instance.port === registryFallback.port);
-    const knownConflict = (registryFallback.port === savedPort && info?.projectPath && info.projectPath !== savedPath)
-      || (liveIdentity?.projectPath && liveIdentity.projectPath !== savedPath);
+    const fallbackProbe = await probeInstance(registryFallback.port, probes);
+    const knownConflict = fallbackProbe.status === "unrecognized"
+      || (fallbackProbe.info && !sameProject(fallbackProbe.info, saved));
     if (knownConflict) {
       debugLog(`Registry fallback for "${saved.projectName}" conflicts with the live editor identity. Requiring re-selection.`);
     } else if (isRegistryEntryStale(registryFallback)) {
@@ -182,12 +184,12 @@ export async function selectInstance(port) {
     };
   }
 
-  // Verify the instance is actually reachable
-  const alive = await pingInstance(port);
-  if (!alive) {
+  // Recheck identity so a port reused during discovery cannot select another project.
+  const verified = await probeInstance(port);
+  if (!verified.info || !sameProject(verified.info, match)) {
     return {
       success: false,
-      error: `Unity instance on port ${port} (${match.projectName}) is not responding. It may have shut down.`,
+      error: `Unity instance on port ${port} (${match.projectName}) is unavailable or its identity changed. Discover instances again before selecting it.`,
     };
   }
 
@@ -230,7 +232,7 @@ export function getActiveBridgeUrl() {
  *
  * @returns {Array<object>} List of discovered instances with their metadata.
  */
-export async function discoverInstances() {
+export async function discoverInstances(probes = new Map()) {
   let instances = [];
 
   // Step 1: Read registry file
@@ -245,13 +247,13 @@ export async function discoverInstances() {
 
           // Validation ping doubles as capability capture: the ping body carries
           // protocolVersion/pluginVersion on newer plugins (absent = pre-handshake).
-          const info = await getInstanceInfo(port);
-          if (info === null) return null;
+          const { info } = await probeInstance(port, probes);
+          if (!info) return null;
           return {
             ...entry,
-            projectName: info.projectName || entry.projectName,
-            projectPath: info.projectPath || entry.projectPath,
-            unityVersion: info.unityVersion || entry.unityVersion,
+            projectName: info.projectName || `Unknown (port ${port})`,
+            projectPath: info.projectPath || "",
+            unityVersion: info.unityVersion,
             isClone: info.isClone,
             cloneIndex: info.cloneIndex,
             isVirtualPlayer: info.isVirtualPlayer,
@@ -281,7 +283,7 @@ export async function discoverInstances() {
 
     scanPromises.push(
       (async () => {
-        const info = await getInstanceInfo(port);
+        const { info } = await probeInstance(port, probes);
         if (info) {
           return {
             port,
@@ -319,20 +321,23 @@ export async function discoverInstances() {
  * @returns {object} Result with auto-selected instance or selection requirement.
  */
 export async function autoSelectInstance() {
-  const instances = await discoverInstances();
+  const probes = new Map();
+  const instances = await discoverInstances(probes);
 
   if (instances.length === 0) {
     // No instances found — try default port as last resort
-    const defaultAlive = await pingInstance(CONFIG.editorBridgePort);
-    if (defaultAlive) {
-      const info = await getInstanceInfo(CONFIG.editorBridgePort);
+    const { info } = await probeInstance(CONFIG.editorBridgePort, probes);
+    if (info) {
       const defaultInstance = {
         port: CONFIG.editorBridgePort,
         projectName: info?.projectName || "Unity Editor",
         projectPath: info?.projectPath || "",
         unityVersion: info?.unityVersion || "",
-        isClone: false,
-        cloneIndex: -1,
+        isClone: info.isClone,
+        cloneIndex: info.cloneIndex,
+        isVirtualPlayer: info.isVirtualPlayer,
+        mainProjectPath: info.mainProjectPath,
+        virtualPlayerId: info.virtualPlayerId,
         protocolVersion: info?.protocolVersion,
         pluginVersion: info?.pluginVersion,
         alive: true,
@@ -439,54 +444,55 @@ function readRegistryFile() {
   }
 }
 
-/**
- * Ping a Unity instance at a specific port (fast timeout for discovery).
- * @param {number} port
- * @returns {boolean} True if the instance is alive.
- */
-async function pingInstance(port) {
-  try {
-    const url = `http://${CONFIG.editorBridgeHost}:${port}/api/ping`;
-    const response = await requestFetch(url, {
-      method: "GET",
-    }, 1500);
-    return response.ok;
-  } catch {
-    throwIfRequestCancelled();
-    return false;
-  }
+function identityText(value) {
+  return typeof value === "string" && value.trim().length > 0 ? value : null;
 }
 
-/**
- * Get project information from a Unity instance via its ping endpoint.
- * @param {number} port
- * @returns {object|null} Project info, or null if unavailable.
- */
-async function getInstanceInfo(port) {
-  try {
-    const url = `http://${CONFIG.editorBridgeHost}:${port}/api/ping`;
-    const response = await requestFetch(url, {
-      method: "GET",
-    }, 2000);
+export function bridgeIdentity(data) {
+  if (!data || typeof data !== "object" || Array.isArray(data)) return null;
+  if ((data.status !== undefined && data.status !== "ok") || data.success === false || data.error) return null;
+  const projectName = identityText(data.projectName) || identityText(data.project);
+  const projectPath = identityText(data.projectPath);
+  const unityVersion = identityText(data.unityVersion) || identityText(data.version);
+  // Original plugins provide project identity and Unity version, without protocol or plugin-version fields.
+  if (!unityVersion || (!projectName && !projectPath)) return null;
+  return {
+    projectName,
+    projectPath,
+    unityVersion,
+    isClone: data.isClone === true,
+    cloneIndex: Number.isInteger(data.cloneIndex) ? data.cloneIndex : -1,
+    isVirtualPlayer: typeof data.isVirtualPlayer === "boolean" ? data.isVirtualPlayer : undefined,
+    mainProjectPath: identityText(data.mainProjectPath) ?? undefined,
+    virtualPlayerId: identityText(data.virtualPlayerId) ?? undefined,
+    protocolVersion: Number.isInteger(data.protocolVersion) ? data.protocolVersion : undefined,
+    pluginVersion: identityText(data.pluginVersion) ?? undefined,
+  };
+}
 
-    if (!response.ok) return null;
+function sameProject(info, selected) {
+  if (info.projectPath && selected.projectPath) return info.projectPath === selected.projectPath;
+  return !!info.projectName && info.projectName === selected.projectName;
+}
 
-    const data = JSON.parse(response.text);
-    return {
-      projectName: data.projectName || data.project || null,
-      projectPath: data.projectPath || null,
-      unityVersion: data.unityVersion || data.version || null,
-      isClone: data.isClone || false,
-      cloneIndex: data.cloneIndex ?? -1,
-      isVirtualPlayer: typeof data.isVirtualPlayer === "boolean" ? data.isVirtualPlayer : undefined,
-      mainProjectPath: typeof data.mainProjectPath === "string" ? data.mainProjectPath : undefined,
-      virtualPlayerId: typeof data.virtualPlayerId === "string" ? data.virtualPlayerId : undefined,
-      // Capability handshake fields (plugins >= protocolVersion 1; else undefined)
-      protocolVersion: typeof data.protocolVersion === "number" ? data.protocolVersion : undefined,
-      pluginVersion: typeof data.pluginVersion === "string" ? data.pluginVersion : undefined,
-    };
-  } catch {
-    throwIfRequestCancelled();
-    return null;
-  }
+function probeInstance(port, probes = new Map()) {
+  // Reuse observations within one discovery attempt; later calls probe again.
+  if (probes.has(port)) return probes.get(port);
+  const pending = (async () => {
+    let response;
+    try {
+      const url = `http://${CONFIG.editorBridgeHost}:${port}/api/ping`;
+      response = await requestFetch(url, { method: "GET" }, 2000);
+    } catch {
+      throwIfRequestCancelled();
+      return { status: "unavailable", info: null };
+    }
+    if (!response.ok) return { status: "unavailable", info: null };
+    let info;
+    try { info = bridgeIdentity(JSON.parse(response.text)); } catch { info = null; }
+    // An unrelated successful response must not gain an editor identity from an old registry entry.
+    return { status: info ? "bridge" : "unrecognized", info };
+  })();
+  probes.set(port, pending);
+  return pending;
 }

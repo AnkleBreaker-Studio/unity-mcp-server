@@ -22,7 +22,7 @@ When multiple editors are available and no editor has been selected, listing ret
 
 Because legacy URIs are relative, reading the same URI after deliberately changing the selection reads the newly selected project's category. Consumers that need to pin a particular read should pass the freshly discovered port in `_meta.port` and verify project identity during selection. The plugin still applies its existing context enablement, category validation and file-reading rules.
 
-A fresh registry timestamp cannot override a conflicting live project identity. If another project reuses the selected port, calls require a new selection even when the registry still names the original project. Fresh registry entries remain useful when an editor is temporarily unreachable during compilation, provided no live identity conflict has been observed.
+A fresh registry timestamp cannot override a conflicting live project identity or a successful response that does not identify a Unity bridge. See [discovery identity checks](discovery.md). If another project reuses the selected port, calls require a new selection even when the registry still names the original project. Fresh registry entries remain useful when an editor is temporarily unreachable during compilation, provided no live identity conflict has been observed.
 
 Oversized reads fail explicitly under the configured hard byte limit. See [response budgets and recovery](response-limits.md) for accounting and scope.
 

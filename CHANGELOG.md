@@ -4,6 +4,12 @@ All notable changes to this package will be documented in this file.
 
 ## [Unreleased]
 
+### Editor identity and discovery
+- Reject unrecognized successful ping bodies across scans, registry validation, default-port fallback and explicit selection. Fresh registry entries cannot override a live foreign identity.
+- Recheck recovery ports and selection identity, retain legacy project/version formats, and stop copying stale project paths into live pathless responses. Reuse probes within one discovery attempt.
+- Block implicit editor commands when no editor is verified; keep cached schemas and ping diagnostics available. Failed results leave automatic context for the next successful call.
+- Add 26 checks, including 22 baseline failures; all 163 ordinary tests pass locally on Node 18 and 22. Read-only live checks pass with released/current plugins in Unity 6.6. See `docs/discovery.md` for compatibility and scope.
+
 ### Request cancellation
 - Propagate SDK cancellation through editor HTTP/body reads, discovery, queue negotiation, retry delays, ticket polling and test-job waits. Do not submit deferred commands or fetch automatic context after cancellation.
 - Keep shared work alive for remaining callers; abort and evict it when its last observer leaves. Preserve selections after cancelled validation and remove completed timers/listeners.

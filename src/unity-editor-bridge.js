@@ -1,7 +1,7 @@
 // Unity Editor HTTP bridge wrappers.
 import { getRequestContext, getCurrentAgentId } from "./request-context.js";
 import { CONFIG } from "./config.js";
-import { getActiveBridgeUrl } from "./instance-discovery.js";
+import { getActiveBridgeUrl, bridgeIdentity } from "./instance-discovery.js";
 import { sendQueuedCommand } from "./queue-transport.js";
 import { pluginSupports } from "./capabilities.js";
 import { requestFetch, throwIfRequestCancelled } from "./request-cancellation.js";
@@ -86,6 +86,7 @@ export async function ping() {
     }, 3000);
     if (response.ok) {
       const data = JSON.parse(response.text);
+      if (!bridgeIdentity(data)) return { connected: false, error: "The endpoint did not identify a Unity Editor bridge" };
       return { connected: true, ...data };
     }
     return { connected: false, error: `HTTP ${response.status}` };
