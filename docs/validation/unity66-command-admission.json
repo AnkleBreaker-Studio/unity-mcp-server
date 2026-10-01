@@ -737,6 +737,27 @@
     "Actual older-Unity execution remains deferred; the 2021 check compiles source only"
   ],
   "pluginCommit": "0e35f3f1b18f9618730c8ca0070c48ab49b57e37",
+  "serverCommit": "45ececeee9dfe6ad37f0a376668224be56a734bb",
+  "ci": {
+    "server": {
+      "runId": 36841683235,
+      "url": "https://github.com/AnkleBreaker-Studio/unity-mcp-server/actions/runs/36841683235",
+      "passed": true,
+      "jobs": 8,
+      "nodeVersions": [18, 20, 22, 24],
+      "platforms": ["Windows", "Linux"],
+      "tests": 248,
+      "failures": 0,
+      "verifiedLogJobIds": [110302026984, 110302027305]
+    },
+    "plugin": {
+      "runId": 36840673790,
+      "url": "https://github.com/AnkleBreaker-Studio/unity-mcp-plugin/actions/runs/36840673790",
+      "passed": true,
+      "routes": 338,
+      "verifiedLogJobId": 110298777672
+    }
+  },
   "ciFixtureCorrection": {
     "initialCommit": "443da411d1a06d325dbd7ae29ea15923b4587f33",
     "initialRun": "https://github.com/AnkleBreaker-Studio/unity-mcp-server/actions/runs/36840737275",

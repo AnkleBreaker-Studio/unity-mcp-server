@@ -283,7 +283,11 @@
       "status": "corrected",
       "report": "unity66-command-admission.json",
       "scope": "HTTP ticket count and weighted decoded-argument accounting",
-      "remaining": "Parsing before admission, completed results/history, transport workers/output and native buffers"
+      "remaining": "Parsing before admission, completed results/history, transport workers/output and native buffers",
+      "pluginCommit": "0e35f3f1b18f9618730c8ca0070c48ab49b57e37",
+      "serverCommit": "45ececeee9dfe6ad37f0a376668224be56a734bb",
+      "serverCi": "https://github.com/AnkleBreaker-Studio/unity-mcp-server/actions/runs/36841683235",
+      "pluginCi": "https://github.com/AnkleBreaker-Studio/unity-mcp-plugin/actions/runs/36840673790"
     }
   }
 }

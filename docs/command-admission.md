@@ -46,7 +46,9 @@ The [report](validation/unity66-command-admission.json) preserves baseline and f
 
 The existing queue, input and package suites pass 52 further checks. Package validation now passes decoded dictionaries to the dispatcher after the earlier input-parser change; its category and missing-argument assertions are preserved. All 75 editor sources in the minimum-version compiler check pass against Unity 2021 APIs. Actual older-editor execution remains deferred.
 
-Five additional Node checks cover refusal/retry interpretation; the full ordinary suite passes 248 tests locally. Four live runs cover current/released servers on Node 18/22 against Unity 6000.6.2f1. The opt-in fixture fills actual command-admission slots through MCP, attempts a named GameObject write, waits for automatic cleanup, and verifies that the refused object was never created. Scenes remain clean.
+Five additional Node checks cover refusal/retry interpretation; the full ordinary suite passes 248 tests locally and in all eight [Node 18/20/22/24 Windows/Linux CI jobs](https://github.com/AnkleBreaker-Studio/unity-mcp-server/actions/runs/36841683235). The initial CI exposed a fixture deadline race; the corrected tests exhaust all five attempts within the normal retry window and preserve unknown outcomes after lost acknowledgements. Four live runs cover current/released servers on Node 18/22 against Unity 6000.6.2f1. The opt-in fixture fills actual command-admission slots through MCP, attempts a named GameObject write, waits for automatic cleanup, and verifies that the refused object was never created. Scenes remain clean.
+
+Implementation checkpoints: plugin `0e35f3f`, server validation `443da41` with fixture correction `45ecece`. The [plugin CI](https://github.com/AnkleBreaker-Studio/unity-mcp-plugin/actions/runs/36840673790) verifies 338 routes. Owned validation editors are closed, temporary copied fixtures are removed, and versions remain unchanged. No release is published.
 
 ```powershell
 ./tools~/validate-unity.ps1 -EditorPath PATH_TO_UNITY -ProjectPath DISPOSABLE_PROJECT -Suite QueueAdmission
