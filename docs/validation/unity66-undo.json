@@ -909,7 +909,7 @@
   "live": [
     {
       "server": "current",
-      "serverCommit": "current worktree",
+      "serverCommit": "212a43e77effdea82938c112b359e610825a73c0",
       "nodeVersion": "v18.20.8",
       "passed": true,
       "checks": [
@@ -943,7 +943,7 @@
     },
     {
       "server": "current",
-      "serverCommit": "current worktree",
+      "serverCommit": "212a43e77effdea82938c112b359e610825a73c0",
       "nodeVersion": "v22.18.0",
       "passed": true,
       "checks": [
@@ -1079,5 +1079,34 @@
         "undoSignatureLoaded": true
       }
     ]
+  },
+  "serverCommit": "212a43e77effdea82938c112b359e610825a73c0",
+  "ci": {
+    "server": {
+      "runId": 36808336270,
+      "url": "https://github.com/AnkleBreaker-Studio/unity-mcp-server/actions/runs/36808336270",
+      "commit": "212a43e77effdea82938c112b359e610825a73c0",
+      "result": "success",
+      "jobs": 8,
+      "nodeVersions": [
+        18,
+        20,
+        22,
+        24
+      ],
+      "operatingSystems": [
+        "Windows",
+        "Linux"
+      ],
+      "ordinaryTests": 185
+    },
+    "plugin": {
+      "runId": 36808306705,
+      "url": "https://github.com/AnkleBreaker-Studio/unity-mcp-plugin/actions/runs/36808306705",
+      "commit": "b41af31906c12adec502835b8ee453effa204af9",
+      "result": "success",
+      "check": "338-route registry drift check"
+    },
+    "unityExecution": false
   }
 }
