@@ -180,8 +180,7 @@ test("a stalled poll body honors the total polling deadline without resubmission
 function refuseInput(bridge, { status = 503, accepted = false, after = 0 } = {}) {
   const handle = bridge._handle.bind(bridge), reply = bridge._json.bind(bridge);
   bridge.refusedInputs = 0;
-  bridge._json = (res, code, data) => reply(res, code, Object.hasOwn(data, "queueRetryWindowMs")
-    ? { ...data, queueRetryWindowMs: 2100 } : data);
+  // Exhaust retry attempts within the normal window; a deadline race can legitimately make the outcome unknown.
   bridge._handle = (req, res) => {
     const target = bridge.mode === "legacy" ? req.url === "/api/gameobject/create" : /\/api\/queue\/submit(?:-once)?$/.test(req.url);
     if (req.method === "POST" && target
@@ -197,13 +196,13 @@ for (const mode of ["legacy", "queue", "protected"]) {
   test(`explicit pre-dispatch refusal remains definite in ${mode} mode`, async () => {
     const bridge = mode === "protected" ? modernBridge() : new MockBridge({ mode: mode === "legacy" ? "legacy" : "queue" });
     refuseInput(bridge);
-    await exercise(bridge, result => {
+    await exercise(bridge, (result, client) => {
       assert.equal(result.isError, true);
-      assert.equal(result.payload.requestAccepted, false, result.payloadText);
+      assert.equal(result.payload.requestAccepted, false, JSON.stringify({ result: result.payload, refusedInputs: bridge.refusedInputs, diagnostics: client.stderr }));
       assert.equal(result.payload.code, "request_body_busy");
       assert.equal(result.payload.outcomeUnknown, undefined);
       assert.equal(bridge.seen.length, 0);
-      assert.equal(bridge.refusedInputs, mode === "protected" ? 2 : 1);
+      assert.equal(bridge.refusedInputs, mode === "protected" ? 5 : 1);
     });
   });
 }
@@ -223,7 +222,7 @@ test("a later body refusal cannot erase an earlier lost acknowledgement", async 
   await exercise(bridge, result => {
     assert.equal(result.isError, true); assert.equal(result.payload.outcomeUnknown, true);
     assert.equal(result.payload.requestAccepted, undefined); assert.equal(bridge.writes, 1);
-    assert.equal(bridge.submissions.length, 1); assert.equal(bridge.refusedInputs, 1);
+    assert.equal(bridge.submissions.length, 1); assert.equal(bridge.refusedInputs, 4);
     assert.equal(typeof result.payload.requestId, "string");
   });
 });
