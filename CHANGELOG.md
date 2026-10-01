@@ -4,6 +4,11 @@ All notable changes to this package will be documented in this file.
 
 ## [Unreleased]
 
+### Inline graphics captures
+- Describe camera-only rendering, explicit camera errors and bounded whole-pixel dimensions while preserving tool names, defaults and image results.
+- Add opt-in `test:graphics` with decoded PNG, refusal and cleanup checks through direct MCP calls. Current and released servers pass on Node 18/22 with the updated plugin.
+- Document nine reproduced plugin failures, seventeen passing controlled checks, removed GPU uploads and the limits of local timing measurements. Keep the existing tool-catalog size gate.
+
 ### Concurrent editor selection
 - Keep the identity resolved by a project name through verification. Remove the second discovery that could silently adopt a replacement project; two-editor selection drops from five ping requests to three.
 - Supersede older explicit choices per agent and reject stale automatic discovery/validation before it can clear or restore a project over a newer selection. Preserve independent agents, explicit-port calls, ambiguity handling and cancellation cleanup.

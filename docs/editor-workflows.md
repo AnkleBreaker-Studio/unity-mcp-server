@@ -27,6 +27,8 @@ The plugin avoids type lookups and result dictionaries for omitted assets. Unity
 
 ## Scene view captures
 
+Inline `unity_graphics_scene_capture` and `unity_graphics_game_capture` have separate [camera/pixel validation](graphics-capture.md). The file-based Scene workflow below predates those checks.
+
 For editor UI rather than camera images, see [editor-window capture](editor-capture.md). Its Windows fixture covers native pixels, resource cleanup, ambiguity and tab selection separately from this Scene-view workflow.
 
 `unity_screenshot_scene`, available through `unity_advanced_tool`, accepts dimensions from 1 to 8,192 pixels per side, with at most 33,554,432 pixels in total. The existing Scene view must be available.

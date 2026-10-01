@@ -2980,16 +2980,20 @@ export const editorTools = [
   {
     name: "unity_graphics_scene_capture",
     description:
-      "Capture the current Scene View as an inline image. Returns base64 PNG that Claude can see directly. Use to visually inspect the scene layout.",
+      "Render the Scene View camera to inline PNG. Whole-pixel sizes within device limits, at most 33554432 pixels.",
     inputSchema: {
       type: "object",
       properties: {
         width: {
           type: "number",
+          minimum: 1,
+          maximum: 8192,
           description: "Image width in pixels (default: 512)",
         },
         height: {
           type: "number",
+          minimum: 1,
+          maximum: 8192,
           description: "Image height in pixels (default: 512)",
         },
       },
@@ -3000,22 +3004,26 @@ export const editorTools = [
   {
     name: "unity_graphics_game_capture",
     description:
-      "Capture the Game View camera as an inline image. Returns base64 PNG that Claude can see directly. Use to see what the player sees.",
+      "Render one camera to inline PNG, without Game View composition or overlay UI. Whole-pixel sizes within device limits, at most 33554432 pixels.",
     inputSchema: {
       type: "object",
       properties: {
         width: {
           type: "number",
+          minimum: 1,
+          maximum: 8192,
           description: "Image width in pixels (default: 512)",
         },
         height: {
           type: "number",
+          minimum: 1,
+          maximum: 8192,
           description: "Image height in pixels (default: 512)",
         },
         cameraName: {
           type: "string",
           description:
-            "Name of camera to use (default: Camera.main / MainCamera tag)",
+            "Active object's name/path; omitted: Camera.main. Missing explicit camera is an error.",
         },
       },
     },
