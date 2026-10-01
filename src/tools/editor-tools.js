@@ -3081,7 +3081,7 @@ export const editorTools = [
   {
     name: "unity_graphics_mesh_info",
     description:
-      "Get detailed mesh geometry information: vertex count, triangle count, submeshes, UV channels, blend shapes, bone count, bounds. Works on mesh assets or scene GameObjects with MeshFilter/SkinnedMeshRenderer.",
+      "Get mesh metadata: vertex count, triangle count (including triangulated quads), submeshes, populated UV channels 0-7, blend shapes, bone count and bounds. Works on mesh assets or scene GameObjects with MeshFilter/SkinnedMeshRenderer.",
     inputSchema: {
       type: "object",
       properties: {

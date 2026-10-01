@@ -4,6 +4,11 @@ All notable changes to this package will be documented in this file.
 
 ## [Unreleased]
 
+### Mesh and renderer metadata
+- Describe all eight UV channels and triangulated quad counts while retaining tool names and input schemas.
+- Add opt-in `test:meshes` for current/released servers on Node 18/22, checking both path names, errors and non-readable metadata through the editor queue.
+- Record four failed baseline checks, twenty passing plugin checks and measured command costs without claiming end-to-end latency or gameplay gains.
+
 ### Responsive asset previews
 - Describe honored preview sizes, optional image suppression and native prefab framing. Retain tool names and correct the previously inaccurate fixed-size defaults.
 - Add opt-in `test:previews` for current/released servers on Node 18/22, including native cold-preview dispatch, independent queued reads and decoded PNG verification.

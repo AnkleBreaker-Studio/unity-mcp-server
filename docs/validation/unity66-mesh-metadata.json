@@ -1,0 +1,2470 @@
+{
+  "date": "2026-10-01",
+  "scope": "Windows Unity Editor metadata; no player/game-loop or end-to-end performance claims",
+  "baseline": {
+    "pluginCommit": "cb591aa05d88d9edc799bcb0996c0fa8a4f7a62a",
+    "serverCommit": "5e130f0",
+    "batch": {
+      "unityVersion": "6000.6.2f1",
+      "passed": false,
+      "checks": [
+        {
+          "name": "Legacy mesh path preserves triangles, attributes and source",
+          "passed": true,
+          "evidence": {
+            "name": "__MeshMetadata_931b4caaab884f8d891f8efc9e51f0ce_Mesh",
+            "source": "__MeshMetadata_931b4caaab884f8d891f8efc9e51f0ce_Root (MeshFilter)",
+            "vertexCount": 4,
+            "triangleCount": 1,
+            "subMeshCount": 1,
+            "bounds": {
+              "center": {
+                "x": 0.5,
+                "y": 0.5,
+                "z": 0
+              },
+              "size": {
+                "x": 1,
+                "y": 1,
+                "z": 0
+              },
+              "extents": {
+                "x": 0.5,
+                "y": 0.5,
+                "z": 0
+              },
+              "min": {
+                "x": 0,
+                "y": 0,
+                "z": 0
+              },
+              "max": {
+                "x": 1,
+                "y": 1,
+                "z": 0
+              }
+            },
+            "uvChannelCount": 2,
+            "hasNormals": true,
+            "hasTangents": true,
+            "hasColors": true,
+            "blendShapeCount": 0,
+            "isSkinned": false,
+            "boneCount": 0,
+            "isReadable": true,
+            "indexFormat": "UInt16"
+          }
+        },
+        {
+          "name": "Documented mesh objectPath resolves the scene object",
+          "passed": false,
+          "error": "vertexCount expected 4: {\"error\":\"No mesh found. Provide assetPath to a mesh/model asset or gameObjectPath to a scene object with MeshFilter/SkinnedMeshRenderer.\"}"
+        },
+        {
+          "name": "Documented renderer objectPath resolves the scene object",
+          "passed": false,
+          "error": "materialCount expected 2: {\"error\":\"gameObjectPath is required\"}"
+        },
+        {
+          "name": "Sparse UV channels include channels four and seven",
+          "passed": false,
+          "error": "uvChannelCount expected 4: {\"name\":\"__MeshMetadata_931b4caaab884f8d891f8efc9e51f0ce_Mesh\",\"source\":\"__MeshMetadata_931b4caaab884f8d891f8efc9e51f0ce_Root (MeshFilter)\",\"vertexCount\":4,\"triangleCount\":1,\"subMeshCount\":1,\"bounds\":{\"center\":{\"x\":0.5,\"y\":0.5,\"z\":0},\"size\":{\"x\":1,\"y\":1,\"z\":0},\"extents\":{\"x\":0.5,\"y\":0.5,\"z\":0},\"min\":{\"x\":0,\"y\":0,\"z\":0},\"max\":{\"x\":1,\"y\":1,\"z\":0}},\"uvChannelCount\":2,\"hasNormals\":true,\"hasTangents\":true,\"hasColors\":true,\"blendShapeCount\":0,\"isSkinned\":false,\"boneCount\":0,\"isReadable\":true,\"indexFormat\":\"UInt16\"}"
+        },
+        {
+          "name": "Legacy paths take precedence when both aliases are supplied",
+          "passed": true,
+          "evidence": true
+        },
+        {
+          "name": "Missing paths and missing components retain structured errors",
+          "passed": true,
+          "evidence": true
+        },
+        {
+          "name": "Renderer preserves shared mesh and null material slots",
+          "passed": true,
+          "evidence": {
+            "gameObjectPath": "__MeshMetadata_931b4caaab884f8d891f8efc9e51f0ce_Root",
+            "rendererType": "MeshRenderer",
+            "enabled": true,
+            "isVisible": false,
+            "bounds": {
+              "center": {
+                "x": 0.5,
+                "y": 0.5,
+                "z": 0
+              },
+              "size": {
+                "x": 1,
+                "y": 1,
+                "z": 0
+              },
+              "extents": {
+                "x": 0.5,
+                "y": 0.5,
+                "z": 0
+              },
+              "min": {
+                "x": 0,
+                "y": 0,
+                "z": 0
+              },
+              "max": {
+                "x": 1,
+                "y": 1,
+                "z": 0
+              }
+            },
+            "shadowCastingMode": "On",
+            "receiveShadows": true,
+            "lightmapIndex": -1,
+            "sortingLayerName": "Default",
+            "sortingOrder": 0,
+            "lightProbeUsage": "BlendProbes",
+            "reflectionProbeUsage": "BlendProbes",
+            "materials": [
+              {
+                "name": "(null/missing)"
+              },
+              {
+                "name": "(null/missing)"
+              }
+            ],
+            "materialCount": 2,
+            "isSkinned": false,
+            "mesh": {
+              "name": "__MeshMetadata_931b4caaab884f8d891f8efc9e51f0ce_Mesh",
+              "vertexCount": 4,
+              "triangleCount": 1,
+              "assetPath": ""
+            }
+          }
+        },
+        {
+          "name": "Non-readable mesh retains metadata outside the game loop",
+          "passed": false,
+          "error": "uvChannelCount expected 4: {\"name\":\"__MeshMetadata_931b4caaab884f8d891f8efc9e51f0ce_Mesh\",\"source\":\"__MeshMetadata_931b4caaab884f8d891f8efc9e51f0ce_Root (MeshFilter)\",\"vertexCount\":4,\"triangleCount\":1,\"subMeshCount\":1,\"bounds\":{\"center\":{\"x\":0.5,\"y\":0.5,\"z\":0},\"size\":{\"x\":1,\"y\":1,\"z\":0},\"extents\":{\"x\":0.5,\"y\":0.5,\"z\":0},\"min\":{\"x\":0,\"y\":0,\"z\":0},\"max\":{\"x\":1,\"y\":1,\"z\":0}},\"uvChannelCount\":2,\"hasNormals\":true,\"hasTangents\":true,\"hasColors\":true,\"blendShapeCount\":0,\"isSkinned\":false,\"boneCount\":0,\"isReadable\":false,\"indexFormat\":\"UInt16\"}"
+        },
+        {
+          "name": "Asset lookup retains precedence and works without a scene object",
+          "passed": true,
+          "evidence": {
+            "name": "Mesh",
+            "source": "Assets/__MeshMetadata_931b4caaab884f8d891f8efc9e51f0ce_Assets/Mesh.asset",
+            "vertexCount": 4,
+            "triangleCount": 1,
+            "subMeshCount": 1,
+            "bounds": {
+              "center": {
+                "x": 0.5,
+                "y": 0.5,
+                "z": 0
+              },
+              "size": {
+                "x": 1,
+                "y": 1,
+                "z": 0
+              },
+              "extents": {
+                "x": 0.5,
+                "y": 0.5,
+                "z": 0
+              },
+              "min": {
+                "x": 0,
+                "y": 0,
+                "z": 0
+              },
+              "max": {
+                "x": 1,
+                "y": 1,
+                "z": 0
+              }
+            },
+            "uvChannelCount": 2,
+            "hasNormals": true,
+            "hasTangents": true,
+            "hasColors": true,
+            "blendShapeCount": 0,
+            "isSkinned": false,
+            "boneCount": 0,
+            "isReadable": true,
+            "indexFormat": "UInt16"
+          }
+        },
+        {
+          "name": "Empty mesh reports no geometry or populated attributes",
+          "passed": true,
+          "evidence": {
+            "name": "",
+            "source": "__MeshMetadata_931b4caaab884f8d891f8efc9e51f0ce_Root (MeshFilter)",
+            "vertexCount": 0,
+            "triangleCount": 0,
+            "subMeshCount": 1,
+            "bounds": {
+              "center": {
+                "x": 0,
+                "y": 0,
+                "z": 0
+              },
+              "size": {
+                "x": 0,
+                "y": 0,
+                "z": 0
+              },
+              "extents": {
+                "x": 0,
+                "y": 0,
+                "z": 0
+              },
+              "min": {
+                "x": 0,
+                "y": 0,
+                "z": 0
+              },
+              "max": {
+                "x": 0,
+                "y": 0,
+                "z": 0
+              }
+            },
+            "uvChannelCount": 0,
+            "hasNormals": false,
+            "hasTangents": false,
+            "hasColors": false,
+            "blendShapeCount": 0,
+            "isSkinned": false,
+            "boneCount": 0,
+            "isReadable": true,
+            "indexFormat": "UInt16"
+          }
+        },
+        {
+          "name": "Mixed topology counts triangles and triangulated quads only",
+          "passed": true,
+          "evidence": {
+            "name": "__MeshMetadata_931b4caaab884f8d891f8efc9e51f0ce_Mesh",
+            "source": "__MeshMetadata_931b4caaab884f8d891f8efc9e51f0ce_Root (MeshFilter)",
+            "vertexCount": 4,
+            "triangleCount": 3,
+            "subMeshCount": 4,
+            "bounds": {
+              "center": {
+                "x": 0.5,
+                "y": 0.5,
+                "z": 0
+              },
+              "size": {
+                "x": 1,
+                "y": 1,
+                "z": 0
+              },
+              "extents": {
+                "x": 0.5,
+                "y": 0.5,
+                "z": 0
+              },
+              "min": {
+                "x": 0,
+                "y": 0,
+                "z": 0
+              },
+              "max": {
+                "x": 1,
+                "y": 1,
+                "z": 0
+              }
+            },
+            "uvChannelCount": 2,
+            "hasNormals": true,
+            "hasTangents": true,
+            "hasColors": true,
+            "blendShapeCount": 0,
+            "isSkinned": false,
+            "boneCount": 0,
+            "isReadable": true,
+            "indexFormat": "UInt16"
+          }
+        },
+        {
+          "name": "Skinned mesh retains bone count and shared resources",
+          "passed": true,
+          "evidence": {
+            "name": "__MeshMetadata_931b4caaab884f8d891f8efc9e51f0ce_Mesh",
+            "source": "__MeshMetadata_931b4caaab884f8d891f8efc9e51f0ce_Skinned (SkinnedMeshRenderer)",
+            "vertexCount": 4,
+            "triangleCount": 1,
+            "subMeshCount": 1,
+            "bounds": {
+              "center": {
+                "x": 0.5,
+                "y": 0.5,
+                "z": 0
+              },
+              "size": {
+                "x": 1,
+                "y": 1,
+                "z": 0
+              },
+              "extents": {
+                "x": 0.5,
+                "y": 0.5,
+                "z": 0
+              },
+              "min": {
+                "x": 0,
+                "y": 0,
+                "z": 0
+              },
+              "max": {
+                "x": 1,
+                "y": 1,
+                "z": 0
+              }
+            },
+            "uvChannelCount": 2,
+            "hasNormals": true,
+            "hasTangents": true,
+            "hasColors": true,
+            "blendShapeCount": 0,
+            "isSkinned": true,
+            "boneCount": 2,
+            "isReadable": false,
+            "indexFormat": "UInt16"
+          }
+        },
+        {
+          "name": "Large mesh metadata timing and allocation control",
+          "passed": true,
+          "evidence": {
+            "vertices": 120000,
+            "iterationsPerSample": 20,
+            "controlCount": 1,
+            "controlValue": 100,
+            "byteMeasurementSupported": false,
+            "samples": [
+              {
+                "elapsedMs": 233.5431,
+                "allocations": 1400,
+                "rawRecorderValue": 58900
+              },
+              {
+                "elapsedMs": 216.1859,
+                "allocations": 1400,
+                "rawRecorderValue": 57800
+              },
+              {
+                "elapsedMs": 221.76430000000002,
+                "allocations": 1400,
+                "rawRecorderValue": 58900
+              },
+              {
+                "elapsedMs": 239.07760000000002,
+                "allocations": 1400,
+                "rawRecorderValue": 56000
+              },
+              {
+                "elapsedMs": 223.09400000000002,
+                "allocations": 1400,
+                "rawRecorderValue": 52200
+              }
+            ]
+          }
+        },
+        {
+          "name": "Large renderer metadata timing and allocation control",
+          "passed": true,
+          "evidence": {
+            "vertices": 120000,
+            "iterationsPerSample": 20,
+            "controlCount": 1,
+            "controlValue": 100,
+            "byteMeasurementSupported": false,
+            "samples": [
+              {
+                "elapsedMs": 6.0878000000000005,
+                "allocations": 1500,
+                "rawRecorderValue": 33900
+              },
+              {
+                "elapsedMs": 5.258500000000001,
+                "allocations": 1500,
+                "rawRecorderValue": 43000
+              },
+              {
+                "elapsedMs": 6.0336,
+                "allocations": 1500,
+                "rawRecorderValue": 37200
+              },
+              {
+                "elapsedMs": 6.1379,
+                "allocations": 1500,
+                "rawRecorderValue": 37500
+              },
+              {
+                "elapsedMs": 4.3106,
+                "allocations": 1500,
+                "rawRecorderValue": 35200
+              }
+            ]
+          }
+        }
+      ],
+      "cleanup": {
+        "remaining": 0,
+        "sceneCountRestored": true,
+        "originalSceneClean": true
+      },
+      "fixtureAssetsRemoved": true
+    }
+  },
+  "corrected": {
+    "batch": {
+      "unityVersion": "6000.6.2f1",
+      "passed": true,
+      "checks": [
+        {
+          "name": "Legacy mesh path preserves triangles, attributes and source",
+          "passed": true,
+          "evidence": {
+            "name": "__MeshMetadata_3957929ee9f644d08a106d2bfc54e817_Mesh",
+            "source": "__MeshMetadata_3957929ee9f644d08a106d2bfc54e817_Root (MeshFilter)",
+            "vertexCount": 4,
+            "triangleCount": 1,
+            "subMeshCount": 1,
+            "bounds": {
+              "center": {
+                "x": 0.5,
+                "y": 0.5,
+                "z": 0
+              },
+              "size": {
+                "x": 1,
+                "y": 1,
+                "z": 0
+              },
+              "extents": {
+                "x": 0.5,
+                "y": 0.5,
+                "z": 0
+              },
+              "min": {
+                "x": 0,
+                "y": 0,
+                "z": 0
+              },
+              "max": {
+                "x": 1,
+                "y": 1,
+                "z": 0
+              }
+            },
+            "uvChannelCount": 4,
+            "hasNormals": true,
+            "hasTangents": true,
+            "hasColors": true,
+            "blendShapeCount": 0,
+            "isSkinned": false,
+            "boneCount": 0,
+            "isReadable": true,
+            "indexFormat": "UInt16"
+          }
+        },
+        {
+          "name": "Documented mesh objectPath resolves the scene object",
+          "passed": true,
+          "evidence": {
+            "name": "__MeshMetadata_3957929ee9f644d08a106d2bfc54e817_Mesh",
+            "source": "__MeshMetadata_3957929ee9f644d08a106d2bfc54e817_Root (MeshFilter)",
+            "vertexCount": 4,
+            "triangleCount": 1,
+            "subMeshCount": 1,
+            "bounds": {
+              "center": {
+                "x": 0.5,
+                "y": 0.5,
+                "z": 0
+              },
+              "size": {
+                "x": 1,
+                "y": 1,
+                "z": 0
+              },
+              "extents": {
+                "x": 0.5,
+                "y": 0.5,
+                "z": 0
+              },
+              "min": {
+                "x": 0,
+                "y": 0,
+                "z": 0
+              },
+              "max": {
+                "x": 1,
+                "y": 1,
+                "z": 0
+              }
+            },
+            "uvChannelCount": 4,
+            "hasNormals": true,
+            "hasTangents": true,
+            "hasColors": true,
+            "blendShapeCount": 0,
+            "isSkinned": false,
+            "boneCount": 0,
+            "isReadable": true,
+            "indexFormat": "UInt16"
+          }
+        },
+        {
+          "name": "Documented renderer objectPath resolves the scene object",
+          "passed": true,
+          "evidence": {
+            "gameObjectPath": "__MeshMetadata_3957929ee9f644d08a106d2bfc54e817_Root",
+            "rendererType": "MeshRenderer",
+            "enabled": true,
+            "isVisible": false,
+            "bounds": {
+              "center": {
+                "x": 0.5,
+                "y": 0.5,
+                "z": 0
+              },
+              "size": {
+                "x": 1,
+                "y": 1,
+                "z": 0
+              },
+              "extents": {
+                "x": 0.5,
+                "y": 0.5,
+                "z": 0
+              },
+              "min": {
+                "x": 0,
+                "y": 0,
+                "z": 0
+              },
+              "max": {
+                "x": 1,
+                "y": 1,
+                "z": 0
+              }
+            },
+            "shadowCastingMode": "On",
+            "receiveShadows": true,
+            "lightmapIndex": -1,
+            "sortingLayerName": "Default",
+            "sortingOrder": 0,
+            "lightProbeUsage": "BlendProbes",
+            "reflectionProbeUsage": "BlendProbes",
+            "materials": [
+              {
+                "name": "(null/missing)"
+              },
+              {
+                "name": "(null/missing)"
+              }
+            ],
+            "materialCount": 2,
+            "isSkinned": false,
+            "mesh": {
+              "name": "__MeshMetadata_3957929ee9f644d08a106d2bfc54e817_Mesh",
+              "vertexCount": 4,
+              "triangleCount": 1,
+              "assetPath": ""
+            }
+          }
+        },
+        {
+          "name": "Sparse UV channels include channels four and seven",
+          "passed": true,
+          "evidence": {
+            "name": "__MeshMetadata_3957929ee9f644d08a106d2bfc54e817_Mesh",
+            "source": "__MeshMetadata_3957929ee9f644d08a106d2bfc54e817_Root (MeshFilter)",
+            "vertexCount": 4,
+            "triangleCount": 1,
+            "subMeshCount": 1,
+            "bounds": {
+              "center": {
+                "x": 0.5,
+                "y": 0.5,
+                "z": 0
+              },
+              "size": {
+                "x": 1,
+                "y": 1,
+                "z": 0
+              },
+              "extents": {
+                "x": 0.5,
+                "y": 0.5,
+                "z": 0
+              },
+              "min": {
+                "x": 0,
+                "y": 0,
+                "z": 0
+              },
+              "max": {
+                "x": 1,
+                "y": 1,
+                "z": 0
+              }
+            },
+            "uvChannelCount": 4,
+            "hasNormals": true,
+            "hasTangents": true,
+            "hasColors": true,
+            "blendShapeCount": 0,
+            "isSkinned": false,
+            "boneCount": 0,
+            "isReadable": true,
+            "indexFormat": "UInt16"
+          }
+        },
+        {
+          "name": "Legacy paths take precedence when both aliases are supplied",
+          "passed": true,
+          "evidence": true
+        },
+        {
+          "name": "Missing paths and missing components retain structured errors",
+          "passed": true,
+          "evidence": true
+        },
+        {
+          "name": "Renderer preserves shared mesh and null material slots",
+          "passed": true,
+          "evidence": {
+            "gameObjectPath": "__MeshMetadata_3957929ee9f644d08a106d2bfc54e817_Root",
+            "rendererType": "MeshRenderer",
+            "enabled": true,
+            "isVisible": false,
+            "bounds": {
+              "center": {
+                "x": 0.5,
+                "y": 0.5,
+                "z": 0
+              },
+              "size": {
+                "x": 1,
+                "y": 1,
+                "z": 0
+              },
+              "extents": {
+                "x": 0.5,
+                "y": 0.5,
+                "z": 0
+              },
+              "min": {
+                "x": 0,
+                "y": 0,
+                "z": 0
+              },
+              "max": {
+                "x": 1,
+                "y": 1,
+                "z": 0
+              }
+            },
+            "shadowCastingMode": "On",
+            "receiveShadows": true,
+            "lightmapIndex": -1,
+            "sortingLayerName": "Default",
+            "sortingOrder": 0,
+            "lightProbeUsage": "BlendProbes",
+            "reflectionProbeUsage": "BlendProbes",
+            "materials": [
+              {
+                "name": "(null/missing)"
+              },
+              {
+                "name": "(null/missing)"
+              }
+            ],
+            "materialCount": 2,
+            "isSkinned": false,
+            "mesh": {
+              "name": "__MeshMetadata_3957929ee9f644d08a106d2bfc54e817_Mesh",
+              "vertexCount": 4,
+              "triangleCount": 1,
+              "assetPath": ""
+            }
+          }
+        },
+        {
+          "name": "Non-readable mesh retains metadata outside the game loop",
+          "passed": true,
+          "evidence": {
+            "name": "__MeshMetadata_3957929ee9f644d08a106d2bfc54e817_Mesh",
+            "source": "__MeshMetadata_3957929ee9f644d08a106d2bfc54e817_Root (MeshFilter)",
+            "vertexCount": 4,
+            "triangleCount": 1,
+            "subMeshCount": 1,
+            "bounds": {
+              "center": {
+                "x": 0.5,
+                "y": 0.5,
+                "z": 0
+              },
+              "size": {
+                "x": 1,
+                "y": 1,
+                "z": 0
+              },
+              "extents": {
+                "x": 0.5,
+                "y": 0.5,
+                "z": 0
+              },
+              "min": {
+                "x": 0,
+                "y": 0,
+                "z": 0
+              },
+              "max": {
+                "x": 1,
+                "y": 1,
+                "z": 0
+              }
+            },
+            "uvChannelCount": 4,
+            "hasNormals": true,
+            "hasTangents": true,
+            "hasColors": true,
+            "blendShapeCount": 0,
+            "isSkinned": false,
+            "boneCount": 0,
+            "isReadable": false,
+            "indexFormat": "UInt16"
+          }
+        },
+        {
+          "name": "Asset lookup retains precedence and works without a scene object",
+          "passed": true,
+          "evidence": {
+            "name": "Mesh",
+            "source": "Assets/__MeshMetadata_3957929ee9f644d08a106d2bfc54e817_Assets/Mesh.asset",
+            "vertexCount": 4,
+            "triangleCount": 1,
+            "subMeshCount": 1,
+            "bounds": {
+              "center": {
+                "x": 0.5,
+                "y": 0.5,
+                "z": 0
+              },
+              "size": {
+                "x": 1,
+                "y": 1,
+                "z": 0
+              },
+              "extents": {
+                "x": 0.5,
+                "y": 0.5,
+                "z": 0
+              },
+              "min": {
+                "x": 0,
+                "y": 0,
+                "z": 0
+              },
+              "max": {
+                "x": 1,
+                "y": 1,
+                "z": 0
+              }
+            },
+            "uvChannelCount": 4,
+            "hasNormals": true,
+            "hasTangents": true,
+            "hasColors": true,
+            "blendShapeCount": 0,
+            "isSkinned": false,
+            "boneCount": 0,
+            "isReadable": true,
+            "indexFormat": "UInt16"
+          }
+        },
+        {
+          "name": "Empty mesh reports no geometry or populated attributes",
+          "passed": true,
+          "evidence": {
+            "name": "",
+            "source": "__MeshMetadata_3957929ee9f644d08a106d2bfc54e817_Root (MeshFilter)",
+            "vertexCount": 0,
+            "triangleCount": 0,
+            "subMeshCount": 1,
+            "bounds": {
+              "center": {
+                "x": 0,
+                "y": 0,
+                "z": 0
+              },
+              "size": {
+                "x": 0,
+                "y": 0,
+                "z": 0
+              },
+              "extents": {
+                "x": 0,
+                "y": 0,
+                "z": 0
+              },
+              "min": {
+                "x": 0,
+                "y": 0,
+                "z": 0
+              },
+              "max": {
+                "x": 0,
+                "y": 0,
+                "z": 0
+              }
+            },
+            "uvChannelCount": 0,
+            "hasNormals": false,
+            "hasTangents": false,
+            "hasColors": false,
+            "blendShapeCount": 0,
+            "isSkinned": false,
+            "boneCount": 0,
+            "isReadable": true,
+            "indexFormat": "UInt16"
+          }
+        },
+        {
+          "name": "Mixed topology counts triangles and triangulated quads only",
+          "passed": true,
+          "evidence": {
+            "name": "__MeshMetadata_3957929ee9f644d08a106d2bfc54e817_Mesh",
+            "source": "__MeshMetadata_3957929ee9f644d08a106d2bfc54e817_Root (MeshFilter)",
+            "vertexCount": 4,
+            "triangleCount": 3,
+            "subMeshCount": 4,
+            "bounds": {
+              "center": {
+                "x": 0.5,
+                "y": 0.5,
+                "z": 0
+              },
+              "size": {
+                "x": 1,
+                "y": 1,
+                "z": 0
+              },
+              "extents": {
+                "x": 0.5,
+                "y": 0.5,
+                "z": 0
+              },
+              "min": {
+                "x": 0,
+                "y": 0,
+                "z": 0
+              },
+              "max": {
+                "x": 1,
+                "y": 1,
+                "z": 0
+              }
+            },
+            "uvChannelCount": 4,
+            "hasNormals": true,
+            "hasTangents": true,
+            "hasColors": true,
+            "blendShapeCount": 0,
+            "isSkinned": false,
+            "boneCount": 0,
+            "isReadable": true,
+            "indexFormat": "UInt16"
+          }
+        },
+        {
+          "name": "Skinned mesh retains bone count and shared resources",
+          "passed": true,
+          "evidence": {
+            "name": "__MeshMetadata_3957929ee9f644d08a106d2bfc54e817_Mesh",
+            "source": "__MeshMetadata_3957929ee9f644d08a106d2bfc54e817_Skinned (SkinnedMeshRenderer)",
+            "vertexCount": 4,
+            "triangleCount": 1,
+            "subMeshCount": 1,
+            "bounds": {
+              "center": {
+                "x": 0.5,
+                "y": 0.5,
+                "z": 0
+              },
+              "size": {
+                "x": 1,
+                "y": 1,
+                "z": 0
+              },
+              "extents": {
+                "x": 0.5,
+                "y": 0.5,
+                "z": 0
+              },
+              "min": {
+                "x": 0,
+                "y": 0,
+                "z": 0
+              },
+              "max": {
+                "x": 1,
+                "y": 1,
+                "z": 0
+              }
+            },
+            "uvChannelCount": 4,
+            "hasNormals": true,
+            "hasTangents": true,
+            "hasColors": true,
+            "blendShapeCount": 0,
+            "isSkinned": true,
+            "boneCount": 2,
+            "isReadable": false,
+            "indexFormat": "UInt16"
+          }
+        },
+        {
+          "name": "All eight UV channels and a lone highest channel are counted",
+          "passed": true,
+          "evidence": true
+        },
+        {
+          "name": "Each primitive topology retains the native triangle count",
+          "passed": true,
+          "evidence": {
+            "Triangles": 1,
+            "Quads": 2,
+            "Lines": 0,
+            "LineStrip": 0,
+            "Points": 0
+          }
+        },
+        {
+          "name": "Cleared meshes retain empty attribute semantics despite their layout",
+          "passed": true,
+          "evidence": {
+            "name": "__MeshMetadata_3957929ee9f644d08a106d2bfc54e817_Mesh",
+            "source": "__MeshMetadata_3957929ee9f644d08a106d2bfc54e817_Root (MeshFilter)",
+            "vertexCount": 0,
+            "triangleCount": 0,
+            "subMeshCount": 1,
+            "bounds": {
+              "center": {
+                "x": 0.5,
+                "y": 0.5,
+                "z": 0
+              },
+              "size": {
+                "x": 1,
+                "y": 1,
+                "z": 0
+              },
+              "extents": {
+                "x": 0.5,
+                "y": 0.5,
+                "z": 0
+              },
+              "min": {
+                "x": 0,
+                "y": 0,
+                "z": 0
+              },
+              "max": {
+                "x": 1,
+                "y": 1,
+                "z": 0
+              }
+            },
+            "uvChannelCount": 0,
+            "hasNormals": false,
+            "hasTangents": false,
+            "hasColors": false,
+            "blendShapeCount": 0,
+            "isSkinned": false,
+            "boneCount": 0,
+            "isReadable": true,
+            "indexFormat": "UInt16"
+          }
+        },
+        {
+          "name": "Empty or null legacy aliases fall back to the documented path",
+          "passed": true,
+          "evidence": true
+        },
+        {
+          "name": "Mesh blend shapes are retained without modifying the source",
+          "passed": true,
+          "evidence": {
+            "name": "__MeshMetadata_3957929ee9f644d08a106d2bfc54e817_Mesh",
+            "source": "__MeshMetadata_3957929ee9f644d08a106d2bfc54e817_Root (MeshFilter)",
+            "vertexCount": 4,
+            "triangleCount": 1,
+            "subMeshCount": 1,
+            "bounds": {
+              "center": {
+                "x": 0.5,
+                "y": 0.5,
+                "z": 0
+              },
+              "size": {
+                "x": 1,
+                "y": 1,
+                "z": 0
+              },
+              "extents": {
+                "x": 0.5,
+                "y": 0.5,
+                "z": 0
+              },
+              "min": {
+                "x": 0,
+                "y": 0,
+                "z": 0
+              },
+              "max": {
+                "x": 1,
+                "y": 1,
+                "z": 0
+              }
+            },
+            "uvChannelCount": 4,
+            "hasNormals": true,
+            "hasTangents": true,
+            "hasColors": true,
+            "blendShapeCount": 1,
+            "isSkinned": false,
+            "boneCount": 0,
+            "isReadable": true,
+            "indexFormat": "UInt16"
+          }
+        },
+        {
+          "name": "Prefab asset lookup retains MeshFilter and skinned mesh sources",
+          "passed": true,
+          "evidence": true
+        },
+        {
+          "name": "Large mesh metadata timing and allocation control",
+          "passed": true,
+          "evidence": {
+            "vertices": 120000,
+            "iterationsPerSample": 20,
+            "controlCount": 1,
+            "controlValue": 100,
+            "byteMeasurementSupported": false,
+            "samples": [
+              {
+                "elapsedMs": 2.7909,
+                "allocations": 1180,
+                "rawRecorderValue": 22500
+              },
+              {
+                "elapsedMs": 0.27540000000000003,
+                "allocations": 1180,
+                "rawRecorderValue": 27400
+              },
+              {
+                "elapsedMs": 0.2515,
+                "allocations": 1180,
+                "rawRecorderValue": 25300
+              },
+              {
+                "elapsedMs": 0.2494,
+                "allocations": 1180,
+                "rawRecorderValue": 23400
+              },
+              {
+                "elapsedMs": 0.24880000000000002,
+                "allocations": 1180,
+                "rawRecorderValue": 24000
+              }
+            ]
+          }
+        },
+        {
+          "name": "Large renderer metadata timing and allocation control",
+          "passed": true,
+          "evidence": {
+            "vertices": 120000,
+            "iterationsPerSample": 20,
+            "controlCount": 1,
+            "controlValue": 0,
+            "byteMeasurementSupported": false,
+            "samples": [
+              {
+                "elapsedMs": 0.2978,
+                "allocations": 1480,
+                "rawRecorderValue": 31400
+              },
+              {
+                "elapsedMs": 0.2928,
+                "allocations": 1480,
+                "rawRecorderValue": 30300
+              },
+              {
+                "elapsedMs": 0.28900000000000003,
+                "allocations": 1480,
+                "rawRecorderValue": 30800
+              },
+              {
+                "elapsedMs": 0.2914,
+                "allocations": 1480,
+                "rawRecorderValue": 29800
+              },
+              {
+                "elapsedMs": 1.3342,
+                "allocations": 1480,
+                "rawRecorderValue": 32300
+              }
+            ]
+          }
+        }
+      ],
+      "cleanup": {
+        "remaining": 0,
+        "sceneCountRestored": true,
+        "originalSceneClean": true
+      },
+      "fixtureAssetsRemoved": true
+    },
+    "priorMeasurements": [
+      {
+        "phase": "after",
+        "checks": [
+          {
+            "name": "Large mesh metadata timing and allocation control",
+            "passed": true,
+            "evidence": {
+              "vertices": 120000,
+              "iterationsPerSample": 20,
+              "controlCount": 1,
+              "controlValue": 200,
+              "byteMeasurementSupported": false,
+              "samples": [
+                {
+                  "elapsedMs": 0.3652,
+                  "allocations": 1180,
+                  "rawRecorderValue": 25500
+                },
+                {
+                  "elapsedMs": 0.2921,
+                  "allocations": 1180,
+                  "rawRecorderValue": 25500
+                },
+                {
+                  "elapsedMs": 0.26830000000000004,
+                  "allocations": 1180,
+                  "rawRecorderValue": 23600
+                },
+                {
+                  "elapsedMs": 0.25320000000000004,
+                  "allocations": 1180,
+                  "rawRecorderValue": 23300
+                },
+                {
+                  "elapsedMs": 0.2516,
+                  "allocations": 1180,
+                  "rawRecorderValue": 24600
+                }
+              ]
+            }
+          },
+          {
+            "name": "Large renderer metadata timing and allocation control",
+            "passed": true,
+            "evidence": {
+              "vertices": 120000,
+              "iterationsPerSample": 20,
+              "controlCount": 1,
+              "controlValue": 200,
+              "byteMeasurementSupported": false,
+              "samples": [
+                {
+                  "elapsedMs": 0.3017,
+                  "allocations": 1480,
+                  "rawRecorderValue": 30700
+                },
+                {
+                  "elapsedMs": 0.2974,
+                  "allocations": 1480,
+                  "rawRecorderValue": 29200
+                },
+                {
+                  "elapsedMs": 0.2921,
+                  "allocations": 1480,
+                  "rawRecorderValue": 30800
+                },
+                {
+                  "elapsedMs": 0.31220000000000003,
+                  "allocations": 1480,
+                  "rawRecorderValue": 31900
+                },
+                {
+                  "elapsedMs": 0.2977,
+                  "allocations": 1480,
+                  "rawRecorderValue": 33100
+                }
+              ]
+            }
+          }
+        ]
+      },
+      {
+        "phase": "expanded",
+        "checks": [
+          {
+            "name": "Large mesh metadata timing and allocation control",
+            "passed": true,
+            "evidence": {
+              "vertices": 120000,
+              "iterationsPerSample": 20,
+              "controlCount": 1,
+              "controlValue": 100,
+              "byteMeasurementSupported": false,
+              "samples": [
+                {
+                  "elapsedMs": 0.36200000000000004,
+                  "allocations": 1180,
+                  "rawRecorderValue": 26000
+                },
+                {
+                  "elapsedMs": 0.2691,
+                  "allocations": 1180,
+                  "rawRecorderValue": 23400
+                },
+                {
+                  "elapsedMs": 0.2692,
+                  "allocations": 1180,
+                  "rawRecorderValue": 20500
+                },
+                {
+                  "elapsedMs": 0.29400000000000004,
+                  "allocations": 1180,
+                  "rawRecorderValue": 25100
+                },
+                {
+                  "elapsedMs": 0.32320000000000004,
+                  "allocations": 1180,
+                  "rawRecorderValue": 26300
+                }
+              ]
+            }
+          },
+          {
+            "name": "Large renderer metadata timing and allocation control",
+            "passed": true,
+            "evidence": {
+              "vertices": 120000,
+              "iterationsPerSample": 20,
+              "controlCount": 1,
+              "controlValue": 0,
+              "byteMeasurementSupported": false,
+              "samples": [
+                {
+                  "elapsedMs": 0.2953,
+                  "allocations": 1480,
+                  "rawRecorderValue": 31000
+                },
+                {
+                  "elapsedMs": 0.2888,
+                  "allocations": 1480,
+                  "rawRecorderValue": 31000
+                },
+                {
+                  "elapsedMs": 0.2851,
+                  "allocations": 1480,
+                  "rawRecorderValue": 29400
+                },
+                {
+                  "elapsedMs": 0.29600000000000004,
+                  "allocations": 1480,
+                  "rawRecorderValue": 29900
+                },
+                {
+                  "elapsedMs": 0.28200000000000003,
+                  "allocations": 1480,
+                  "rawRecorderValue": 29800
+                }
+              ]
+            }
+          }
+        ]
+      }
+    ],
+    "live": [
+      {
+        "configuration": "current-node22",
+        "nodeVersion": "v22.18.0",
+        "passed": true,
+        "checks": [
+          {
+            "name": "unity_graphics_mesh_info via objectPath",
+            "passed": true,
+            "data": {
+              "name": "__MeshMetadata_b9aad42186db4c458c95ebdad20f35f0_Mesh",
+              "source": "__MeshMetadata_b9aad42186db4c458c95ebdad20f35f0_Root (MeshFilter)",
+              "vertexCount": 4,
+              "triangleCount": 1,
+              "subMeshCount": 1,
+              "bounds": {
+                "center": {
+                  "x": 0.5,
+                  "y": 0.5,
+                  "z": 0
+                },
+                "size": {
+                  "x": 1,
+                  "y": 1,
+                  "z": 0
+                },
+                "extents": {
+                  "x": 0.5,
+                  "y": 0.5,
+                  "z": 0
+                },
+                "min": {
+                  "x": 0,
+                  "y": 0,
+                  "z": 0
+                },
+                "max": {
+                  "x": 1,
+                  "y": 1,
+                  "z": 0
+                }
+              },
+              "uvChannelCount": 4,
+              "hasNormals": true,
+              "hasTangents": true,
+              "hasColors": true,
+              "blendShapeCount": 0,
+              "isSkinned": false,
+              "boneCount": 0,
+              "isReadable": true,
+              "indexFormat": "UInt16"
+            }
+          },
+          {
+            "name": "unity_graphics_renderer_info via objectPath",
+            "passed": true,
+            "data": {
+              "gameObjectPath": "__MeshMetadata_b9aad42186db4c458c95ebdad20f35f0_Root",
+              "rendererType": "MeshRenderer",
+              "enabled": true,
+              "isVisible": true,
+              "bounds": {
+                "center": {
+                  "x": 0.5,
+                  "y": 0.5,
+                  "z": 0
+                },
+                "size": {
+                  "x": 1,
+                  "y": 1,
+                  "z": 0
+                },
+                "extents": {
+                  "x": 0.5,
+                  "y": 0.5,
+                  "z": 0
+                },
+                "min": {
+                  "x": 0,
+                  "y": 0,
+                  "z": 0
+                },
+                "max": {
+                  "x": 1,
+                  "y": 1,
+                  "z": 0
+                }
+              },
+              "shadowCastingMode": "On",
+              "receiveShadows": true,
+              "lightmapIndex": -1,
+              "sortingLayerName": "Default",
+              "sortingOrder": 0,
+              "lightProbeUsage": "BlendProbes",
+              "reflectionProbeUsage": "BlendProbes",
+              "materials": [
+                {
+                  "name": "(null/missing)"
+                },
+                {
+                  "name": "(null/missing)"
+                }
+              ],
+              "materialCount": 2,
+              "isSkinned": false,
+              "mesh": {
+                "name": "__MeshMetadata_b9aad42186db4c458c95ebdad20f35f0_Mesh",
+                "vertexCount": 4,
+                "triangleCount": 1,
+                "assetPath": ""
+              }
+            }
+          },
+          {
+            "name": "unity_graphics_mesh_info via gameObjectPath",
+            "passed": true,
+            "data": {
+              "name": "__MeshMetadata_b9aad42186db4c458c95ebdad20f35f0_Mesh",
+              "source": "__MeshMetadata_b9aad42186db4c458c95ebdad20f35f0_Root (MeshFilter)",
+              "vertexCount": 4,
+              "triangleCount": 1,
+              "subMeshCount": 1,
+              "bounds": {
+                "center": {
+                  "x": 0.5,
+                  "y": 0.5,
+                  "z": 0
+                },
+                "size": {
+                  "x": 1,
+                  "y": 1,
+                  "z": 0
+                },
+                "extents": {
+                  "x": 0.5,
+                  "y": 0.5,
+                  "z": 0
+                },
+                "min": {
+                  "x": 0,
+                  "y": 0,
+                  "z": 0
+                },
+                "max": {
+                  "x": 1,
+                  "y": 1,
+                  "z": 0
+                }
+              },
+              "uvChannelCount": 4,
+              "hasNormals": true,
+              "hasTangents": true,
+              "hasColors": true,
+              "blendShapeCount": 0,
+              "isSkinned": false,
+              "boneCount": 0,
+              "isReadable": true,
+              "indexFormat": "UInt16"
+            }
+          },
+          {
+            "name": "unity_graphics_renderer_info via gameObjectPath",
+            "passed": true,
+            "data": {
+              "gameObjectPath": "__MeshMetadata_b9aad42186db4c458c95ebdad20f35f0_Root",
+              "rendererType": "MeshRenderer",
+              "enabled": true,
+              "isVisible": true,
+              "bounds": {
+                "center": {
+                  "x": 0.5,
+                  "y": 0.5,
+                  "z": 0
+                },
+                "size": {
+                  "x": 1,
+                  "y": 1,
+                  "z": 0
+                },
+                "extents": {
+                  "x": 0.5,
+                  "y": 0.5,
+                  "z": 0
+                },
+                "min": {
+                  "x": 0,
+                  "y": 0,
+                  "z": 0
+                },
+                "max": {
+                  "x": 1,
+                  "y": 1,
+                  "z": 0
+                }
+              },
+              "shadowCastingMode": "On",
+              "receiveShadows": true,
+              "lightmapIndex": -1,
+              "sortingLayerName": "Default",
+              "sortingOrder": 0,
+              "lightProbeUsage": "BlendProbes",
+              "reflectionProbeUsage": "BlendProbes",
+              "materials": [
+                {
+                  "name": "(null/missing)"
+                },
+                {
+                  "name": "(null/missing)"
+                }
+              ],
+              "materialCount": 2,
+              "isSkinned": false,
+              "mesh": {
+                "name": "__MeshMetadata_b9aad42186db4c458c95ebdad20f35f0_Mesh",
+                "vertexCount": 4,
+                "triangleCount": 1,
+                "assetPath": ""
+              }
+            }
+          },
+          {
+            "name": "unity_graphics_mesh_info missing object error",
+            "passed": true
+          },
+          {
+            "name": "unity_graphics_renderer_info missing object error",
+            "passed": true
+          },
+          {
+            "name": "Non-readable metadata through the editor queue",
+            "passed": true,
+            "data": {
+              "name": "__MeshMetadata_b9aad42186db4c458c95ebdad20f35f0_Mesh",
+              "source": "__MeshMetadata_b9aad42186db4c458c95ebdad20f35f0_Root (MeshFilter)",
+              "vertexCount": 4,
+              "triangleCount": 1,
+              "subMeshCount": 1,
+              "bounds": {
+                "center": {
+                  "x": 0.5,
+                  "y": 0.5,
+                  "z": 0
+                },
+                "size": {
+                  "x": 1,
+                  "y": 1,
+                  "z": 0
+                },
+                "extents": {
+                  "x": 0.5,
+                  "y": 0.5,
+                  "z": 0
+                },
+                "min": {
+                  "x": 0,
+                  "y": 0,
+                  "z": 0
+                },
+                "max": {
+                  "x": 1,
+                  "y": 1,
+                  "z": 0
+                }
+              },
+              "uvChannelCount": 4,
+              "hasNormals": true,
+              "hasTangents": true,
+              "hasColors": true,
+              "blendShapeCount": 0,
+              "isSkinned": false,
+              "boneCount": 0,
+              "isReadable": false,
+              "indexFormat": "UInt16"
+            }
+          }
+        ],
+        "unityVersion": "6000.6.2f1",
+        "cleanup": {
+          "remaining": 0,
+          "sceneCountRestored": true,
+          "originalSceneClean": true
+        }
+      },
+      {
+        "configuration": "current-node18",
+        "nodeVersion": "v18.20.8",
+        "passed": true,
+        "checks": [
+          {
+            "name": "unity_graphics_mesh_info via objectPath",
+            "passed": true,
+            "data": {
+              "name": "__MeshMetadata_9430687309fa46e69b23fba483e064c3_Mesh",
+              "source": "__MeshMetadata_9430687309fa46e69b23fba483e064c3_Root (MeshFilter)",
+              "vertexCount": 4,
+              "triangleCount": 1,
+              "subMeshCount": 1,
+              "bounds": {
+                "center": {
+                  "x": 0.5,
+                  "y": 0.5,
+                  "z": 0
+                },
+                "size": {
+                  "x": 1,
+                  "y": 1,
+                  "z": 0
+                },
+                "extents": {
+                  "x": 0.5,
+                  "y": 0.5,
+                  "z": 0
+                },
+                "min": {
+                  "x": 0,
+                  "y": 0,
+                  "z": 0
+                },
+                "max": {
+                  "x": 1,
+                  "y": 1,
+                  "z": 0
+                }
+              },
+              "uvChannelCount": 4,
+              "hasNormals": true,
+              "hasTangents": true,
+              "hasColors": true,
+              "blendShapeCount": 0,
+              "isSkinned": false,
+              "boneCount": 0,
+              "isReadable": true,
+              "indexFormat": "UInt16"
+            }
+          },
+          {
+            "name": "unity_graphics_renderer_info via objectPath",
+            "passed": true,
+            "data": {
+              "gameObjectPath": "__MeshMetadata_9430687309fa46e69b23fba483e064c3_Root",
+              "rendererType": "MeshRenderer",
+              "enabled": true,
+              "isVisible": true,
+              "bounds": {
+                "center": {
+                  "x": 0.5,
+                  "y": 0.5,
+                  "z": 0
+                },
+                "size": {
+                  "x": 1,
+                  "y": 1,
+                  "z": 0
+                },
+                "extents": {
+                  "x": 0.5,
+                  "y": 0.5,
+                  "z": 0
+                },
+                "min": {
+                  "x": 0,
+                  "y": 0,
+                  "z": 0
+                },
+                "max": {
+                  "x": 1,
+                  "y": 1,
+                  "z": 0
+                }
+              },
+              "shadowCastingMode": "On",
+              "receiveShadows": true,
+              "lightmapIndex": -1,
+              "sortingLayerName": "Default",
+              "sortingOrder": 0,
+              "lightProbeUsage": "BlendProbes",
+              "reflectionProbeUsage": "BlendProbes",
+              "materials": [
+                {
+                  "name": "(null/missing)"
+                },
+                {
+                  "name": "(null/missing)"
+                }
+              ],
+              "materialCount": 2,
+              "isSkinned": false,
+              "mesh": {
+                "name": "__MeshMetadata_9430687309fa46e69b23fba483e064c3_Mesh",
+                "vertexCount": 4,
+                "triangleCount": 1,
+                "assetPath": ""
+              }
+            }
+          },
+          {
+            "name": "unity_graphics_mesh_info via gameObjectPath",
+            "passed": true,
+            "data": {
+              "name": "__MeshMetadata_9430687309fa46e69b23fba483e064c3_Mesh",
+              "source": "__MeshMetadata_9430687309fa46e69b23fba483e064c3_Root (MeshFilter)",
+              "vertexCount": 4,
+              "triangleCount": 1,
+              "subMeshCount": 1,
+              "bounds": {
+                "center": {
+                  "x": 0.5,
+                  "y": 0.5,
+                  "z": 0
+                },
+                "size": {
+                  "x": 1,
+                  "y": 1,
+                  "z": 0
+                },
+                "extents": {
+                  "x": 0.5,
+                  "y": 0.5,
+                  "z": 0
+                },
+                "min": {
+                  "x": 0,
+                  "y": 0,
+                  "z": 0
+                },
+                "max": {
+                  "x": 1,
+                  "y": 1,
+                  "z": 0
+                }
+              },
+              "uvChannelCount": 4,
+              "hasNormals": true,
+              "hasTangents": true,
+              "hasColors": true,
+              "blendShapeCount": 0,
+              "isSkinned": false,
+              "boneCount": 0,
+              "isReadable": true,
+              "indexFormat": "UInt16"
+            }
+          },
+          {
+            "name": "unity_graphics_renderer_info via gameObjectPath",
+            "passed": true,
+            "data": {
+              "gameObjectPath": "__MeshMetadata_9430687309fa46e69b23fba483e064c3_Root",
+              "rendererType": "MeshRenderer",
+              "enabled": true,
+              "isVisible": true,
+              "bounds": {
+                "center": {
+                  "x": 0.5,
+                  "y": 0.5,
+                  "z": 0
+                },
+                "size": {
+                  "x": 1,
+                  "y": 1,
+                  "z": 0
+                },
+                "extents": {
+                  "x": 0.5,
+                  "y": 0.5,
+                  "z": 0
+                },
+                "min": {
+                  "x": 0,
+                  "y": 0,
+                  "z": 0
+                },
+                "max": {
+                  "x": 1,
+                  "y": 1,
+                  "z": 0
+                }
+              },
+              "shadowCastingMode": "On",
+              "receiveShadows": true,
+              "lightmapIndex": -1,
+              "sortingLayerName": "Default",
+              "sortingOrder": 0,
+              "lightProbeUsage": "BlendProbes",
+              "reflectionProbeUsage": "BlendProbes",
+              "materials": [
+                {
+                  "name": "(null/missing)"
+                },
+                {
+                  "name": "(null/missing)"
+                }
+              ],
+              "materialCount": 2,
+              "isSkinned": false,
+              "mesh": {
+                "name": "__MeshMetadata_9430687309fa46e69b23fba483e064c3_Mesh",
+                "vertexCount": 4,
+                "triangleCount": 1,
+                "assetPath": ""
+              }
+            }
+          },
+          {
+            "name": "unity_graphics_mesh_info missing object error",
+            "passed": true
+          },
+          {
+            "name": "unity_graphics_renderer_info missing object error",
+            "passed": true
+          },
+          {
+            "name": "Non-readable metadata through the editor queue",
+            "passed": true,
+            "data": {
+              "name": "__MeshMetadata_9430687309fa46e69b23fba483e064c3_Mesh",
+              "source": "__MeshMetadata_9430687309fa46e69b23fba483e064c3_Root (MeshFilter)",
+              "vertexCount": 4,
+              "triangleCount": 1,
+              "subMeshCount": 1,
+              "bounds": {
+                "center": {
+                  "x": 0.5,
+                  "y": 0.5,
+                  "z": 0
+                },
+                "size": {
+                  "x": 1,
+                  "y": 1,
+                  "z": 0
+                },
+                "extents": {
+                  "x": 0.5,
+                  "y": 0.5,
+                  "z": 0
+                },
+                "min": {
+                  "x": 0,
+                  "y": 0,
+                  "z": 0
+                },
+                "max": {
+                  "x": 1,
+                  "y": 1,
+                  "z": 0
+                }
+              },
+              "uvChannelCount": 4,
+              "hasNormals": true,
+              "hasTangents": true,
+              "hasColors": true,
+              "blendShapeCount": 0,
+              "isSkinned": false,
+              "boneCount": 0,
+              "isReadable": false,
+              "indexFormat": "UInt16"
+            }
+          }
+        ],
+        "unityVersion": "6000.6.2f1",
+        "cleanup": {
+          "remaining": 0,
+          "sceneCountRestored": true,
+          "originalSceneClean": true
+        }
+      },
+      {
+        "configuration": "released-node22",
+        "nodeVersion": "v22.18.0",
+        "passed": true,
+        "checks": [
+          {
+            "name": "unity_graphics_mesh_info via objectPath",
+            "passed": true,
+            "data": {
+              "name": "__MeshMetadata_593ea6e04b864fa4b0035076ffcea8f3_Mesh",
+              "source": "__MeshMetadata_593ea6e04b864fa4b0035076ffcea8f3_Root (MeshFilter)",
+              "vertexCount": 4,
+              "triangleCount": 1,
+              "subMeshCount": 1,
+              "bounds": {
+                "center": {
+                  "x": 0.5,
+                  "y": 0.5,
+                  "z": 0
+                },
+                "size": {
+                  "x": 1,
+                  "y": 1,
+                  "z": 0
+                },
+                "extents": {
+                  "x": 0.5,
+                  "y": 0.5,
+                  "z": 0
+                },
+                "min": {
+                  "x": 0,
+                  "y": 0,
+                  "z": 0
+                },
+                "max": {
+                  "x": 1,
+                  "y": 1,
+                  "z": 0
+                }
+              },
+              "uvChannelCount": 4,
+              "hasNormals": true,
+              "hasTangents": true,
+              "hasColors": true,
+              "blendShapeCount": 0,
+              "isSkinned": false,
+              "boneCount": 0,
+              "isReadable": true,
+              "indexFormat": "UInt16"
+            }
+          },
+          {
+            "name": "unity_graphics_renderer_info via objectPath",
+            "passed": true,
+            "data": {
+              "gameObjectPath": "__MeshMetadata_593ea6e04b864fa4b0035076ffcea8f3_Root",
+              "rendererType": "MeshRenderer",
+              "enabled": true,
+              "isVisible": true,
+              "bounds": {
+                "center": {
+                  "x": 0.5,
+                  "y": 0.5,
+                  "z": 0
+                },
+                "size": {
+                  "x": 1,
+                  "y": 1,
+                  "z": 0
+                },
+                "extents": {
+                  "x": 0.5,
+                  "y": 0.5,
+                  "z": 0
+                },
+                "min": {
+                  "x": 0,
+                  "y": 0,
+                  "z": 0
+                },
+                "max": {
+                  "x": 1,
+                  "y": 1,
+                  "z": 0
+                }
+              },
+              "shadowCastingMode": "On",
+              "receiveShadows": true,
+              "lightmapIndex": -1,
+              "sortingLayerName": "Default",
+              "sortingOrder": 0,
+              "lightProbeUsage": "BlendProbes",
+              "reflectionProbeUsage": "BlendProbes",
+              "materials": [
+                {
+                  "name": "(null/missing)"
+                },
+                {
+                  "name": "(null/missing)"
+                }
+              ],
+              "materialCount": 2,
+              "isSkinned": false,
+              "mesh": {
+                "name": "__MeshMetadata_593ea6e04b864fa4b0035076ffcea8f3_Mesh",
+                "vertexCount": 4,
+                "triangleCount": 1,
+                "assetPath": ""
+              }
+            }
+          },
+          {
+            "name": "unity_graphics_mesh_info via gameObjectPath",
+            "passed": true,
+            "data": {
+              "name": "__MeshMetadata_593ea6e04b864fa4b0035076ffcea8f3_Mesh",
+              "source": "__MeshMetadata_593ea6e04b864fa4b0035076ffcea8f3_Root (MeshFilter)",
+              "vertexCount": 4,
+              "triangleCount": 1,
+              "subMeshCount": 1,
+              "bounds": {
+                "center": {
+                  "x": 0.5,
+                  "y": 0.5,
+                  "z": 0
+                },
+                "size": {
+                  "x": 1,
+                  "y": 1,
+                  "z": 0
+                },
+                "extents": {
+                  "x": 0.5,
+                  "y": 0.5,
+                  "z": 0
+                },
+                "min": {
+                  "x": 0,
+                  "y": 0,
+                  "z": 0
+                },
+                "max": {
+                  "x": 1,
+                  "y": 1,
+                  "z": 0
+                }
+              },
+              "uvChannelCount": 4,
+              "hasNormals": true,
+              "hasTangents": true,
+              "hasColors": true,
+              "blendShapeCount": 0,
+              "isSkinned": false,
+              "boneCount": 0,
+              "isReadable": true,
+              "indexFormat": "UInt16"
+            }
+          },
+          {
+            "name": "unity_graphics_renderer_info via gameObjectPath",
+            "passed": true,
+            "data": {
+              "gameObjectPath": "__MeshMetadata_593ea6e04b864fa4b0035076ffcea8f3_Root",
+              "rendererType": "MeshRenderer",
+              "enabled": true,
+              "isVisible": true,
+              "bounds": {
+                "center": {
+                  "x": 0.5,
+                  "y": 0.5,
+                  "z": 0
+                },
+                "size": {
+                  "x": 1,
+                  "y": 1,
+                  "z": 0
+                },
+                "extents": {
+                  "x": 0.5,
+                  "y": 0.5,
+                  "z": 0
+                },
+                "min": {
+                  "x": 0,
+                  "y": 0,
+                  "z": 0
+                },
+                "max": {
+                  "x": 1,
+                  "y": 1,
+                  "z": 0
+                }
+              },
+              "shadowCastingMode": "On",
+              "receiveShadows": true,
+              "lightmapIndex": -1,
+              "sortingLayerName": "Default",
+              "sortingOrder": 0,
+              "lightProbeUsage": "BlendProbes",
+              "reflectionProbeUsage": "BlendProbes",
+              "materials": [
+                {
+                  "name": "(null/missing)"
+                },
+                {
+                  "name": "(null/missing)"
+                }
+              ],
+              "materialCount": 2,
+              "isSkinned": false,
+              "mesh": {
+                "name": "__MeshMetadata_593ea6e04b864fa4b0035076ffcea8f3_Mesh",
+                "vertexCount": 4,
+                "triangleCount": 1,
+                "assetPath": ""
+              }
+            }
+          },
+          {
+            "name": "unity_graphics_mesh_info missing object error",
+            "passed": true
+          },
+          {
+            "name": "unity_graphics_renderer_info missing object error",
+            "passed": true
+          },
+          {
+            "name": "Non-readable metadata through the editor queue",
+            "passed": true,
+            "data": {
+              "name": "__MeshMetadata_593ea6e04b864fa4b0035076ffcea8f3_Mesh",
+              "source": "__MeshMetadata_593ea6e04b864fa4b0035076ffcea8f3_Root (MeshFilter)",
+              "vertexCount": 4,
+              "triangleCount": 1,
+              "subMeshCount": 1,
+              "bounds": {
+                "center": {
+                  "x": 0.5,
+                  "y": 0.5,
+                  "z": 0
+                },
+                "size": {
+                  "x": 1,
+                  "y": 1,
+                  "z": 0
+                },
+                "extents": {
+                  "x": 0.5,
+                  "y": 0.5,
+                  "z": 0
+                },
+                "min": {
+                  "x": 0,
+                  "y": 0,
+                  "z": 0
+                },
+                "max": {
+                  "x": 1,
+                  "y": 1,
+                  "z": 0
+                }
+              },
+              "uvChannelCount": 4,
+              "hasNormals": true,
+              "hasTangents": true,
+              "hasColors": true,
+              "blendShapeCount": 0,
+              "isSkinned": false,
+              "boneCount": 0,
+              "isReadable": false,
+              "indexFormat": "UInt16"
+            }
+          }
+        ],
+        "unityVersion": "6000.6.2f1",
+        "cleanup": {
+          "remaining": 0,
+          "sceneCountRestored": true,
+          "originalSceneClean": true
+        }
+      },
+      {
+        "configuration": "released-node18",
+        "nodeVersion": "v18.20.8",
+        "passed": true,
+        "checks": [
+          {
+            "name": "unity_graphics_mesh_info via objectPath",
+            "passed": true,
+            "data": {
+              "name": "__MeshMetadata_1d698a9082614b68b2d36236e6d95965_Mesh",
+              "source": "__MeshMetadata_1d698a9082614b68b2d36236e6d95965_Root (MeshFilter)",
+              "vertexCount": 4,
+              "triangleCount": 1,
+              "subMeshCount": 1,
+              "bounds": {
+                "center": {
+                  "x": 0.5,
+                  "y": 0.5,
+                  "z": 0
+                },
+                "size": {
+                  "x": 1,
+                  "y": 1,
+                  "z": 0
+                },
+                "extents": {
+                  "x": 0.5,
+                  "y": 0.5,
+                  "z": 0
+                },
+                "min": {
+                  "x": 0,
+                  "y": 0,
+                  "z": 0
+                },
+                "max": {
+                  "x": 1,
+                  "y": 1,
+                  "z": 0
+                }
+              },
+              "uvChannelCount": 4,
+              "hasNormals": true,
+              "hasTangents": true,
+              "hasColors": true,
+              "blendShapeCount": 0,
+              "isSkinned": false,
+              "boneCount": 0,
+              "isReadable": true,
+              "indexFormat": "UInt16"
+            }
+          },
+          {
+            "name": "unity_graphics_renderer_info via objectPath",
+            "passed": true,
+            "data": {
+              "gameObjectPath": "__MeshMetadata_1d698a9082614b68b2d36236e6d95965_Root",
+              "rendererType": "MeshRenderer",
+              "enabled": true,
+              "isVisible": true,
+              "bounds": {
+                "center": {
+                  "x": 0.5,
+                  "y": 0.5,
+                  "z": 0
+                },
+                "size": {
+                  "x": 1,
+                  "y": 1,
+                  "z": 0
+                },
+                "extents": {
+                  "x": 0.5,
+                  "y": 0.5,
+                  "z": 0
+                },
+                "min": {
+                  "x": 0,
+                  "y": 0,
+                  "z": 0
+                },
+                "max": {
+                  "x": 1,
+                  "y": 1,
+                  "z": 0
+                }
+              },
+              "shadowCastingMode": "On",
+              "receiveShadows": true,
+              "lightmapIndex": -1,
+              "sortingLayerName": "Default",
+              "sortingOrder": 0,
+              "lightProbeUsage": "BlendProbes",
+              "reflectionProbeUsage": "BlendProbes",
+              "materials": [
+                {
+                  "name": "(null/missing)"
+                },
+                {
+                  "name": "(null/missing)"
+                }
+              ],
+              "materialCount": 2,
+              "isSkinned": false,
+              "mesh": {
+                "name": "__MeshMetadata_1d698a9082614b68b2d36236e6d95965_Mesh",
+                "vertexCount": 4,
+                "triangleCount": 1,
+                "assetPath": ""
+              }
+            }
+          },
+          {
+            "name": "unity_graphics_mesh_info via gameObjectPath",
+            "passed": true,
+            "data": {
+              "name": "__MeshMetadata_1d698a9082614b68b2d36236e6d95965_Mesh",
+              "source": "__MeshMetadata_1d698a9082614b68b2d36236e6d95965_Root (MeshFilter)",
+              "vertexCount": 4,
+              "triangleCount": 1,
+              "subMeshCount": 1,
+              "bounds": {
+                "center": {
+                  "x": 0.5,
+                  "y": 0.5,
+                  "z": 0
+                },
+                "size": {
+                  "x": 1,
+                  "y": 1,
+                  "z": 0
+                },
+                "extents": {
+                  "x": 0.5,
+                  "y": 0.5,
+                  "z": 0
+                },
+                "min": {
+                  "x": 0,
+                  "y": 0,
+                  "z": 0
+                },
+                "max": {
+                  "x": 1,
+                  "y": 1,
+                  "z": 0
+                }
+              },
+              "uvChannelCount": 4,
+              "hasNormals": true,
+              "hasTangents": true,
+              "hasColors": true,
+              "blendShapeCount": 0,
+              "isSkinned": false,
+              "boneCount": 0,
+              "isReadable": true,
+              "indexFormat": "UInt16"
+            }
+          },
+          {
+            "name": "unity_graphics_renderer_info via gameObjectPath",
+            "passed": true,
+            "data": {
+              "gameObjectPath": "__MeshMetadata_1d698a9082614b68b2d36236e6d95965_Root",
+              "rendererType": "MeshRenderer",
+              "enabled": true,
+              "isVisible": true,
+              "bounds": {
+                "center": {
+                  "x": 0.5,
+                  "y": 0.5,
+                  "z": 0
+                },
+                "size": {
+                  "x": 1,
+                  "y": 1,
+                  "z": 0
+                },
+                "extents": {
+                  "x": 0.5,
+                  "y": 0.5,
+                  "z": 0
+                },
+                "min": {
+                  "x": 0,
+                  "y": 0,
+                  "z": 0
+                },
+                "max": {
+                  "x": 1,
+                  "y": 1,
+                  "z": 0
+                }
+              },
+              "shadowCastingMode": "On",
+              "receiveShadows": true,
+              "lightmapIndex": -1,
+              "sortingLayerName": "Default",
+              "sortingOrder": 0,
+              "lightProbeUsage": "BlendProbes",
+              "reflectionProbeUsage": "BlendProbes",
+              "materials": [
+                {
+                  "name": "(null/missing)"
+                },
+                {
+                  "name": "(null/missing)"
+                }
+              ],
+              "materialCount": 2,
+              "isSkinned": false,
+              "mesh": {
+                "name": "__MeshMetadata_1d698a9082614b68b2d36236e6d95965_Mesh",
+                "vertexCount": 4,
+                "triangleCount": 1,
+                "assetPath": ""
+              }
+            }
+          },
+          {
+            "name": "unity_graphics_mesh_info missing object error",
+            "passed": true
+          },
+          {
+            "name": "unity_graphics_renderer_info missing object error",
+            "passed": true
+          },
+          {
+            "name": "Non-readable metadata through the editor queue",
+            "passed": true,
+            "data": {
+              "name": "__MeshMetadata_1d698a9082614b68b2d36236e6d95965_Mesh",
+              "source": "__MeshMetadata_1d698a9082614b68b2d36236e6d95965_Root (MeshFilter)",
+              "vertexCount": 4,
+              "triangleCount": 1,
+              "subMeshCount": 1,
+              "bounds": {
+                "center": {
+                  "x": 0.5,
+                  "y": 0.5,
+                  "z": 0
+                },
+                "size": {
+                  "x": 1,
+                  "y": 1,
+                  "z": 0
+                },
+                "extents": {
+                  "x": 0.5,
+                  "y": 0.5,
+                  "z": 0
+                },
+                "min": {
+                  "x": 0,
+                  "y": 0,
+                  "z": 0
+                },
+                "max": {
+                  "x": 1,
+                  "y": 1,
+                  "z": 0
+                }
+              },
+              "uvChannelCount": 4,
+              "hasNormals": true,
+              "hasTangents": true,
+              "hasColors": true,
+              "blendShapeCount": 0,
+              "isSkinned": false,
+              "boneCount": 0,
+              "isReadable": false,
+              "indexFormat": "UInt16"
+            }
+          }
+        ],
+        "unityVersion": "6000.6.2f1",
+        "cleanup": {
+          "remaining": 0,
+          "sceneCountRestored": true,
+          "originalSceneClean": true
+        }
+      }
+    ]
+  },
+  "compatibility": {
+    "releasedServerCommit": "826af5ce61db7e2d2d675fe90d24c941a83f3924",
+    "unityMinimumApi": {
+      "version": "2021.3.18f1",
+      "sourceCount": 75,
+      "editorExecuted": false,
+      "passed": true,
+      "referenceCount": 211
+    },
+    "serverTests": {
+      "node": "22.18.0",
+      "passed": 217,
+      "failed": 0
+    },
+    "routeRegistry": {
+      "routes": 338,
+      "passed": true
+    }
+  },
+  "limitations": [
+    "Synthetic 120000-vertex mesh; five samples of twenty calls after warmup; excludes serialization and transport",
+    "Profiler GC.Alloc event count passed its positive control; raw values do not measure allocated bytes",
+    "The baseline non-readable mesh already allowed geometry reads outside the game/rendering loop; its failure was the UV count",
+    "Current and released servers tested with the updated plugin; no runtime change to server routing",
+    "Old editor execution remains deferred; imported model formats and game-loop/player behavior are not exhaustively tested"
+  ],
+  "sourceSha256": {
+    "../unity-mcp-plugin/Editor/MCPGraphicsCommands.cs": "c6b44808c4145623e19e319611d8026be023667674d10f05174111396ed3ac37",
+    "../unity-mcp-plugin/tools~/MeshMetadataValidation.cs": "a744e0a0f4dfa15c292667a9972384cc06ff44ff0a31dc85b4f989f97d1cba6f",
+    "../unity-mcp-plugin/tools~/validate-unity.ps1": "2dc8171dc14cc90760b4ef80554aaac59d7ee519ad4eba10ad15e3e1c9547f10",
+    "src/tools/editor-tools.js": "cca2c0dc019841c5325758c9cb5c87d15c6aa18e309e8d9bb60dffe777922599",
+    "tests/live-mesh-metadata.test.mjs": "7b1505dd711fa3d6e99d745ee6e2a7716ae4faffb78b5bd5aee56a59763bc82f",
+    "package.json": "1195083b3259b67e594b47dd6a337e6e05cb9aeafaff40ea91d608440af3475a"
+  },
+  "cleanup": {
+    "ownedEditorsClosed": true,
+    "copiedFixturesRemoved": true,
+    "temporaryScenesRemoved": true
+  }
+}
