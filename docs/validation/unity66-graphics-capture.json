@@ -1,5 +1,26 @@
 {
   "date": "2026-10-01",
+  "implementationCommits": {
+    "plugin": "0b93577f4970f5a76f78dcabe121ef9646812e0d",
+    "server": "bdf59d9d717cd0c9d9f4522731e505be4acd35c9"
+  },
+  "ci": {
+    "server": {
+      "runId": 36825599951,
+      "url": "https://github.com/AnkleBreaker-Studio/unity-mcp-server/actions/runs/36825599951",
+      "passedJobs": 8,
+      "nodeVersions": [18, 20, 22, 24],
+      "platforms": ["Windows", "Linux"],
+      "tests": 217,
+      "failed": 0
+    },
+    "plugin": {
+      "runId": 36825596239,
+      "url": "https://github.com/AnkleBreaker-Studio/unity-mcp-plugin/actions/runs/36825596239",
+      "passed": true,
+      "routes": 338
+    }
+  },
   "scope": "Inline Game/Scene camera rendering and asset preview render-state restoration",
   "baselinePluginCommit": "5cd25e8b839968c1744aa3b99738ece1fa7dcd3e",
   "baselinePluginRuntimeCommit": "0e450a9faeffd98122b873670747ce926b9b2b9a",
