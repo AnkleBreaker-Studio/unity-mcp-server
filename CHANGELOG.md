@@ -4,6 +4,10 @@ All notable changes to this package will be documented in this file.
 
 ## [Unreleased]
 
+### Rendered editor validation
+- Add opt-in `test:editor-render` for real floating/docked UI Toolkit and IMGUI pixels, focus/tab preservation and Dashboard layouts on Node 18/22.
+- Record the plugin's corrected dock crop and context-help wrapping with before/after evidence, local pixel review and restored fixture state.
+
 ### Editor-window capture
 - Describe background capture, ambiguity candidates and optional temporary tab selection for the updated plugin. Keep the tool-catalog payload below its existing 48,000-byte gate.
 - Add opt-in live MCP checks for string window identities, safe refusals and current/released-server compatibility on Node 18/22.
