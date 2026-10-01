@@ -42,7 +42,8 @@
     "test:selection": "node --test tests/live-selection-concurrency.test.mjs",
     "test:agent-state": "node --test tests/live-agent-state.test.mjs",
     "test:queue-admission": "node --test tests/live-queue-admission.test.mjs",
-    "test:result-retention": "node --test tests/live-result-retention.test.mjs"
+    "test:result-retention": "node --test tests/live-result-retention.test.mjs",
+    "test:history": "node --test tests/live-history-notifications.test.mjs"
   },
   "dependencies": {
     "@modelcontextprotocol/sdk": "1.27.1"
