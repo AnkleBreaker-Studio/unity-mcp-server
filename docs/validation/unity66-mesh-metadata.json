@@ -2426,7 +2426,9 @@
           "originalSceneClean": true
         }
       }
-    ]
+    ],
+    "pluginCommit": "f67c16c40881a4fede48dd1692b7bd49e9597744",
+    "serverCommit": "c9132c2c407cea0978a0537540763867cb906d9b"
   },
   "compatibility": {
     "releasedServerCommit": "826af5ce61db7e2d2d675fe90d24c941a83f3924",
@@ -2445,6 +2447,32 @@
     "routeRegistry": {
       "routes": 338,
       "passed": true
+    },
+    "ci": {
+      "server": {
+        "runId": 36831078552,
+        "url": "https://github.com/AnkleBreaker-Studio/unity-mcp-server/actions/runs/36831078552",
+        "passed": true,
+        "jobs": 8,
+        "nodeVersions": [
+          18,
+          20,
+          22,
+          24
+        ],
+        "platforms": [
+          "Windows",
+          "Linux"
+        ],
+        "ordinaryTests": 217,
+        "verifiedLogJobId": 110267583040
+      },
+      "plugin": {
+        "runId": 36831039065,
+        "url": "https://github.com/AnkleBreaker-Studio/unity-mcp-plugin/actions/runs/36831039065",
+        "passed": true,
+        "routes": 338
+      }
     }
   },
   "limitations": [
