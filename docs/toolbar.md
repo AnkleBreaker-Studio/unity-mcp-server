@@ -40,4 +40,4 @@ The reload check uses the native overlay's visibility, a session marker and `Edi
 
 ## Upstream synchronization
 
-Plugin `main` at `ce5a57f` was merged into `Development-Unity66-Modernization`, preserving the canonical Welcome changes, Unity 6000.5+ fixes, catalogue, theme relocation and upstream **2.40.1** version. The sole merge conflict was the changelog; both histories were retained. The server already contained all fetched `main` changes. No modernization changes were merged into `main`, and no release was created by this work.
+Plugin `main` at `ce5a57f` was merged into `Development-Unity66-Modernization`, preserving the canonical Welcome changes, Unity 6000.5+ fixes, catalogue, theme relocation and upstream **2.40.1** version. The sole merge conflict was the changelog; both histories were retained. The server already contained all fetched `main` changes. The completed modernization branch, including these upstream changes, is now integrated into `main` in both repositories. No version tag or npm release is created by this integration.

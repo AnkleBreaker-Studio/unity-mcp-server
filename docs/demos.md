@@ -6,7 +6,7 @@ These existing recordings show an AI assistant operating the Unity Editor throug
 
 [![AI assistant and Unity Editor building a neon brick breaker](unity-mcp-showcase-brickbreaker.gif)](https://cdn.jsdelivr.net/gh/AnkleBreaker-Studio/unity-mcp-server@513fca2/docs/media/showcase-brickbreaker.mp4)
 
-**[Open the 25-second MP4](https://cdn.jsdelivr.net/gh/AnkleBreaker-Studio/unity-mcp-server@513fca2/docs/media/showcase-brickbreaker.mp4)** · [Download video](https://raw.githubusercontent.com/AnkleBreaker-Studio/unity-mcp-server/Development-Unity66-Modernization/docs/media/showcase-brickbreaker.mp4)
+**[Open the 25-second MP4](https://cdn.jsdelivr.net/gh/AnkleBreaker-Studio/unity-mcp-server@513fca2/docs/media/showcase-brickbreaker.mp4)** · [Download video](https://raw.githubusercontent.com/AnkleBreaker-Studio/unity-mcp-server/main/docs/media/showcase-brickbreaker.mp4)
 
 Scene creation, brick layout, materials, C# gameplay scripts and visual iteration in one recorded workflow.
 
@@ -18,7 +18,7 @@ Try a similar prompt in a disposable prototype:
 
 [![AI assistant building a village with terrain, houses, trees and paths in Unity](unity-mcp-showcase-village.gif)](https://cdn.jsdelivr.net/gh/AnkleBreaker-Studio/unity-mcp-server@513fca2/docs/media/showcase-village.mp4)
 
-**[Open the 25-second MP4](https://cdn.jsdelivr.net/gh/AnkleBreaker-Studio/unity-mcp-server@513fca2/docs/media/showcase-village.mp4)** · [Download video](https://raw.githubusercontent.com/AnkleBreaker-Studio/unity-mcp-server/Development-Unity66-Modernization/docs/media/showcase-village.mp4)
+**[Open the 25-second MP4](https://cdn.jsdelivr.net/gh/AnkleBreaker-Studio/unity-mcp-server@513fca2/docs/media/showcase-village.mp4)** · [Download video](https://raw.githubusercontent.com/AnkleBreaker-Studio/unity-mcp-server/main/docs/media/showcase-village.mp4)
 
 Terrain, repeated house construction, materials and environmental details, with the assistant inspecting and refining the scene.
 
@@ -28,7 +28,7 @@ Terrain, repeated house construction, materials and environmental details, with 
 
 [![AI assistant constructing and inspecting a castle in the Unity Editor](unity-mcp-showcase-castle.gif)](https://cdn.jsdelivr.net/gh/AnkleBreaker-Studio/unity-mcp-server@513fca2/docs/media/showcase-castle.mp4)
 
-**[Open the 18-second MP4](https://cdn.jsdelivr.net/gh/AnkleBreaker-Studio/unity-mcp-server@513fca2/docs/media/showcase-castle.mp4)** · [Download video](https://raw.githubusercontent.com/AnkleBreaker-Studio/unity-mcp-server/Development-Unity66-Modernization/docs/media/showcase-castle.mp4)
+**[Open the 18-second MP4](https://cdn.jsdelivr.net/gh/AnkleBreaker-Studio/unity-mcp-server@513fca2/docs/media/showcase-castle.mp4)** · [Download video](https://raw.githubusercontent.com/AnkleBreaker-Studio/unity-mcp-server/main/docs/media/showcase-castle.mp4)
 
 Multi-room level construction, lighting adjustments and a playable walkthrough in the recorded project.
 

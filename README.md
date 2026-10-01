@@ -4,8 +4,8 @@
 
 # AnkleBreaker Unity MCP
 
-[![Server regression tests](https://github.com/AnkleBreaker-Studio/unity-mcp-server/actions/workflows/test.yml/badge.svg?branch=Development-Unity66-Modernization)](https://github.com/AnkleBreaker-Studio/unity-mcp-server/actions/workflows/test.yml?query=branch%3ADevelopment-Unity66-Modernization)
-[![Plugin route checks](https://github.com/AnkleBreaker-Studio/unity-mcp-plugin/actions/workflows/checks.yml/badge.svg?branch=Development-Unity66-Modernization)](https://github.com/AnkleBreaker-Studio/unity-mcp-plugin/actions/workflows/checks.yml?query=branch%3ADevelopment-Unity66-Modernization)
+[![Server regression tests](https://github.com/AnkleBreaker-Studio/unity-mcp-server/actions/workflows/test.yml/badge.svg?branch=main)](https://github.com/AnkleBreaker-Studio/unity-mcp-server/actions/workflows/test.yml?query=branch%3Amain)
+[![Plugin route checks](https://github.com/AnkleBreaker-Studio/unity-mcp-plugin/actions/workflows/checks.yml/badge.svg?branch=main)](https://github.com/AnkleBreaker-Studio/unity-mcp-plugin/actions/workflows/checks.yml?query=branch%3Amain)
 
 **Build worlds. Coordinate agents. See every action.** Connect your AI assistants to scene authoring, running games, multiplayer scenarios, tests, builds and profiling through Model Context Protocol. Built by [AnkleBreaker Studio](https://github.com/AnkleBreaker-Studio) for workflows that span more than one editor and one assistant.
 
@@ -23,7 +23,7 @@ Counts reflect the checked-in definitions; optional tools require their correspo
 
 [![Watch the AI assistant build a neon brick-breaker prototype in the Unity Editor](docs/unity-mcp-showcase-brickbreaker.gif)](https://cdn.jsdelivr.net/gh/AnkleBreaker-Studio/unity-mcp-server@513fca2/docs/media/showcase-brickbreaker.mp4)
 
-**[▶ Open video · 25 seconds](https://cdn.jsdelivr.net/gh/AnkleBreaker-Studio/unity-mcp-server@513fca2/docs/media/showcase-brickbreaker.mp4)** · [Download MP4](https://raw.githubusercontent.com/AnkleBreaker-Studio/unity-mcp-server/Development-Unity66-Modernization/docs/media/showcase-brickbreaker.mp4) · [Village and castle demos](#from-environments-to-playable-levels)
+**[▶ Open video · 25 seconds](https://cdn.jsdelivr.net/gh/AnkleBreaker-Studio/unity-mcp-server@513fca2/docs/media/showcase-brickbreaker.mp4)** · [Download MP4](https://raw.githubusercontent.com/AnkleBreaker-Studio/unity-mcp-server/main/docs/media/showcase-brickbreaker.mp4) · [Village and castle demos](#from-environments-to-playable-levels)
 
 Recorded, accelerated excerpts. The silent videos export the same recordings as the GIFs; their duration is not a build-time benchmark. [Media details and example prompts](docs/demos.md).
 
@@ -43,14 +43,14 @@ The combination is the strength: routing, scheduling, multiplayer controls and o
 
 ## Get started
 
-**Development preview:** this README describes `Development-Unity66-Modernization`, which has not been released. The commands below install that branch in both repositories. For the existing release line, use the [default-branch instructions](https://github.com/AnkleBreaker-Studio/unity-mcp-server).
+**Install from source:** the commands below install `main` in both repositories, including the improvements documented here. Published npm packages and version tags may lag behind `main`.
 
 ### 1. Add the Unity plugin
 
 In Unity, open **Window → Package Manager → Add package from git URL**:
 
 ```text
-https://github.com/AnkleBreaker-Studio/unity-mcp-plugin.git#Development-Unity66-Modernization
+https://github.com/AnkleBreaker-Studio/unity-mcp-plugin.git#main
 ```
 
 The **MCP** status dropdown appears automatically in Unity's main toolbar. Open the Dashboard from it, **Window → AB Unity MCP**, or **Tools → AnkleBreaker → Unity MCP**. Verify the bridge is running there. If you previously hid the indicator, choose **Show Toolbar Status**. [Toolbar and menu access](docs/toolbar.md).
@@ -60,7 +60,7 @@ The **MCP** status dropdown appears automatically in Unity's main toolbar. Open 
 Use Node.js 18 or newer; a maintained Node.js LTS is recommended.
 
 ```bash
-git clone --branch Development-Unity66-Modernization https://github.com/AnkleBreaker-Studio/unity-mcp-server.git
+git clone --branch main https://github.com/AnkleBreaker-Studio/unity-mcp-server.git
 cd unity-mcp-server
 npm ci
 ```
@@ -100,7 +100,7 @@ Terrain, houses, materials, trees, fences and paths: the assistant constructs a 
 
 [![Recorded Unity MCP workflow building a medieval village with terrain and reusable houses](docs/unity-mcp-showcase-village.gif)](https://cdn.jsdelivr.net/gh/AnkleBreaker-Studio/unity-mcp-server@513fca2/docs/media/showcase-village.mp4)
 
-**[▶ Open video · 25 seconds](https://cdn.jsdelivr.net/gh/AnkleBreaker-Studio/unity-mcp-server@513fca2/docs/media/showcase-village.mp4)** · [Download MP4](https://raw.githubusercontent.com/AnkleBreaker-Studio/unity-mcp-server/Development-Unity66-Modernization/docs/media/showcase-village.mp4)
+**[▶ Open video · 25 seconds](https://cdn.jsdelivr.net/gh/AnkleBreaker-Studio/unity-mcp-server@513fca2/docs/media/showcase-village.mp4)** · [Download MP4](https://raw.githubusercontent.com/AnkleBreaker-Studio/unity-mcp-server/main/docs/media/showcase-village.mp4)
 
 ### A castle you can walk through
 
@@ -108,7 +108,7 @@ Multi-room construction, lighting adjustment and a first-person walkthrough in t
 
 [![Recorded Unity MCP workflow constructing a castle and testing its lighting and walkthrough](docs/unity-mcp-showcase-castle.gif)](https://cdn.jsdelivr.net/gh/AnkleBreaker-Studio/unity-mcp-server@513fca2/docs/media/showcase-castle.mp4)
 
-**[▶ Open video · 18 seconds](https://cdn.jsdelivr.net/gh/AnkleBreaker-Studio/unity-mcp-server@513fca2/docs/media/showcase-castle.mp4)** · [Download MP4](https://raw.githubusercontent.com/AnkleBreaker-Studio/unity-mcp-server/Development-Unity66-Modernization/docs/media/showcase-castle.mp4)
+**[▶ Open video · 18 seconds](https://cdn.jsdelivr.net/gh/AnkleBreaker-Studio/unity-mcp-server@513fca2/docs/media/showcase-castle.mp4)** · [Download MP4](https://raw.githubusercontent.com/AnkleBreaker-Studio/unity-mcp-server/main/docs/media/showcase-castle.mp4)
 
 [All demonstrations, prompts and media formats →](docs/demos.md)
 
