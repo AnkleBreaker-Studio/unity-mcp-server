@@ -599,7 +599,7 @@
   ],
   "passed": true,
   "documentation": {
-    "localLinksChecked": 304,
+    "localLinksChecked": 306,
     "missing": 0
   },
   "cleanup": {
@@ -611,5 +611,48 @@
     "persistencePreferenceRestored": true,
     "cleanScene": true,
     "userEditorsUntouched": true
+  },
+  "pluginCommit": "2fc0f0e3a1919361211a5ea4c72474c8b8b6f164",
+  "serverCommit": "1daa94314ef76cf89a3b328c21cc98a0bf646511",
+  "ci": {
+    "plugin": {
+      "run": 36854497279,
+      "job": 110343649924,
+      "status": "success",
+      "routes": 338
+    },
+    "server": {
+      "run": 36854525933,
+      "status": "success",
+      "matrixJobsPassed": 8,
+      "nodeVersions": [
+        18,
+        20,
+        22,
+        24
+      ],
+      "platforms": [
+        "windows-latest",
+        "ubuntu-latest"
+      ],
+      "inspectedLogs": [
+        {
+          "job": 110343744499,
+          "node": 22,
+          "platform": "ubuntu-latest",
+          "tests": 255,
+          "passed": 255,
+          "failed": 0
+        },
+        {
+          "job": 110343744543,
+          "node": 18,
+          "platform": "windows-latest",
+          "tests": 255,
+          "passed": 255,
+          "failed": 0
+        }
+      ]
+    }
   }
 }
