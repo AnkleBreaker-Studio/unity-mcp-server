@@ -1,0 +1,1482 @@
+{
+  "recordedAt": "2026-10-01T03:59:22.694Z",
+  "baselinePluginCommit": "579168527df12c4ebe02797f3f5f955953af8a1c",
+  "baselineServerCommit": "ef513ad",
+  "pluginSourceHashes": {
+    "Editor/MCPBridgeServer.cs": "8a84dda8ae4d7f8d38b061fc7f639f43857b94fb4aa96ebce24798aab09188c7",
+    "Editor/MCPHttpDiagnostics.cs": "fdd21bf55bc040e806698472a7212bd73045f458fd9a04c83a21a1b54e1a7621",
+    "Editor/MCPRequestInput.cs": "3243454d21c09783669158f5072e3d99b0d48b41aa245069ef5c4913f03fb611",
+    "Editor/MCPRequestQueue.cs": "3896893d60993f5a523829b23d1941e7890b802ccfeff0c67ed702fc5e8bf0fd",
+    "Editor/MCPDashboardWindow.cs": "112e06c2e0cd80316eff96aee12608cac7cd6e15b441b4453b40f5a43a12b78e"
+  },
+  "dashboardBefore": {
+    "unityVersion": "6000.6.2f1",
+    "idle": {
+      "iterations": 100,
+      "elapsedMs": 21.588900000000002,
+      "allocations": 33700,
+      "allocatedBytes": 723600,
+      "profilerControlAllocations": 1
+    },
+    "twentyStableAgents": {
+      "iterations": 100,
+      "elapsedMs": 22.5405,
+      "allocations": 33700,
+      "allocatedBytes": 770700,
+      "profilerControlAllocations": 1
+    },
+    "unshownActivityDoesNotRebuild": true,
+    "visibleMetricsRefresh": true,
+    "changingAgents": {
+      "iterations": 100,
+      "elapsedMs": 26.331,
+      "allocations": 35100,
+      "allocatedBytes": 728900,
+      "profilerControlAllocations": 1
+    },
+    "changedAndUnchangedCardsReused": true,
+    "oldOutstandingSessionVisible": true,
+    "idleSessionExpiresWithoutRebuildingOthers": true,
+    "returningSessionVisible": true,
+    "emptyStateRestored": true,
+    "newAgentReplacesEmptyState": true,
+    "scrollRootsBefore": 1,
+    "scrollRootsAfter": 1,
+    "recreateGuiDoesNotDuplicateControls": true,
+    "savedFoldoutStateRestored": true,
+    "failures": [],
+    "passed": true,
+    "fixtureSessionsRemoved": true
+  },
+  "dashboardAfter": {
+    "unityVersion": "6000.6.2f1",
+    "idle": {
+      "iterations": 100,
+      "elapsedMs": 24.1951,
+      "allocations": 30400,
+      "allocatedBytes": 741200,
+      "profilerControlAllocations": 1
+    },
+    "unchangedQueueSection": {
+      "iterations": 100,
+      "elapsedMs": 0.029300000000000003,
+      "allocations": 0,
+      "allocatedBytes": 0,
+      "profilerControlAllocations": 1
+    },
+    "unchangedHttpSection": {
+      "iterations": 100,
+      "elapsedMs": 0.0323,
+      "allocations": 0,
+      "allocatedBytes": 0,
+      "profilerControlAllocations": 1
+    },
+    "httpActiveRequestVisible": true,
+    "httpRefusalVisible": true,
+    "httpControlsReused": true,
+    "twentyStableAgents": {
+      "iterations": 100,
+      "elapsedMs": 22.5289,
+      "allocations": 30400,
+      "allocatedBytes": 641200,
+      "profilerControlAllocations": 1
+    },
+    "unshownActivityDoesNotRebuild": true,
+    "visibleMetricsRefresh": true,
+    "changingAgents": {
+      "iterations": 100,
+      "elapsedMs": 23.7281,
+      "allocations": 31800,
+      "allocatedBytes": 712900,
+      "profilerControlAllocations": 1
+    },
+    "changedAndUnchangedCardsReused": true,
+    "oldOutstandingSessionVisible": true,
+    "idleSessionExpiresWithoutRebuildingOthers": true,
+    "returningSessionVisible": true,
+    "emptyStateRestored": true,
+    "newAgentReplacesEmptyState": true,
+    "scrollRootsBefore": 1,
+    "scrollRootsAfter": 1,
+    "recreateGuiDoesNotDuplicateControls": true,
+    "savedFoldoutStateRestored": true,
+    "httpPreferenceAndCountersRestored": true,
+    "failures": [],
+    "passed": true,
+    "fixtureSessionsRemoved": true
+  },
+  "controlled": {
+    "unityVersion": "6000.6.2f1",
+    "passed": true,
+    "checks": [
+      {
+        "name": "Queue info exposes domain-scoped HTTP counters",
+        "passed": true,
+        "evidence": {
+          "startedAtUtc": "2026-10-01T03:53:06.2950480Z",
+          "receivedRequests": 0,
+          "completedRequests": 0,
+          "activeRequests": 0,
+          "peakActiveRequests": 0,
+          "responses2xx": 0,
+          "responses4xx": 0,
+          "responses5xx": 0,
+          "otherResponses": 0,
+          "incompleteRequests": 0,
+          "abortedRequests": 0,
+          "inputRejectedRequests": 0,
+          "inputBytesRead": 0,
+          "outputBytesWritten": 0,
+          "responseSerializationFailures": 0,
+          "averageDurationMs": 0,
+          "maxDurationMs": 0,
+          "domainReloadCount": 0,
+          "lastDomainReloadMs": 0,
+          "activeRequestsAtLastReload": 0
+        }
+      },
+      {
+        "name": "Successful read counts actual UTF-8 bytes",
+        "passed": true,
+        "evidence": {
+          "status": 200,
+          "inputBytes": 20,
+          "after": {
+            "startedAtUtc": "2026-10-01T03:53:06.2950480Z",
+            "receivedRequests": 1,
+            "completedRequests": 1,
+            "activeRequests": 0,
+            "peakActiveRequests": 1,
+            "responses2xx": 1,
+            "responses4xx": 0,
+            "responses5xx": 0,
+            "otherResponses": 0,
+            "incompleteRequests": 0,
+            "abortedRequests": 0,
+            "inputRejectedRequests": 0,
+            "inputBytesRead": 20,
+            "outputBytesWritten": 928,
+            "responseSerializationFailures": 0,
+            "averageDurationMs": 7.6992,
+            "maxDurationMs": 7.6992,
+            "domainReloadCount": 0,
+            "lastDomainReloadMs": 0,
+            "activeRequestsAtLastReload": 0
+          }
+        }
+      },
+      {
+        "name": "Malformed request is visible before queue acceptance",
+        "passed": true,
+        "evidence": {
+          "status": 400,
+          "inputBytes": 11,
+          "after": {
+            "startedAtUtc": "2026-10-01T03:53:06.2950480Z",
+            "receivedRequests": 2,
+            "completedRequests": 2,
+            "activeRequests": 0,
+            "peakActiveRequests": 1,
+            "responses2xx": 1,
+            "responses4xx": 1,
+            "responses5xx": 0,
+            "otherResponses": 0,
+            "incompleteRequests": 0,
+            "abortedRequests": 0,
+            "inputRejectedRequests": 1,
+            "inputBytesRead": 31,
+            "outputBytesWritten": 1038,
+            "responseSerializationFailures": 0,
+            "averageDurationMs": 4.75945,
+            "maxDurationMs": 7.6992,
+            "domainReloadCount": 0,
+            "lastDomainReloadMs": 0,
+            "activeRequestsAtLastReload": 0
+          }
+        }
+      },
+      {
+        "name": "Nested queue body rejection is counted once",
+        "passed": true,
+        "evidence": {
+          "status": 400,
+          "inputBytes": 30,
+          "after": {
+            "startedAtUtc": "2026-10-01T03:53:06.2950480Z",
+            "receivedRequests": 3,
+            "completedRequests": 3,
+            "activeRequests": 0,
+            "peakActiveRequests": 1,
+            "responses2xx": 1,
+            "responses4xx": 2,
+            "responses5xx": 0,
+            "otherResponses": 0,
+            "incompleteRequests": 0,
+            "abortedRequests": 0,
+            "inputRejectedRequests": 2,
+            "inputBytesRead": 61,
+            "outputBytesWritten": 1130,
+            "responseSerializationFailures": 0,
+            "averageDurationMs": 3.2946000000000004,
+            "maxDurationMs": 7.6992,
+            "domainReloadCount": 0,
+            "lastDomainReloadMs": 0,
+            "activeRequestsAtLastReload": 0
+          }
+        }
+      },
+      {
+        "name": "Deep input uses HTTP 413 and input rejection counters",
+        "passed": true,
+        "evidence": {
+          "status": 413,
+          "inputBytes": 137,
+          "after": {
+            "startedAtUtc": "2026-10-01T03:53:06.2950480Z",
+            "receivedRequests": 4,
+            "completedRequests": 4,
+            "activeRequests": 0,
+            "peakActiveRequests": 1,
+            "responses2xx": 1,
+            "responses4xx": 3,
+            "responses5xx": 0,
+            "otherResponses": 0,
+            "incompleteRequests": 0,
+            "abortedRequests": 0,
+            "inputRejectedRequests": 3,
+            "inputBytesRead": 198,
+            "outputBytesWritten": 1234,
+            "responseSerializationFailures": 0,
+            "averageDurationMs": 2.5509500000000003,
+            "maxDurationMs": 7.6992,
+            "domainReloadCount": 0,
+            "lastDomainReloadMs": 0,
+            "activeRequestsAtLastReload": 0
+          }
+        }
+      },
+      {
+        "name": "Origin refusal has no body read or input-parser rejection",
+        "passed": true,
+        "evidence": {
+          "status": 403,
+          "inputBytes": 0,
+          "after": {
+            "startedAtUtc": "2026-10-01T03:53:06.2950480Z",
+            "receivedRequests": 5,
+            "completedRequests": 5,
+            "activeRequests": 0,
+            "peakActiveRequests": 1,
+            "responses2xx": 1,
+            "responses4xx": 4,
+            "responses5xx": 0,
+            "otherResponses": 0,
+            "incompleteRequests": 0,
+            "abortedRequests": 0,
+            "inputRejectedRequests": 3,
+            "inputBytesRead": 198,
+            "outputBytesWritten": 1312,
+            "responseSerializationFailures": 0,
+            "averageDurationMs": 2.21136,
+            "maxDurationMs": 7.6992,
+            "domainReloadCount": 0,
+            "lastDomainReloadMs": 0,
+            "activeRequestsAtLastReload": 0
+          }
+        }
+      },
+      {
+        "name": "Unknown route is visible in HTTP 4xx",
+        "passed": true,
+        "evidence": {
+          "status": 404,
+          "inputBytes": 2,
+          "after": {
+            "startedAtUtc": "2026-10-01T03:53:06.2950480Z",
+            "receivedRequests": 6,
+            "completedRequests": 6,
+            "activeRequests": 0,
+            "peakActiveRequests": 1,
+            "responses2xx": 1,
+            "responses4xx": 5,
+            "responses5xx": 0,
+            "otherResponses": 0,
+            "incompleteRequests": 0,
+            "abortedRequests": 0,
+            "inputRejectedRequests": 3,
+            "inputBytesRead": 200,
+            "outputBytesWritten": 1348,
+            "responseSerializationFailures": 0,
+            "averageDurationMs": 1.8741,
+            "maxDurationMs": 7.6992,
+            "domainReloadCount": 0,
+            "lastDomainReloadMs": 0,
+            "activeRequestsAtLastReload": 0
+          }
+        }
+      },
+      {
+        "name": "Method refusal is visible before dispatch",
+        "passed": true,
+        "evidence": {
+          "status": 405,
+          "inputBytes": 0,
+          "after": {
+            "startedAtUtc": "2026-10-01T03:53:06.2950480Z",
+            "receivedRequests": 7,
+            "completedRequests": 7,
+            "activeRequests": 0,
+            "peakActiveRequests": 1,
+            "responses2xx": 1,
+            "responses4xx": 6,
+            "responses5xx": 0,
+            "otherResponses": 0,
+            "incompleteRequests": 0,
+            "abortedRequests": 0,
+            "inputRejectedRequests": 3,
+            "inputBytesRead": 200,
+            "outputBytesWritten": 1420,
+            "responseSerializationFailures": 0,
+            "averageDurationMs": 1.6276285714285714,
+            "maxDurationMs": 7.6992,
+            "domainReloadCount": 0,
+            "lastDomainReloadMs": 0,
+            "activeRequestsAtLastReload": 0
+          }
+        }
+      },
+      {
+        "name": "Missing API prefix is visible before body reading",
+        "passed": true,
+        "evidence": {
+          "status": 404,
+          "inputBytes": 0,
+          "after": {
+            "startedAtUtc": "2026-10-01T03:53:06.2950480Z",
+            "receivedRequests": 8,
+            "completedRequests": 8,
+            "activeRequests": 0,
+            "peakActiveRequests": 1,
+            "responses2xx": 1,
+            "responses4xx": 7,
+            "responses5xx": 0,
+            "otherResponses": 0,
+            "incompleteRequests": 0,
+            "abortedRequests": 0,
+            "inputRejectedRequests": 3,
+            "inputBytesRead": 200,
+            "outputBytesWritten": 1441,
+            "responseSerializationFailures": 0,
+            "averageDurationMs": 1.4473875,
+            "maxDurationMs": 7.6992,
+            "domainReloadCount": 0,
+            "lastDomainReloadMs": 0,
+            "activeRequestsAtLastReload": 0
+          }
+        }
+      },
+      {
+        "name": "Queue acceptance is a completed HTTP 202",
+        "passed": true,
+        "evidence": {
+          "status": 202,
+          "inputBytes": 18,
+          "after": {
+            "startedAtUtc": "2026-10-01T03:53:06.2950480Z",
+            "receivedRequests": 9,
+            "completedRequests": 9,
+            "activeRequests": 0,
+            "peakActiveRequests": 1,
+            "responses2xx": 2,
+            "responses4xx": 7,
+            "responses5xx": 0,
+            "otherResponses": 0,
+            "incompleteRequests": 0,
+            "abortedRequests": 0,
+            "inputRejectedRequests": 3,
+            "inputBytesRead": 218,
+            "outputBytesWritten": 1565,
+            "responseSerializationFailures": 0,
+            "averageDurationMs": 1.6230444444444445,
+            "maxDurationMs": 7.6992,
+            "domainReloadCount": 0,
+            "lastDomainReloadMs": 0,
+            "activeRequestsAtLastReload": 0
+          }
+        }
+      },
+      {
+        "name": "Command error remains HTTP 200",
+        "passed": true,
+        "evidence": {
+          "status": 200,
+          "inputBytes": 0,
+          "after": {
+            "startedAtUtc": "2026-10-01T03:53:06.2950480Z",
+            "receivedRequests": 10,
+            "completedRequests": 10,
+            "activeRequests": 0,
+            "peakActiveRequests": 1,
+            "responses2xx": 3,
+            "responses4xx": 7,
+            "responses5xx": 0,
+            "otherResponses": 0,
+            "incompleteRequests": 0,
+            "abortedRequests": 0,
+            "inputRejectedRequests": 3,
+            "inputBytesRead": 218,
+            "outputBytesWritten": 1995,
+            "responseSerializationFailures": 0,
+            "averageDurationMs": 1.58857,
+            "maxDurationMs": 7.6992,
+            "domainReloadCount": 0,
+            "lastDomainReloadMs": 0,
+            "activeRequestsAtLastReload": 0
+          }
+        }
+      },
+      {
+        "name": "Cyclic response is HTTP 500 with serialization failure",
+        "passed": true,
+        "evidence": {
+          "status": 500,
+          "inputBytes": 0,
+          "after": {
+            "startedAtUtc": "2026-10-01T03:53:06.2950480Z",
+            "receivedRequests": 11,
+            "completedRequests": 11,
+            "activeRequests": 0,
+            "peakActiveRequests": 1,
+            "responses2xx": 3,
+            "responses4xx": 7,
+            "responses5xx": 1,
+            "otherResponses": 0,
+            "incompleteRequests": 0,
+            "abortedRequests": 0,
+            "inputRejectedRequests": 3,
+            "inputBytesRead": 218,
+            "outputBytesWritten": 2266,
+            "responseSerializationFailures": 1,
+            "averageDurationMs": 1.480009090909091,
+            "maxDurationMs": 7.6992,
+            "domainReloadCount": 0,
+            "lastDomainReloadMs": 0,
+            "activeRequestsAtLastReload": 0
+          }
+        }
+      },
+      {
+        "name": "Oversized response is distinct from rejected input",
+        "passed": true,
+        "evidence": {
+          "status": 413,
+          "inputBytes": 0,
+          "after": {
+            "startedAtUtc": "2026-10-01T03:53:06.2950480Z",
+            "receivedRequests": 12,
+            "completedRequests": 12,
+            "activeRequests": 0,
+            "peakActiveRequests": 1,
+            "responses2xx": 3,
+            "responses4xx": 8,
+            "responses5xx": 1,
+            "otherResponses": 0,
+            "incompleteRequests": 0,
+            "abortedRequests": 0,
+            "inputRejectedRequests": 3,
+            "inputBytesRead": 218,
+            "outputBytesWritten": 2647,
+            "responseSerializationFailures": 2,
+            "averageDurationMs": 39.51169166666667,
+            "maxDurationMs": 457.8602,
+            "domainReloadCount": 0,
+            "lastDomainReloadMs": 0,
+            "activeRequestsAtLastReload": 0
+          }
+        }
+      },
+      {
+        "name": "Completed counts partition into response classes and incomplete requests",
+        "passed": true,
+        "evidence": {
+          "startedAtUtc": "2026-10-01T03:53:06.2950480Z",
+          "receivedRequests": 12,
+          "completedRequests": 12,
+          "activeRequests": 0,
+          "peakActiveRequests": 1,
+          "responses2xx": 3,
+          "responses4xx": 8,
+          "responses5xx": 1,
+          "otherResponses": 0,
+          "incompleteRequests": 0,
+          "abortedRequests": 0,
+          "inputRejectedRequests": 3,
+          "inputBytesRead": 218,
+          "outputBytesWritten": 2647,
+          "responseSerializationFailures": 2,
+          "averageDurationMs": 39.51169166666667,
+          "maxDurationMs": 457.8602,
+          "domainReloadCount": 0,
+          "lastDomainReloadMs": 0,
+          "activeRequestsAtLastReload": 0
+        }
+      }
+    ]
+  },
+  "interruption": {
+    "unityVersion": "6000.6.2f1",
+    "passed": true,
+    "waiterObserved": true,
+    "requestErrorLogs": 0,
+    "failure": null,
+    "clientResult": "",
+    "workerFailure": null,
+    "metricsPassed": true,
+    "before": {
+      "startedAtUtc": "2026-10-01T03:53:17.2900058Z",
+      "receivedRequests": 0,
+      "completedRequests": 0,
+      "activeRequests": 0,
+      "peakActiveRequests": 0,
+      "responses2xx": 0,
+      "responses4xx": 0,
+      "responses5xx": 0,
+      "otherResponses": 0,
+      "incompleteRequests": 0,
+      "abortedRequests": 0,
+      "inputRejectedRequests": 0,
+      "inputBytesRead": 0,
+      "outputBytesWritten": 0,
+      "responseSerializationFailures": 0,
+      "averageDurationMs": 0,
+      "maxDurationMs": 0,
+      "domainReloadCount": 0,
+      "lastDomainReloadMs": 0,
+      "activeRequestsAtLastReload": 0
+    },
+    "active": {
+      "startedAtUtc": "2026-10-01T03:53:17.2900058Z",
+      "receivedRequests": 1,
+      "completedRequests": 0,
+      "activeRequests": 1,
+      "peakActiveRequests": 1,
+      "responses2xx": 0,
+      "responses4xx": 0,
+      "responses5xx": 0,
+      "otherResponses": 0,
+      "incompleteRequests": 0,
+      "abortedRequests": 0,
+      "inputRejectedRequests": 0,
+      "inputBytesRead": 0,
+      "outputBytesWritten": 0,
+      "responseSerializationFailures": 0,
+      "averageDurationMs": 0,
+      "maxDurationMs": 0,
+      "domainReloadCount": 0,
+      "lastDomainReloadMs": 0,
+      "activeRequestsAtLastReload": 0
+    },
+    "after": {
+      "startedAtUtc": "2026-10-01T03:53:17.2900058Z",
+      "receivedRequests": 1,
+      "completedRequests": 1,
+      "activeRequests": 0,
+      "peakActiveRequests": 1,
+      "responses2xx": 0,
+      "responses4xx": 0,
+      "responses5xx": 0,
+      "otherResponses": 0,
+      "incompleteRequests": 1,
+      "abortedRequests": 1,
+      "inputRejectedRequests": 0,
+      "inputBytesRead": 0,
+      "outputBytesWritten": 0,
+      "responseSerializationFailures": 0,
+      "averageDurationMs": 5.8733,
+      "maxDurationMs": 5.8733,
+      "domainReloadCount": 0,
+      "lastDomainReloadMs": 0,
+      "activeRequestsAtLastReload": 0
+    },
+    "scope": "Owned loopback HTTP worker aborted while waiting for the editor; no domain reload or native tests"
+  },
+  "regressions": {
+    "queue": {
+      "unityVersion": "6000.6.2f1",
+      "passed": true,
+      "checks": [
+        "Object identity round-trip without JSON number conversion",
+        "Agent FIFO, round-robin writes, read batching and ticket results",
+        "Deferred completion is atomic, single-shot and stable after timeout",
+        "Concurrent submission retries share one ticket; conflicts, reload sessions and expired results never re-execute",
+        "Actual HTTP dispatcher validates scoped submission/polling, browser rejection, one-object retries and legacy compatibility",
+        "Legacy synchronous callers are signaled without lost wakeups",
+        "Legacy timeout preserves running outcomes and skips expired batched and queued work",
+        "Dashboard shows running-only work and separates failures from finished requests",
+        "Submission retry cache refuses new work at its bounded capacity",
+        "1000 status polls at queue depths 100 and 10000"
+      ],
+      "polling100Ms": 3.1514,
+      "polling10000Ms": 4.45,
+      "error": ""
+    },
+    "monitoring": {
+      "unityVersion": "6000.6.2f1",
+      "passed": true,
+      "resultCases": 15,
+      "classificationMismatches": 0,
+      "rawResultsPreserved": true,
+      "commandErrors": 7,
+      "exceptions": 1,
+      "duplicateCallbacks": 20,
+      "deferredHistoryRecords": 1,
+      "timedOutHistoryRecords": 1,
+      "lateCallbackIgnored": true,
+      "legacyResultPreserved": true,
+      "dashboardShowsCommandError": true,
+      "dashboardShowsExceptionCount": true,
+      "dashboardErrorRow": true,
+      "historyEndpointError": true,
+      "diagnosticBounded": true,
+      "undoPreserved": true,
+      "undoWithHistoryBacklog": true,
+      "pendingHistorySavedBeforeReload": true,
+      "clearIncludesPendingHistory": true,
+      "historyRoundTrip": true,
+      "oldHistoryLoads": true,
+      "maximumPendingHistory": 10000,
+      "historyRecordsDropped": 1,
+      "backlogDrained": true,
+      "error": ""
+    },
+    "requestInput": {
+      "unityVersion": "6000.6.2f1",
+      "passed": true,
+      "checks": [
+        {
+          "name": "Existing empty and valid object payloads retain their shapes",
+          "passed": true,
+          "evidence": {
+            "text": "中😀",
+            "int": 4,
+            "long": 2147483648,
+            "real": 1.25,
+            "list": [
+              true,
+              false,
+              null
+            ]
+          }
+        },
+        {
+          "name": "Duplicate names preserve the existing last-value behavior",
+          "passed": true,
+          "evidence": true
+        },
+        {
+          "name": "Reject invalid request {} trailing",
+          "passed": true,
+          "evidence": true
+        },
+        {
+          "name": "Reject invalid request {\"v\":1,}",
+          "passed": true,
+          "evidence": true
+        },
+        {
+          "name": "Reject invalid request {\"v\":1 \"b\":2}",
+          "passed": true,
+          "evidence": true
+        },
+        {
+          "name": "Reject invalid request {\"v\":01}",
+          "passed": true,
+          "evidence": true
+        },
+        {
+          "name": "Reject invalid request {\"v\":1e}",
+          "passed": true,
+          "evidence": true
+        },
+        {
+          "name": "Reject invalid request {\"v\":\"bad\\q\"}",
+          "passed": true,
+          "evidence": true
+        },
+        {
+          "name": "Reject invalid request {\"v\":\"raw\\nline\"}",
+          "passed": true,
+          "evidence": true
+        },
+        {
+          "name": "Reject invalid request []",
+          "passed": true,
+          "evidence": true
+        },
+        {
+          "name": "Reject invalid request null",
+          "passed": true,
+          "evidence": true
+        },
+        {
+          "name": "Reject invalid request {\"v\":[1,2,]}",
+          "passed": true,
+          "evidence": true
+        },
+        {
+          "name": "Deep input stops before exhausting the native thread stack",
+          "passed": true,
+          "evidence": true
+        },
+        {
+          "name": "Exact depth boundary accepts 64 containers and rejects 65",
+          "passed": true,
+          "evidence": true
+        },
+        {
+          "name": "Wide arrays stop at the shared value budget",
+          "passed": true,
+          "evidence": {
+            "maximumValuesAndKeys": 1000000
+          }
+        },
+        {
+          "name": "Malformed delimiters, EOF and escapes terminate with input errors",
+          "passed": true,
+          "evidence": {
+            "count": 15
+          }
+        },
+        {
+          "name": "Escaped Unicode, control characters and finite numbers retain values",
+          "passed": true,
+          "evidence": true
+        },
+        {
+          "name": "ASCII exact byte limit",
+          "passed": true,
+          "evidence": {
+            "bytes": 5,
+            "limit": 5,
+            "read": 5
+          }
+        },
+        {
+          "name": "ASCII over byte limit",
+          "passed": true,
+          "evidence": {
+            "bytes": 5,
+            "limit": 4,
+            "read": 5
+          }
+        },
+        {
+          "name": "UTF-8 exact byte limit across split sequences",
+          "passed": true,
+          "evidence": {
+            "bytes": 7,
+            "limit": 7,
+            "read": 7
+          }
+        },
+        {
+          "name": "UTF-8 over byte limit",
+          "passed": true,
+          "evidence": {
+            "bytes": 7,
+            "limit": 6,
+            "read": 7
+          }
+        },
+        {
+          "name": "UTF-16 BOM counts toward the byte limit",
+          "passed": true,
+          "evidence": {
+            "bytes": 12,
+            "limit": 11,
+            "read": 12
+          }
+        },
+        {
+          "name": "UTF-16 BOM exact limit stays compatible",
+          "passed": true,
+          "evidence": {
+            "bytes": 8,
+            "limit": 8,
+            "read": 8
+          }
+        },
+        {
+          "name": "UTF-8 BOM exact limit stays compatible",
+          "passed": true,
+          "evidence": {
+            "bytes": 8,
+            "limit": 8,
+            "read": 8
+          }
+        },
+        {
+          "name": "Byte reader stops at limit plus one without draining the body",
+          "passed": true,
+          "evidence": {
+            "read": 11
+          }
+        },
+        {
+          "name": "Malformed legacy write is rejected before creating an object",
+          "passed": true,
+          "evidence": {
+            "error": "Unexpected content after JSON value. At character 39.",
+            "code": "invalid_json",
+            "requestAccepted": false
+          }
+        },
+        {
+          "name": "Malformed queue envelope is rejected before issuing a ticket",
+          "passed": true,
+          "evidence": {
+            "error": "Unexpected content after JSON value. At character 39.",
+            "code": "invalid_json",
+            "requestAccepted": false
+          }
+        },
+        {
+          "name": "Malformed inner write is rejected before issuing a ticket",
+          "passed": true,
+          "evidence": {
+            "error": "Unexpected content after JSON value. At character 39.",
+            "code": "invalid_json",
+            "requestAccepted": false
+          }
+        },
+        {
+          "name": "Valid chunked queue request is still accepted",
+          "passed": true,
+          "evidence": {
+            "status": 202
+          }
+        },
+        {
+          "name": "Valid legacy request is still accepted",
+          "passed": true,
+          "evidence": {
+            "status": 200
+          }
+        },
+        {
+          "name": "Invalid deferred input is refused before a native operation starts",
+          "passed": true,
+          "evidence": {
+            "error": "Unexpected content after JSON value. At character 27.",
+            "code": "invalid_json",
+            "requestAccepted": false
+          }
+        },
+        {
+          "name": "Queue envelope field types are checked before dispatch",
+          "passed": true,
+          "evidence": true
+        },
+        {
+          "name": "Guarded submission rejects malformed input before consuming its identity",
+          "passed": true,
+          "evidence": {
+            "rejectedStatus": 400,
+            "acceptedStatus": 202,
+            "duplicateStatus": 202
+          }
+        },
+        {
+          "name": "Actual chunked Unicode body cannot exceed the 32 MiB byte limit",
+          "passed": true,
+          "evidence": {
+            "status": 413,
+            "sentEntityBytes": 33554433,
+            "preparedCharacters": 12582920,
+            "preparedBytes": 37748744
+          }
+        },
+        {
+          "name": "Origin rejection still precedes parsing",
+          "passed": true,
+          "evidence": {
+            "error": "Forbidden: only local, non-browser clients may call the MCP bridge"
+          }
+        }
+      ]
+    }
+  },
+  "minimumApi": {
+    "unityVersion": "2021.3.18f1",
+    "passed": true,
+    "referenceCount": 211,
+    "log": "C:\\Users\\Francois\\orca\\workspaces\\unity-mcp-server\\validation\\Unity2021\\api-check-HTTPMONITOR\\compiler.log",
+    "packageAssemblies": [
+      {
+        "sha256": "AF83F70ECAC09EE676571E37C62595B7FF26148B636CE498F9151A2F7A9697A3",
+        "file": "C:\\Users\\Francois\\orca\\workspaces\\unity-mcp-server\\validation\\Editors\\2021.3.18f1\\Editor\\Data\\Resources\\PackageManager\\ProjectTemplates\\libcache\\com.unity.template.universal-2d-1.1.4\\ScriptAssemblies\\UnityEngine.UI.dll"
+      },
+      {
+        "sha256": "AAAF5BC1E371F6CFA67138DCB6E77634A8075D30E0C1DF27670A5B0028CC5523",
+        "file": "C:\\Users\\Francois\\orca\\workspaces\\unity-mcp-server\\validation\\Editors\\2021.3.18f1\\Editor\\Data\\Resources\\PackageManager\\ProjectTemplates\\libcache\\com.unity.template.universal-2d-1.1.4\\ScriptAssemblies\\UnityEngine.TestRunner.dll"
+      },
+      {
+        "sha256": "6995901F60508B79F4B648FE2E3B64D8D1BD545B3CB3817134F079842FA82832",
+        "file": "C:\\Users\\Francois\\orca\\workspaces\\unity-mcp-server\\validation\\Editors\\2021.3.18f1\\Editor\\Data\\Resources\\PackageManager\\ProjectTemplates\\libcache\\com.unity.template.universal-2d-1.1.4\\ScriptAssemblies\\UnityEditor.TestRunner.dll"
+      }
+    ],
+    "excludedIntegrations": [
+      "UMA",
+      "ProBuilder"
+    ],
+    "sourceCount": 74,
+    "check": "C# compilation against installed Unity assemblies; no editor execution or package import",
+    "exitCode": 0
+  },
+  "live": {
+    "current-node22": {
+      "nodeVersion": "v22.18.0",
+      "passed": true,
+      "checks": [
+        {
+          "name": "Twelve overlapping MCP calls preserve aggregate invariants",
+          "passed": true,
+          "before": {
+            "startedAtUtc": "2026-10-01T03:54:03.2656117Z",
+            "receivedRequests": 11,
+            "completedRequests": 10,
+            "activeRequests": 1,
+            "peakActiveRequests": 1,
+            "responses2xx": 10,
+            "responses4xx": 0,
+            "responses5xx": 0,
+            "otherResponses": 0,
+            "incompleteRequests": 0,
+            "abortedRequests": 0,
+            "inputRejectedRequests": 0,
+            "inputBytesRead": 206,
+            "outputBytesWritten": 4657,
+            "responseSerializationFailures": 0,
+            "averageDurationMs": 36.06267999999999,
+            "maxDurationMs": 105.4725,
+            "domainReloadCount": 0,
+            "lastDomainReloadMs": 0,
+            "activeRequestsAtLastReload": 0
+          },
+          "after": {
+            "startedAtUtc": "2026-10-01T03:54:03.2656117Z",
+            "receivedRequests": 56,
+            "completedRequests": 55,
+            "activeRequests": 1,
+            "peakActiveRequests": 4,
+            "responses2xx": 55,
+            "responses4xx": 0,
+            "responses5xx": 0,
+            "otherResponses": 0,
+            "incompleteRequests": 0,
+            "abortedRequests": 0,
+            "inputRejectedRequests": 0,
+            "inputBytesRead": 2678,
+            "outputBytesWritten": 24036,
+            "responseSerializationFailures": 0,
+            "averageDurationMs": 6.756574545454547,
+            "maxDurationMs": 105.4725,
+            "domainReloadCount": 0,
+            "lastDomainReloadMs": 0,
+            "activeRequestsAtLastReload": 0
+          }
+        },
+        {
+          "name": "Command failure is not mislabeled as an HTTP failure",
+          "passed": true
+        },
+        {
+          "name": "Input refused before ticket creation is visible through MCP",
+          "passed": true,
+          "counters": {
+            "startedAtUtc": "2026-10-01T03:54:03.2656117Z",
+            "receivedRequests": 68,
+            "completedRequests": 67,
+            "activeRequests": 1,
+            "peakActiveRequests": 4,
+            "responses2xx": 66,
+            "responses4xx": 1,
+            "responses5xx": 0,
+            "otherResponses": 0,
+            "incompleteRequests": 0,
+            "abortedRequests": 0,
+            "inputRejectedRequests": 1,
+            "inputBytesRead": 3586,
+            "outputBytesWritten": 46122,
+            "responseSerializationFailures": 0,
+            "averageDurationMs": 5.628804477611942,
+            "maxDurationMs": 105.4725,
+            "domainReloadCount": 0,
+            "lastDomainReloadMs": 0,
+            "activeRequestsAtLastReload": 0
+          }
+        },
+        {
+          "name": "Actual reload persists reload count and resets HTTP totals",
+          "passed": true,
+          "before": {
+            "startedAtUtc": "2026-10-01T03:54:03.2656117Z",
+            "receivedRequests": 68,
+            "completedRequests": 67,
+            "activeRequests": 1,
+            "peakActiveRequests": 4,
+            "responses2xx": 66,
+            "responses4xx": 1,
+            "responses5xx": 0,
+            "otherResponses": 0,
+            "incompleteRequests": 0,
+            "abortedRequests": 0,
+            "inputRejectedRequests": 1,
+            "inputBytesRead": 3586,
+            "outputBytesWritten": 46122,
+            "responseSerializationFailures": 0,
+            "averageDurationMs": 5.628804477611942,
+            "maxDurationMs": 105.4725,
+            "domainReloadCount": 0,
+            "lastDomainReloadMs": 0,
+            "activeRequestsAtLastReload": 0
+          },
+          "after": {
+            "startedAtUtc": "2026-10-01T03:55:52.2552679Z",
+            "receivedRequests": 4,
+            "completedRequests": 3,
+            "activeRequests": 1,
+            "peakActiveRequests": 1,
+            "responses2xx": 3,
+            "responses4xx": 0,
+            "responses5xx": 0,
+            "otherResponses": 0,
+            "incompleteRequests": 0,
+            "abortedRequests": 0,
+            "inputRejectedRequests": 0,
+            "inputBytesRead": 0,
+            "outputBytesWritten": 1398,
+            "responseSerializationFailures": 0,
+            "averageDurationMs": 98.20633333333335,
+            "maxDurationMs": 134.9421,
+            "domainReloadCount": 1,
+            "lastDomainReloadMs": 1200.1435,
+            "activeRequestsAtLastReload": 0
+          }
+        }
+      ],
+      "unityVersion": "6000.6.2f1"
+    },
+    "released-node22": {
+      "nodeVersion": "v22.18.0",
+      "passed": true,
+      "checks": [
+        {
+          "name": "Twelve overlapping MCP calls preserve aggregate invariants",
+          "passed": true,
+          "before": {
+            "startedAtUtc": "2026-10-01T03:55:52.2552679Z",
+            "receivedRequests": 19,
+            "completedRequests": 18,
+            "activeRequests": 1,
+            "peakActiveRequests": 1,
+            "responses2xx": 18,
+            "responses4xx": 0,
+            "responses5xx": 0,
+            "otherResponses": 0,
+            "incompleteRequests": 0,
+            "abortedRequests": 0,
+            "inputRejectedRequests": 0,
+            "inputBytesRead": 526,
+            "outputBytesWritten": 9098,
+            "responseSerializationFailures": 0,
+            "averageDurationMs": 30.03644444444444,
+            "maxDurationMs": 134.9421,
+            "domainReloadCount": 1,
+            "lastDomainReloadMs": 1200.1435,
+            "activeRequestsAtLastReload": 0
+          },
+          "after": {
+            "startedAtUtc": "2026-10-01T03:55:52.2552679Z",
+            "receivedRequests": 58,
+            "completedRequests": 57,
+            "activeRequests": 1,
+            "peakActiveRequests": 4,
+            "responses2xx": 57,
+            "responses4xx": 0,
+            "responses5xx": 0,
+            "otherResponses": 0,
+            "incompleteRequests": 0,
+            "abortedRequests": 0,
+            "inputRejectedRequests": 0,
+            "inputBytesRead": 1558,
+            "outputBytesWritten": 26127,
+            "responseSerializationFailures": 0,
+            "averageDurationMs": 9.66140877192983,
+            "maxDurationMs": 134.9421,
+            "domainReloadCount": 1,
+            "lastDomainReloadMs": 1200.1435,
+            "activeRequestsAtLastReload": 0
+          }
+        },
+        {
+          "name": "Command failure is not mislabeled as an HTTP failure",
+          "passed": true
+        },
+        {
+          "name": "Input refused before ticket creation is visible through MCP",
+          "passed": true,
+          "counters": {
+            "startedAtUtc": "2026-10-01T03:55:52.2552679Z",
+            "receivedRequests": 68,
+            "completedRequests": 67,
+            "activeRequests": 1,
+            "peakActiveRequests": 4,
+            "responses2xx": 65,
+            "responses4xx": 2,
+            "responses5xx": 0,
+            "otherResponses": 0,
+            "incompleteRequests": 0,
+            "abortedRequests": 0,
+            "inputRejectedRequests": 2,
+            "inputBytesRead": 2340,
+            "outputBytesWritten": 45425,
+            "responseSerializationFailures": 0,
+            "averageDurationMs": 8.293462686567167,
+            "maxDurationMs": 134.9421,
+            "domainReloadCount": 1,
+            "lastDomainReloadMs": 1200.1435,
+            "activeRequestsAtLastReload": 0
+          }
+        },
+        {
+          "name": "Actual reload persists reload count and resets HTTP totals",
+          "passed": true,
+          "before": {
+            "startedAtUtc": "2026-10-01T03:55:52.2552679Z",
+            "receivedRequests": 68,
+            "completedRequests": 67,
+            "activeRequests": 1,
+            "peakActiveRequests": 4,
+            "responses2xx": 65,
+            "responses4xx": 2,
+            "responses5xx": 0,
+            "otherResponses": 0,
+            "incompleteRequests": 0,
+            "abortedRequests": 0,
+            "inputRejectedRequests": 2,
+            "inputBytesRead": 2340,
+            "outputBytesWritten": 45425,
+            "responseSerializationFailures": 0,
+            "averageDurationMs": 8.293462686567167,
+            "maxDurationMs": 134.9421,
+            "domainReloadCount": 1,
+            "lastDomainReloadMs": 1200.1435,
+            "activeRequestsAtLastReload": 0
+          },
+          "after": {
+            "startedAtUtc": "2026-10-01T03:56:13.4930691Z",
+            "receivedRequests": 6,
+            "completedRequests": 5,
+            "activeRequests": 1,
+            "peakActiveRequests": 2,
+            "responses2xx": 5,
+            "responses4xx": 0,
+            "responses5xx": 0,
+            "otherResponses": 0,
+            "incompleteRequests": 0,
+            "abortedRequests": 0,
+            "inputRejectedRequests": 0,
+            "inputBytesRead": 0,
+            "outputBytesWritten": 2330,
+            "responseSerializationFailures": 0,
+            "averageDurationMs": 93.01885999999999,
+            "maxDurationMs": 260.4084,
+            "domainReloadCount": 2,
+            "lastDomainReloadMs": 1117.2268,
+            "activeRequestsAtLastReload": 0
+          }
+        }
+      ],
+      "unityVersion": "6000.6.2f1"
+    },
+    "current-node18": {
+      "nodeVersion": "v18.20.8",
+      "passed": true,
+      "checks": [
+        {
+          "name": "Twelve overlapping MCP calls preserve aggregate invariants",
+          "passed": true,
+          "before": {
+            "startedAtUtc": "2026-10-01T03:56:13.4930691Z",
+            "receivedRequests": 21,
+            "completedRequests": 20,
+            "activeRequests": 1,
+            "peakActiveRequests": 2,
+            "responses2xx": 20,
+            "responses4xx": 0,
+            "responses5xx": 0,
+            "otherResponses": 0,
+            "incompleteRequests": 0,
+            "abortedRequests": 0,
+            "inputRejectedRequests": 0,
+            "inputBytesRead": 406,
+            "outputBytesWritten": 9159,
+            "responseSerializationFailures": 0,
+            "averageDurationMs": 38.849000000000004,
+            "maxDurationMs": 260.4084,
+            "domainReloadCount": 2,
+            "lastDomainReloadMs": 1117.2268,
+            "activeRequestsAtLastReload": 0
+          },
+          "after": {
+            "startedAtUtc": "2026-10-01T03:56:13.4930691Z",
+            "receivedRequests": 66,
+            "completedRequests": 65,
+            "activeRequests": 1,
+            "peakActiveRequests": 5,
+            "responses2xx": 65,
+            "responses4xx": 0,
+            "responses5xx": 0,
+            "otherResponses": 0,
+            "incompleteRequests": 0,
+            "abortedRequests": 0,
+            "inputRejectedRequests": 0,
+            "inputBytesRead": 2878,
+            "outputBytesWritten": 28567,
+            "responseSerializationFailures": 0,
+            "averageDurationMs": 12.113864615384617,
+            "maxDurationMs": 260.4084,
+            "domainReloadCount": 2,
+            "lastDomainReloadMs": 1117.2268,
+            "activeRequestsAtLastReload": 0
+          }
+        },
+        {
+          "name": "Command failure is not mislabeled as an HTTP failure",
+          "passed": true
+        },
+        {
+          "name": "Input refused before ticket creation is visible through MCP",
+          "passed": true,
+          "counters": {
+            "startedAtUtc": "2026-10-01T03:56:13.4930691Z",
+            "receivedRequests": 78,
+            "completedRequests": 77,
+            "activeRequests": 1,
+            "peakActiveRequests": 5,
+            "responses2xx": 76,
+            "responses4xx": 1,
+            "responses5xx": 0,
+            "otherResponses": 0,
+            "incompleteRequests": 0,
+            "abortedRequests": 0,
+            "inputRejectedRequests": 1,
+            "inputBytesRead": 3786,
+            "outputBytesWritten": 50686,
+            "responseSerializationFailures": 0,
+            "averageDurationMs": 10.303841558441558,
+            "maxDurationMs": 260.4084,
+            "domainReloadCount": 2,
+            "lastDomainReloadMs": 1117.2268,
+            "activeRequestsAtLastReload": 0
+          }
+        },
+        {
+          "name": "Actual reload persists reload count and resets HTTP totals",
+          "passed": true,
+          "before": {
+            "startedAtUtc": "2026-10-01T03:56:13.4930691Z",
+            "receivedRequests": 78,
+            "completedRequests": 77,
+            "activeRequests": 1,
+            "peakActiveRequests": 5,
+            "responses2xx": 76,
+            "responses4xx": 1,
+            "responses5xx": 0,
+            "otherResponses": 0,
+            "incompleteRequests": 0,
+            "abortedRequests": 0,
+            "inputRejectedRequests": 1,
+            "inputBytesRead": 3786,
+            "outputBytesWritten": 50686,
+            "responseSerializationFailures": 0,
+            "averageDurationMs": 10.303841558441558,
+            "maxDurationMs": 260.4084,
+            "domainReloadCount": 2,
+            "lastDomainReloadMs": 1117.2268,
+            "activeRequestsAtLastReload": 0
+          },
+          "after": {
+            "startedAtUtc": "2026-10-01T03:56:33.7682159Z",
+            "receivedRequests": 4,
+            "completedRequests": 3,
+            "activeRequests": 1,
+            "peakActiveRequests": 1,
+            "responses2xx": 3,
+            "responses4xx": 0,
+            "responses5xx": 0,
+            "otherResponses": 0,
+            "incompleteRequests": 0,
+            "abortedRequests": 0,
+            "inputRejectedRequests": 0,
+            "inputBytesRead": 0,
+            "outputBytesWritten": 1398,
+            "responseSerializationFailures": 0,
+            "averageDurationMs": 64.62793333333333,
+            "maxDurationMs": 89.8732,
+            "domainReloadCount": 3,
+            "lastDomainReloadMs": 1239.1374,
+            "activeRequestsAtLastReload": 0
+          }
+        }
+      ],
+      "unityVersion": "6000.6.2f1"
+    },
+    "released-node18": {
+      "nodeVersion": "v18.20.8",
+      "passed": true,
+      "checks": [
+        {
+          "name": "Twelve overlapping MCP calls preserve aggregate invariants",
+          "passed": true,
+          "before": {
+            "startedAtUtc": "2026-10-01T03:56:33.7682159Z",
+            "receivedRequests": 19,
+            "completedRequests": 18,
+            "activeRequests": 1,
+            "peakActiveRequests": 1,
+            "responses2xx": 18,
+            "responses4xx": 0,
+            "responses5xx": 0,
+            "otherResponses": 0,
+            "incompleteRequests": 0,
+            "abortedRequests": 0,
+            "inputRejectedRequests": 0,
+            "inputBytesRead": 526,
+            "outputBytesWritten": 9104,
+            "responseSerializationFailures": 0,
+            "averageDurationMs": 21.966805555555553,
+            "maxDurationMs": 93.956,
+            "domainReloadCount": 3,
+            "lastDomainReloadMs": 1239.1374,
+            "activeRequestsAtLastReload": 0
+          },
+          "after": {
+            "startedAtUtc": "2026-10-01T03:56:33.7682159Z",
+            "receivedRequests": 58,
+            "completedRequests": 57,
+            "activeRequests": 1,
+            "peakActiveRequests": 5,
+            "responses2xx": 57,
+            "responses4xx": 0,
+            "responses5xx": 0,
+            "otherResponses": 0,
+            "incompleteRequests": 0,
+            "abortedRequests": 0,
+            "inputRejectedRequests": 0,
+            "inputBytesRead": 1558,
+            "outputBytesWritten": 26141,
+            "responseSerializationFailures": 0,
+            "averageDurationMs": 7.0973877192982435,
+            "maxDurationMs": 93.956,
+            "domainReloadCount": 3,
+            "lastDomainReloadMs": 1239.1374,
+            "activeRequestsAtLastReload": 0
+          }
+        },
+        {
+          "name": "Command failure is not mislabeled as an HTTP failure",
+          "passed": true
+        },
+        {
+          "name": "Input refused before ticket creation is visible through MCP",
+          "passed": true,
+          "counters": {
+            "startedAtUtc": "2026-10-01T03:56:33.7682159Z",
+            "receivedRequests": 68,
+            "completedRequests": 67,
+            "activeRequests": 1,
+            "peakActiveRequests": 5,
+            "responses2xx": 65,
+            "responses4xx": 2,
+            "responses5xx": 0,
+            "otherResponses": 0,
+            "incompleteRequests": 0,
+            "abortedRequests": 0,
+            "inputRejectedRequests": 2,
+            "inputBytesRead": 2340,
+            "outputBytesWritten": 45440,
+            "responseSerializationFailures": 0,
+            "averageDurationMs": 6.114049253731341,
+            "maxDurationMs": 93.956,
+            "domainReloadCount": 3,
+            "lastDomainReloadMs": 1239.1374,
+            "activeRequestsAtLastReload": 0
+          }
+        },
+        {
+          "name": "Actual reload persists reload count and resets HTTP totals",
+          "passed": true,
+          "before": {
+            "startedAtUtc": "2026-10-01T03:56:33.7682159Z",
+            "receivedRequests": 68,
+            "completedRequests": 67,
+            "activeRequests": 1,
+            "peakActiveRequests": 5,
+            "responses2xx": 65,
+            "responses4xx": 2,
+            "responses5xx": 0,
+            "otherResponses": 0,
+            "incompleteRequests": 0,
+            "abortedRequests": 0,
+            "inputRejectedRequests": 2,
+            "inputBytesRead": 2340,
+            "outputBytesWritten": 45440,
+            "responseSerializationFailures": 0,
+            "averageDurationMs": 6.114049253731341,
+            "maxDurationMs": 93.956,
+            "domainReloadCount": 3,
+            "lastDomainReloadMs": 1239.1374,
+            "activeRequestsAtLastReload": 0
+          },
+          "after": {
+            "startedAtUtc": "2026-10-01T03:56:55.2474362Z",
+            "receivedRequests": 5,
+            "completedRequests": 4,
+            "activeRequests": 1,
+            "peakActiveRequests": 2,
+            "responses2xx": 4,
+            "responses4xx": 0,
+            "responses5xx": 0,
+            "otherResponses": 0,
+            "incompleteRequests": 0,
+            "abortedRequests": 0,
+            "inputRejectedRequests": 0,
+            "inputBytesRead": 0,
+            "outputBytesWritten": 1864,
+            "responseSerializationFailures": 0,
+            "averageDurationMs": 108.257575,
+            "maxDurationMs": 351.1872,
+            "domainReloadCount": 4,
+            "lastDomainReloadMs": 1130.8986,
+            "activeRequestsAtLastReload": 0
+          }
+        }
+      ],
+      "unityVersion": "6000.6.2f1"
+    }
+  },
+  "serverTests": {
+    "node": "22.18.0",
+    "passed": 195,
+    "failed": 0
+  },
+  "limits": [
+    "Windows Unity 6000.6.2f1 only for runtime checks",
+    "Unity 2021 compiler-only; real editor execution deferred by maintainer",
+    "Refresh measurements exclude attached-panel layout/rendering and whole HTTP overhead",
+    "HTTP successful writes do not prove client receipt",
+    "Reload duration excludes script compilation and does not establish bridge readiness"
+  ]
+}

@@ -4252,7 +4252,7 @@ export const editorTools = [
   {
     name: "unity_queue_info",
     description:
-      "Get the current state of the multi-agent request queue: total queued requests, active agents, per-agent queue depths, and completed cache size. Useful for monitoring when multiple agents are working on the same Unity project.",
+      "Get queued/running counts, per-agent queue depths and completed cache size. Newer plugins also return aggregate HTTP statuses, active/peak requests, body bytes, input rejections, handler timings and domain reload metadata in http. HTTP counters reset on domain reload and count discovery/polling too; command outcomes remain in agent sessions.",
     inputSchema: { type: "object", properties: {} },
     handler: async () => formatResult(await bridge.getQueueInfo()),
   },

@@ -53,7 +53,7 @@ The policy bounds inactive session retention, not all memory used by active requ
 
 ## Evidence and limits
 
-The [Dashboard guide](dashboard.md) covers card reuse, section persistence and the meaning of **Latest request**. Its dedicated batch suite and attached-window checks supplement the earlier monitoring-label tests below; the local refresh measurements exclude panel layout and rendering.
+The [Dashboard guide](dashboard.md) covers card reuse, section persistence and the meaning of **Latest request**. Its dedicated batch suite and attached-window checks supplement the earlier monitoring-label tests below; the local refresh measurements exclude panel layout and rendering. The additive [HTTP diagnostics](http-monitoring.md) describe requests refused before ticket creation, response status/bytes, handler durations and domain reloads; these counters remain separate from command outcomes.
 
 Compilation has separate [code-execution diagnostics](code-execution.md) in `unity_editor_state.codeExecution`. These describe retained Roslyn metadata and loaded snippets for the current editor, rather than per-agent queue statistics. The image-byte counter is not total editor memory.
 

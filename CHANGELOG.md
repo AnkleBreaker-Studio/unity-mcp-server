@@ -4,6 +4,10 @@ All notable changes to this package will be documented in this file.
 
 ## [Unreleased]
 
+### HTTP monitoring validation
+- Add an opt-in live MCP suite for concurrent traffic, command/HTTP outcome separation, refused input and actual domain reload, including released-server compatibility.
+- Document the companion plugin's additive HTTP counters, reload metadata and lighter Dashboard queue snapshots with controlled and live evidence.
+
 ### Request input validation
 - Check the complete UTF-8 queue envelope against the plugin's advertised byte limit before upload. Report explicit non-acceptance without retries; retain older-plugin behavior when metadata is absent or invalid.
 - Add ten server checks and an opt-in live suite for current/released servers on Node 18/22. Document plugin grammar/depth/value validation before dispatch and the separate input/output limits.

@@ -1,5 +1,7 @@
 # Dashboard behavior and measurements
 
+The [HTTP monitoring update](http-monitoring.md) adds a collapsed **HTTP Activity** section and typed queue snapshots. Its newer report measures the complete idle refresh at 30,400 allocation events per 100 iterations, with zero events in the unchanged queue and HTTP sections. The earlier measurements below remain the baseline evidence for agent-card reuse.
+
 Open **Window → AB Unity MCP → Dashboard** in the editor you want to inspect. The header identifies the project directory and Unity version. Bridge controls, the request queue, agent sessions and recent actions come before project context, feature categories, news and settings. News starts collapsed; each section remembers its open/closed state for that project path on the current machine.
 
 Each agent keeps its own card while its displayed metrics change. Completed, outstanding, command-error, exception and timeout counts remain separate, with average queue wait and processing time. **Latest request** means the most recently submitted request; it can be waiting or already finished. It does not identify the operation currently executing. The queue section provides the pending/running totals. See [monitoring semantics](queue-monitoring.md) for the underlying fields.
