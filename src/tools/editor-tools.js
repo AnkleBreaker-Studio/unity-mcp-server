@@ -4485,7 +4485,7 @@ export const editorTools = [
         },
         clearStuck: {
           type: "boolean",
-          description: "Force-clear a stuck test job before starting a new one",
+          description: "Clear the active MCP test job. Start the next run in a separate call after Unity finishes cleanup. Updated plugins request native cancellation when supported and do nothing if no job is active.",
         },
       },
     },

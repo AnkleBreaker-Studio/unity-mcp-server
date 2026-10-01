@@ -4,6 +4,10 @@ All notable changes to this package will be documented in this file.
 
 ## [Unreleased]
 
+### Test Runner validation
+- Add an opt-in live fixture for EditMode/PlayMode results, real prebuild failures, native cancellation, cleanup admission and restored settings. Keep released-server checks available through an explicit server entry point.
+- Clarify that clearing a job and starting its replacement are separate calls. Document the companion plugin's lifecycle fixes, cancellation diagnostics, UTC restoration and remaining limits in `docs/testing.md`.
+
 ### Package Manager validation
 - Add an opt-in live package workflow covering list/info/search, overlapping reads, command errors and a local package add/remove cycle with manifest restoration.
 - Validate the plugin's deferred package scheduler on Node 18 and 22, including sequential compatibility with the released server. See `docs/packages.md` for measured editor waits, timeouts and remaining coverage.

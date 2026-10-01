@@ -45,6 +45,7 @@ Discovery distinguishes recognized identities, unavailable endpoints and unrecog
 | Listener, dispatch, reload lifecycle | `MCPBridgeServer.cs`, `MCPBridgeServer.Routes.g.cs` | Queue and legacy entry paths, route category checks, startup/stop/restart. The generated route list has a drift check. |
 | Scheduling and observability | `MCPRequestQueue.cs`, `MCPAgentSession.cs` | Ticket indexes, read batching, fair writes, sessions, timing and retention. |
 | Package operations | `MCPPackageManagerCommands.cs` | Sequential native requests polled on editor updates; expired pending work is dropped while started work retains its slot. [Contracts and validation](packages.md). |
+| Test jobs | `MCPTestRunnerCommands.cs` | One active job per editor, callbacks bound to its identity, native cleanup admission and restoration of Play Mode settings. [Failure, cancellation and reload limits](testing.md). |
 | Undo and history | `MCPActionHistory.cs`, `MCPActionRecord.cs`, `MCPUndoCommands.cs` | Supported synchronous writes get named groups; deferred operations do not collapse interleaved groups. |
 | Discovery | `MCPInstanceRegistry.cs` | Cross-process registry locking, identity, port affinity, clone metadata and heartbeat. |
 | Settings and diagnostics UI | `MCPSettingsManager.cs`, dashboard/toolbar/self-test classes | Categories, startup policy, agent visibility and safe feature probes. |

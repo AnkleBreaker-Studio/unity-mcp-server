@@ -25,7 +25,8 @@
     "test:responses": "node --test tests/live-response-limits.test.mjs",
     "test:cancellation": "node --test tests/live-cancellation.test.mjs",
     "test:discovery": "node --test tests/live-discovery-identity.test.mjs",
-    "test:packages": "node --test tests/live-packages.test.mjs"
+    "test:packages": "node --test tests/live-packages.test.mjs",
+    "test:testing": "node --test tests/live-testing.test.mjs"
   },
   "dependencies": {
     "@modelcontextprotocol/sdk": "1.27.1"

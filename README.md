@@ -128,6 +128,7 @@ The plugin declares **Unity 2021.3.18f1+** support. Server and plugin versions a
 | Multiplayer Play Mode 3.0 | Host/Client launch, separate agent routing and shared script recompilation. Game networking and ParrelSync lifecycle need separate validation. [Multiplayer guide](docs/multiplayer.md) |
 | Scene and asset editing | Enums, references, prefabs, rejected-write preservation and Scene capture cleanup. [Editor workflows](docs/editor-workflows.md) |
 | Package Manager | Requests yield between editor updates and remain sequential; list/search/info and local add/remove pass with current and released servers. [Package guide](docs/packages.md) |
+| Test Runner | Startup/prebuild failures release jobs and restore settings; native cancellation and cleanup guard the next run. [Testing guide](docs/testing.md) |
 | Unity 6.6 builds | Five Windows Mono builds verify managed diagnostics and restoration of project settings. Other platforms and IL2CPP remain untested. [Build guide](docs/builds.md) |
 | UMA V3.1f1 | Asset creation, race changes and recipe renames, with the integration isolated from the core bridge. [UMA guide](docs/uma.md) |
 
