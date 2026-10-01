@@ -29,7 +29,8 @@
     "test:testing": "node --test tests/live-testing.test.mjs",
     "test:test-persistence": "node --test tests/live-test-persistence.test.mjs",
     "test:serialization": "node --test tests/live-serialization.test.mjs",
-    "test:http-responses": "node --test tests/live-http-response-limit.test.mjs"
+    "test:http-responses": "node --test tests/live-http-response-limit.test.mjs",
+    "test:undo": "node --test tests/live-undo.test.mjs"
   },
   "dependencies": {
     "@modelcontextprotocol/sdk": "1.27.1"

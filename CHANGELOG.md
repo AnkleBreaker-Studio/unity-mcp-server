@@ -4,6 +4,10 @@ All notable changes to this package will be documented in this file.
 
 ## [Unreleased]
 
+### Native Undo validation
+- Add an opt-in MCP suite for transform rollback, multiple agents, native Undo/Redo, clearing, explicit native cascades and action identity through actual script reload.
+- Clarify targeted group-revert behavior, its lack of Redo, current native eligibility and the companion plugin's additive recovery fields in tool descriptions and `docs/undo.md`.
+
 ### HTTP response downloads
 - Bound incoming decompressed editor HTTP bodies before JSON parsing with `UNITY_HTTP_RESPONSE_LIMIT` (32 MiB by default). Preserve exact-limit UTF-8 decoding, cancellation and body deadlines.
 - Stop retries after overflow; report unknown outcomes after submission with known recovery identifiers. Cover queue, legacy, discovery, diagnostics and context paths without changing tool schemas.

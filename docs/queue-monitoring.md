@@ -20,6 +20,8 @@ Classification follows the server's direct-result rules for dictionaries, anonym
 
 ## Action history
 
+Undo eligibility is checked against Unity's current native stack, including native Undo/Redo, clearing and session identity. A targeted revert also accounts for newer native groups outside retained MCP history. See [Undo and multi-agent cascade protection](undo.md).
+
 The winning terminal transition creates one history record, including deferred callbacks and queued/executing timeouts. Duplicate or late callbacks cannot create additional records or change counters. History and `undo/history` add `commandFailed` without changing the original `status`; the dashboard, details and copied text display **Command error** for recognized handler failures. Supported synchronous undo groups retain their previous behavior; a command error can still follow partial changes.
 
 Callbacks can arrive on worker threads, so target inspection and history insertion run on the editor thread. A buffer retains at most 10,000 pending records. Each routine drain processes up to 100 records, before scheduling and again after a nonempty request batch. Explicit history queries and `undo/last` drain the bounded backlog before choosing an action, so a recently completed edit cannot be hidden behind older callbacks. Clearing history also clears pending records. If callbacks overwhelm this buffer, the oldest history records are dropped and counted; ticket results and session outcome counters remain intact. This is a record-count bound, not a byte bound on retained results.

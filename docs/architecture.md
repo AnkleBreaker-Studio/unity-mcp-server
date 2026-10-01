@@ -49,7 +49,7 @@ Discovery distinguishes recognized identities, unavailable endpoints and unrecog
 | Package operations | `MCPPackageManagerCommands.cs` | Sequential native requests polled on editor updates; expired pending work is dropped while started work retains its slot. [Contracts and validation](packages.md). |
 | Test jobs | `MCPTestRunnerCommands.cs`, `MCPTestRunnerPersistence.cs` | One active job per editor, callbacks bound to its identity, native cleanup admission and restoration of Play Mode settings. [Failure, cancellation and reload limits](testing.md). |
 | Result serialization | `MiniJson.cs`, `MCPEditorCommands.cs` | Global conversion/traversal bounds, early HTTP byte limits and explicit failures after execution. [Contracts](code-execution.md) |
-| Undo and history | `MCPActionHistory.cs`, `MCPActionRecord.cs`, `MCPUndoCommands.cs` | Supported synchronous writes get named groups; deferred operations do not collapse interleaved groups. |
+| Undo and history | `MCPActionHistory.cs`, `MCPActionRecord.cs`, `MCPUndoCommands.cs`, `MCPUndoState.cs` | Native group/session checks, explicit cascade consent and sealed synchronous groups; deferred operations do not collapse interleaved groups. [Undo contract](undo.md) |
 | Discovery | `MCPInstanceRegistry.cs` | Cross-process registry locking, identity, port affinity, clone metadata and heartbeat. |
 | Settings and diagnostics UI | `MCPSettingsManager.cs`, dashboard/toolbar/self-test classes | Categories, startup policy, agent visibility and safe feature probes. |
 | Multiplayer | `MCPScenarioCommands.cs` | Package-dependent scenario and player APIs resolved at runtime; MPPM virtual-player startup policy. |

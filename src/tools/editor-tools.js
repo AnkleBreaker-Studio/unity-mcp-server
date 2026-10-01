@@ -2842,9 +2842,7 @@ export const editorTools = [
   },
   {
     name: "unity_undo_last",
-    description:
-      "Revert the most recent undoable MCP action as a whole (create/edit/boolean, not one internal step — each write runs in its own named undo group). With agentId, targets that agent's most recent action. " +
-      "Unity's undo is LINEAR: reverting an action also reverts anything newer stacked on it, so this refuses to cascade and lists what would be affected unless force:true. (execute-code and reads are never targets.)",
+    description: "Revert the latest verified MCP Undo group, optionally by agentId. Newer MCP/native groups require force:true. Only Unity-registered changes are covered; this revert creates no Redo step. Use unity_undo for normal Undo/Redo. Reads and execute-code are not targets.",
     inputSchema: {
       type: "object",
       properties: {
@@ -2862,7 +2860,7 @@ export const editorTools = [
   },
   {
     name: "unity_undo_history",
-    description: "List recent MCP actions with undo state: per-agent attribution, whether each is still undoable, target, and the current undo group. Use it to decide what unity_undo_last reverts or to pick an agentId.",
+    description: "Show which recorded MCP actions can still be reverted, with agent, target and current Unity Undo state.",
     inputSchema: {
       type: "object",
       properties: {
