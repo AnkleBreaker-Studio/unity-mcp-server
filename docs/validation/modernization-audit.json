@@ -265,5 +265,12 @@
     "tests": 217,
     "failures": 0,
     "verifiedLogJobId": 110272979793
+  },
+  "followUps": {
+    "debugLogging": {
+      "status": "corrected",
+      "report": "debug-logging.json",
+      "agentStateRetentionStillOpen": true
+    }
   }
 }

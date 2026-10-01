@@ -4,6 +4,11 @@ All notable changes to this package will be documented in this file.
 
 ## [Unreleased]
 
+### Debug logging during long sessions
+- Rotate before an append crosses 5 MiB, retaining one previous generation; preserve the existing log path and disabled default.
+- Bound entries to 64 KiB with UTF-8-safe truncation. Keep filesystem/formatting failures out of MCP results and bound stderr diagnostics with a one-second retry delay.
+- Add twelve checks covering repeated rotation, historical files, failure recovery, concurrent processes and actual stdio framing. Document shared-writer and disk-quota limits.
+
 ### Whole-product review
 - Refresh all four released/current server-plugin pairs on Node 18/22 after the mesh changes, including mixed-project agent isolation and unchanged published tool names.
 - Recheck both current READMEs locally and on GitHub, 92 links and primary comparison sources.

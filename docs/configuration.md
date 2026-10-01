@@ -18,7 +18,7 @@
 | `UNITY_REGISTRY_STALENESS_TIMEOUT` | `300000` | Registry entry staleness timeout in ms (crash detection) |
 | `UNITY_RESPONSE_SOFT_LIMIT` | `2097152` | Serialized UTF-8 tool-result warning threshold; minimum 1 byte |
 | `UNITY_RESPONSE_HARD_LIMIT` | `4194304` | Serialized UTF-8 tool/resource-result limit; minimum 1024 bytes; oversized results fail explicitly |
-| `UNITY_MCP_DEBUG` | unset | Set to `1` to append diagnostics to `UnityMCP/mcp-debug.log` (5MB rotation) |
+| `UNITY_MCP_DEBUG` | unset | Set to `1` for diagnostic logging; 5 MiB rotation threshold, one previous generation and 64 KiB entries. [Behavior and limits](debug-logging.md) |
 | `UNITY_MCP_PRETTY_JSON` | unset | Set to `1` to pretty-print tool responses (default is compact JSON — 20-50% fewer tokens) |
 | `UNITY_MCP_COMPACT_TOOLS` | unset | Set to `1` for a smaller tool registry: keeps all 80 exposed tools and schema structure, drops per-parameter prose. For clients with registry size limits. |
 
