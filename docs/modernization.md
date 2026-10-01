@@ -1,10 +1,10 @@
-# Modernization: evidence and remaining work
+# Modernization: delivery evidence and follow-up work
 
-Working branch: `Development-Unity66-Modernization` in both repositories. Baselines: server `826af5c` (2.35.6), plugin `0b8e76f` (2.39.7). Work remains in progress; no release has been published.
+Working branch: `Development-Unity66-Modernization` in both repositories. Baselines: server `826af5c` (2.35.6), plugin `0b8e76f` (2.39.7). The improvement pass is closed for handoff on 2026-10-01; changes are pushed, with no merge or release. See the [delivery summary and validation limits](modernization-audit.md#delivery-checkpoint).
 
 The objective remains a broad improvement of the existing MCP and plugin: backwards compatibility, Unity 6.6, performance, monitoring, multiplayer/multiple projects and documentation with stronger visuals. The current architecture is retained. Improvements must follow understanding and evidence, not assumptions that existing behavior is broken.
 
-The [current goal review](modernization-audit.md) refreshes the full released/current matrix and README checks, maps the original objectives to their evidence, and reproduces two long-session findings: retained agent selections and ineffective ongoing debug-log rotation. [Debug-log rotation and entry bounds](debug-logging.md) and [bounded agent state](agent-state.md) are now corrected and tested. The modernization is not complete.
+The [goal review](modernization-audit.md) records the released/current matrix and README checks, maps the original objectives to their evidence, and reproduces two long-session findings: retained agent selections and ineffective ongoing debug-log rotation. [Debug-log rotation and entry bounds](debug-logging.md) and [bounded agent state](agent-state.md) are now corrected and tested. The delivery summary identifies the latest implementation checks separately from this historical matrix.
 
 Completed-result checkpoint: plugin `63afda5`, server validation `565f4af`. Terminal polling results now have count/cost bounds; pending history keeps scalar metadata instead of full result graphs. Fourteen controlled checks include weak-reference collection, protected replay after eviction, synchronous delivery, custom comparers and capacity accounting. Existing queue/admission/serialization/monitoring regressions, four live current/published-server runs on Node 18/22 and all 76 minimum-version source compilations pass. All eight [server CI jobs](https://github.com/AnkleBreaker-Studio/unity-mcp-server/actions/runs/36844619880) pass 251 tests; the [plugin CI](https://github.com/AnkleBreaker-Studio/unity-mcp-plugin/actions/runs/36844555925) verifies 338 routes. Owned editors and temporary fixtures are cleaned up. See [retention, recovery and accounting limits](result-retention.md). Versions remain unchanged.
 
@@ -138,7 +138,11 @@ This opt-in suite selects by project name and verifies each actual project path.
 
 Local live-editor evidence lives in the sibling workspace directory `../validation/Queue66/`. Unity 6.6.2 runs there. The official Unity 2021.3.18f1 editor was installed separately and used for a passing compiler-only API check, but its batch startup stopped at license initialization. At the maintainer's request, further older-editor execution is deferred and will be revisited for reported compatibility issues. The folders named 6000.0.26f1 and 6000.3.3f1 remain incomplete installations.
 
-## Remaining work before completion
+<a id="remaining-work-before-completion"></a>
+
+## Follow-up candidates and validation limits
+
+The list below preserves the broader audit backlog and its known coverage gaps. It is not a claim of exhaustive validation or a requirement to keep extending this improvement pass. Following the maintainer's request to conclude the overlong session, further native test-discovery optimization was stopped before any production change; its uncommitted measurement fixture was removed. Older Unity execution remains explicitly deferred. Any future work should select a concrete issue or a bounded additional validation target from this list.
 
 The [UMA guide](uma.md) and [report](validation/unity66-uma.json) add a tested optional assembly boundary and fixes for the reproduced UMA 3 compiler/API failures. Generation preserves unrelated folders and existing assets after collisions; renames cover recipe JSON v1/v2/v3 and cached names. The minimal-project health suite and minimum-version compiler check still pass.
 
