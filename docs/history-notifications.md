@@ -23,11 +23,13 @@ Action History observes a revision changed by recording, clearing and loading hi
 
 Counters reset on domain reload. These limits do not bound user-held records, arbitrary subscriber work, record text sizes, per-agent logs, or total process memory. [Persisted files](history-persistence.md) have separate byte/validation limits. The [completed-result policy](result-retention.md) and [queue retention policy](queue-monitoring.md) remain separate.
 
+For native GUI drawing costs, visible-row rendering and texture cleanup, see the [window measurements](history-window.md).
+
 ## Evidence and reproduction
 
 The [report](validation/unity66-history-notifications.json) records the baseline failures and thirteen passing corrected checks. These cover callback count, weak-reference collection after clear, ordered deferred delivery, update allowance, reentrant clear, unsubscribe, failing observers, pressure, idle list reuse, filters and selection.
 
-The local 500-record window fixture, including notification drainage and one final window refresh, measured 136.74 ms and 449,400 recorded allocation bytes before the change, versus 1.39 ms and 67,500 bytes afterward. Both allocation recorders passed a positive control. This measures a controlled unshown window on Windows/Mono, not rendered-frame cost, network latency, gameplay FPS or a competitor benchmark.
+The local 500-record window fixture, including notification drainage and one final window refresh, measured 136.74 ms before the change versus 1.39 ms afterward. The earlier allocation-byte figures and derived percentage were withdrawn: the recorder values were artificial marker durations in nanoseconds, not bytes. The fixture now records allocation-event counts separately and reports the raw recorder unit. This measures a controlled unshown window on Windows/Mono, not rendered-frame cost, network latency, gameplay FPS or a competitor benchmark.
 
 Four real Unity 6000.6.2f1 runs use current/released servers on Node 18/22. Each verifies twelve concurrent MCP reads with ordered, exactly-once observer delivery on the editor thread; synthetic 10,032-record notification pressure with 32 observed drops; clear without stale delivery; and actual script reload with observer release and counter reset. The pressure phase uses the native history API inside an MCP command, not 10,032 HTTP requests. Existing monitoring, completed-result, Dashboard and queue regressions pass. All 76 editor sources also compile against Unity 2021.3 APIs; actual older-editor execution remains deferred.
 

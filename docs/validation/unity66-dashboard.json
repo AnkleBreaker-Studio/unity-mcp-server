@@ -9,15 +9,17 @@
       "iterations": 100,
       "elapsedMs": 38.4829,
       "allocations": 33700,
-      "allocatedBytes": 1043300,
-      "profilerControlAllocations": 1
+      "profilerControlAllocations": 1,
+      "rawRecorderValue": 1043300,
+      "rawRecorderUnit": "TimeNanoseconds"
     },
     "twentyStableAgents": {
       "iterations": 100,
       "elapsedMs": 75.1241,
       "allocations": 96000,
-      "allocatedBytes": 2483600,
-      "profilerControlAllocations": 1
+      "profilerControlAllocations": 1,
+      "rawRecorderValue": 2483600,
+      "rawRecorderUnit": "TimeNanoseconds"
     },
     "unshownActivityDoesNotRebuild": false,
     "visibleMetricsRefresh": true,
@@ -25,8 +27,9 @@
       "iterations": 100,
       "elapsedMs": 274.8611,
       "allocations": 210000,
-      "allocatedBytes": 5624400,
-      "profilerControlAllocations": 1
+      "profilerControlAllocations": 1,
+      "rawRecorderValue": 5624400,
+      "rawRecorderUnit": "TimeNanoseconds"
     },
     "scrollRootsBefore": 1,
     "scrollRootsAfter": 2,
@@ -44,15 +47,17 @@
       "iterations": 100,
       "elapsedMs": 44.6819,
       "allocations": 33400,
-      "allocatedBytes": 996300,
-      "profilerControlAllocations": 1
+      "profilerControlAllocations": 1,
+      "rawRecorderValue": 996300,
+      "rawRecorderUnit": "TimeNanoseconds"
     },
     "twentyStableAgents": {
       "iterations": 100,
       "elapsedMs": 36.7563,
       "allocations": 33400,
-      "allocatedBytes": 876800,
-      "profilerControlAllocations": 1
+      "profilerControlAllocations": 1,
+      "rawRecorderValue": 876800,
+      "rawRecorderUnit": "TimeNanoseconds"
     },
     "unshownActivityDoesNotRebuild": true,
     "visibleMetricsRefresh": true,
@@ -60,8 +65,9 @@
       "iterations": 100,
       "elapsedMs": 47.7809,
       "allocations": 34800,
-      "allocatedBytes": 1077700,
-      "profilerControlAllocations": 1
+      "profilerControlAllocations": 1,
+      "rawRecorderValue": 1077700,
+      "rawRecorderUnit": "TimeNanoseconds"
     },
     "changedAndUnchangedCardsReused": true,
     "oldOutstandingSessionVisible": true,
@@ -147,5 +153,11 @@
     "url": "https://github.com/AnkleBreaker-Studio/unity-mcp-plugin/actions/runs/36776145255",
     "conclusion": "success",
     "routes": 338
+  },
+  "measurementCorrection": {
+    "recordedOn": "2026-10-01",
+    "affectedValues": 6,
+    "reason": "GC.Alloc sample Value was incorrectly labeled allocatedBytes. The native Unity 6000.6.2f1 recorder reports TimeNanoseconds; its artificial marker duration is not allocation size or allocation CPU time.",
+    "preserved": "Original numeric values are retained as rawRecorderValue. Previously recorded allocation-event counts and independent Stopwatch timings are unchanged. This annotation is not a rerun of the historical checks."
   }
 }

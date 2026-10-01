@@ -312,11 +312,12 @@
           "name": "500-record window cost observation",
           "passed": true,
           "evidence": {
-            "allocatedBytes": 64500,
             "elapsedMs": 1.3184,
             "profilerControlAllocations": 1,
             "coalesced": true,
-            "idleReused": true
+            "idleReused": true,
+            "rawRecorderValue": 64500,
+            "rawRecorderUnit": "TimeNanoseconds"
           }
         },
         {
@@ -654,5 +655,11 @@
         }
       ]
     }
+  },
+  "measurementCorrection": {
+    "recordedOn": "2026-10-01",
+    "affectedValues": 1,
+    "reason": "GC.Alloc sample Value was incorrectly labeled allocatedBytes. The native Unity 6000.6.2f1 recorder reports TimeNanoseconds; its artificial marker duration is not allocation size or allocation CPU time.",
+    "preserved": "Original numeric values are retained as rawRecorderValue. Previously recorded allocation-event counts and independent Stopwatch timings are unchanged. This annotation is not a rerun of the historical checks."
   }
 }

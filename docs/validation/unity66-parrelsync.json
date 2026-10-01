@@ -305,22 +305,25 @@
       "iterations": 100,
       "elapsedMs": 22.3367,
       "allocations": 31700,
-      "allocatedBytes": 677500,
-      "profilerControlAllocations": 1
+      "profilerControlAllocations": 1,
+      "rawRecorderValue": 677500,
+      "rawRecorderUnit": "TimeNanoseconds"
     },
     "unchangedQueueSection": {
       "iterations": 100,
       "elapsedMs": 0.0196,
       "allocations": 0,
-      "allocatedBytes": 0,
-      "profilerControlAllocations": 1
+      "profilerControlAllocations": 1,
+      "rawRecorderValue": 0,
+      "rawRecorderUnit": "TimeNanoseconds"
     },
     "unchangedHttpSection": {
       "iterations": 100,
       "elapsedMs": 0.030000000000000002,
       "allocations": 0,
-      "allocatedBytes": 0,
-      "profilerControlAllocations": 1
+      "profilerControlAllocations": 1,
+      "rawRecorderValue": 0,
+      "rawRecorderUnit": "TimeNanoseconds"
     },
     "httpActiveRequestVisible": true,
     "httpRefusalVisible": true,
@@ -329,8 +332,9 @@
       "iterations": 100,
       "elapsedMs": 25.6594,
       "allocations": 31700,
-      "allocatedBytes": 693700,
-      "profilerControlAllocations": 1
+      "profilerControlAllocations": 1,
+      "rawRecorderValue": 693700,
+      "rawRecorderUnit": "TimeNanoseconds"
     },
     "unshownActivityDoesNotRebuild": true,
     "visibleMetricsRefresh": true,
@@ -338,8 +342,9 @@
       "iterations": 100,
       "elapsedMs": 25.1183,
       "allocations": 33100,
-      "allocatedBytes": 717500,
-      "profilerControlAllocations": 1
+      "profilerControlAllocations": 1,
+      "rawRecorderValue": 717500,
+      "rawRecorderUnit": "TimeNanoseconds"
     },
     "changedAndUnchangedCardsReused": true,
     "oldOutstandingSessionVisible": true,
@@ -489,5 +494,11 @@
   "documentation": {
     "localLinksChecked": 170,
     "missing": 0
+  },
+  "measurementCorrection": {
+    "recordedOn": "2026-10-01",
+    "affectedValues": 5,
+    "reason": "GC.Alloc sample Value was incorrectly labeled allocatedBytes. The native Unity 6000.6.2f1 recorder reports TimeNanoseconds; its artificial marker duration is not allocation size or allocation CPU time.",
+    "preserved": "Original numeric values are retained as rawRecorderValue. Previously recorded allocation-event counts and independent Stopwatch timings are unchanged. This annotation is not a rerun of the historical checks."
   }
 }

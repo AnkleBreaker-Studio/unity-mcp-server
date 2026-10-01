@@ -35,7 +35,7 @@ The fixture warms up each case and invokes `RefreshAll` 100 times on an unattach
 
 The changing workload records about **83% fewer allocation events**. Typed snapshots avoid creating the transport dictionaries and timestamp strings for each UI update; unchanged cards keep their controls and text. The public session response stays unchanged.
 
-These local measurements exclude panel layout and rendering. Other Dashboard sections still allocate; idle CPU time did not improve in this recorded run. Timing and allocated-byte readings vary with warmup and scheduling. The results are neither whole-editor performance guarantees nor comparisons with another product.
+These local measurements exclude panel layout and rendering. Other Dashboard sections still allocate; idle CPU time did not improve in this recorded run. Timing varies with warmup and scheduling. Historical raw GC.Alloc values were incorrectly labeled as bytes in JSON reports; those fields are now explicitly marked as raw nanosecond marker values. The allocation-event counts in this table remain unchanged. The results are neither whole-editor performance guarantees nor comparisons with another product.
 
 ## Reproduce
 

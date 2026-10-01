@@ -4,6 +4,11 @@ All notable changes to this package will be documented in this file.
 
 ## [Unreleased]
 
+### Action History drawing and measurement accuracy
+- Add opt-in `test:history-window` for native GUI cost, resource lifetime and eight interactions with current/released servers on Node 18/22.
+- Document visible-row drawing and removal of leaked selection textures in the [window guide](docs/history-window.md).
+- Correct 39 mislabeled allocation-byte values across seven historical reports. Preserve their raw values with units, retain measured event counts/timings, and withdraw the unsupported history byte-reduction percentage.
+
 ### Action history persistence
 - Describe additive `historyPersistence` limits, restoration counts, warnings and failure counters while retaining the tool-catalog size budget.
 - Extend the live Undo fixture to inspect available persistence diagnostics after actual script reload; preserve compatibility with plugins predating these fields.

@@ -127,7 +127,7 @@ The plugin declares **Unity 2021.3.18f1+** support. Server and plugin versions a
 | Multiple editors and reloads | Overlapping calls to two editors, four Play Mode reload configurations and lost-result handling after script reload. [Validation record](docs/modernization.md) |
 | Multiplayer Play Mode 3.0 | Host/Client launch, separate agent routing and shared script recompilation. [Multiplayer guide](docs/multiplayer.md) |
 | ParrelSync 1.5.2 | Native clone identity, independent agents, Play Mode, shared recompilation, settings persistence and clone restart. Gameplay connections need separate validation. [Clone guide](docs/parrelsync.md) |
-| Action History | Bounded deferred observers, grouped window refreshes and stable filters/selection under retention. [History guide and measurements](docs/history-notifications.md) |
+| Action History | Bounded observers, grouped refreshes and visible-row drawing with stable filters/selection. [Notifications](docs/history-notifications.md) · [Window costs and cleanup](docs/history-window.md) |
 | History persistence | Retention-aware loading, bounded snapshots and recovery after failed saves/loads. [Compatibility and recovery](docs/history-persistence.md) |
 | Scene and asset editing | Enums, references, prefabs, rejected-write preservation and Scene capture cleanup. [Editor workflows](docs/editor-workflows.md) |
 | Inline camera images | Explicit camera selection, bounded dimensions, restored render targets and decoded PNG checks with current/released servers. [Capture guide](docs/graphics-capture.md) |

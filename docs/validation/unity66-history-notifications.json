@@ -60,11 +60,12 @@
         "name": "500-record window cost observation",
         "passed": true,
         "evidence": {
-          "allocatedBytes": 449400,
           "elapsedMs": 136.73510000000002,
           "profilerControlAllocations": 1,
           "coalesced": false,
-          "idleReused": false
+          "idleReused": false,
+          "rawRecorderValue": 449400,
+          "rawRecorderUnit": "TimeNanoseconds"
         }
       },
       {
@@ -167,11 +168,12 @@
         "name": "500-record window cost observation",
         "passed": true,
         "evidence": {
-          "allocatedBytes": 67500,
           "elapsedMs": 1.3857000000000002,
           "profilerControlAllocations": 1,
           "coalesced": true,
-          "idleReused": true
+          "idleReused": true,
+          "rawRecorderValue": 67500,
+          "rawRecorderUnit": "TimeNanoseconds"
         }
       },
       {
@@ -203,25 +205,26 @@
   },
   "measurement": {
     "before": {
-      "allocatedBytes": 449400,
       "elapsedMs": 136.73510000000002,
       "profilerControlAllocations": 1,
       "coalesced": false,
-      "idleReused": false
+      "idleReused": false,
+      "rawRecorderValue": 449400,
+      "rawRecorderUnit": "TimeNanoseconds"
     },
     "after": {
-      "allocatedBytes": 67500,
       "elapsedMs": 1.3857000000000002,
       "profilerControlAllocations": 1,
       "coalesced": true,
-      "idleReused": true
+      "idleReused": true,
+      "rawRecorderValue": 67500,
+      "rawRecorderUnit": "TimeNanoseconds"
     },
-    "allocationReductionPercent": 84.97997329773031,
     "scope": "500 native record additions, deferred notification drainage and one final refresh of an unshown Action History window",
     "includesRenderedFrames": false,
     "includesTransport": false,
     "profiler": "GC.Alloc on current thread, positive control required",
-    "note": "GC.GetAllocatedBytesForCurrentThread returned zero in the initial diagnostic and was replaced with the controlled ProfilerRecorder measurement"
+    "note": "The allocated-byte claim and derived reduction percentage were withdrawn after checking the recorder unit. No byte or allocation-event reduction is inferred from the historical raw marker values; independent Stopwatch timings remain valid."
   },
   "live": [
     {
@@ -642,22 +645,25 @@
         "iterations": 100,
         "elapsedMs": 25.7257,
         "allocations": 31700,
-        "allocatedBytes": 702100,
-        "profilerControlAllocations": 1
+        "profilerControlAllocations": 1,
+        "rawRecorderValue": 702100,
+        "rawRecorderUnit": "TimeNanoseconds"
       },
       "unchangedQueueSection": {
         "iterations": 100,
         "elapsedMs": 0.02,
         "allocations": 0,
-        "allocatedBytes": 0,
-        "profilerControlAllocations": 1
+        "profilerControlAllocations": 1,
+        "rawRecorderValue": 0,
+        "rawRecorderUnit": "TimeNanoseconds"
       },
       "unchangedHttpSection": {
         "iterations": 100,
         "elapsedMs": 0.021,
         "allocations": 0,
-        "allocatedBytes": 0,
-        "profilerControlAllocations": 1
+        "profilerControlAllocations": 1,
+        "rawRecorderValue": 0,
+        "rawRecorderUnit": "TimeNanoseconds"
       },
       "httpActiveRequestVisible": true,
       "httpRefusalVisible": true,
@@ -666,8 +672,9 @@
         "iterations": 100,
         "elapsedMs": 24.8735,
         "allocations": 31700,
-        "allocatedBytes": 675600,
-        "profilerControlAllocations": 1
+        "profilerControlAllocations": 1,
+        "rawRecorderValue": 675600,
+        "rawRecorderUnit": "TimeNanoseconds"
       },
       "unshownActivityDoesNotRebuild": true,
       "visibleMetricsRefresh": true,
@@ -675,8 +682,9 @@
         "iterations": 100,
         "elapsedMs": 32.5614,
         "allocations": 33100,
-        "allocatedBytes": 807100,
-        "profilerControlAllocations": 1
+        "profilerControlAllocations": 1,
+        "rawRecorderValue": 807100,
+        "rawRecorderUnit": "TimeNanoseconds"
       },
       "changedAndUnchangedCardsReused": true,
       "oldOutstandingSessionVisible": true,
@@ -820,5 +828,11 @@
   "documentation": {
     "localLinksChecked": 202,
     "missing": 0
+  },
+  "measurementCorrection": {
+    "recordedOn": "2026-10-01",
+    "affectedValues": 9,
+    "reason": "GC.Alloc sample Value was incorrectly labeled allocatedBytes. The native Unity 6000.6.2f1 recorder reports TimeNanoseconds; its artificial marker duration is not allocation size or allocation CPU time.",
+    "preserved": "Original numeric values are retained as rawRecorderValue. Previously recorded allocation-event counts and independent Stopwatch timings are unchanged. This annotation is not a rerun of the historical checks."
   }
 }
