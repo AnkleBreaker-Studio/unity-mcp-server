@@ -4576,7 +4576,7 @@ export const editorTools = [
         },
         maxResults: {
           type: "number",
-          description: "Maximum number of tests to return (default: 200)",
+          description: "Maximum number of tests to return (integer 1-10000, default: 200). Updated plugins set truncated only when another matching test exists.",
         },
       },
     },

@@ -48,7 +48,7 @@ isPlaying = EditorApplication.isPlaying, isCompiling = EditorApplication.isCompi
   };
   const start = async (mode, name) => {
     await idle();
-    const result = await raw("unity_testing_run_tests", { mode, testNames: [name] });
+    const result = await raw("unity_testing_run_tests", { mode, testNames: Array.isArray(name) ? name : [name] });
     assert.ok(result.payload.data?.jobId, result.payloadText);
     return result.payload.data;
   };
@@ -87,6 +87,23 @@ isPlaying = EditorApplication.isPlaying, isCompiling = EditorApplication.isCompi
       await client.callTool("unity_list_advanced_tools", { tool, port });
     const available = await call("unity_testing_list_tests", { mode: "PlayMode", nameFilter: "UnityMcpValidation", maxResults: 20 });
     assert.ok(available.tests.some(item => item.fullName === "UnityMcpValidation.PlayModeCases.Pass"));
+    const fixture = "UnityMcpValidation.EditModeCases.";
+    const exact = await call("unity_testing_list_tests", { mode: "EditMode", nameFilter: fixture + "Pass", maxResults: 1 });
+    assert.equal(exact.totalTests, 1);
+    assert.equal(exact.truncated, false);
+    const cases = await call("unity_testing_list_tests", { mode: "EditMode", nameFilter: fixture + "Parameterized", maxResults: 2 });
+    assert.equal(cases.totalTests, 2);
+    assert.equal(cases.truncated, false);
+    assert.ok(cases.tests.every(item => item.fullName.includes("Parameterized(")));
+    const limited = await call("unity_testing_list_tests", { mode: "EditMode", nameFilter: fixture + "Parameterized", maxResults: 1 });
+    assert.equal(limited.totalTests, 1);
+    assert.equal(limited.truncated, true);
+    for (const maxResults of [0, -1, 1.5, 10001]) {
+      const invalid = await raw("unity_testing_list_tests", { mode: "EditMode", maxResults });
+      assert.equal(invalid.isError, true);
+      assert.match(invalid.payloadText, /maxResults must be an integer/);
+    }
+    report.checks.push("Actual parameterized discovery, exact/over-limit truncation and rejected invalid limits");
     await code("EditorSettings.enterPlayModeOptions = EnterPlayModeOptions.DisableSceneReload; return true;");
     const expected = await config();
 
@@ -99,6 +116,23 @@ isPlaying = EditorApplication.isPlaying, isCompiling = EditorApplication.isCompi
     }
     report.checks.push("Real EditMode pass/failure and detailed results");
 
+    const mixed = await terminal(await start("EditMode", ["Pass", "Fail", "Skip", "Inconclusive"].map(name => fixture + name).concat(cases.tests.map(item => item.fullName))));
+    assert.equal(mixed.status, "failed");
+    assert.deepEqual([mixed.summary.total, mixed.summary.passed, mixed.summary.failed, mixed.summary.skipped, mixed.progress.completed], [6, 3, 1, 2, 6]);
+    assert.equal(mixed.tests.length, 6);
+    assert.equal(mixed.resultsComplete, true);
+    const failedOnly = await call("unity_testing_get_job", { jobId: mixed.jobId, includeFailedOnly: true });
+    assert.deepEqual(failedOnly.tests.map(item => item.status).sort(), ["Failed", "Inconclusive"]);
+    const setup = await terminal(await start("EditMode", ["First", "Second"].map(name => "UnityMcpValidation.SetupFailureCases." + name)));
+    assert.equal(setup.status, "failed");
+    assert.equal(setup.summary.failed, 2);
+    assert.equal(setup.progress.completed, 2);
+    assert.equal(setup.resultsComplete, true);
+    assert.equal(setup.tests.length, 2);
+    assert.ok(setup.tests.every(item => item.status === "Failed" && item.message.includes("MCP controlled fixture setup failure")));
+    await expectRestored(expected);
+    report.checks.push("Real mixed results and fixture setup failures retain authoritative counts and complete details");
+
     await call("unity_console_clear");
     const prebuild = await terminal(await start("PlayMode", "UnityMcpValidation.PrebuildFailure.NeverStarted"));
     assert.equal(prebuild.status, "failed");
@@ -109,15 +143,26 @@ isPlaying = EditorApplication.isPlaying, isCompiling = EditorApplication.isCompi
     await expectRestored(expected);
     report.checks.push("Real prebuild failure releases the job and restores Play Mode options");
 
-    const play = await terminal(await start("PlayMode", "UnityMcpValidation.PlayModeCases.Pass"));
-    assert.equal(play.status, "succeeded");
-    assert.equal(play.summary.passed, 1);
-    await expectRestored(expected);
-    report.checks.push("Real PlayMode success after a prebuild failure");
+    for (let run = 0; run < 2; run++) {
+      const play = await terminal(await start("PlayMode", "UnityMcpValidation.PlayModeCases.Pass"));
+      assert.equal(play.status, "succeeded");
+      assert.equal(play.summary.passed, 1);
+      assert.equal(play.tests.length, 1);
+      assert.equal(play.tests[0].fullName, "UnityMcpValidation.PlayModeCases.Pass");
+      await expectRestored(expected);
+    }
+    report.checks.push("Two consecutive real PlayMode successes after a prebuild failure without script reload");
 
     for (const mode of ["EditMode", "PlayMode"]) {
       const running = await start(mode, `UnityMcpValidation.${mode}Cases.Slow`);
       assert.equal(running.status, "running", JSON.stringify(running));
+      let active = running;
+      const startedDeadline = Date.now() + 30_000;
+      while (active.status === "running" && !active.progress?.currentTest?.endsWith(".Slow") && Date.now() < startedDeadline) {
+        await delay(500);
+        active = await job(running.jobId);
+      }
+      assert.ok(active.progress?.currentTest?.endsWith(".Slow"), JSON.stringify(active));
       let cleared;
       if (mode === "EditMode") {
         const outcome = await code(`var cleared = UnityMCP.Editor.MCPTestRunnerCommands.RunTests(new Dictionary<string,object>{{"clearStuck",true}});

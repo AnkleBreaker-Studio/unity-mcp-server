@@ -4,6 +4,11 @@ All notable changes to this package will be documented in this file.
 
 ## [Unreleased]
 
+### Test discovery and results
+- Expand the live Test Runner fixture with parameterized, ignored/inconclusive and fixture-setup failure cases. Check discovery truncation, invalid limits, final counts and detailed-result completeness.
+- Document the companion plugin's exclusion of empty suites, bounded result collection and reconciliation from Unity's final result tree. Complete reload persistence remains separate work.
+- Require exact test identities across consecutive PlayMode runs and wait for slow tests to start before cancellation. These checks expose a native Test Framework 1.8 assembly-cache defect previously masked by empty-suite counting.
+
 ### Test Runner validation
 - Add an opt-in live fixture for EditMode/PlayMode results, real prebuild failures, native cancellation, cleanup admission and restored settings. Keep released-server checks available through an explicit server entry point.
 - Clarify that clearing a job and starting its replacement are separate calls. Document the companion plugin's lifecycle fixes, cancellation diagnostics, UTC restoration and remaining limits in `docs/testing.md`.

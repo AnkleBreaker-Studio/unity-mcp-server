@@ -4,6 +4,16 @@ Discover `unity_testing_list_tests`, `unity_testing_run_tests` and `unity_testin
 
 Start with an EditMode or PlayMode filter, retain the returned `jobId`, and poll that ID until its status is `succeeded` or `failed`. `includeDetails` returns individual test results; `includeFailedOnly` limits them to failed/inconclusive results. Existing tool names, arguments, job IDs and status values remain compatible.
 
+## Discovery and result counts
+
+Discovery returns test cases, including individual parameterized cases. Empty suites and fixture containers are not tests. `maxResults` defaults to 200 and accepts integers from 1 to 10,000; invalid values return a command error before starting native discovery. The existing `totalTests` field remains the number returned, and `truncated` is true only when another matching test exists. Collection stops at the first matching overflow without constructing its result dictionary. Unity still builds its native test tree before this collection step.
+
+Progress while running comes from callbacks. At completion, Unity's aggregate counts and final result tree replace that provisional data, correcting missed or duplicated intermediate callbacks. Existing result records are reused where possible. The legacy `skipped` count still includes inconclusive cases, while individual entries retain their actual status. A suite-level failure remains a failed job even when no leaf failure exists.
+
+The additive `resultsComplete` field tells whether the detailed list accounts for every completed test. It does not indicate that the job has finished; use `status` for that. Missing native details or a completed job restored from the current summary-only session format can make it false. Reconciliation repairs results when the final native tree arrives; it does not yet persist complete details through a later script reload.
+
+Repeated PlayMode runs exposed a Test Framework 1.8 cache defect: its subsystem reset clears the assembly list, while the loader only populates a null list. With domain reload disabled, a later run can therefore execute zero tests even though discovery lists them. A controlled cache reset restored the requested test. Before starting a PlayMode job, the plugin now invalidates that cache when the inspected private reset hook and list field exist. The inspected 1.1.31 implementation has no such hook and is left alone. This is a compatibility workaround for native framework state, not a replay of an empty run.
+
 ## Failure and cleanup
 
 PlayMode jobs temporarily disable domain reload to keep callbacks alive. The plugin now restores the original Play Mode settings and releases its callbacks after normal completion, a synchronous startup exception, a framework error or an explicit clear. Callbacks are bound to their job ID, so a retained callback from an older job cannot change its replacement.
@@ -32,7 +42,13 @@ The [validation report](validation/unity66-testing.json) separates controlled fa
 
 All 19 controlled checks pass, covering four Play Mode option masks, late callbacks, API cleanup, session restoration, empty clear and UTC ordering. Live tests cover EditMode success/assertion failure, an actual prebuild exception, PlayMode success, cancellation in both modes, rejection during native cleanup and a successful next run. The current server and released server `826af5c` each pass this sequential workflow on Node 18 and 22; the marked project's original Play Mode settings are restored. All 163 ordinary server tests also pass locally on both Node versions.
 
-All 70 editor sources pass the Unity 2021.3.18f1 API compiler check. Actual older-editor execution remains deferred by maintainer direction. Other operating systems, player-build test runs, actual script reload during a native test, complete result persistence and large-suite discovery/counting need further coverage. These checks do not establish every Test Runner feature as complete.
+The subsequent [discovery and result report](validation/unity66-test-results.json) records empty-suite and final-count failures, exact-limit truncation and rejected limits. Its controlled suite covers final-tree reconciliation with missing/duplicate callbacks, suite-level failure, bounded discovery traversal and incomplete native details. The expanded live suite includes parameterized tests, ignored/inconclusive results and actual fixture setup failures.
+
+The earlier live suite checked the PlayMode passed count, which could hide an empty suite miscounted as a passing test. The expanded suite requires the exact test name in two consecutive PlayMode results without script reload, then waits for each slow test to actually start before requesting cancellation. Use this newer report for those execution guarantees.
+
+All ten result/discovery checks and the nineteen lifecycle regressions pass. The expanded current/released-server suites pass on Node 18 and 22, consecutively in one Unity editor. A real script reload after completion retains the summary but removes the detailed result; `resultsComplete` correctly changes from true to false. Full result persistence remains unfinished.
+
+All 70 editor sources pass the Unity 2021.3.18f1 API compiler check. Actual older-editor execution remains deferred by maintainer direction. Other operating systems, player-build test runs, actual script reload during a native test, complete result persistence and large-project native discovery costs need further coverage. These checks do not establish every Test Runner feature as complete.
 
 ## Reproduce
 
@@ -55,3 +71,5 @@ From the plugin repository, in a closed disposable project:
 ```
 
 This controlled suite replaces the native scheduling delegate; it launches no native tests. It writes `Library/UnityMcpTestRunnerValidation.json` and restores the fixture settings before exiting.
+
+Use `-Suite TestResults` for controlled test-tree/result checks, which write `Library/UnityMcpTestResultsValidation.json`. These use synthetic Unity adaptors and the actual plugin callbacks; they also launch no native tests. To reproduce the empty-project check, discover tests in a marked project without any test assemblies: it should return `totalTests: 0`, `truncated: false` and an empty list.

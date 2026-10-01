@@ -342,5 +342,9 @@
       "testsPerJob": 163
     },
     "releasePublished": false
+  },
+  "followup": {
+    "report": "unity66-test-results.json",
+    "scope": "The original live PlayMode success check used an aggregate count. Empty-suite miscounting could hide a native zero-test run. The expanded suite requires exact test names across consecutive PlayMode runs and actual slow-test start before cancellation."
   }
 }
