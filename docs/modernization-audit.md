@@ -16,7 +16,7 @@ The modernization remains in progress. This review checks the original product g
 | Improve README presentation and substantiate comparisons | Both current READMEs were rendered locally and on GitHub at 390 and 1280 px; images load and articles do not overflow. All 92 checked local/branch links pass. Shared SVGs match. Primary comparison sources were rechecked. | The comparison concerns documented behavior, with no unsupported universal speed claim. Implementation changes must continue to update these claims. |
 | Deliver reviewable changes | Changes and evidence are pushed to the modernization branches in both repositories, with passing server and plugin CI at the latest implementation checkpoint. | Final cross-repository review and versioning remain open. No release or merge has been performed. |
 
-The [audit report](validation/modernization-audit.json) records the exact scope of the refreshed checks. Historical reports remain useful for individual changes; their older source commits must not be mistaken for a full execution of today's implementation.
+The [audit report](validation/modernization-audit.json) records the exact scope of the refreshed checks. Audit commit `8d18625` passes all eight [Node 18/20/22/24 Windows/Linux CI jobs](https://github.com/AnkleBreaker-Studio/unity-mcp-server/actions/runs/36832779588), with 217 ordinary tests. The separate lifetime diagnostic reproduces the same findings on Node 18 and 22. Historical reports remain useful for individual changes; their older source commits must not be mistaken for a full execution of today's implementation.
 
 ## Reproduced lifetime findings
 

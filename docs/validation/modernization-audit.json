@@ -245,5 +245,25 @@
     "src/queue-transport.js": "9bab7c1883a78446b8e69d1b4cb2f49c13ee85e96375fdefc2e6265b611c7fa1",
     "tests/live-version-compatibility.test.mjs": "7e204ab90ccc8567b802028a0b0c31dffb12b7b3b2b41554bc021cc09d1c1675",
     "tests/diagnostics/state-retention-audit.mjs": "39e551727027c2683592799e0559f7a64b28b6d200d8c9848ffcea8c300fb5a2"
+  },
+  "auditCommit": "8d186251239808407e95425149bd42add1eb464e",
+  "ci": {
+    "runId": 36832779588,
+    "url": "https://github.com/AnkleBreaker-Studio/unity-mcp-server/actions/runs/36832779588",
+    "passed": true,
+    "jobs": 8,
+    "nodeVersions": [
+      18,
+      20,
+      22,
+      24
+    ],
+    "platforms": [
+      "Windows",
+      "Linux"
+    ],
+    "tests": 217,
+    "failures": 0,
+    "verifiedLogJobId": 110272979793
   }
 }
