@@ -149,6 +149,8 @@ These tests run the real MCP stdio process against isolated mock bridges. The co
 
 The plugin Dashboard shows queue activity, agent sessions, HTTP activity and recent actions. Agent cards update in place, sections remember their state, and long request text stays readable through tooltips. HTTP counters include input refused before ticket creation, body traffic and domain reloads. [Dashboard behavior](docs/dashboard.md) · [HTTP fields and measurements](docs/http-monitoring.md).
 
+Requested [editor-window captures](docs/editor-capture.md) preserve keyboard focus, identify ambiguous windows explicitly and bound native image allocations. Inactive tabs require an explicit temporary-switch option.
+
 Code execution reuses bounded compiler metadata and reports cache activity in `unity_editor_state.codeExecution`. A local Unity 6.6 benchmark of twenty small calls fell from 15.85 s to 1.01 s; this measures one workload, not every Unity operation. [Execution behavior, measurements and limits](docs/code-execution.md).
 
 - **No editor found:** check the plugin dashboard, console and discovered project path. See [connection troubleshooting](docs/configuration.md#troubleshooting).

@@ -19,6 +19,7 @@
     "test:lifecycle": "node --test tests/live-editor-lifecycle.test.mjs",
     "test:monitoring": "node --test tests/live-monitoring.test.mjs",
     "test:http-monitoring": "node --test tests/live-http-monitoring.test.mjs",
+    "test:editor-capture": "node --test tests/live-editor-capture.test.mjs",
     "test:multiplayer": "node --test tests/live-multiplayer.test.mjs",
     "test:features": "node --test tests/live-features.test.mjs",
     "test:compatibility": "node --test tests/live-version-compatibility.test.mjs",

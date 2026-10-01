@@ -2911,16 +2911,15 @@ export const editorTools = [
   {
     name: "unity_screenshot_editor_window",
     description:
-      "Capture a specific Editor window (Inspector, Project, Console, custom) to a PNG file via Win32 PrintWindow — works even when occluded, no focus steal. " +
-      "USE ONLY ON EXPLICIT USER REQUEST — never proactively or for your own inspection. " +
-      "WINDOWS EDITOR ONLY: on macOS/Linux it returns { success:false, platform } — do not retry, tell the user it's unavailable there. " +
-      "For game/scene views use unity_screenshot_game / unity_screenshot_scene (cross-platform).",
+      "Capture an existing EditorWindow to PNG (Windows PrintWindow) without requesting keyboard focus. Hidden tabs require activateTab:true; ambiguous names return id: candidates. GPU/minimized windows can refuse capture. " +
+      "USE ONLY ON EXPLICIT USER REQUEST; never proactively or for your own inspection. On macOS/Linux report unsupported, do not retry; use Game/Scene captures there.",
     inputSchema: {
       type: "object",
       properties: {
-        window: { type: "string", description: "EditorWindow type FullName (e.g. 'UnityEditor.InspectorWindow'), simple type name, or tab title." },
+        window: { type: "string", description: "Full type name, simple name, tab title, or id: selector from candidates." },
         path: { type: "string", description: "Save path ending in .png (default: Assets/Screenshots/EditorWindow_<time>.png)." },
-        maxDimension: { type: "number", description: "Max pixels per side (default 8192, clamped to GPU max)." },
+        maxDimension: { type: "number", description: "Max side (default 8192, clamped to GPU). Full window and crop each limited to 33554432 pixels." },
+        activateTab: { type: "boolean", description: "Temporarily select an existing tab, then restore its predecessor (default false; newer plugins). Does not request keyboard focus." },
       },
       required: ["window"],
     },

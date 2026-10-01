@@ -4,6 +4,10 @@ All notable changes to this package will be documented in this file.
 
 ## [Unreleased]
 
+### Editor-window capture
+- Describe background capture, ambiguity candidates and optional temporary tab selection for the updated plugin. Keep the tool-catalog payload below its existing 48,000-byte gate.
+- Add opt-in live MCP checks for string window identities, safe refusals and current/released-server compatibility on Node 18/22.
+
 ### HTTP monitoring validation
 - Add an opt-in live MCP suite for concurrent traffic, command/HTTP outcome separation, refused input and actual domain reload, including released-server compatibility.
 - Document the companion plugin's additive HTTP counters, reload metadata and lighter Dashboard queue snapshots with controlled and live evidence.

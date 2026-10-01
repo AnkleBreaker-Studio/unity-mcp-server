@@ -1,0 +1,400 @@
+{
+  "recordedAt": "2026-10-01T04:26:05.823Z",
+  "baselinePluginCommit": "e72cc8b134566a6a86af397dac77662bc4e524e2",
+  "baselineServerCommit": "62a8d27",
+  "baselineFixture": "Same final fixture copied into a local checkout of the baseline plugin; package Editor sources unchanged",
+  "pluginSourceSha256": "ca9688a435ea9bd37d28ab5674f1aab52a014316016973c17c79dcac779a2a64",
+  "baseline": {
+    "unityVersion": "6000.6.2f1",
+    "passed": false,
+    "checks": [
+      {
+        "name": "Duplicate full type names are refused",
+        "passed": false,
+        "error": "Arbitrary duplicate window selected"
+      },
+      {
+        "name": "Duplicate simple type names are refused",
+        "passed": true,
+        "evidence": 2
+      },
+      {
+        "name": "Unique title retains exact matching",
+        "passed": true,
+        "evidence": true
+      },
+      {
+        "name": "Ambiguous substrings are refused",
+        "passed": true,
+        "evidence": 2
+      },
+      {
+        "name": "String object identity selects one duplicate",
+        "passed": false,
+        "error": "Explicit identity not resolved"
+      },
+      {
+        "name": "Missing identity does not fall back to a different window",
+        "passed": true,
+        "evidence": true
+      },
+      {
+        "name": "Ambiguous capture returns usable string identities",
+        "passed": false,
+        "error": "Ambiguity was not reported"
+      },
+      {
+        "name": "Unshown windows fail before native capture",
+        "passed": false,
+        "error": "Unshown window was not identified safely"
+      },
+      {
+        "name": "Capture pixel limits include the full backing window",
+        "passed": false,
+        "error": "No bound for the full native bitmap"
+      },
+      {
+        "name": "Inactive tabs require opt-in and restore the previous tab after native failure",
+        "passed": false,
+        "error": "The given key 'code' was not present in the dictionary."
+      },
+      {
+        "name": "GDI resource counter detects an owned DC",
+        "passed": true,
+        "evidence": true
+      },
+      {
+        "name": "Native full-window PNG has exact opaque pixels",
+        "passed": true,
+        "evidence": {
+          "width": 64,
+          "height": 48,
+          "opaqueWhitePixels": 3072
+        }
+      },
+      {
+        "name": "Native crop PNG has exact dimensions and pixels",
+        "passed": true,
+        "evidence": {
+          "width": 24,
+          "height": 16,
+          "opaqueWhitePixels": 384
+        }
+      },
+      {
+        "name": "Rejected dimensions do not allocate GDI resources",
+        "passed": true,
+        "evidence": {
+          "success": false,
+          "error": "Too large 64x48 (cap 32)"
+        }
+      },
+      {
+        "name": "Repeated captures release GDI objects and textures",
+        "passed": true,
+        "evidence": {
+          "iterations": 20,
+          "before": 7,
+          "after": 7
+        }
+      },
+      {
+        "name": "Filesystem failure also releases capture resources",
+        "passed": true,
+        "evidence": true
+      },
+      {
+        "name": "Owned captures preserve OS foreground and leave Unity windows unshown",
+        "passed": true,
+        "evidence": true
+      }
+    ],
+    "scope": "Unshown Unity fixtures and a 64x48 native white window behind existing windows without activation; no user-window pixels"
+  },
+  "corrected": {
+    "unityVersion": "6000.6.2f1",
+    "passed": true,
+    "checks": [
+      {
+        "name": "Duplicate full type names are refused",
+        "passed": true,
+        "evidence": 2
+      },
+      {
+        "name": "Duplicate simple type names are refused",
+        "passed": true,
+        "evidence": 2
+      },
+      {
+        "name": "Unique title retains exact matching",
+        "passed": true,
+        "evidence": true
+      },
+      {
+        "name": "Ambiguous substrings are refused",
+        "passed": true,
+        "evidence": 2
+      },
+      {
+        "name": "String object identity selects one duplicate",
+        "passed": true,
+        "evidence": {
+          "id": "1099511641235"
+        }
+      },
+      {
+        "name": "Missing identity does not fall back to a different window",
+        "passed": true,
+        "evidence": true
+      },
+      {
+        "name": "Ambiguous capture returns usable string identities",
+        "passed": true,
+        "evidence": {
+          "success": false,
+          "error": "Ambiguous: 2 windows match 'UnityMcpCaptureFixture.CaptureWindow'. Use a unique title or an id: selector from candidates.",
+          "code": "ambiguous_window",
+          "candidates": [
+            {
+              "window": "id:1099511641235",
+              "type": "UnityMcpCaptureFixture.CaptureWindow",
+              "title": "__Capture_Second"
+            },
+            {
+              "window": "id:3298534896761",
+              "type": "UnityMcpCaptureFixture.CaptureWindow",
+              "title": "__Capture_First"
+            }
+          ]
+        }
+      },
+      {
+        "name": "Unshown windows fail before native capture",
+        "passed": true,
+        "evidence": {
+          "success": false,
+          "error": "The window is not a visible tab. Select it first, or explicitly pass activateTab:true to temporarily switch an existing tab.",
+          "code": "window_not_visible"
+        }
+      },
+      {
+        "name": "Capture pixel limits include the full backing window",
+        "passed": true,
+        "evidence": true
+      },
+      {
+        "name": "Inactive tabs require opt-in and restore the previous tab after native failure",
+        "passed": true,
+        "evidence": {
+          "success": false,
+          "error": "Could not resolve the main editor window handle."
+        }
+      },
+      {
+        "name": "GDI resource counter detects an owned DC",
+        "passed": true,
+        "evidence": true
+      },
+      {
+        "name": "Native full-window PNG has exact opaque pixels",
+        "passed": true,
+        "evidence": {
+          "width": 64,
+          "height": 48,
+          "opaqueWhitePixels": 3072
+        }
+      },
+      {
+        "name": "Native crop PNG has exact dimensions and pixels",
+        "passed": true,
+        "evidence": {
+          "width": 24,
+          "height": 16,
+          "opaqueWhitePixels": 384
+        }
+      },
+      {
+        "name": "Rejected dimensions do not allocate GDI resources",
+        "passed": true,
+        "evidence": {
+          "success": false,
+          "error": "Capture exceeds the 32-pixel side limit or 33554432-pixel total limit."
+        }
+      },
+      {
+        "name": "Repeated captures release GDI objects and textures",
+        "passed": true,
+        "evidence": {
+          "iterations": 20,
+          "before": 7,
+          "after": 7
+        }
+      },
+      {
+        "name": "Filesystem failure also releases capture resources",
+        "passed": true,
+        "evidence": true
+      },
+      {
+        "name": "Owned captures preserve OS foreground and leave Unity windows unshown",
+        "passed": true,
+        "evidence": true
+      }
+    ],
+    "scope": "Unshown Unity fixtures and a 64x48 native white window behind existing windows without activation; no user-window pixels"
+  },
+  "minimumApi": {
+    "unityVersion": "2021.3.18f1",
+    "passed": true,
+    "referenceCount": 211,
+    "log": "C:\\Users\\Francois\\orca\\workspaces\\unity-mcp-server\\validation\\Unity2021\\api-check-CAPTURE\\compiler.log",
+    "packageAssemblies": [
+      {
+        "sha256": "AF83F70ECAC09EE676571E37C62595B7FF26148B636CE498F9151A2F7A9697A3",
+        "file": "C:\\Users\\Francois\\orca\\workspaces\\unity-mcp-server\\validation\\Editors\\2021.3.18f1\\Editor\\Data\\Resources\\PackageManager\\ProjectTemplates\\libcache\\com.unity.template.universal-2d-1.1.4\\ScriptAssemblies\\UnityEngine.UI.dll"
+      },
+      {
+        "sha256": "AAAF5BC1E371F6CFA67138DCB6E77634A8075D30E0C1DF27670A5B0028CC5523",
+        "file": "C:\\Users\\Francois\\orca\\workspaces\\unity-mcp-server\\validation\\Editors\\2021.3.18f1\\Editor\\Data\\Resources\\PackageManager\\ProjectTemplates\\libcache\\com.unity.template.universal-2d-1.1.4\\ScriptAssemblies\\UnityEngine.TestRunner.dll"
+      },
+      {
+        "sha256": "6995901F60508B79F4B648FE2E3B64D8D1BD545B3CB3817134F079842FA82832",
+        "file": "C:\\Users\\Francois\\orca\\workspaces\\unity-mcp-server\\validation\\Editors\\2021.3.18f1\\Editor\\Data\\Resources\\PackageManager\\ProjectTemplates\\libcache\\com.unity.template.universal-2d-1.1.4\\ScriptAssemblies\\UnityEditor.TestRunner.dll"
+      }
+    ],
+    "excludedIntegrations": [
+      "UMA",
+      "ProBuilder"
+    ],
+    "sourceCount": 74,
+    "check": "C# compilation against installed Unity assemblies; no editor execution or package import",
+    "exitCode": 0
+  },
+  "live": {
+    "current-node22": {
+      "nodeVersion": "v22.18.0",
+      "passed": true,
+      "checks": [
+        {
+          "name": "Duplicate types return exact string identities through MCP",
+          "passed": true,
+          "candidates": [
+            {
+              "window": "id:3298534896931",
+              "type": "UnityMcpCaptureFixture.CaptureWindow",
+              "title": "__McpCapture_afe93fb522b147adae03d097b27bab7f0"
+            },
+            {
+              "window": "id:3298534896932",
+              "type": "UnityMcpCaptureFixture.CaptureWindow",
+              "title": "__McpCapture_afe93fb522b147adae03d097b27bab7f1"
+            }
+          ]
+        },
+        {
+          "name": "Identity/title selection never creates or displays an unshown window",
+          "passed": true
+        }
+      ],
+      "unityVersion": "6000.6.2f1",
+      "fixturesRemoved": 2
+    },
+    "released-node22": {
+      "nodeVersion": "v22.18.0",
+      "passed": true,
+      "checks": [
+        {
+          "name": "Duplicate types return exact string identities through MCP",
+          "passed": true,
+          "candidates": [
+            {
+              "window": "id:1099511641408",
+              "type": "UnityMcpCaptureFixture.CaptureWindow",
+              "title": "__McpCapture_f4ae2afffd2140918f07e4a06abdf9661"
+            },
+            {
+              "window": "id:5497558152484",
+              "type": "UnityMcpCaptureFixture.CaptureWindow",
+              "title": "__McpCapture_f4ae2afffd2140918f07e4a06abdf9660"
+            }
+          ]
+        },
+        {
+          "name": "Identity/title selection never creates or displays an unshown window",
+          "passed": true
+        }
+      ],
+      "unityVersion": "6000.6.2f1",
+      "fixturesRemoved": 2
+    },
+    "current-node18": {
+      "nodeVersion": "v18.20.8",
+      "passed": true,
+      "checks": [
+        {
+          "name": "Duplicate types return exact string identities through MCP",
+          "passed": true,
+          "candidates": [
+            {
+              "window": "id:1099511641416",
+              "type": "UnityMcpCaptureFixture.CaptureWindow",
+              "title": "__McpCapture_81aafd9d977f4edebc35c323a1b34d5f1"
+            },
+            {
+              "window": "id:3298534896960",
+              "type": "UnityMcpCaptureFixture.CaptureWindow",
+              "title": "__McpCapture_81aafd9d977f4edebc35c323a1b34d5f0"
+            }
+          ]
+        },
+        {
+          "name": "Identity/title selection never creates or displays an unshown window",
+          "passed": true
+        }
+      ],
+      "unityVersion": "6000.6.2f1",
+      "fixturesRemoved": 2
+    },
+    "released-node18": {
+      "nodeVersion": "v18.20.8",
+      "passed": true,
+      "checks": [
+        {
+          "name": "Duplicate types return exact string identities through MCP",
+          "passed": true,
+          "candidates": [
+            {
+              "window": "id:1099511641424",
+              "type": "UnityMcpCaptureFixture.CaptureWindow",
+              "title": "__McpCapture_21aaed123677458e9a309acefc1f148b1"
+            },
+            {
+              "window": "id:3298534896968",
+              "type": "UnityMcpCaptureFixture.CaptureWindow",
+              "title": "__McpCapture_21aaed123677458e9a309acefc1f148b0"
+            }
+          ]
+        },
+        {
+          "name": "Identity/title selection never creates or displays an unshown window",
+          "passed": true
+        }
+      ],
+      "unityVersion": "6000.6.2f1",
+      "fixturesRemoved": 2
+    }
+  },
+  "serverTests": {
+    "node": "22.18.0",
+    "passed": 195,
+    "failed": 0,
+    "richCatalogUnder48000Bytes": true
+  },
+  "limitations": [
+    "Native white fixture pixels are not attached Unity-window rendering evidence",
+    "Controlled tab restoration covers native-handle failure; successful attached inactive-tab capture remains unverified",
+    "No user-window pixels captured",
+    "Mixed DPI, multi-monitor crop placement and other desktop renderers not verified",
+    "Old Unity runtime deferred by maintainer; minimum API compilation only"
+  ]
+}

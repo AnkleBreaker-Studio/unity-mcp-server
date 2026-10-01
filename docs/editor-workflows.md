@@ -27,6 +27,8 @@ The plugin avoids type lookups and result dictionaries for omitted assets. Unity
 
 ## Scene view captures
 
+For editor UI rather than camera images, see [editor-window capture](editor-capture.md). Its Windows fixture covers native pixels, resource cleanup, ambiguity and tab selection separately from this Scene-view workflow.
+
 `unity_screenshot_scene`, available through `unity_advanced_tool`, accepts dimensions from 1 to 8,192 pixels per side, with at most 33,554,432 pixels in total. The existing Scene view must be available.
 
 The plugin restores the camera target and active render target and destroys its capture textures in `finally`, including when rendering, encoding or file writing fails. The regression test forces an actual filesystem failure by targeting an existing directory, then verifies a successful capture. It warms Unity's temporary rendering cache before comparing live texture objects; that cache belongs to Unity and is not destroyed by the test. The check does not establish total editor GPU memory usage or cover Game view capture.
