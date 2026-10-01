@@ -1787,7 +1787,13 @@
     "sources": [
       "https://unity.com/how-to/best-practices-for-profiling-game-performance",
       "https://docs.unity3d.com/2021.3/Documentation/ScriptReference/Unity.Profiling.ProfilerRecorder.html"
-    ]
+    ],
+    "numericPreservationAudit": {
+      "reports": 7,
+      "metricValuesVerified": 117,
+      "renamedFields": 39,
+      "numericValuesChanged": 0
+    }
   },
   "serverTests": [
     {
@@ -1809,7 +1815,7 @@
   ],
   "passed": true,
   "documentation": {
-    "localLinksChecked": 312,
+    "localLinksChecked": 314,
     "missing": 0
   },
   "cleanup": {
@@ -1821,5 +1827,48 @@
     "copiedFixturesRemoved": true,
     "cleanScene": true,
     "userEditorsUntouched": true
+  },
+  "pluginCommit": "bbe6da10b54e9b080a4fdb2496d3595d67cf637f",
+  "serverCommit": "796b5c265564c90dc952edbb9dd0db825d7bce2f",
+  "ci": {
+    "plugin": {
+      "run": 36857586357,
+      "job": 110353680122,
+      "status": "success",
+      "routes": 338
+    },
+    "server": {
+      "run": 36857739932,
+      "status": "success",
+      "matrixJobsPassed": 8,
+      "nodeVersions": [
+        18,
+        20,
+        22,
+        24
+      ],
+      "platforms": [
+        "windows-latest",
+        "ubuntu-latest"
+      ],
+      "inspectedLogs": [
+        {
+          "job": 110354177602,
+          "node": 22,
+          "platform": "ubuntu-latest",
+          "tests": 255,
+          "passed": 255,
+          "failed": 0
+        },
+        {
+          "job": 110354177657,
+          "node": 18,
+          "platform": "windows-latest",
+          "tests": 255,
+          "passed": 255,
+          "failed": 0
+        }
+      ]
+    }
   }
 }
