@@ -58,6 +58,8 @@ import { shareRequestWork, throwIfRequestCancelled } from "./request-cancellatio
 const PROCESS_AGENT_ID = `agent-${process.pid}-${randomBytes(3).toString("hex")}`;
 setAgentId(PROCESS_AGENT_ID);
 
+const cloneLabel = instance => `ParrelSync clone${Number.isInteger(instance.cloneIndex) && instance.cloneIndex >= 0 ? ` #${instance.cloneIndex}` : ""}`;
+
 // ─── Combine all tools (two-tier system) ───
 // Split editor tools into core (always exposed) and advanced (on-demand via meta-tool).
 // This keeps the tool count under ~70, preventing MCP client rejection caused by
@@ -174,7 +176,7 @@ async function discoverForCurrentAgent() {
     if (result.autoSelected) {
       // Single instance found and auto-selected
       const inst = result.instance;
-      const cloneInfo = inst.isClone ? ` (ParrelSync clone #${inst.cloneIndex})` : "";
+      const cloneInfo = inst.isClone ? ` (${cloneLabel(inst)})` : "";
       return (
         `=== UNITY INSTANCE (auto-connected) ===\n` +
         `Project: ${inst.projectName}${cloneInfo}\n` +
@@ -200,7 +202,7 @@ async function discoverForCurrentAgent() {
     const alreadySelected = getSelectedInstance();
     if (alreadySelected) {
       // User already selected an instance before discovery ran — just confirm
-      const cloneInfo = alreadySelected.isClone ? ` (ParrelSync clone #${alreadySelected.cloneIndex})` : "";
+      const cloneInfo = alreadySelected.isClone ? ` (${cloneLabel(alreadySelected)})` : "";
       return (
         `=== UNITY INSTANCE (user-selected) ===\n` +
         `Project: ${alreadySelected.projectName}${cloneInfo}\n` +
@@ -220,7 +222,7 @@ async function discoverForCurrentAgent() {
       `Available instances:\n`;
 
     for (const inst of result.instances) {
-      const cloneInfo = inst.isClone ? ` [ParrelSync clone #${inst.cloneIndex}]` : "";
+      const cloneInfo = inst.isClone ? ` [${cloneLabel(inst)}]` : "";
       prompt += `  • Port ${inst.port}: ${inst.projectName}${cloneInfo} (Unity ${inst.unityVersion || "?"})\n`;
       if (inst.projectPath) {
         prompt += `    Path: ${inst.projectPath}\n`;
