@@ -486,12 +486,42 @@
   ],
   "pluginImplementationCommits": [
     "212af673a4ad9146dc666836db36b131790a4112",
-    "dd7bc5e"
+    "dd7bc5e0b4e2cfd382c5d7369a5f19809449d871"
   ],
   "cleanup": {
     "temporaryBatchEditorClosed": true,
     "liveFixtureMarkersRemoved": true,
     "liveSceneDirty": false,
-    "livePlayMode": false
+    "livePlayMode": false,
+    "persistentEditorCompilationErrors": {
+      "Queue66": 0,
+      "Unity66": 0
+    }
+  },
+  "serverValidationCommit": "c81fb7aaa1a91ab0b3dc7913200a3bd8f7fe41f8",
+  "ci": {
+    "plugin": {
+      "url": "https://github.com/AnkleBreaker-Studio/unity-mcp-plugin/actions/runs/36803185547",
+      "conclusion": "success",
+      "routes": 338,
+      "scope": "Registry drift check; no Unity execution"
+    },
+    "server": {
+      "url": "https://github.com/AnkleBreaker-Studio/unity-mcp-server/actions/runs/36803248940",
+      "conclusion": "success",
+      "jobs": 8,
+      "nodeVersions": [
+        18,
+        20,
+        22,
+        24
+      ],
+      "operatingSystems": [
+        "Windows",
+        "Linux"
+      ],
+      "testsPerJob": 163,
+      "scope": "Ordinary server checks; opt-in Unity execution remains local"
+    }
   }
 }
