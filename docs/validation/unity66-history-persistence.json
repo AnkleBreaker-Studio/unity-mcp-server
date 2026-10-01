@@ -1,0 +1,615 @@
+{
+  "recordedOn": "2026-10-01",
+  "baselinePluginCommit": "6bb13a89b1a820fc70b0c7b2aaf92a2ef866f75f",
+  "releasedServerCommit": "826af5ce61db7e2d2d675fe90d24c941a83f3924",
+  "environment": {
+    "unity": "6000.6.2f1",
+    "platform": "Windows",
+    "runtime": "Mono"
+  },
+  "baseline": {
+    "unityVersion": "6000.6.2f1",
+    "passed": false,
+    "checks": [
+      {
+        "name": "Restoration keeps only the configured newest records",
+        "passed": false,
+        "error": "Restored 1000 entries instead of the newest eight"
+      },
+      {
+        "name": "Zero retention stays empty through load and append",
+        "passed": false,
+        "error": "Load ignored zero retention"
+      },
+      {
+        "name": "Invalid negative preferences cannot fail record insertion",
+        "passed": false,
+        "error": "Index was out of range. Must be non-negative and less than the size of the collection.\r\nParameter name: index"
+      },
+      {
+        "name": "Legacy numeric object identities remain exact strings",
+        "passed": true,
+        "evidence": {
+          "targets": [
+            "-2147483648",
+            "9223372036854775806"
+          ]
+        }
+      },
+      {
+        "name": "An invalid entry cannot partially replace current history",
+        "passed": false,
+        "error": "Invalid saved history replaced existing records"
+      },
+      {
+        "name": "Restoration never reuses an ID from an earlier stored record",
+        "passed": false,
+        "error": "ID counter followed the last entry instead of its high-water mark"
+      },
+      {
+        "name": "Failed restoration preserves its source through the next save hook",
+        "passed": false,
+        "error": "Automatic save overwrote failed-load evidence"
+      },
+      {
+        "name": "Normal fields and old files without new Undo metadata remain readable",
+        "passed": true,
+        "evidence": true
+      }
+    ]
+  },
+  "corrected": {
+    "unityVersion": "6000.6.2f1",
+    "passed": true,
+    "checks": [
+      {
+        "name": "Restoration keeps only the configured newest records",
+        "passed": true,
+        "evidence": {
+          "stored": 1000,
+          "retained": 8,
+          "firstId": 993,
+          "lastId": 1000
+        }
+      },
+      {
+        "name": "Zero retention stays empty through load and append",
+        "passed": true,
+        "evidence": true
+      },
+      {
+        "name": "Invalid negative preferences cannot fail record insertion",
+        "passed": true,
+        "evidence": {
+          "effectiveLimit": 500,
+          "count": 1
+        }
+      },
+      {
+        "name": "Legacy numeric object identities remain exact strings",
+        "passed": true,
+        "evidence": {
+          "targets": [
+            "-2147483648",
+            "9223372036854775806"
+          ]
+        }
+      },
+      {
+        "name": "An invalid entry cannot partially replace current history",
+        "passed": true,
+        "evidence": true
+      },
+      {
+        "name": "Restoration never reuses an ID from an earlier stored record",
+        "passed": true,
+        "evidence": {
+          "before": 3003,
+          "next": 3014
+        }
+      },
+      {
+        "name": "Failed restoration preserves its source through the next save hook",
+        "passed": true,
+        "evidence": true
+      },
+      {
+        "name": "Normal fields and old files without new Undo metadata remain readable",
+        "passed": true,
+        "evidence": true
+      },
+      {
+        "name": "Files above 32 MiB preserve memory and block replacement",
+        "passed": true,
+        "evidence": {
+          "maxFileBytes": 33554432,
+          "saveBlocked": true,
+          "warning": "History load failed: History file exceeds the 32 MiB limit; preserve it separately before clearing history.",
+          "loadedRecords": 2,
+          "discardedOnLoad": 0,
+          "lastFileBytes": 782,
+          "loadFailures": 3,
+          "saveFailures": 0
+        }
+      },
+      {
+        "name": "Output above the byte budget preserves the previous snapshot",
+        "passed": true,
+        "evidence": {
+          "maxFileBytes": 33554432,
+          "saveBlocked": false,
+          "warning": "History save failed: Serialized response exceeded its UTF-8 byte limit",
+          "loadedRecords": 2,
+          "discardedOnLoad": 0,
+          "lastFileBytes": 336,
+          "loadFailures": 3,
+          "saveFailures": 1
+        }
+      },
+      {
+        "name": "A locked destination preserves old bytes and cleans its temporary file",
+        "passed": true,
+        "evidence": true
+      },
+      {
+        "name": "Malformed syntax and invalid field types never replace memory",
+        "passed": true,
+        "evidence": {
+          "rejected": 7
+        }
+      },
+      {
+        "name": "Successful repair and explicit clear both resume saving",
+        "passed": true,
+        "evidence": true
+      },
+      {
+        "name": "Saved JSON remains readable by the previous JsonUtility schema",
+        "passed": true,
+        "evidence": true
+      },
+      {
+        "name": "UTF-8 and UTF-16 BOM snapshots retain Unicode",
+        "passed": true,
+        "evidence": true
+      },
+      {
+        "name": "Missing legacy Undo groups remain unavailable",
+        "passed": true,
+        "evidence": true
+      },
+      {
+        "name": "Lowering the cap before a save retains only newest records",
+        "passed": true,
+        "evidence": true
+      },
+      {
+        "name": "A save cannot publish more values than the loader accepts",
+        "passed": true,
+        "evidence": {
+          "maxFileBytes": 33554432,
+          "saveBlocked": false,
+          "warning": "History save failed: History exceeds the JSON value limit; reduce retained entries before saving.",
+          "loadedRecords": 1,
+          "discardedOnLoad": 0,
+          "lastFileBytes": 336,
+          "loadFailures": 12,
+          "saveFailures": 3
+        }
+      }
+    ]
+  },
+  "regressions": {
+    "monitoring": {
+      "unityVersion": "6000.6.2f1",
+      "passed": true,
+      "resultCases": 15,
+      "classificationMismatches": 0,
+      "rawResultsPreserved": true,
+      "commandErrors": 7,
+      "exceptions": 1,
+      "duplicateCallbacks": 20,
+      "deferredHistoryRecords": 1,
+      "timedOutHistoryRecords": 1,
+      "lateCallbackIgnored": true,
+      "legacyResultPreserved": true,
+      "dashboardShowsCommandError": true,
+      "dashboardShowsExceptionCount": true,
+      "dashboardErrorRow": true,
+      "historyEndpointError": true,
+      "diagnosticBounded": true,
+      "undoPreserved": true,
+      "undoWithHistoryBacklog": true,
+      "pendingHistorySavedBeforeReload": true,
+      "clearIncludesPendingHistory": true,
+      "historyRoundTrip": true,
+      "oldHistoryLoads": true,
+      "maximumPendingHistory": 10000,
+      "historyRecordsDropped": 1,
+      "backlogDrained": true,
+      "error": ""
+    },
+    "notifications": {
+      "unityVersion": "6000.6.2f1",
+      "passed": true,
+      "checks": [
+        {
+          "name": "No observers schedule no callbacks through 2000 records",
+          "passed": true,
+          "evidence": {
+            "recorded": 2000,
+            "retained": 8,
+            "scheduled": 0
+          }
+        },
+        {
+          "name": "Clear releases an undispatched large record",
+          "passed": true,
+          "evidence": {
+            "collected": true,
+            "recordTextBytes": 1048576
+          }
+        },
+        {
+          "name": "Observers retain deferred ordered exactly-once delivery",
+          "passed": true,
+          "evidence": {
+            "delivered": 230,
+            "scheduled": 1,
+            "deferred": true
+          }
+        },
+        {
+          "name": "Clear cancels queued observer notifications",
+          "passed": true,
+          "evidence": {
+            "count": 0
+          }
+        },
+        {
+          "name": "Each editor update drains at most 100 notifications",
+          "passed": true,
+          "evidence": {
+            "firstUpdate": 100,
+            "total": 230
+          }
+        },
+        {
+          "name": "Reentrant clear defers new records and cancels the previous batch",
+          "passed": true,
+          "evidence": {
+            "delivered": [
+              "first",
+              "new"
+            ]
+          }
+        },
+        {
+          "name": "Unsubscribing releases pending notifications on the next update",
+          "passed": true,
+          "evidence": {
+            "calls": 0,
+            "pending": 0
+          }
+        },
+        {
+          "name": "One failing observer does not suppress later observers or records",
+          "passed": true,
+          "evidence": {
+            "count": 2
+          }
+        },
+        {
+          "name": "Notification pressure has an explicit bound",
+          "passed": true,
+          "evidence": {
+            "pending": 10000,
+            "dropped": 32,
+            "delivered": 10000
+          }
+        },
+        {
+          "name": "500-record window cost observation",
+          "passed": true,
+          "evidence": {
+            "allocatedBytes": 64500,
+            "elapsedMs": 1.3184,
+            "profilerControlAllocations": 1,
+            "coalesced": true,
+            "idleReused": true
+          }
+        },
+        {
+          "name": "Window coalesces bursts and reuses an idle list",
+          "passed": true,
+          "evidence": {
+            "coalesced": true,
+            "idleReused": true,
+            "clearObserved": true
+          }
+        },
+        {
+          "name": "Window filters retain values when earlier options expire",
+          "passed": true,
+          "evidence": {
+            "agent": "B",
+            "category": "editor"
+          }
+        },
+        {
+          "name": "Window selection follows its record and releases an evicted record",
+          "passed": true,
+          "evidence": {
+            "insertionPreservedSelection": true,
+            "evictedSelectionReleased": true
+          }
+        }
+      ]
+    },
+    "queue": {
+      "unityVersion": "6000.6.2f1",
+      "passed": true,
+      "checks": [
+        "Object identity round-trip without JSON number conversion",
+        "Agent FIFO, round-robin writes, read batching and ticket results",
+        "Deferred completion is atomic, single-shot and stable after timeout",
+        "Concurrent submission retries share one ticket; conflicts, reload sessions and expired results never re-execute",
+        "Actual HTTP dispatcher validates scoped submission/polling, browser rejection, one-object retries and legacy compatibility",
+        "Legacy synchronous callers are signaled without lost wakeups",
+        "Legacy timeout preserves running outcomes and skips expired batched and queued work",
+        "Dashboard shows running-only work and separates failures from finished requests",
+        "Submission retry cache refuses new work at its bounded capacity",
+        "1000 status polls at queue depths 100 and 10000"
+      ],
+      "polling100Ms": 11.5836,
+      "polling10000Ms": 20.3883,
+      "error": ""
+    }
+  },
+  "liveRuns": [
+    {
+      "name": "current22",
+      "nodeVersion": "v22.18.0",
+      "serverEntry": "current",
+      "passed": true,
+      "checks": [
+        {
+          "name": "Transform rollback and cross-agent cascade guard",
+          "passed": true
+        },
+        {
+          "name": "Native Undo and Redo update recorded eligibility",
+          "passed": true
+        },
+        {
+          "name": "Untracked native work requires explicit cascade and is reported",
+          "passed": true
+        },
+        {
+          "name": "Clearing native Undo cannot claim a successful targeted revert",
+          "passed": true
+        },
+        {
+          "name": "Actual script reload preserves same-session native Undo identity",
+          "beforeSession": "737b8caf5c574837959b9873b0aa3478",
+          "afterSession": "503331dbdc564445ac9e173126990de1",
+          "actionId": 59,
+          "passed": true
+        }
+      ],
+      "unityVersion": "6000.6.2f1",
+      "historyPersistence": {
+        "maxFileBytes": 33554432,
+        "saveBlocked": false,
+        "warning": "",
+        "loadedRecords": 61,
+        "discardedOnLoad": 0,
+        "lastFileBytes": 22331,
+        "loadFailures": 0,
+        "saveFailures": 0
+      },
+      "fixtureRemoved": true,
+      "persistenceRestored": false
+    },
+    {
+      "name": "current18",
+      "nodeVersion": "v18.20.8",
+      "serverEntry": "current",
+      "passed": true,
+      "checks": [
+        {
+          "name": "Transform rollback and cross-agent cascade guard",
+          "passed": true
+        },
+        {
+          "name": "Native Undo and Redo update recorded eligibility",
+          "passed": true
+        },
+        {
+          "name": "Untracked native work requires explicit cascade and is reported",
+          "passed": true
+        },
+        {
+          "name": "Clearing native Undo cannot claim a successful targeted revert",
+          "passed": true
+        },
+        {
+          "name": "Actual script reload preserves same-session native Undo identity",
+          "beforeSession": "503331dbdc564445ac9e173126990de1",
+          "afterSession": "8d91bfa574ce4c8ca210d020fd4de237",
+          "actionId": 117,
+          "passed": true
+        }
+      ],
+      "unityVersion": "6000.6.2f1",
+      "historyPersistence": {
+        "maxFileBytes": 33554432,
+        "saveBlocked": false,
+        "warning": "",
+        "loadedRecords": 47,
+        "discardedOnLoad": 0,
+        "lastFileBytes": 18047,
+        "loadFailures": 0,
+        "saveFailures": 0
+      },
+      "fixtureRemoved": true,
+      "persistenceRestored": false
+    },
+    {
+      "name": "released22",
+      "nodeVersion": "v22.18.0",
+      "serverEntry": "released 826af5ce61db7e2d2d675fe90d24c941a83f3924",
+      "passed": true,
+      "checks": [
+        {
+          "name": "Transform rollback and cross-agent cascade guard",
+          "passed": true
+        },
+        {
+          "name": "Native Undo and Redo update recorded eligibility",
+          "passed": true
+        },
+        {
+          "name": "Untracked native work requires explicit cascade and is reported",
+          "passed": true
+        },
+        {
+          "name": "Clearing native Undo cannot claim a successful targeted revert",
+          "passed": true
+        },
+        {
+          "name": "Actual script reload preserves same-session native Undo identity",
+          "beforeSession": "8d91bfa574ce4c8ca210d020fd4de237",
+          "afterSession": "bc046d19f03d4fe6bea8f0ee9a046d9c",
+          "actionId": 178,
+          "passed": true
+        }
+      ],
+      "unityVersion": "6000.6.2f1",
+      "historyPersistence": {
+        "maxFileBytes": 33554432,
+        "saveBlocked": false,
+        "warning": "",
+        "loadedRecords": 50,
+        "discardedOnLoad": 0,
+        "lastFileBytes": 18981,
+        "loadFailures": 0,
+        "saveFailures": 0
+      },
+      "fixtureRemoved": true,
+      "persistenceRestored": false
+    },
+    {
+      "name": "released18",
+      "nodeVersion": "v18.20.8",
+      "serverEntry": "released 826af5ce61db7e2d2d675fe90d24c941a83f3924",
+      "passed": true,
+      "checks": [
+        {
+          "name": "Transform rollback and cross-agent cascade guard",
+          "passed": true
+        },
+        {
+          "name": "Native Undo and Redo update recorded eligibility",
+          "passed": true
+        },
+        {
+          "name": "Untracked native work requires explicit cascade and is reported",
+          "passed": true
+        },
+        {
+          "name": "Clearing native Undo cannot claim a successful targeted revert",
+          "passed": true
+        },
+        {
+          "name": "Actual script reload preserves same-session native Undo identity",
+          "beforeSession": "bc046d19f03d4fe6bea8f0ee9a046d9c",
+          "afterSession": "7def9877ccf74db7a9683e404ba70a2f",
+          "actionId": 242,
+          "passed": true
+        }
+      ],
+      "unityVersion": "6000.6.2f1",
+      "historyPersistence": {
+        "maxFileBytes": 33554432,
+        "saveBlocked": false,
+        "warning": "",
+        "loadedRecords": 50,
+        "discardedOnLoad": 0,
+        "lastFileBytes": 18966,
+        "loadFailures": 0,
+        "saveFailures": 0
+      },
+      "fixtureRemoved": true,
+      "persistenceRestored": false
+    }
+  ],
+  "minimumVersion": {
+    "unityVersion": "2021.3.18f1",
+    "passed": true,
+    "referenceCount": 211,
+    "packageAssemblies": [
+      {
+        "sha256": "AF83F70ECAC09EE676571E37C62595B7FF26148B636CE498F9151A2F7A9697A3",
+        "file": "UnityEngine.UI.dll"
+      },
+      {
+        "sha256": "AAAF5BC1E371F6CFA67138DCB6E77634A8075D30E0C1DF27670A5B0028CC5523",
+        "file": "UnityEngine.TestRunner.dll"
+      },
+      {
+        "sha256": "6995901F60508B79F4B648FE2E3B64D8D1BD545B3CB3817134F079842FA82832",
+        "file": "UnityEditor.TestRunner.dll"
+      }
+    ],
+    "excludedIntegrations": [
+      "UMA",
+      "ProBuilder"
+    ],
+    "sourceCount": 77,
+    "check": "C# compilation against installed Unity assemblies; no editor execution or package import",
+    "exitCode": 0
+  },
+  "serverTests": [
+    {
+      "node": "22.18.0",
+      "passed": 255,
+      "failed": 0
+    },
+    {
+      "node": "18.20.8",
+      "passed": 255,
+      "failed": 0
+    }
+  ],
+  "toolCatalog": {
+    "richModeBudgetBytes": 48000,
+    "preserved": true
+  },
+  "fixturePrecondition": {
+    "initialLiveRunStoppedBeforeFixture": true,
+    "reason": "Clean default scene still had Main Camera and Directional Light",
+    "correction": "Opened an empty scene in the marked disposable project; all four complete runs passed"
+  },
+  "limits": [
+    "Input/output file budgets and parser complexity bounds are not whole-heap limits",
+    "Existing history APIs and user-held record text have separate lifetimes",
+    "Windows/Mono file replacement evidence does not establish power-loss durability or other-filesystem behavior",
+    "Actual Unity 2021 runtime remains deferred by maintainer direction"
+  ],
+  "passed": true,
+  "documentation": {
+    "localLinksChecked": 304,
+    "missing": 0
+  },
+  "cleanup": {
+    "ownedEditorsClosed": true,
+    "closedLivePid": 444284,
+    "closedQueuePid": 444916,
+    "copiedBatchFixturesRemoved": true,
+    "liveObjectsRemoved": true,
+    "persistencePreferenceRestored": true,
+    "cleanScene": true,
+    "userEditorsUntouched": true
+  }
+}

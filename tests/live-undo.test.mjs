@@ -19,7 +19,7 @@ test("live Undo follows native state, protects other agents and survives script 
   const suffix = randomUUID().replaceAll("-", "");
   const prefix = "__McpUndoLive_" + suffix + "_";
   const agents = { control: "undo-control-" + suffix, a: "undo-a-" + suffix, b: "undo-b-" + suffix };
-  const report = { nodeVersion: process.version, passed: false, checks: [] };
+  const report = { nodeVersion: process.version, serverEntry: process.env.UNITY_MCP_UNDO_SERVER_ENTRY || "current", passed: false, checks: [] };
   let port, original, fixtureStarted = false;
   const raw = async (name, args = {}, agent = agents.control) => {
     const response = await client.request("tools/call", {
@@ -128,6 +128,15 @@ test("live Undo follows native state, protects other agents and survives script 
     const after = await history("Reload");
     assert.equal(after.id, before.id);
     assert.equal(after.undoable, true);
+    const persistence = (await call("unity_queue_info")).historyPersistence;
+    if (persistence) {
+      assert.equal(persistence.maxFileBytes, 32 * 1024 * 1024);
+      assert.equal(persistence.saveBlocked, false);
+      assert.equal(persistence.warning, "");
+      assert.ok(persistence.loadedRecords > 0 && persistence.lastFileBytes > 0);
+      assert.equal(persistence.loadFailures, 0);
+      report.historyPersistence = persistence;
+    }
     await undo();
     assert.equal(await exists("Reload"), false);
     report.checks.push({ name: "Actual script reload preserves same-session native Undo identity", beforeSession: oldSession, afterSession: newSession, actionId: after.id, passed: true });

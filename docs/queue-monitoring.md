@@ -22,6 +22,8 @@ Classification follows the server's direct-result rules for dictionaries, anonym
 
 Deferred observer backlog appears separately in `historyNotifications`. See [notification retention and window refreshes](history-notifications.md) for capacity, cancellation, delivery counters and real reload checks.
 
+`historyPersistence` reports file-size limits, restoration counts, failures and blocked saves that preserve a damaged source. See [snapshot persistence and recovery](history-persistence.md).
+
 Undo eligibility is checked against Unity's current native stack, including native Undo/Redo, clearing and session identity. A targeted revert also accounts for newer native groups outside retained MCP history. See [Undo and multi-agent cascade protection](undo.md).
 
 The winning terminal transition creates one history record, including deferred callbacks and queued/executing timeouts. Duplicate or late callbacks cannot create additional records or change counters. History and `undo/history` add `commandFailed` without changing the original `status`; the dashboard, details and copied text display **Command error** for recognized handler failures. Supported synchronous undo groups retain their previous behavior; a command error can still follow partial changes.

@@ -21,7 +21,7 @@ Action History observes a revision changed by recording, clearing and loading hi
 | `delivered` | Records dispatched to the then-current subscriber list; subscriber exceptions are logged separately |
 | `dropped` | Oldest notifications discarded by capacity pressure; intentional clear/unsubscribe/shutdown cancellation is excluded |
 
-Counters reset on domain reload. These limits do not bound user-held records, arbitrary subscriber work, record text sizes, persisted files, per-agent logs, or total process memory. The [completed-result policy](result-retention.md) and [queue retention policy](queue-monitoring.md) remain separate.
+Counters reset on domain reload. These limits do not bound user-held records, arbitrary subscriber work, record text sizes, per-agent logs, or total process memory. [Persisted files](history-persistence.md) have separate byte/validation limits. The [completed-result policy](result-retention.md) and [queue retention policy](queue-monitoring.md) remain separate.
 
 ## Evidence and reproduction
 

@@ -4270,7 +4270,7 @@ export const editorTools = [
   {
     name: "unity_queue_info",
     description:
-      "Queue depths, agent counts and result cache. New plugin metrics: http, httpCommands (admission), completedResults (retained cost/evictions), historyNotifications (observer backlog). Reset on reload. serverAgentState covers Node agent/identity-byte limits, active leases and evictions. Accounted bytes are not heap usage.",
+      "Queue depths, agents and results. Plugin metrics: http, httpCommands (admission), completedResults (cost/evictions), historyNotifications (backlog), historyPersistence (file limits/failures). Reset on reload. serverAgentState: Node agent/identity limits, leases, evictions. Accounted bytes are not heap usage.",
     inputSchema: { type: "object", properties: {} },
     handler: async () => formatResult({ ...await bridge.getQueueInfo(), serverAgentState: agentState.snapshot() }),
   },

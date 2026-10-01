@@ -4,6 +4,11 @@ All notable changes to this package will be documented in this file.
 
 ## [Unreleased]
 
+### Action history persistence
+- Describe additive `historyPersistence` limits, restoration counts, warnings and failure counters while retaining the tool-catalog size budget.
+- Extend the live Undo fixture to inspect available persistence diagnostics after actual script reload; preserve compatibility with plugins predating these fields.
+- Document eighteen native checks and current/released-server reload/Undo validation on Node 18/22 in the [persistence guide](docs/history-persistence.md).
+
 ### Action history monitoring
 - Describe additive `historyNotifications` backlog, delivery and drop metrics while retaining the tool-catalog size budget.
 - Add opt-in `test:history` for actual editor-update observer delivery, native pressure/clear and script reload with current/released servers on Node 18/22.
