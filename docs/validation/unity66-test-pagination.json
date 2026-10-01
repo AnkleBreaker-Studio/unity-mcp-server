@@ -1,7 +1,7 @@
 {
   "recordedOn": "2026-10-01",
-  "baselinePluginCommit": "4981f6a",
-  "baselineServerCommit": "7c0c693",
+  "baselinePluginCommit": "4981f6abcc8b937b0a952f146b231cc5837e20d4",
+  "baselineServerCommit": "7c0c6934eeb8219884936c7a0ecc2824c37876b5",
   "releasedPluginCommit": "0b8e76f7c50ed8c0bd5f359d893653211d0f2abe",
   "releasedServerCommit": "826af5ce61db7e2d2d675fe90d24c941a83f3924",
   "environment": {
@@ -1576,5 +1576,37 @@
     "Running pages are provisional and can reorder at final reconciliation.",
     "Measurements cover result construction, excluding serialization, network and whole editor frames; allocation events are not bytes.",
     "Older Unity runtime execution remains deferred; minimum-version evidence is compiler-only."
-  ]
+  ],
+  "implementation": {
+    "pluginCommit": "f9c7cc4e00039166135436e6dac6369fcd40bce1",
+    "serverCommit": "edbb7113d83922f8b61a8c0efffe1d302913091b"
+  },
+  "ci": {
+    "plugin": {
+      "run": 36863206966,
+      "passed": true,
+      "routes": 338
+    },
+    "server": {
+      "run": 36863215277,
+      "passed": true,
+      "jobs": 8,
+      "nodeVersions": [
+        18,
+        20,
+        22,
+        24
+      ],
+      "platforms": [
+        "Windows",
+        "Linux"
+      ],
+      "testsPerJob": 263
+    }
+  },
+  "cleanup": {
+    "ownedEditorsClosed": true,
+    "copiedFixturesRemoved": true,
+    "localDocumentationLinksChecked": 331
+  }
 }
