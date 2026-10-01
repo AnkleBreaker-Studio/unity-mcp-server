@@ -178,7 +178,8 @@
       "selections": 4096,
       "selectionRequirements": 4096,
       "pendingSelections": 0
-    }
+    },
+    "serverCommit": "74158a90ea6e043f7516a1a424ce906809c8fe6f"
   },
   "serverTests": {
     "node": "22.18.0",
@@ -196,5 +197,24 @@
     "tests/debug-logging.test.mjs": "d4366287642d9ed18de79054fd2e1f9e7e76764d0c44325ba83c30a3e5ae25bc",
     "tests/fixtures/debug-log-worker.mjs": "eec6261ab1997fed3d6ad75054fb92c7e8f8257a078e37847d26e2a23eb16974",
     "package.json": "c3747ac8d90af18d67b86b4e1ca7c55d6f445c3d256ddad9476c4310a8accef5"
+  },
+  "ci": {
+    "runId": 36834180163,
+    "url": "https://github.com/AnkleBreaker-Studio/unity-mcp-server/actions/runs/36834180163",
+    "passed": true,
+    "jobs": 8,
+    "nodeVersions": [
+      18,
+      20,
+      22,
+      24
+    ],
+    "platforms": [
+      "Windows",
+      "Linux"
+    ],
+    "tests": 229,
+    "failed": 0,
+    "verifiedLogJobId": 110277488359
   }
 }

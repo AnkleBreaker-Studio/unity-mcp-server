@@ -25,4 +25,4 @@ node --test tests/debug-logging.test.mjs
 node tests/diagnostics/state-retention-audit.mjs /absolute/path/to/report.json
 ```
 
-The focused checks are included in `npm test`. They use temporary directories and mock bridges; they do not contact a running Unity Editor. Server/plugin wire contracts and the plugin implementation are unchanged.
+The focused checks are included in `npm test`. Commit `74158a9` passes all eight [Node 18/20/22/24 Windows/Linux CI jobs](https://github.com/AnkleBreaker-Studio/unity-mcp-server/actions/runs/36834180163), with 229 tests. They use temporary directories and mock bridges; they do not contact a running Unity Editor. Server/plugin wire contracts and the plugin implementation are unchanged.
