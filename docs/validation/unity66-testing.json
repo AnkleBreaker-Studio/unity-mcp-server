@@ -316,5 +316,31 @@
       }
     ]
   },
-  "implementationPluginCommit": "ad7e8adb009799c43f85034f7b3c6aa415fa1f61"
+  "implementationPluginCommit": "ad7e8adb009799c43f85034f7b3c6aa415fa1f61",
+  "published": {
+    "pluginCommit": "ad7e8adb009799c43f85034f7b3c6aa415fa1f61",
+    "serverValidationCommit": "8a852bb280b6cb68af0a89a7a4d48b729ec4d42a",
+    "pluginCi": {
+      "url": "https://github.com/AnkleBreaker-Studio/unity-mcp-plugin/actions/runs/36795622609",
+      "conclusion": "success",
+      "scope": "338-route registry; Unity validation is local"
+    },
+    "serverCi": {
+      "url": "https://github.com/AnkleBreaker-Studio/unity-mcp-server/actions/runs/36795625065",
+      "conclusion": "success",
+      "jobs": 8,
+      "nodeVersions": [
+        18,
+        20,
+        22,
+        24
+      ],
+      "platforms": [
+        "Windows",
+        "Linux"
+      ],
+      "testsPerJob": 163
+    },
+    "releasePublished": false
+  }
 }
