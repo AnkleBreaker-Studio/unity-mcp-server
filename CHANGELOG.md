@@ -4,6 +4,11 @@ All notable changes to this package will be documented in this file.
 
 ## [Unreleased]
 
+### Responsive asset previews
+- Describe honored preview sizes, optional image suppression and native prefab framing. Retain tool names and correct the previously inaccurate fixed-size defaults.
+- Add opt-in `test:previews` for current/released servers on Node 18/22, including native cold-preview dispatch, independent queued reads and decoded PNG verification.
+- Record eleven baseline failures, 26 passing plugin checks, 17 capture regressions and matching native-preview pixel hashes. Distinguish reduced main-thread occupation from total rendering latency.
+
 ### Inline graphics captures
 - Describe camera-only rendering, explicit camera errors and bounded whole-pixel dimensions while preserving tool names, defaults and image results.
 - Add opt-in `test:graphics` with decoded PNG, refusal and cleanup checks through direct MCP calls. Current and released servers pass on Node 18/22 with the updated plugin.

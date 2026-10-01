@@ -20,7 +20,7 @@ Five samples of ten 1024-square captures had a baseline median of 192.25 ms and 
 
 Four live MCP runs pass with the current and released servers on Node 18/22. They use the direct core capture tools, validate returned PNGs and errors, and restore the original clean scene with no surviving fixture objects. The released server's advanced proxy returns these core captures as JSON; its direct tools preserve image blocks. This pre-existing proxy difference is not changed by the plugin update.
 
-All 74 included editor sources compile against installed Unity 2021.3.18f1 assemblies; actual old-editor execution remains deferred. URP/HDRP, other graphics APIs, composed Game View capture, and duplicate/inactive camera selection need separate validation. Asset-preview loading still uses its existing synchronous retry path and native preview dimensions; this change does not implement requested thumbnail resizing.
+All 74 editor sources included at this checkpoint compile against installed Unity 2021.3.18f1 assemblies; actual old-editor execution remains deferred. URP/HDRP, other graphics APIs, composed Game View capture, and duplicate/inactive camera selection need separate validation. The later [asset-preview change](asset-previews.md) adds deferred loading and requested thumbnail resizing with separate evidence.
 
 ## Reproduce
 

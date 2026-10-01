@@ -1,0 +1,1076 @@
+{
+  "date": "2026-10-01",
+  "scope": "Deferred asset/prefab/material/texture preview loading, options and render-resource ownership",
+  "baselinePluginCommit": "0b93577f4970f5a76f78dcabe121ef9646812e0d",
+  "releasedServerCommit": "826af5ce61db7e2d2d675fe90d24c941a83f3924",
+  "baseline": {
+    "failed": 11,
+    "passingControls": 4,
+    "unityVersion": "6000.6.2f1",
+    "graphicsDevice": "Direct3D12",
+    "passed": false,
+    "checks": [
+      {
+        "name": "Cold material preview records editor-thread occupancy",
+        "passed": true,
+        "evidence": {
+          "elapsedMs": 2828.0457,
+          "image": {
+            "width": 128,
+            "height": 128,
+            "bytes": 14003,
+            "checkedPixels": 0
+          },
+          "scope": "Synchronous C# entry point on a newly imported material"
+        }
+      },
+      {
+        "name": "Asset preview retains valid default pixels",
+        "passed": true,
+        "evidence": {
+          "width": 32,
+          "height": 16,
+          "bytes": 95,
+          "checkedPixels": 512
+        }
+      },
+      {
+        "name": "Explicit asset dimensions are honored",
+        "passed": false,
+        "error": "Wrong PNG size: 32x16"
+      },
+      {
+        "name": "Explicit prefab dimensions are honored",
+        "passed": false,
+        "error": "Wrong PNG size: 128x128"
+      },
+      {
+        "name": "Material metadata can omit its preview",
+        "passed": false,
+        "error": "includePreview=false was ignored"
+      },
+      {
+        "name": "Texture metadata can omit its preview",
+        "passed": false,
+        "error": "previewSize=0 was ignored"
+      },
+      {
+        "name": "Texture preview size bounds the longest edge with aspect preserved",
+        "passed": false,
+        "error": "Wrong PNG size: 32x16"
+      },
+      {
+        "name": "Documented material objectPath resolves the renderer material",
+        "passed": false,
+        "error": "{\"error\":\"Material not found. Provide assetPath to a .mat file or gameObjectPath + materialIndex.\"}"
+      },
+      {
+        "name": "Legacy material gameObjectPath remains accepted",
+        "passed": true,
+        "evidence": true
+      },
+      {
+        "name": "Negative material index returns a structured error",
+        "passed": false,
+        "error": "Index was outside the bounds of the array."
+      },
+      {
+        "name": "Material metadata preview restores the active render target",
+        "passed": false,
+        "error": "Material preview changed the active target"
+      },
+      {
+        "name": "Texture metadata preview restores the active render target",
+        "passed": false,
+        "error": "Texture preview changed the active target"
+      },
+      {
+        "name": "Invalid asset dimensions are refused before rendering",
+        "passed": false,
+        "error": "Expected a structured error: {\"success\":true,\"base64\":\"iVBORw0KGgoAAAANSUhEUgAAACAAAAAQCAYAAAB3AH1ZAAAAJklEQVRIDWNk+A+EAwiYBtBusNWjDhgNgdEQGA2B0RAYDYHREAAAk+YCHn+ZfQ8AAAAASUVORK5CYII=\",\"width\":32,\"height\":16,\"assetPath\":\"Assets/__AssetPreview_795a76f4f9164649a394cb75f714f4d0/Texture.png\",\"assetType\":\"Texture2D\"}"
+      },
+      {
+        "name": "Fractional texture preview size is refused",
+        "passed": false,
+        "error": "Expected a structured error: {\"name\":\"Texture\",\"assetPath\":\"Assets/__AssetPreview_795a76f4f9164649a394cb75f714f4d0/Texture.png\",\"width\":32,\"height\":16,\"filterMode\":\"Bilinear\",\"wrapMode\":\"Repeat\",\"anisoLevel\":1,\"texelSize\":{\"x\":0.03125,\"y\":0.0625},\"format\":\"DXT1\",\"mipmapCount\":6,\"isReadable\":false,\"importSettings\":{\"textureType\":\"Default\",\"spriteMode\":\"None\",\"sRGB\":true,\"alphaSource\":\"FromInput\",\"alphaIsTransparency\":false,\"mipmapEnabled\":true,\"readWriteEnabled\":false,\"maxTextureSize\":2048,\"textureCompression\":\"Compressed\",\"npotScale\":\"ToNearest\"},\"memoryEstimateKB\":5.4,\"base64\":\"iVBORw0KGgoAAAANSUhEUgAAACAAAAAQCAYAAAB3AH1ZAAAAJklEQVRIDWNk+A+EAwiYBtBusNWjDhgNgdEQGA2B0RAYDYHREAAAk+YCHn+ZfQ8AAAAASUVORK5CYII=\"}"
+      },
+      {
+        "name": "Missing asset still returns a structured error",
+        "passed": true,
+        "evidence": true
+      }
+    ],
+    "fixtureAssetsRemoved": true
+  },
+  "corrected": {
+    "unityVersion": "6000.6.2f1",
+    "graphicsDevice": "Direct3D12",
+    "passed": true,
+    "checks": [
+      {
+        "name": "Cold material preview records editor-thread occupancy",
+        "passed": true,
+        "evidence": {
+          "elapsedMs": 25.003800000000002,
+          "image": {
+            "width": 64,
+            "height": 64,
+            "bytes": 1996,
+            "checkedPixels": 0
+          },
+          "scope": "Synchronous C# entry point on a newly imported material"
+        }
+      },
+      {
+        "name": "Asset preview retains valid default pixels",
+        "passed": true,
+        "evidence": {
+          "width": 32,
+          "height": 16,
+          "bytes": 95,
+          "checkedPixels": 512
+        }
+      },
+      {
+        "name": "Explicit asset dimensions are honored",
+        "passed": true,
+        "evidence": {
+          "width": 40,
+          "height": 24,
+          "bytes": 127,
+          "checkedPixels": 960
+        }
+      },
+      {
+        "name": "Explicit prefab dimensions are honored",
+        "passed": true,
+        "evidence": {
+          "width": 48,
+          "height": 32,
+          "bytes": 1419,
+          "checkedPixels": 0
+        }
+      },
+      {
+        "name": "Material metadata can omit its preview",
+        "passed": true,
+        "evidence": true
+      },
+      {
+        "name": "Texture metadata can omit its preview",
+        "passed": true,
+        "evidence": true
+      },
+      {
+        "name": "Texture preview size bounds the longest edge with aspect preserved",
+        "passed": true,
+        "evidence": {
+          "width": 24,
+          "height": 12,
+          "bytes": 95,
+          "checkedPixels": 288
+        }
+      },
+      {
+        "name": "Documented material objectPath resolves the renderer material",
+        "passed": true,
+        "evidence": true
+      },
+      {
+        "name": "Legacy material gameObjectPath remains accepted",
+        "passed": true,
+        "evidence": true
+      },
+      {
+        "name": "Negative material index returns a structured error",
+        "passed": true,
+        "evidence": true
+      },
+      {
+        "name": "Material metadata preview restores the active render target",
+        "passed": true,
+        "evidence": {
+          "width": 64,
+          "height": 64,
+          "bytes": 1996,
+          "checkedPixels": 0
+        }
+      },
+      {
+        "name": "Texture metadata preview restores the active render target",
+        "passed": true,
+        "evidence": {
+          "width": 32,
+          "height": 16,
+          "bytes": 95,
+          "checkedPixels": 512
+        }
+      },
+      {
+        "name": "Invalid asset dimensions are refused before rendering",
+        "passed": true,
+        "evidence": true
+      },
+      {
+        "name": "Fractional texture preview size is refused",
+        "passed": true,
+        "evidence": true
+      },
+      {
+        "name": "Missing asset still returns a structured error",
+        "passed": true,
+        "evidence": true
+      },
+      {
+        "name": "Pending previews yield while independent queued reads complete",
+        "passed": true,
+        "evidence": {
+          "dispatchMs": 2.7169000000000003,
+          "independentReadBeforePreview": true
+        }
+      },
+      {
+        "name": "Unavailable preview falls back once when native loading stops",
+        "passed": true,
+        "evidence": true
+      },
+      {
+        "name": "Loading deadline uses a fallback without sleeping",
+        "passed": true,
+        "evidence": true
+      },
+      {
+        "name": "Native preview polling is throttled across rapid editor updates",
+        "passed": true,
+        "evidence": true
+      },
+      {
+        "name": "Inactive work is neither scheduled nor polled",
+        "passed": true,
+        "evidence": true
+      },
+      {
+        "name": "Expiration during native polling skips result encoding",
+        "passed": true,
+        "evidence": true
+      },
+      {
+        "name": "Polling and fallback exceptions release the operation once",
+        "passed": true,
+        "evidence": true
+      },
+      {
+        "name": "Result construction failure releases the operation once",
+        "passed": true,
+        "evidence": true
+      },
+      {
+        "name": "Pending admission and per-update polling are bounded and fair",
+        "passed": true,
+        "evidence": true
+      },
+      {
+        "name": "Reload cleanup detaches updates and drops pending callbacks",
+        "passed": true,
+        "evidence": true
+      },
+      {
+        "name": "All four preview routes use the shared deferred dispatcher",
+        "passed": true,
+        "evidence": true
+      }
+    ],
+    "fixtureAssetsRemoved": true
+  },
+  "cameraRegressions": {
+    "passed": true,
+    "count": 17,
+    "checks": [
+      {
+        "name": "Default game camera retains 512-square red PNG output",
+        "passed": true,
+        "evidence": {
+          "width": 512,
+          "height": 512,
+          "pngBytes": 4404,
+          "checkedPixels": 262144
+        }
+      },
+      {
+        "name": "Explicit camera renders its own pixels at requested dimensions",
+        "passed": true,
+        "evidence": {
+          "width": 64,
+          "height": 40,
+          "pngBytes": 178,
+          "checkedPixels": 2560
+        }
+      },
+      {
+        "name": "Missing explicit camera cannot fall back to MainCamera",
+        "passed": true,
+        "evidence": true
+      },
+      {
+        "name": "Explicit object without a Camera cannot fall back",
+        "passed": true,
+        "evidence": true
+      },
+      {
+        "name": "Fractional dimensions are refused instead of rounded",
+        "passed": true,
+        "evidence": true
+      },
+      {
+        "name": "Dimensions above the per-side limit are refused",
+        "passed": true,
+        "evidence": true
+      },
+      {
+        "name": "Oversized integer input returns a structured dimension error",
+        "passed": true,
+        "evidence": true
+      },
+      {
+        "name": "Pixel budget is checked before camera lookup without a large allocation",
+        "passed": true,
+        "evidence": true
+      },
+      {
+        "name": "Exact pixel budget remains admissible before missing-camera lookup",
+        "passed": true,
+        "evidence": true
+      },
+      {
+        "name": "Invalid dimension forms return errors without changing render state",
+        "passed": true,
+        "evidence": true
+      },
+      {
+        "name": "Whole-number numeric forms retain valid capture behavior",
+        "passed": true,
+        "evidence": true
+      },
+      {
+        "name": "Game capture restores both borrowed render targets",
+        "passed": true,
+        "evidence": {
+          "width": 64,
+          "height": 40,
+          "pngBytes": 175,
+          "checkedPixels": 2560
+        }
+      },
+      {
+        "name": "Scene capture restores both borrowed render targets",
+        "passed": true,
+        "evidence": {
+          "width": 64,
+          "height": 40,
+          "pngBytes": 825,
+          "checkedPixels": 0
+        }
+      },
+      {
+        "name": "Scene capture enforces the same dimension boundary",
+        "passed": true,
+        "evidence": true
+      },
+      {
+        "name": "Asset preview restores the borrowed active render target",
+        "passed": true,
+        "evidence": {
+          "width": 16,
+          "height": 16,
+          "pngBytes": 91,
+          "checkedPixels": 256
+        }
+      },
+      {
+        "name": "Repeated game captures do not retain capture texture objects",
+        "passed": true,
+        "evidence": {
+          "before": 160,
+          "after": 160,
+          "repetitions": 20,
+          "scope": "Live texture objects after warmup; not total GPU memory"
+        }
+      }
+    ]
+  },
+  "nativeComparison": {
+    "baseline": {
+      "nodeVersion": "v22.18.0",
+      "baseline": true,
+      "passed": true,
+      "checks": [],
+      "coldProbes": [
+        {
+          "done": true,
+          "deferred": false,
+          "dispatchMs": 114.1243,
+          "heartbeats": 0,
+          "readBeforePreview": false,
+          "processingMs": 114.0586,
+          "image": {
+            "width": 128,
+            "height": 128,
+            "bytes": 13834,
+            "pixelSha256": "69e785e87a2cdeae9a4726dff49ed502fee1a90188df597be260eb7cbdb45069",
+            "checkedPixels": 0
+          }
+        },
+        {
+          "done": true,
+          "deferred": false,
+          "dispatchMs": 119.9268,
+          "heartbeats": 0,
+          "readBeforePreview": false,
+          "processingMs": 119.8696,
+          "image": {
+            "width": 128,
+            "height": 128,
+            "bytes": 13834,
+            "pixelSha256": "69e785e87a2cdeae9a4726dff49ed502fee1a90188df597be260eb7cbdb45069",
+            "checkedPixels": 0
+          }
+        },
+        {
+          "done": true,
+          "deferred": false,
+          "dispatchMs": 124.6738,
+          "heartbeats": 0,
+          "readBeforePreview": false,
+          "processingMs": 124.6177,
+          "image": {
+            "width": 128,
+            "height": 128,
+            "bytes": 13834,
+            "pixelSha256": "69e785e87a2cdeae9a4726dff49ed502fee1a90188df597be260eb7cbdb45069",
+            "checkedPixels": 0
+          }
+        }
+      ],
+      "unityVersion": "6000.6.2f1",
+      "cleanup": {
+        "assetsRemoved": true,
+        "sceneCountRestored": true,
+        "originalSceneClean": true
+      }
+    },
+    "initialBaseline": {
+      "nodeVersion": "v22.18.0",
+      "baseline": true,
+      "passed": true,
+      "checks": [],
+      "coldProbes": [
+        {
+          "done": true,
+          "deferred": false,
+          "dispatchMs": 338.1231,
+          "heartbeats": 0,
+          "readBeforePreview": false,
+          "processingMs": 338.0684,
+          "image": {
+            "width": 128,
+            "height": 128,
+            "bytes": 13834,
+            "checkedPixels": 0
+          }
+        },
+        {
+          "done": true,
+          "deferred": false,
+          "dispatchMs": 331.9356,
+          "heartbeats": 0,
+          "readBeforePreview": false,
+          "processingMs": 331.8875,
+          "image": {
+            "width": 128,
+            "height": 128,
+            "bytes": 13834,
+            "checkedPixels": 0
+          }
+        },
+        {
+          "done": true,
+          "deferred": false,
+          "dispatchMs": 118.49950000000001,
+          "heartbeats": 0,
+          "readBeforePreview": false,
+          "processingMs": 118.4493,
+          "image": {
+            "width": 128,
+            "height": 128,
+            "bytes": 13834,
+            "checkedPixels": 0
+          }
+        }
+      ],
+      "unityVersion": "6000.6.2f1",
+      "cleanup": {
+        "assetsRemoved": true,
+        "sceneCountRestored": true,
+        "originalSceneClean": true
+      }
+    },
+    "pixelSha256": "69e785e87a2cdeae9a4726dff49ed502fee1a90188df597be260eb7cbdb45069",
+    "allFifteenDecodedImagesMatch": true,
+    "scope": "Three newly created cyan-material previews in a dedicated preceding-plugin editor, then three per live run in the updated editor. Same Unity version, Built-in pipeline and Direct3D12. Dispatch timing includes queue dispatch and fixture work; processing time includes native loading and later encoding. Update callbacks are not rendered frames.",
+    "conclusion": "Dispatch no longer occupies the main thread for native preview loading. Independent queued reads complete before preview results. No gameplay FPS or whole-editor CPU/GPU claim.",
+    "synchronousHelperCaveat": "The batch helper changed from a bounded blocking wait to an immediate cached/mini lookup and returned a smaller icon. Its before/after timings are not an equivalent-output performance comparison."
+  },
+  "live": [
+    {
+      "server": "current",
+      "nodeVersion": "v22.18.0",
+      "baseline": false,
+      "passed": true,
+      "checks": [
+        {
+          "name": "unity_graphics_asset_preview",
+          "passed": true,
+          "width": 40,
+          "height": 24,
+          "bytes": 127,
+          "pixelSha256": "f3c4de4999a80ca53befe2296bc674e69383507f2c26b7340a82d0c517112961",
+          "checkedPixels": 960
+        },
+        {
+          "name": "unity_graphics_prefab_render",
+          "passed": true,
+          "width": 48,
+          "height": 32,
+          "bytes": 1044,
+          "pixelSha256": "ed2a5d90db2a382c04a1c6f686b44cac3a940770e788a01b90501016ccc59d2a",
+          "checkedPixels": 0
+        },
+        {
+          "name": "unity_graphics_texture_info",
+          "passed": true,
+          "width": 24,
+          "height": 12,
+          "bytes": 95,
+          "pixelSha256": "98db64277ac82e9fbc545d50127432ba01ce618f7b9fac3c9791ae56e978404a",
+          "checkedPixels": 288
+        },
+        {
+          "name": "unity_graphics_material_info",
+          "passed": true,
+          "width": 128,
+          "height": 128,
+          "bytes": 14003,
+          "pixelSha256": "1002b7898f0bae4f6439f57ba1a74dc79695756deda18e94841f3b7e8fd767f0",
+          "checkedPixels": 0
+        },
+        {
+          "name": "unity_graphics_material_info omits preview and preserves metadata",
+          "passed": true
+        },
+        {
+          "name": "unity_graphics_material_info omits preview and preserves metadata",
+          "passed": true
+        },
+        {
+          "name": "unity_graphics_texture_info omits preview and preserves metadata",
+          "passed": true
+        },
+        {
+          "name": "unity_graphics_asset_preview refuses invalid input",
+          "passed": true
+        },
+        {
+          "name": "unity_graphics_texture_info refuses invalid input",
+          "passed": true
+        },
+        {
+          "name": "unity_graphics_material_info refuses invalid input",
+          "passed": true
+        }
+      ],
+      "coldProbes": [
+        {
+          "done": true,
+          "deferred": true,
+          "dispatchMs": 1.4333,
+          "heartbeats": 2578,
+          "readBeforePreview": true,
+          "processingMs": 155.8095,
+          "image": {
+            "width": 128,
+            "height": 128,
+            "bytes": 13834,
+            "pixelSha256": "69e785e87a2cdeae9a4726dff49ed502fee1a90188df597be260eb7cbdb45069",
+            "checkedPixels": 0
+          }
+        },
+        {
+          "done": true,
+          "deferred": true,
+          "dispatchMs": 0.0395,
+          "heartbeats": 1780,
+          "readBeforePreview": true,
+          "processingMs": 89.1816,
+          "image": {
+            "width": 128,
+            "height": 128,
+            "bytes": 13834,
+            "pixelSha256": "69e785e87a2cdeae9a4726dff49ed502fee1a90188df597be260eb7cbdb45069",
+            "checkedPixels": 0
+          }
+        },
+        {
+          "done": true,
+          "deferred": true,
+          "dispatchMs": 0.047,
+          "heartbeats": 1586,
+          "readBeforePreview": true,
+          "processingMs": 87.1592,
+          "image": {
+            "width": 128,
+            "height": 128,
+            "bytes": 13834,
+            "pixelSha256": "69e785e87a2cdeae9a4726dff49ed502fee1a90188df597be260eb7cbdb45069",
+            "checkedPixels": 0
+          }
+        }
+      ],
+      "unityVersion": "6000.6.2f1",
+      "cleanup": {
+        "assetsRemoved": true,
+        "sceneCountRestored": true,
+        "originalSceneClean": true
+      }
+    },
+    {
+      "server": "current",
+      "nodeVersion": "v18.20.8",
+      "baseline": false,
+      "passed": true,
+      "checks": [
+        {
+          "name": "unity_graphics_asset_preview",
+          "passed": true,
+          "width": 40,
+          "height": 24,
+          "bytes": 127,
+          "pixelSha256": "f3c4de4999a80ca53befe2296bc674e69383507f2c26b7340a82d0c517112961",
+          "checkedPixels": 960
+        },
+        {
+          "name": "unity_graphics_prefab_render",
+          "passed": true,
+          "width": 48,
+          "height": 32,
+          "bytes": 1044,
+          "pixelSha256": "ed2a5d90db2a382c04a1c6f686b44cac3a940770e788a01b90501016ccc59d2a",
+          "checkedPixels": 0
+        },
+        {
+          "name": "unity_graphics_texture_info",
+          "passed": true,
+          "width": 24,
+          "height": 12,
+          "bytes": 95,
+          "pixelSha256": "98db64277ac82e9fbc545d50127432ba01ce618f7b9fac3c9791ae56e978404a",
+          "checkedPixels": 288
+        },
+        {
+          "name": "unity_graphics_material_info",
+          "passed": true,
+          "width": 128,
+          "height": 128,
+          "bytes": 14003,
+          "pixelSha256": "1002b7898f0bae4f6439f57ba1a74dc79695756deda18e94841f3b7e8fd767f0",
+          "checkedPixels": 0
+        },
+        {
+          "name": "unity_graphics_material_info omits preview and preserves metadata",
+          "passed": true
+        },
+        {
+          "name": "unity_graphics_material_info omits preview and preserves metadata",
+          "passed": true
+        },
+        {
+          "name": "unity_graphics_texture_info omits preview and preserves metadata",
+          "passed": true
+        },
+        {
+          "name": "unity_graphics_asset_preview refuses invalid input",
+          "passed": true
+        },
+        {
+          "name": "unity_graphics_texture_info refuses invalid input",
+          "passed": true
+        },
+        {
+          "name": "unity_graphics_material_info refuses invalid input",
+          "passed": true
+        }
+      ],
+      "coldProbes": [
+        {
+          "done": true,
+          "deferred": true,
+          "dispatchMs": 0.0327,
+          "heartbeats": 1787,
+          "readBeforePreview": true,
+          "processingMs": 91.0924,
+          "image": {
+            "width": 128,
+            "height": 128,
+            "bytes": 13834,
+            "pixelSha256": "69e785e87a2cdeae9a4726dff49ed502fee1a90188df597be260eb7cbdb45069",
+            "checkedPixels": 0
+          }
+        },
+        {
+          "done": true,
+          "deferred": true,
+          "dispatchMs": 0.033800000000000004,
+          "heartbeats": 1714,
+          "readBeforePreview": true,
+          "processingMs": 84.9564,
+          "image": {
+            "width": 128,
+            "height": 128,
+            "bytes": 13834,
+            "pixelSha256": "69e785e87a2cdeae9a4726dff49ed502fee1a90188df597be260eb7cbdb45069",
+            "checkedPixels": 0
+          }
+        },
+        {
+          "done": true,
+          "deferred": true,
+          "dispatchMs": 0.032,
+          "heartbeats": 1973,
+          "readBeforePreview": true,
+          "processingMs": 88.051,
+          "image": {
+            "width": 128,
+            "height": 128,
+            "bytes": 13834,
+            "pixelSha256": "69e785e87a2cdeae9a4726dff49ed502fee1a90188df597be260eb7cbdb45069",
+            "checkedPixels": 0
+          }
+        }
+      ],
+      "unityVersion": "6000.6.2f1",
+      "cleanup": {
+        "assetsRemoved": true,
+        "sceneCountRestored": true,
+        "originalSceneClean": true
+      }
+    },
+    {
+      "server": "released",
+      "nodeVersion": "v18.20.8",
+      "baseline": false,
+      "passed": true,
+      "checks": [
+        {
+          "name": "unity_graphics_asset_preview",
+          "passed": true,
+          "width": 40,
+          "height": 24,
+          "bytes": 127,
+          "pixelSha256": "f3c4de4999a80ca53befe2296bc674e69383507f2c26b7340a82d0c517112961",
+          "checkedPixels": 960
+        },
+        {
+          "name": "unity_graphics_prefab_render",
+          "passed": true,
+          "width": 48,
+          "height": 32,
+          "bytes": 1044,
+          "pixelSha256": "ed2a5d90db2a382c04a1c6f686b44cac3a940770e788a01b90501016ccc59d2a",
+          "checkedPixels": 0
+        },
+        {
+          "name": "unity_graphics_texture_info",
+          "passed": true,
+          "width": 24,
+          "height": 12,
+          "bytes": 95,
+          "pixelSha256": "98db64277ac82e9fbc545d50127432ba01ce618f7b9fac3c9791ae56e978404a",
+          "checkedPixels": 288
+        },
+        {
+          "name": "unity_graphics_material_info",
+          "passed": true,
+          "width": 128,
+          "height": 128,
+          "bytes": 14003,
+          "pixelSha256": "1002b7898f0bae4f6439f57ba1a74dc79695756deda18e94841f3b7e8fd767f0",
+          "checkedPixels": 0
+        },
+        {
+          "name": "unity_graphics_material_info omits preview and preserves metadata",
+          "passed": true
+        },
+        {
+          "name": "unity_graphics_material_info omits preview and preserves metadata",
+          "passed": true
+        },
+        {
+          "name": "unity_graphics_texture_info omits preview and preserves metadata",
+          "passed": true
+        },
+        {
+          "name": "unity_graphics_asset_preview refuses invalid input",
+          "passed": true
+        },
+        {
+          "name": "unity_graphics_texture_info refuses invalid input",
+          "passed": true
+        },
+        {
+          "name": "unity_graphics_material_info refuses invalid input",
+          "passed": true
+        }
+      ],
+      "coldProbes": [
+        {
+          "done": true,
+          "deferred": true,
+          "dispatchMs": 0.12610000000000002,
+          "heartbeats": 1650,
+          "readBeforePreview": true,
+          "processingMs": 100.1054,
+          "image": {
+            "width": 128,
+            "height": 128,
+            "bytes": 13834,
+            "pixelSha256": "69e785e87a2cdeae9a4726dff49ed502fee1a90188df597be260eb7cbdb45069",
+            "checkedPixels": 0
+          }
+        },
+        {
+          "done": true,
+          "deferred": true,
+          "dispatchMs": 0.0376,
+          "heartbeats": 1570,
+          "readBeforePreview": true,
+          "processingMs": 91.9038,
+          "image": {
+            "width": 128,
+            "height": 128,
+            "bytes": 13834,
+            "pixelSha256": "69e785e87a2cdeae9a4726dff49ed502fee1a90188df597be260eb7cbdb45069",
+            "checkedPixels": 0
+          }
+        },
+        {
+          "done": true,
+          "deferred": true,
+          "dispatchMs": 0.0334,
+          "heartbeats": 1559,
+          "readBeforePreview": true,
+          "processingMs": 99.197,
+          "image": {
+            "width": 128,
+            "height": 128,
+            "bytes": 13834,
+            "pixelSha256": "69e785e87a2cdeae9a4726dff49ed502fee1a90188df597be260eb7cbdb45069",
+            "checkedPixels": 0
+          }
+        }
+      ],
+      "unityVersion": "6000.6.2f1",
+      "cleanup": {
+        "assetsRemoved": true,
+        "sceneCountRestored": true,
+        "originalSceneClean": true
+      }
+    },
+    {
+      "server": "released",
+      "nodeVersion": "v22.18.0",
+      "baseline": false,
+      "passed": true,
+      "checks": [
+        {
+          "name": "unity_graphics_asset_preview",
+          "passed": true,
+          "width": 40,
+          "height": 24,
+          "bytes": 127,
+          "pixelSha256": "f3c4de4999a80ca53befe2296bc674e69383507f2c26b7340a82d0c517112961",
+          "checkedPixels": 960
+        },
+        {
+          "name": "unity_graphics_prefab_render",
+          "passed": true,
+          "width": 48,
+          "height": 32,
+          "bytes": 1044,
+          "pixelSha256": "ed2a5d90db2a382c04a1c6f686b44cac3a940770e788a01b90501016ccc59d2a",
+          "checkedPixels": 0
+        },
+        {
+          "name": "unity_graphics_texture_info",
+          "passed": true,
+          "width": 24,
+          "height": 12,
+          "bytes": 95,
+          "pixelSha256": "98db64277ac82e9fbc545d50127432ba01ce618f7b9fac3c9791ae56e978404a",
+          "checkedPixels": 288
+        },
+        {
+          "name": "unity_graphics_material_info",
+          "passed": true,
+          "width": 128,
+          "height": 128,
+          "bytes": 14003,
+          "pixelSha256": "1002b7898f0bae4f6439f57ba1a74dc79695756deda18e94841f3b7e8fd767f0",
+          "checkedPixels": 0
+        },
+        {
+          "name": "unity_graphics_material_info omits preview and preserves metadata",
+          "passed": true
+        },
+        {
+          "name": "unity_graphics_material_info omits preview and preserves metadata",
+          "passed": true
+        },
+        {
+          "name": "unity_graphics_texture_info omits preview and preserves metadata",
+          "passed": true
+        },
+        {
+          "name": "unity_graphics_asset_preview refuses invalid input",
+          "passed": true
+        },
+        {
+          "name": "unity_graphics_texture_info refuses invalid input",
+          "passed": true
+        },
+        {
+          "name": "unity_graphics_material_info refuses invalid input",
+          "passed": true
+        }
+      ],
+      "coldProbes": [
+        {
+          "done": true,
+          "deferred": true,
+          "dispatchMs": 0.08950000000000001,
+          "heartbeats": 1500,
+          "readBeforePreview": true,
+          "processingMs": 94.852,
+          "image": {
+            "width": 128,
+            "height": 128,
+            "bytes": 13834,
+            "pixelSha256": "69e785e87a2cdeae9a4726dff49ed502fee1a90188df597be260eb7cbdb45069",
+            "checkedPixels": 0
+          }
+        },
+        {
+          "done": true,
+          "deferred": true,
+          "dispatchMs": 0.032,
+          "heartbeats": 1775,
+          "readBeforePreview": true,
+          "processingMs": 88.7185,
+          "image": {
+            "width": 128,
+            "height": 128,
+            "bytes": 13834,
+            "pixelSha256": "69e785e87a2cdeae9a4726dff49ed502fee1a90188df597be260eb7cbdb45069",
+            "checkedPixels": 0
+          }
+        },
+        {
+          "done": true,
+          "deferred": true,
+          "dispatchMs": 0.0688,
+          "heartbeats": 1706,
+          "readBeforePreview": true,
+          "processingMs": 92.7212,
+          "image": {
+            "width": 128,
+            "height": 128,
+            "bytes": 13834,
+            "pixelSha256": "69e785e87a2cdeae9a4726dff49ed502fee1a90188df597be260eb7cbdb45069",
+            "checkedPixels": 0
+          }
+        }
+      ],
+      "unityVersion": "6000.6.2f1",
+      "cleanup": {
+        "assetsRemoved": true,
+        "sceneCountRestored": true,
+        "originalSceneClean": true
+      }
+    }
+  ],
+  "scheduler": {
+    "pendingLimit": 64,
+    "maxNativePollsPerUpdate": 4,
+    "minimumPollIntervalMs": 50,
+    "softUpdateAllowanceMs": 5,
+    "assetWaitSeconds": 3,
+    "metadataWaitSeconds": 2,
+    "limits": "Native calls cannot be preempted. Deadlines apply at the next eligible poll. These bounds exclude Unity preview-cache memory, completed results and other queue work."
+  },
+  "minimumVersionCompile": {
+    "unityVersion": "2021.3.18f1",
+    "passed": true,
+    "sourceCount": 75,
+    "referenceCount": 211,
+    "excludedIntegrations": [
+      "UMA",
+      "ProBuilder"
+    ],
+    "check": "C# compilation against installed Unity assemblies; no editor execution or package import",
+    "exitCode": 0
+  },
+  "serverTests": {
+    "nodeVersion": "v22.18.0",
+    "tests": 217,
+    "passed": 217,
+    "failed": 0,
+    "toolCatalogBudgetUnchanged": true
+  },
+  "routeRegistry": {
+    "routes": 338,
+    "passed": true
+  },
+  "cleanup": {
+    "temporaryEditorsClosed": true,
+    "copiedFixturesRemoved": true,
+    "savedBaselineScenesDeleted": true,
+    "liveAssetFoldersRemoved": true,
+    "allLiveScenesRestoredClean": true,
+    "compilationErrorsBeforeClose": 0
+  },
+  "compatibility": {
+    "unchanged": "MCP names, routes, successful metadata/image fields; omitted sizes retain actual native dimensions. Current/released servers pass on Node 18/22.",
+    "corrected": "Explicit sizes and preview suppression previously ignored now work; documented objectPath alias added; invalid indices and sizes refused.",
+    "csharpHelpers": "Existing synchronous signatures return immediately with cached preview/mini thumbnail; callback overloads provide the previous bounded full-preview wait.",
+    "legacyEndpoint": "Both legacy and ticket HTTP dispatch use the existing shared deferred route map. Live compatibility runs use actual MCP clients; they do not force the legacy HTTP path.",
+    "oldUnityRuntime": "Deferred by maintainer direction; compiler-only check does not launch Unity 2021."
+  },
+  "limits": [
+    "URP/HDRP, other graphics APIs and unusual asset types remain unverified.",
+    "Script reload cleanup is controlled through the same Clear method used by lifecycle callbacks; an actual in-flight preview reload was not tested.",
+    "Native prefab framing is retained; rotation/padding options remain accepted but ignored.",
+    "Metadata is read at dispatch while its optional cached preview can arrive later; this is not an atomic asset snapshot."
+  ],
+  "sourceSha256": {
+    "../unity-mcp-plugin/Editor/MCPGraphicsCommands.cs": "4eaf6e80ee7c718c7c3bc206b889591126596bd5c837869a179607d6736d19ce",
+    "../unity-mcp-plugin/Editor/MCPAssetPreviewScheduler.cs": "464bb324100ea4fd1127f5c574f464f4794ed77cabaee6e702422155b0340203",
+    "../unity-mcp-plugin/Editor/MCPBridgeServer.cs": "ed4a1bbde6cf0f9b388494d5f590397b31210600928f01dd01754e0f858e90b3",
+    "../unity-mcp-plugin/tools~/AssetPreviewValidation.cs": "7c8f6f082ea613c6f8e5b71feaa112a829487065117ad8b6e4def655e4533f84",
+    "../unity-mcp-plugin/tools~/AssetPreviewLiveValidation.cs": "7cfe0159d961071cd3e9b8050353625b47b2411f90c975852bd83eb6ea1ef325",
+    "../unity-mcp-plugin/tools~/validate-unity.ps1": "e3fd0a00069a4ce08fa5622246e0f6bc30be82555e186eec0d862cb93db8c1cd",
+    "src/tools/editor-tools.js": "31b4fd67e6dde8a67804a18342694c19bba32396621a9ba6a619d5edf417df35",
+    "tests/live-asset-preview.test.mjs": "56f1cf4691ef62b3085649a0cacddb0fa6fc66b0067215e1dfbb2c5af05d9afa"
+  },
+  "sources": {
+    "getAssetPreview": "https://docs.unity3d.com/6000.0/Documentation/ScriptReference/AssetPreview.GetAssetPreview.html",
+    "miniThumbnail": "https://docs.unity3d.com/6000.0/Documentation/ScriptReference/AssetPreview.GetMiniThumbnail.html"
+  }
+}

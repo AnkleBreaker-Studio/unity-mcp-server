@@ -22,6 +22,7 @@
     "test:editor-capture": "node --test tests/live-editor-capture.test.mjs",
     "test:editor-render": "node --test tests/live-editor-render.test.mjs",
     "test:graphics": "node --test tests/live-graphics-capture.test.mjs",
+    "test:previews": "node --test tests/live-asset-preview.test.mjs",
     "test:multiplayer": "node --test tests/live-multiplayer.test.mjs",
     "test:features": "node --test tests/live-features.test.mjs",
     "test:compatibility": "node --test tests/live-version-compatibility.test.mjs",

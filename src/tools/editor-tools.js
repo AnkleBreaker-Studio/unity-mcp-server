@@ -2954,7 +2954,7 @@ export const editorTools = [
   {
     name: "unity_graphics_asset_preview",
     description:
-      "Get a visual preview thumbnail of any Unity asset (prefab, material, texture, mesh, etc.) as an inline image. Returns base64 PNG image that Claude can see directly.",
+      "Inline PNG from Unity's asynchronous asset preview, with thumbnail fallback. Maximum 33554432 pixels.",
     inputSchema: {
       type: "object",
       properties: {
@@ -2965,11 +2965,15 @@ export const editorTools = [
         },
         width: {
           type: "number",
-          description: "Preview width in pixels (default: 256)",
+          minimum: 1,
+          maximum: 8192,
+          description: "Pixel width (default: native preview width)",
         },
         height: {
           type: "number",
-          description: "Preview height in pixels (default: 256)",
+          minimum: 1,
+          maximum: 8192,
+          description: "Pixel height (default: native preview height)",
         },
       },
       required: ["assetPath"],
@@ -3033,7 +3037,7 @@ export const editorTools = [
   {
     name: "unity_graphics_prefab_render",
     description:
-      "Render a prefab from a configurable angle as an inline image. Returns base64 PNG that Claude can see directly. Great for previewing 3D models and prefabs.",
+      "Return Unity's prefab preview as inline PNG, with thumbnail fallback. Native preview controls framing; at most 33554432 pixels.",
     inputSchema: {
       type: "object",
       properties: {
@@ -3043,26 +3047,30 @@ export const editorTools = [
         },
         width: {
           type: "number",
-          description: "Image width in pixels (default: 512)",
+          minimum: 1,
+          maximum: 8192,
+          description: "Pixel width (default: native preview width)",
         },
         height: {
           type: "number",
-          description: "Image height in pixels (default: 512)",
+          minimum: 1,
+          maximum: 8192,
+          description: "Pixel height (default: native preview height)",
         },
         rotationY: {
           type: "number",
           description:
-            "Horizontal rotation angle in degrees (default: 30). Controls left-right viewing angle.",
+            "Compatibility parameter; native previews currently ignore this angle.",
         },
         rotationX: {
           type: "number",
           description:
-            "Vertical rotation angle in degrees (default: 20). Controls up-down viewing angle.",
+            "Compatibility parameter; native previews currently ignore this angle.",
         },
         padding: {
           type: "number",
           description:
-            "Padding multiplier around the object (default: 1.2). Higher = more space around object.",
+            "Compatibility parameter; native previews currently control padding.",
         },
       },
       required: ["assetPath"],
@@ -3143,8 +3151,10 @@ export const editorTools = [
         },
         previewSize: {
           type: "number",
+          minimum: 0,
+          maximum: 8192,
           description:
-            "Preview thumbnail size in pixels (default: 128). Set 0 to skip preview.",
+            "Whole-pixel maximum edge; preserves aspect without upscaling. Omit for native size; 0 skips preview.",
         },
       },
       required: ["assetPath"],
