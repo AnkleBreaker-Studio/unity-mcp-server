@@ -29,7 +29,7 @@ HTTP command dispatch now admits at most 256 nonterminal tickets within a 256 Mi
 | Queue protocol support | Bridge endpoint within a Node process |
 | Registry entries, heartbeat, port affinity | Editor instance / shared machine registry |
 | Pending, executing and completed tickets | Editor process; domain reload recreates static state |
-| Action history | Plugin memory plus its existing persistence implementation |
+| Action history | Plugin memory plus optional persistence; [deferred observer notifications](history-notifications.md) have a separate bounded queue |
 | Test jobs and compilation diagnostics | Dedicated plugin command classes |
 
 Stdio does **not** serialize handler completion. Handlers overlap whenever they await I/O. Agent/port globals are therefore unsuitable for carrying request identity. The regression suite overlaps two real MCP calls and checks the returned project, injected context and polling headers.

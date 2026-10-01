@@ -4,6 +4,11 @@ All notable changes to this package will be documented in this file.
 
 ## [Unreleased]
 
+### Action history monitoring
+- Describe additive `historyNotifications` backlog, delivery and drop metrics while retaining the tool-catalog size budget.
+- Add opt-in `test:history` for actual editor-update observer delivery, native pressure/clear and script reload with current/released servers on Node 18/22.
+- Record bounded observer retention, grouped Action History refreshes, filter/selection fixes and measured local costs in the [history guide](docs/history-notifications.md).
+
 ### ParrelSync identity and lifecycle
 - Keep unknown clone indices readable in discovery banners; preserve clone metadata and existing tool schemas.
 - Document native marker-based plugin identity and original-project resolution, including ordinary projects whose names resemble clones.
