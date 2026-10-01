@@ -53,7 +53,7 @@ In Unity, open **Window → Package Manager → Add package from git URL**:
 https://github.com/AnkleBreaker-Studio/unity-mcp-plugin.git#Development-Unity66-Modernization
 ```
 
-The plugin dashboard is at **Window → AB Unity MCP → Dashboard**. Verify the bridge is running there.
+The **MCP** status dropdown appears automatically in Unity's main toolbar. Open the Dashboard from it, **Window → AB Unity MCP**, or **Tools → AnkleBreaker → Unity MCP**. Verify the bridge is running there. If you previously hid the indicator, choose **Show Toolbar Status**. [Toolbar and menu access](docs/toolbar.md).
 
 ### 2. Install the server
 

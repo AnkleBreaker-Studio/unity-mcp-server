@@ -1,0 +1,154 @@
+{
+  "date": "2026-10-01",
+  "pluginCommit": "39dbc9d99644a406c64a545d7b83b316aead3156",
+  "pluginVersion": "2.40.1",
+  "pluginCi": {
+    "head": "39dbc9d99644a406c64a545d7b83b316aead3156",
+    "conclusion": "success",
+    "url": "https://github.com/AnkleBreaker-Studio/unity-mcp-plugin/actions/runs/36889933179"
+  },
+  "upstream": {
+    "serverMain": "826af5ce61db7e2d2d675fe90d24c941a83f3924",
+    "serverAlreadyIncluded": true,
+    "pluginMain": "ce5a57f2e08e7a45bf1e48fa0b1d2bff0f8e12ae",
+    "pluginMerge": "c88e6b7",
+    "conflictsResolved": [
+      "CHANGELOG.md: retain both histories"
+    ],
+    "mainBranchesUnchanged": true
+  },
+  "controlled": {
+    "unityVersion": "6000.6.2f1",
+    "passed": true,
+    "checks": [
+      {
+        "name": "Both menu roots resolve all primary destinations without duplicate registrations",
+        "passed": true
+      },
+      {
+        "name": "Shared menu provides actionable navigation including the canonical Welcome",
+        "passed": true
+      },
+      {
+        "name": "Dashboard retains one keyboard-focusable navigation control after rebuilding",
+        "passed": true
+      },
+      {
+        "name": "First install restores the MCP element in a layout that hides it",
+        "passed": true
+      },
+      {
+        "name": "Subsequent initialization preserves a deliberate Hide choice",
+        "passed": true
+      },
+      {
+        "name": "Explicit restore reuses the same native overlay",
+        "passed": true
+      },
+      {
+        "name": "Live toolbar tooltip follows port-mode changes without agent or running-state changes",
+        "passed": true
+      }
+    ]
+  },
+  "reload": {
+    "hiddenChoiceSurvivedRealReload": true,
+    "restoreAfterReload": true,
+    "passed": true
+  },
+  "reloadObservation": "The reload request lost its queue ticket. A fresh MCP discovery and state read verified the real post-reload visibility; the reload was not retried.",
+  "dashboard": {
+    "unityVersion": "6000.6.2f1",
+    "idle": {
+      "iterations": 100,
+      "elapsedMs": 26.915100000000002,
+      "allocations": 31700,
+      "rawRecorderValue": 730300,
+      "rawRecorderUnit": "TimeNanoseconds",
+      "profilerControlAllocations": 1
+    },
+    "unchangedQueueSection": {
+      "iterations": 100,
+      "elapsedMs": 0.0224,
+      "allocations": 0,
+      "rawRecorderValue": 0,
+      "rawRecorderUnit": "TimeNanoseconds",
+      "profilerControlAllocations": 1
+    },
+    "unchangedHttpSection": {
+      "iterations": 100,
+      "elapsedMs": 0.0233,
+      "allocations": 0,
+      "rawRecorderValue": 0,
+      "rawRecorderUnit": "TimeNanoseconds",
+      "profilerControlAllocations": 1
+    },
+    "httpActiveRequestVisible": true,
+    "httpRefusalVisible": true,
+    "httpControlsReused": true,
+    "twentyStableAgents": {
+      "iterations": 100,
+      "elapsedMs": 26.3868,
+      "allocations": 31700,
+      "rawRecorderValue": 751400,
+      "rawRecorderUnit": "TimeNanoseconds",
+      "profilerControlAllocations": 1
+    },
+    "unshownActivityDoesNotRebuild": true,
+    "visibleMetricsRefresh": true,
+    "changingAgents": {
+      "iterations": 100,
+      "elapsedMs": 26.4781,
+      "allocations": 33100,
+      "rawRecorderValue": 771700,
+      "rawRecorderUnit": "TimeNanoseconds",
+      "profilerControlAllocations": 1
+    },
+    "changedAndUnchangedCardsReused": true,
+    "oldOutstandingSessionVisible": true,
+    "idleSessionExpiresWithoutRebuildingOthers": true,
+    "returningSessionVisible": true,
+    "emptyStateRestored": true,
+    "newAgentReplacesEmptyState": true,
+    "scrollRootsBefore": 1,
+    "scrollRootsAfter": 1,
+    "recreateGuiDoesNotDuplicateControls": true,
+    "savedFoldoutStateRestored": true,
+    "httpPreferenceAndCountersRestored": true,
+    "failures": [],
+    "passed": true,
+    "fixtureSessionsRemoved": true
+  },
+  "minimumUnityApi": {
+    "unityVersion": "2021.3.18f1",
+    "sourceCount": 78,
+    "passed": true,
+    "kind": "Compiler-only; no older-editor execution"
+  },
+  "nativeCompilation": {
+    "unityVersion": "6000.6.2f1",
+    "isCompiling": false,
+    "errorCount": 0
+  },
+  "routeRegistry": {
+    "routes": 338,
+    "passed": true
+  },
+  "cleanup": {
+    "ownedEditorsClosed": true,
+    "temporaryToolbarFixtureRemoved": true,
+    "controlledVisibilityAndPortPreferencesRestored": true
+  },
+  "limits": [
+    "First-install behavior is exercised by clearing the project visibility marker and hiding the native overlay in a running owned editor.",
+    "Legacy injection changes have minimum-API compilation coverage, not older-editor runtime validation.",
+    "Menu registration, callback presence and Dashboard control reachability are verified; external documentation and every menu action are not invoked.",
+    "Native visibility restoration uses guarded internal Unity overlay lookup; other versions, operating systems and custom toolbar presets need separate evidence."
+  ],
+  "sourceHashes": {
+    "MCPToolbarElement.cs": "c87f8f31b7f238b0a7fed0fcc5de6a247194d17291d313d6cdf6d9454bd2ea7d",
+    "MCPMenuCommands.cs": "a4efd46744f4370feb2f638a4d5427222db15a1b1bd621c49782bd767705b9b5",
+    "MCPDashboardWindow.cs": "d1327760d7b4b011a9b927fe4e54e46294c453fda820b58e75cab9e49aafb25c",
+    "MCPActionHistoryWindow.cs": "f748cb7279dcf1e28f4340004bcf1347760d67d10509676ac22ccba81f5f9ce8"
+  }
+}
