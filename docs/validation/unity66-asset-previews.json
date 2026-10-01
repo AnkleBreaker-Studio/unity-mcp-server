@@ -1,5 +1,26 @@
 {
   "date": "2026-10-01",
+  "implementationCommits": {
+    "plugin": "cb591aa05d88d9edc799bcb0996c0fa8a4f7a62a",
+    "server": "55b7de9c0d8191162f48ed01dd1cc4a1447b780d"
+  },
+  "ci": {
+    "server": {
+      "runId": 36828819811,
+      "url": "https://github.com/AnkleBreaker-Studio/unity-mcp-server/actions/runs/36828819811",
+      "passedJobs": 8,
+      "nodeVersions": [18, 20, 22, 24],
+      "platforms": ["Windows", "Linux"],
+      "tests": 217,
+      "failed": 0
+    },
+    "plugin": {
+      "runId": 36828811117,
+      "url": "https://github.com/AnkleBreaker-Studio/unity-mcp-plugin/actions/runs/36828811117",
+      "passed": true,
+      "routes": 338
+    }
+  },
   "scope": "Deferred asset/prefab/material/texture preview loading, options and render-resource ownership",
   "baselinePluginCommit": "0b93577f4970f5a76f78dcabe121ef9646812e0d",
   "releasedServerCommit": "826af5ce61db7e2d2d675fe90d24c941a83f3924",
