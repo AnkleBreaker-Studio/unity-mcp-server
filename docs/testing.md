@@ -4,6 +4,8 @@ Discover `unity_testing_list_tests`, `unity_testing_run_tests` and `unity_testin
 
 Start with an EditMode or PlayMode filter, retain the returned `jobId`, and poll that ID until its status is `succeeded` or `failed`. `includeDetails` returns individual test results; `includeFailedOnly` limits them to failed/inconclusive results. Existing tool names, arguments, job IDs and status values remain compatible.
 
+For large jobs, optional `resultOffset` and `resultLimit` request bounded detail pages on updated plugins. `resultPage` provides the matching count and next offset; wait for terminal status before stable enumeration. Omitting both fields preserves full legacy responses. See [pagination, compatibility and measured construction costs](test-pagination.md). Native command errors and unsupported paging stop server-side `waitTimeout` polling immediately.
+
 ## Discovery and result counts
 
 Discovery returns test cases, including individual parameterized cases. Empty suites and fixture containers are not tests. `maxResults` defaults to 200 and accepts integers from 1 to 10,000; invalid values return a command error before starting native discovery. The existing `totalTests` field remains the number returned, and `truncated` is true only when another matching test exists. Collection stops at the first matching overflow without constructing its result dictionary. Unity still builds its native test tree before this collection step.

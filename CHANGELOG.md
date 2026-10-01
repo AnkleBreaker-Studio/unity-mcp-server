@@ -4,6 +4,11 @@ All notable changes to this package will be documented in this file.
 
 ## [Unreleased]
 
+### Test result pagination and polling
+- Expose optional detail-page parameters and report an explicit compatibility error when an older plugin returns an unpaged job.
+- Stop server-side job polling on command errors or unsupported pagination while preserving the original diagnostic.
+- Add eight ordinary stdio regressions and opt-in live current/released component checks; document native construction measurements and exact details across script reload.
+
 ### Plugin agent-session pressure
 - Add opt-in `test:session-retention` to exercise native identity pressure, returning generations, busy agents and protected results through current/released servers, followed by a real script reload.
 - Document the plugin's 1,024 idle-session ceiling, unchanged busy protection, additive metrics and nine controlled checks in the [session guide](docs/session-retention.md).

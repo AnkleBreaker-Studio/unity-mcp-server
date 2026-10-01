@@ -139,7 +139,7 @@ The plugin declares **Unity 2021.3.18f1+** support. Server and plugin versions a
 | HTTP downloads | Bounded response reads, including compressed bodies and older plugins; overflow never repeats a command. [Response limits](docs/response-limits.md) |
 | Request input | Complete HTTP/JSON before dispatch, 8 body readers, 64 MiB reservations and a 30-second upload deadline; server preflight avoids oversized uploads. [Input guide](docs/request-input.md) |
 | Undo across agents | Native stack checks, explicit cascade handling, accurate Undo/Redo eligibility and identity preserved through script reload. [Undo guide](docs/undo.md) |
-| Test Runner | Failure cleanup, native cancellation, accurate results and retained job details through script reload. [Testing guide](docs/testing.md) |
+| Test Runner | Failure cleanup, native cancellation, retained job details through reload and optional pages for large results. [Testing guide](docs/testing.md) · [Pagination](docs/test-pagination.md) |
 | Unity 6.6 builds | Five Windows Mono builds verify managed diagnostics and restoration of project settings. Other platforms and IL2CPP remain untested. [Build guide](docs/builds.md) |
 | UMA V3.1f1 | Asset creation, race changes and recipe renames, with the integration isolated from the core bridge. [UMA guide](docs/uma.md) |
 

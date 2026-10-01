@@ -4528,7 +4528,8 @@ export const editorTools = [
       "Poll this after calling unity_testing_run_tests until status is 'succeeded' or 'failed'. " +
       "Use waitTimeout for server-side polling to avoid repeated calls. " +
       "With current plugins, results survive script reload within the editor session; retain the jobId after reconnecting. " +
-      "historyRetention reports expiry/eviction limits; persistenceWarning and recoveryWarning report incomplete restoration.",
+      "historyRetention reports expiry/eviction limits; persistenceWarning and recoveryWarning report incomplete restoration. " +
+      "resultOffset/resultLimit opt into detail pages on updated plugins. Use the returned jobId for following pages and wait for terminal status for stable enumeration.",
     inputSchema: {
       type: "object",
       properties: {
@@ -4544,6 +4545,14 @@ export const editorTools = [
           type: "boolean",
           description: "Include detailed results only for failed/inconclusive tests",
         },
+        resultOffset: {
+          type: "integer", minimum: 0, maximum: 2147483647,
+          description: "Offset in filtered results. Opts into paging (default limit: 200). Requires an updated plugin.",
+        },
+        resultLimit: {
+          type: "integer", minimum: 1, maximum: 10000,
+          description: "Maximum details per page. Implies includeDetails; includeFailedOnly still filters. Omit both pagination fields to keep the full legacy response.",
+        },
         waitTimeout: {
           type: "number",
           description:
@@ -4554,6 +4563,15 @@ export const editorTools = [
     },
     handler: async (params) => {
       const waitTimeout = params?.waitTimeout;
+      const paged = params?.resultOffset !== undefined || params?.resultLimit !== undefined;
+      const formatJob = result => {
+        const job = result?.data ?? result;
+        if (paged && job?.jobId && !job.resultPage) {
+          return formatResult({ error: "This Unity plugin does not support test-result pagination. Update the plugin, or omit resultOffset and resultLimit for the legacy response.",
+            code: "test_result_pagination_unsupported", jobId: job.jobId, status: job.status });
+        }
+        return formatResult(result);
+      };
       if (waitTimeout && waitTimeout > 0) {
         // Server-side polling loop. Terminal status lives under .data (bridge envelope);
         // reading the top level meant this never short-circuited and always burned the
@@ -4563,16 +4581,18 @@ export const editorTools = [
         let lastResult;
         while (Date.now() < deadline) {
           lastResult = await bridge.getTestJob(params);
-          const status = (lastResult?.data?.status ?? lastResult?.status ?? "").toLowerCase();
-          if (TERMINAL.has(status)) {
-            return formatResult(lastResult);
+          const job = lastResult?.data ?? lastResult;
+          const status = (job?.status ?? "").toLowerCase();
+          if (TERMINAL.has(status) || looksLikeErrorObject(lastResult) || looksLikeErrorObject(job)
+            || (paged && job?.jobId && !job.resultPage)) {
+            return formatJob(lastResult);
           }
           await requestSleep(2000);
         }
         // Timeout — return last known state
-        return formatResult(lastResult || (await bridge.getTestJob(params)));
+        return formatJob(lastResult || (await bridge.getTestJob(params)));
       }
-      return formatResult(await bridge.getTestJob(params));
+      return formatJob(await bridge.getTestJob(params));
     },
   },
   {
