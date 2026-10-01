@@ -1,0 +1,327 @@
+{
+  "recordedAt": "2026-10-01T05:55:58.233Z",
+  "baselineServerCommit": "19170d5",
+  "pluginChanged": false,
+  "baseline": {
+    "tests": 11,
+    "passed": 2,
+    "failed": 9,
+    "checks": [
+      {
+        "name": "selection by name rejects identity replacement after resolution (same name: false)",
+        "passed": false
+      },
+      {
+        "name": "selection by name rejects identity replacement after resolution (same name: true)",
+        "passed": false
+      },
+      {
+        "name": "selection by name uses one discovery and a fresh identity recheck",
+        "passed": false
+      },
+      {
+        "name": "older explicit selection cannot overwrite a newer completed choice (by name: false)",
+        "passed": false
+      },
+      {
+        "name": "older explicit selection cannot overwrite a newer completed choice (by name: true)",
+        "passed": false
+      },
+      {
+        "name": "old validation cannot clear a newer selection (lost)",
+        "passed": false
+      },
+      {
+        "name": "old validation cannot replace a newer selection (relocated)",
+        "passed": false
+      },
+      {
+        "name": "old validation cannot replace a newer selection (registry)",
+        "passed": false
+      },
+      {
+        "name": "first automatic discovery cannot overwrite a concurrent explicit choice",
+        "passed": false
+      },
+      {
+        "name": "concurrent selections by different agents remain independent",
+        "passed": true
+      },
+      {
+        "name": "ambiguous names and failed explicit selection preserve the existing choice",
+        "passed": true
+      }
+    ]
+  },
+  "controlled": {
+    "tests": 15,
+    "passed": 15,
+    "failed": 0,
+    "checks": [
+      {
+        "name": "selection by name rejects identity replacement after resolution (same name: false)",
+        "passed": true
+      },
+      {
+        "name": "selection by name rejects identity replacement after resolution (same name: true)",
+        "passed": true
+      },
+      {
+        "name": "selection by name uses one discovery and a fresh identity recheck",
+        "passed": true
+      },
+      {
+        "name": "older explicit selection cannot overwrite a newer completed choice (by name: false)",
+        "passed": true
+      },
+      {
+        "name": "older explicit selection cannot overwrite a newer completed choice (by name: true)",
+        "passed": true
+      },
+      {
+        "name": "old validation cannot clear a newer selection (lost)",
+        "passed": true
+      },
+      {
+        "name": "old validation cannot replace a newer selection (relocated)",
+        "passed": true
+      },
+      {
+        "name": "old validation cannot replace a newer selection (registry)",
+        "passed": true
+      },
+      {
+        "name": "first automatic discovery cannot overwrite a concurrent explicit choice",
+        "passed": true
+      },
+      {
+        "name": "concurrent selections by different agents remain independent",
+        "passed": true
+      },
+      {
+        "name": "ambiguous names and failed explicit selection preserve the existing choice",
+        "passed": true
+      },
+      {
+        "name": "an implicit call does not switch projects while explicit selection is still pending",
+        "passed": true
+      },
+      {
+        "name": "a failed newer selection does not let an older selection silently take over",
+        "passed": true
+      },
+      {
+        "name": "selection change during recovery discovery cannot restore the old project",
+        "passed": true
+      },
+      {
+        "name": "cancelled selection releases its pending guard and preserves the prior project",
+        "passed": true
+      }
+    ]
+  },
+  "regressions": {
+    "node18": {
+      "version": "18.20.8",
+      "tests": 71,
+      "passed": 71,
+      "failed": 0
+    },
+    "node22": {
+      "version": "22.18.0",
+      "tests": 217,
+      "passed": 217,
+      "failed": 0
+    }
+  },
+  "probeCost": {
+    "scope": "One selection by name with two live mock identities in the registry and first editor in the scan range",
+    "before": {
+      "chosenEditor": 3,
+      "otherEditor": 2,
+      "total": 5
+    },
+    "after": {
+      "chosenEditor": 2,
+      "otherEditor": 1,
+      "total": 3
+    },
+    "note": "Counts of actual ping requests. No whole-editor or end-to-end speedup claim."
+  },
+  "live": [
+    {
+      "nodeVersion": "v22.18.0",
+      "passed": true,
+      "projects": [
+        {
+          "projectPath": "C:/Users/Francois/orca/workspaces/unity-mcp-server/validation/Queue66",
+          "port": 7891,
+          "pluginVersion": "2.39.7",
+          "unityVersion": "6000.6.2f1"
+        },
+        {
+          "projectPath": "C:/Users/Francois/orca/workspaces/unity-mcp-server/validation/Unity66",
+          "port": 7890,
+          "pluginVersion": "2.39.7",
+          "unityVersion": "6000.6.2f1"
+        }
+      ],
+      "checks": [
+        {
+          "name": "Names select the expected canonical paths and implicit reads remain clean",
+          "passed": true
+        },
+        {
+          "name": "Six overlapping choices retain the newer target and independent agent selections",
+          "passed": true,
+          "superseded": 6
+        },
+        {
+          "name": "Final explicit reads and compilation checks preserve both editors",
+          "passed": true
+        }
+      ]
+    },
+    {
+      "nodeVersion": "v18.20.8",
+      "passed": true,
+      "projects": [
+        {
+          "projectPath": "C:/Users/Francois/orca/workspaces/unity-mcp-server/validation/Queue66",
+          "port": 7891,
+          "pluginVersion": "2.39.7",
+          "unityVersion": "6000.6.2f1"
+        },
+        {
+          "projectPath": "C:/Users/Francois/orca/workspaces/unity-mcp-server/validation/Unity66",
+          "port": 7890,
+          "pluginVersion": "2.39.7",
+          "unityVersion": "6000.6.2f1"
+        }
+      ],
+      "checks": [
+        {
+          "name": "Names select the expected canonical paths and implicit reads remain clean",
+          "passed": true
+        },
+        {
+          "name": "Six overlapping choices retain the newer target and independent agent selections",
+          "passed": true,
+          "superseded": 6
+        },
+        {
+          "name": "Final explicit reads and compilation checks preserve both editors",
+          "passed": true
+        }
+      ]
+    },
+    {
+      "nodeVersion": "v22.18.0",
+      "passed": true,
+      "projects": [
+        {
+          "projectPath": "C:/Users/Francois/orca/workspaces/unity-mcp-server/validation/Queue66",
+          "port": 7891,
+          "pluginVersion": "2.39.7",
+          "unityVersion": "6000.6.2f1",
+          "protocolVersion": 3
+        },
+        {
+          "projectPath": "C:/Users/Francois/orca/workspaces/unity-mcp-server/validation/LegacyCompat66",
+          "port": 7894,
+          "pluginVersion": "2.39.7",
+          "unityVersion": "6000.6.2f1",
+          "protocolVersion": 1
+        }
+      ],
+      "checks": [
+        {
+          "name": "Names select the expected canonical paths and implicit reads remain clean",
+          "passed": true
+        },
+        {
+          "name": "Six overlapping choices retain the newer target and independent agent selections",
+          "passed": true,
+          "superseded": 6
+        },
+        {
+          "name": "Final explicit reads and compilation checks preserve both editors",
+          "passed": true
+        }
+      ]
+    },
+    {
+      "nodeVersion": "v18.20.8",
+      "passed": true,
+      "projects": [
+        {
+          "projectPath": "C:/Users/Francois/orca/workspaces/unity-mcp-server/validation/Queue66",
+          "port": 7891,
+          "pluginVersion": "2.39.7",
+          "unityVersion": "6000.6.2f1",
+          "protocolVersion": 3
+        },
+        {
+          "projectPath": "C:/Users/Francois/orca/workspaces/unity-mcp-server/validation/LegacyCompat66",
+          "port": 7894,
+          "pluginVersion": "2.39.7",
+          "unityVersion": "6000.6.2f1",
+          "protocolVersion": 1
+        }
+      ],
+      "checks": [
+        {
+          "name": "Names select the expected canonical paths and implicit reads remain clean",
+          "passed": true
+        },
+        {
+          "name": "Six overlapping choices retain the newer target and independent agent selections",
+          "passed": true,
+          "superseded": 6
+        },
+        {
+          "name": "Final explicit reads and compilation checks preserve both editors",
+          "passed": true
+        }
+      ]
+    }
+  ],
+  "scope": [
+    "Controlled races hold individual mock identity responses; real-editor runs cover overlapping choices without injecting transport delays.",
+    "Explicit ports retain their existing per-call routing behavior. A port can change owners after verification; identity shape is not authentication.",
+    "Only pending explicit-selection guards are added; they are removed on completion, failure or cancellation. Long-lived selection/context maps are unchanged."
+  ],
+  "pluginRuntimeCommits": {
+    "current": "0e450a9faeffd98122b873670747ce926b9b2b9a",
+    "released": "0b8e76f7c50ed8c0bd5f359d893653211d0f2abe"
+  },
+  "sourceSha256": {
+    "src/index.js": "bed37daae182d0677fe97b8c78171fb181d29ea1f172a7ffe44c74a674a7958e",
+    "src/instance-discovery.js": "d846d3e2b15a323f8e8d80201ac44767d0e7d818ef926a84d02f5b1818f287f4",
+    "src/tools/instance-tools.js": "a9f23badd8c3df54269d76c1f31339685526b8eed6df1842f4a69a140b11168b",
+    "tests/discovery-concurrency.test.mjs": "7660763941fc43e3f7b2444df6dec90f7b521473ab3c44500f8c2dfc1c588e67",
+    "tests/live-selection-concurrency.test.mjs": "97875fa9f8df6529ba5bf52b34feda123c636a8afb4e02ddbf41f608544067f4"
+  },
+  "cleanup": {
+    "temporaryReleasedEditorClosed": true,
+    "selectedProject": "Queue66",
+    "persistentEditors": [
+      {
+        "project": "Queue66",
+        "scene": "Assets/__McpValidation/BuildScene.unity",
+        "isPlaying": false,
+        "isCompiling": false,
+        "sceneDirty": false,
+        "compilationErrors": 0
+      },
+      {
+        "project": "Unity66",
+        "scene": "Assets/__McpValidation/MultiplayerScene.unity",
+        "isPlaying": false,
+        "isCompiling": false,
+        "sceneDirty": false,
+        "compilationErrors": 0
+      }
+    ]
+  }
+}

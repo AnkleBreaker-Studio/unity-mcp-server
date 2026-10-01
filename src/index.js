@@ -242,6 +242,7 @@ async function discoverForCurrentAgent() {
   } catch (err) {
     throwIfRequestCancelled();
     console.error(`[MCP] Instance discovery failed: ${err.message}`);
+    if (err.code === "selection_changed") throw err;
     return null;
   }
 }

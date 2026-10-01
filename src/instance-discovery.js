@@ -14,6 +14,16 @@ import { getRequestContext, getCurrentAgentId } from "./request-context.js";
 
 const _agentInstances = new Map();
 const _agentSelectionRequired = new Map();
+const pendingSelections = new Map();
+
+function selectionChanged() {
+  return Object.assign(new Error("Unity selection changed or was superseded while discovering an editor. Retry with the intended editor's explicit port."), { code: "selection_changed" });
+}
+
+function assertSelectionUnchanged(selected) {
+  throwIfRequestCancelled();
+  if (getSelectedInstance() !== selected || pendingSelections.has(getCurrentAgentId())) throw selectionChanged();
+}
 
 export function setPortOverride(port) {
   getRequestContext().portOverride = port;
@@ -56,12 +66,14 @@ export async function validateSelectedInstance() {
   }
 
   const saved = currentInstance;
+  assertSelectionUnchanged(saved);
   const savedPath = saved.projectPath;
   const savedPort = saved.port;
 
   // Ping the saved port and check what project is actually there
   const probes = new Map();
   const probe = await probeInstance(savedPort, probes);
+  assertSelectionUnchanged(saved);
   const info = probe.info;
   if (info) {
     if (sameProject(info, saved)) {
@@ -106,6 +118,7 @@ export async function validateSelectedInstance() {
 
   // Find the selected project's current port before considering registry recovery.
   const instances = await discoverInstances(probes);
+  assertSelectionUnchanged(saved);
   const match = instances.find(
     (inst) => sameProject(inst, saved)
   );
@@ -123,6 +136,7 @@ export async function validateSelectedInstance() {
   );
   if (registryFallback && registryFallback.port) {
     const fallbackProbe = await probeInstance(registryFallback.port, probes);
+    assertSelectionUnchanged(saved);
     const knownConflict = fallbackProbe.status === "unrecognized"
       || (fallbackProbe.info && !sameProject(fallbackProbe.info, saved));
     if (knownConflict) {
@@ -167,41 +181,58 @@ export function setInstanceSelectionRequired(required) {
   _agentSelectionRequired.set(getCurrentAgentId(), required);
 }
 
-/**
- * Select a Unity instance by port number.
- * All subsequent bridge commands will be routed to this port.
- * @param {number} port - The port of the instance to select.
- * @returns {object} The selected instance info, or error.
- */
-export async function selectInstance(port) {
-  const instances = await discoverInstances();
-  const match = instances.find((inst) => inst.port === port);
+/** Select by explicit port or unique case-insensitive name; only the latest attempt may change this agent's selection. */
+export async function selectInstance(port, projectName) {
+  const agentId = getCurrentAgentId(), attempt = {};
+  pendingSelections.set(agentId, attempt);
+  const assertCurrent = () => {
+    throwIfRequestCancelled();
+    if (pendingSelections.get(agentId) !== attempt) throw selectionChanged();
+  };
+  try {
+    const instances = await discoverInstances();
+    assertCurrent();
+    let match;
+    if (port) match = instances.find(inst => inst.port === port);
+    else {
+      const needle = projectName.toLowerCase();
+      const matches = instances.filter(inst => (inst.projectName || "").toLowerCase() === needle);
+      if (matches.length === 0) return {
+        success: false,
+        error: `No running instance named "${projectName}". Available: ${instances.map(inst => inst.projectName).join(", ") || "none"}.`,
+      };
+      if (matches.length > 1) return {
+        success: false,
+        error: `${matches.length} instances named "${projectName}" (ports ${matches.map(inst => inst.port).join(", ")}). Select by port instead.`,
+      };
+      match = matches[0]; port = match.port;
+    }
 
-  if (!match) {
-    return {
+    if (!match) return {
       success: false,
       error: `No Unity instance found on port ${port}. Use unity_list_instances to see available instances.`,
     };
-  }
 
-  // Recheck identity so a port reused during discovery cannot select another project.
-  const verified = await probeInstance(port);
-  if (!verified.info || !sameProject(verified.info, match)) {
-    return {
+    // Keep the resolved identity through verification; a second scan could silently replace a named project.
+    const verified = await probeInstance(port);
+    assertCurrent();
+    if (!verified.info || !sameProject(verified.info, match)) return {
       success: false,
       error: `Unity instance on port ${port} (${match.projectName}) is unavailable or its identity changed. Discover instances again before selecting it.`,
     };
+
+    _agentInstances.set(agentId, match);
+    _agentSelectionRequired.set(agentId, false);
+    debugLog(`selectInstance: agent ${agentId} selected port ${port} (${match.projectName})`);
+
+    return {
+      success: true,
+      message: `Selected Unity instance: ${match.projectName} (port ${port})`,
+      instance: match,
+    };
+  } finally {
+    if (pendingSelections.get(agentId) === attempt) pendingSelections.delete(agentId);
   }
-
-  _agentInstances.set(getCurrentAgentId(), match);
-  _agentSelectionRequired.set(getCurrentAgentId(), false);
-  debugLog(`selectInstance: agent ${getCurrentAgentId()} selected port ${port} (${match.projectName})`);
-
-  return {
-    success: true,
-    message: `Selected Unity instance: ${match.projectName} (port ${port})`,
-    instance: match,
-  };
 }
 
 /**
@@ -321,12 +352,16 @@ export async function discoverInstances(probes = new Map()) {
  * @returns {object} Result with auto-selected instance or selection requirement.
  */
 export async function autoSelectInstance() {
+  const selected = getSelectedInstance();
+  assertSelectionUnchanged(selected);
   const probes = new Map();
   const instances = await discoverInstances(probes);
+  assertSelectionUnchanged(selected);
 
   if (instances.length === 0) {
     // No instances found — try default port as last resort
     const { info } = await probeInstance(CONFIG.editorBridgePort, probes);
+    assertSelectionUnchanged(selected);
     if (info) {
       const defaultInstance = {
         port: CONFIG.editorBridgePort,

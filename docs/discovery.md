@@ -20,10 +20,16 @@ When comparing an existing selection with a live identity, matching project path
 | Ping is temporarily unavailable or returns a non-success HTTP status | Retain existing fresh-registry recovery for a previously selected editor |
 | Registry proposes a different recovery port | Check that port before using the registry fallback |
 | Identity changes during explicit selection | Reject the selection and request fresh discovery |
+| A newer explicit selection starts for the same agent | Supersede the older pending selection; its eventual result cannot replace the newer choice |
+| Selection changes while validation or automatic discovery is pending | Refuse that stale implicit call before dispatch; preserve the newer selection |
 
 Observations are reused within one discovery/validation attempt, including rejected ports, so registry validation and the fallback scan do not repeat the same probe. Later discovery calls probe again; this is not a long-lived identity cache. Cancellation still aborts an unused shared discovery without treating it as proof that a selected project disappeared.
 
 The configured default port passes the same identity check even when it is outside the scan range. If no editor is verified, an implicit editor command fails before dispatch. A subsequent call can discover an editor that has just started. Explicit instance selection still rechecks its chosen port after discovery.
+
+Selection by `projectName` now resolves a unique case-insensitive name in one discovery, then verifies that same project's identity. Previously, a second discovery could replace the resolved project when its port changed owners. Matching paths protect against a replacement with the same name. Explicit `port` retains precedence when both arguments are provided; ambiguous/missing names leave the existing selection intact.
+
+Pending explicit choices are scoped to their agent and removed on success, failure or cancellation. Only the latest attempt can commit a selection. If a newer attempt fails, an older pending attempt stays superseded and the last committed selection remains. Implicit calls refuse to validate while an explicit choice is pending; explicit-port calls remain available. A validation already in progress checks its saved selection again after each discovery/recovery wait so it cannot clear or restore a project over a newer choice. Calls whose target is already pinned retain the existing routing behavior.
 
 `unity_list_advanced_tools` can return cached schemas without a selected editor, without asking an unverified default service for dynamic routes or project context. `unity_editor_ping` reports unrecognized identities as disconnected. Failed tool results no longer trigger automatic context injection; the next successful call can receive the context.
 
@@ -34,6 +40,12 @@ Explicit `port` routing retains its existing behavior and bypasses selection dis
 This is identity-shape validation, not authentication. A service that deliberately copies a valid bridge response can still imitate one. Ports can also change owners after a probe. Fresh-registry recovery for unavailable endpoints preserves the existing compilation/reload behavior and is not independent proof of the endpoint's current owner.
 
 ## Evidence and reproduction
+
+The newer [selection report](validation/discovery-selection.json) records nine failing baseline checks and two unchanged controls against `19170d5`. Fifteen final checks pass, covering name/path replacement, overlapping explicit choices, stale validation clearing or recovery, automatic selection, independent agents, cancellation and failed newer choices. The complete server suite has 217 passing tests on Node 22; 71 focused discovery/routing/cancellation checks pass on Node 18. Name selection uses three ping requests instead of five in the controlled two-editor case: one discovery plus a fresh recheck. This is a request-count measurement, not an end-to-end latency claim.
+
+The opt-in `npm run test:selection` accepts `UNITY_MCP_SELECTION_PROJECTS` as a JSON array of two absolute marked project paths. It checks named selection, six overlapping choices from one agent alongside independent agent reads, final project paths, saved scenes and compilation diagnostics. It writes `Library/UnityMcpSelectionConcurrency.json` in the first project. Its held-response race reproductions run only against owned mock listeners; the real-editor suite performs discovery and reads without changing project content.
+
+Four live runs pass on Windows/Unity 6000.6.2f1: two current plugins, then a current/released plugin pair, each on Node 18.20.8 and 22.18.0. Every run preserves the newer choice in all six overlapping rounds while both independent agents keep their targets. The mixed pair reports protocols 3 and 1. Both persistent editors finish outside Play Mode with clean saved scenes and no compilation errors; the temporary released-plugin editor is closed. Plugin runtime code and package versions are unchanged by this server update.
 
 The [validation report](validation/discovery-identity.json) records **22 failing checks out of 26** against server `8b7c05982906354f7ae149d3bac132440c2ae720`. Four controls already pass. The corrected suite covers scans, default-port fallback, old/fresh registries, selected-port reuse, a changed recovery port, selection races, historical/alias formats, pathless metadata and offline diagnostics. The full ordinary suite has **163 passing tests** on Node 18.20.8 and 22.18.0.
 

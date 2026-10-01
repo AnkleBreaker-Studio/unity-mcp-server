@@ -5,7 +5,6 @@ import {
   discoverInstances,
   selectInstance,
   getSelectedInstance,
-  autoSelectInstance,
 } from "../instance-discovery.js";
 import { formatResult } from "../response-format.js";
 
@@ -91,30 +90,11 @@ export const instanceTools = [
         });
       }
 
-      // Resolve a project name to its current port (names are stable, ports are not).
-      if (!port) {
-        const instances = await discoverInstances();
-        const needle = projectName.toLowerCase();
-        const matches = instances.filter((i) => (i.projectName || "").toLowerCase() === needle);
-        if (matches.length === 0) {
-          return formatResult({
-            success: false,
-            error: `No running instance named "${projectName}". Available: ${instances.map((i) => i.projectName).join(", ") || "none"}.`,
-          });
-        }
-        if (matches.length > 1) {
-          return formatResult({
-            success: false,
-            error: `${matches.length} instances named "${projectName}" (ports ${matches.map((i) => i.port).join(", ")}). Select by port instead.`,
-          });
-        }
-        port = matches[0].port;
-      }
-
-      const result = await selectInstance(port);
+      const result = await selectInstance(port, projectName);
 
       // Enhance successful responses with parallel-safe routing instructions
       if (result.success) {
+        port = result.instance.port;
         result.routing = {
           port: port,
           instruction:

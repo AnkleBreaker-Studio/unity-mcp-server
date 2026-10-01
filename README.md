@@ -84,7 +84,7 @@ Editor discovery is automatic. Unity Hub is only needed for Hub commands; set `U
 3. Include that `port` on editor calls when coordinating simultaneous tasks.
 4. Discover again after an editor restart: ports are dynamic.
 
-Discovery checks the live Unity identity before adopting a port, including registry and default-port fallbacks. [Identity checks and compatibility](docs/discovery.md).
+Discovery checks the live Unity identity before adopting a port, including registry and default-port fallbacks. Named selection keeps that identity through verification, and stale discovery cannot overwrite a newer project choice. [Identity, concurrent selection and compatibility](docs/discovery.md).
 
 ```json
 {"name":"unity_editor_state","arguments":{"port":7891}}
