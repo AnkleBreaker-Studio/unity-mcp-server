@@ -1189,6 +1189,20 @@
       "tests": 202,
       "passed": 202,
       "failed": 0
+    },
+    "refusalFixtureCorrection": {
+      "initialRun": "https://github.com/AnkleBreaker-Studio/unity-mcp-server/actions/runs/36820589973",
+      "initialPassedJobs": 3,
+      "initialFailedJobs": 5,
+      "inspectedFailure": "Protected refusal test returned an unknown outcome after a request timeout near the shortened 2.1-second negotiated window (1.1-second client budget).",
+      "interpretation": "The fixture assumed exactly two refusals. Timer scheduling can allow a final near-expiry attempt; its lost response must remain uncertain.",
+      "change": "Retain the normal mock retry window and exhaust the five-attempt limit; assert five refusals, or one accepted attempt followed by four refusals. Production retry behavior is unchanged.",
+      "local": {
+        "nodeVersion": "24.21.0",
+        "tests": 16,
+        "passed": 16,
+        "failed": 0
+      }
     }
   },
   "minimumApi": {
@@ -1976,5 +1990,33 @@
       "sceneDirty": false,
       "activeScenePath": "Assets/__McpValidation/MultiplayerScene.unity"
     }
-  ]
+  ],
+  "publication": {
+    "pluginCommit": "0e450a9faeffd98122b873670747ce926b9b2b9a",
+    "serverImplementationCommit": "b75df00ee3b360b58bdbe3ff54ea262e8952ad5e",
+    "serverValidationCommit": "d28f16234db9ae4cb761f718b94a3b01d7424342",
+    "pluginCI": {
+      "url": "https://github.com/AnkleBreaker-Studio/unity-mcp-plugin/actions/runs/36820586759",
+      "conclusion": "success",
+      "routes": 338
+    },
+    "serverCI": {
+      "url": "https://github.com/AnkleBreaker-Studio/unity-mcp-server/actions/runs/36820953662",
+      "conclusion": "success",
+      "jobs": 8,
+      "nodeVersions": [
+        18,
+        20,
+        22,
+        24
+      ],
+      "operatingSystems": [
+        "Windows",
+        "Linux"
+      ],
+      "ordinaryTests": 202
+    },
+    "versionsChanged": false,
+    "releasePublished": false
+  }
 }
