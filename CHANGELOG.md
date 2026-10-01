@@ -4,6 +4,10 @@ All notable changes to this package will be documented in this file.
 
 ## [Unreleased]
 
+### Request input validation
+- Check the complete UTF-8 queue envelope against the plugin's advertised byte limit before upload. Report explicit non-acceptance without retries; retain older-plugin behavior when metadata is absent or invalid.
+- Add ten server checks and an opt-in live suite for current/released servers on Node 18/22. Document plugin grammar/depth/value validation before dispatch and the separate input/output limits.
+
 ### Native Undo validation
 - Add an opt-in MCP suite for transform rollback, multiple agents, native Undo/Redo, clearing, explicit native cascades and action identity through actual script reload.
 - Clarify targeted group-revert behavior, its lack of Redo, current native eligibility and the companion plugin's additive recovery fields in tool descriptions and `docs/undo.md`.

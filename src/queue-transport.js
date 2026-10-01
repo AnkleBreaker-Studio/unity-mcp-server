@@ -132,6 +132,18 @@ export async function sendQueuedCommand(command, params, bridgeUrl, agentId) {
   } : null;
   const deadline = performance.now() + (info ? info.queueRetryWindowMs - 1000 : CONFIG.editorBridgeTimeout * (MAX_RETRIES + 1));
   const payload = JSON.stringify({ apiPath: command, method: "POST", body, agentId, ...guard });
+  if (Number.isSafeInteger(info?.maxRequestBodyBytes) && info.maxRequestBodyBytes > 0) {
+    const requestBytes = Buffer.byteLength(payload, "utf8");
+    if (requestBytes > info.maxRequestBodyBytes) return {
+      success: false,
+      queueTransportError: true,
+      requestAccepted: false,
+      code: "request_too_large",
+      requestBytes,
+      limitBytes: info.maxRequestBodyBytes,
+      error: `Request body too large (${requestBytes} bytes; plugin limit ${info.maxRequestBodyBytes}). No command was submitted.`,
+    };
+  }
   let uncertain = false;
   let lastError;
   for (let attempt = 0; attempt <= MAX_RETRIES && performance.now() < deadline; attempt++) {

@@ -58,6 +58,8 @@ Features for uninstalled packages return helpful messages explaining what to ins
 
 **"response_too_large"** - The result could not be delivered within the configured byte limit. Inspect the effects before repeating a write; request smaller results for reads. See [response handling](response-limits.md).
 
+**"request_too_large"** - Reduce the request payload. The plugin enforces its existing 32 MiB input limit; the current server checks the advertised limit before uploading. This input rejection differs from a response failure after execution. See [request input](request-input.md).
+
 **"http_response_too_large"** - The server stopped reading an editor HTTP response above `UNITY_HTTP_RESPONSE_LIMIT`. It does not retry that response or resubmit the command. Inspect the original ticket/project before repeating a write; reduce the scope of reads.
 
 **"Outcome unknown"** - An Editor command may already have executed: inspect the project or original ticket before issuing it again. Updating both components enables protected submission retries; see the [retry and session contract](queue-protocol.md). For a Hub command, inspect Hub installations/settings before retrying; Hub operations run once and have [separate process diagnostics](hub.md).
