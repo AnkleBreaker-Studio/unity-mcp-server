@@ -4,9 +4,14 @@ All notable changes to this package will be documented in this file.
 
 ## [Unreleased]
 
+### Test job persistence
+- Add an opt-in live suite for completed results and native EditMode execution through actual script reloads. Reconnect to the marked editor and poll the original job ID.
+- Document retained details, native identity recovery, legacy summaries, corruption warnings and history limits in `docs/testing.md`.
+- Reproduce an HTTP-worker shutdown error that fails native tests during reload; the companion plugin now preserves normal thread-abort behavior without logging a false failure.
+
 ### Test discovery and results
 - Expand the live Test Runner fixture with parameterized, ignored/inconclusive and fixture-setup failure cases. Check discovery truncation, invalid limits, final counts and detailed-result completeness.
-- Document the companion plugin's exclusion of empty suites, bounded result collection and reconciliation from Unity's final result tree. Complete reload persistence remains separate work.
+- Document the companion plugin's exclusion of empty suites, bounded result collection and reconciliation from Unity's final result tree. Reload persistence is covered by the subsequent change above.
 - Require exact test identities across consecutive PlayMode runs and wait for slow tests to start before cancellation. These checks expose a native Test Framework 1.8 assembly-cache defect previously masked by empty-suite counting.
 
 ### Test Runner validation

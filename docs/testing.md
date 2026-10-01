@@ -10,7 +10,7 @@ Discovery returns test cases, including individual parameterized cases. Empty su
 
 Progress while running comes from callbacks. At completion, Unity's aggregate counts and final result tree replace that provisional data, correcting missed or duplicated intermediate callbacks. Existing result records are reused where possible. The legacy `skipped` count still includes inconclusive cases, while individual entries retain their actual status. A suite-level failure remains a failed job even when no leaf failure exists.
 
-The additive `resultsComplete` field tells whether the detailed list accounts for every completed test. It does not indicate that the job has finished; use `status` for that. Missing native details or a completed job restored from the current summary-only session format can make it false. Reconciliation repairs results when the final native tree arrives; it does not yet persist complete details through a later script reload.
+The additive `resultsComplete` field tells whether the detailed list accounts for every completed test. It does not indicate that the job has finished; use `status` for that. Missing native details, legacy summaries or a damaged snapshot can make it false. Current jobs retain complete available details through script reload; older summary-only records remain readable.
 
 Repeated PlayMode runs exposed a Test Framework 1.8 cache defect: its subsystem reset clears the assembly list, while the loader only populates a null list. With domain reload disabled, a later run can therefore execute zero tests even though discovery lists them. A controlled cache reset restored the requested test. Before starting a PlayMode job, the plugin now invalidates that cache when the inspected private reset hook and list field exist. The inspected 1.1.31 implementation has no such hook and is left alone. This is a compatibility workaround for native framework state, not a replay of an empty run.
 
@@ -34,7 +34,19 @@ Cancellation is cooperative. Older Test Framework versions without the public `C
 
 Unity broadcasts test callbacks globally. Before starting a new job, the plugin checks native run activity, including cleanup and runs started outside MCP. The state check uses the internal `IsRunActive` method found in the inspected Test Framework 1.1.31 and 1.8.0 implementations. If it becomes unavailable, starting tests reports an explicit error instead of admitting overlapping jobs. The public callback registration contract also documents that registrations are global. [Unity TestRunnerApi](https://docs.unity3d.com/Packages/com.unity.test-framework@1.1/api/UnityEditor.TestTools.TestRunner.Api.TestRunnerApi.html).
 
-Before assembly reload, the plugin saves job summaries and native run IDs, unregisters its callbacks and destroys its owned API instance. Restored timestamps are normalized to UTC, keeping latest-job ordering and elapsed-time calculations consistent with new jobs. This does not make arbitrary test runs survive every reload: detailed results are not persisted, and the existing five-minute stale-job heuristic remains.
+## Script reload and retained history
+
+Before assembly reload, the plugin saves changed job snapshots, unregisters its callbacks and destroys its owned API instance. Snapshots retain detailed results, failure messages/stacks, all four filter families, current-test identity and its timer. Unchanged snapshots are reused; individual test callbacks only mark their job dirty. UTC timestamps preserve elapsed time and latest-job ordering. Unity's SessionState survives assembly reload and is cleared when the editor exits, so this is session history rather than durable storage across restarts. [Unity SessionState](https://docs.unity3d.com/2021.3/Documentation/ScriptReference/SessionState.html).
+
+After reconnecting to the same editor, poll the original `jobId`. An active job is matched to the native run ID in Test Framework's serialized job holder before its runner dictionary is rebuilt. A matching active native run remains running regardless of its age; a definitely absent native run becomes a failed job without restarting tests. The former five-minute heuristic has been removed. The private holder shape was inspected in Test Framework 1.1.31 and 1.8.0; real reload execution is validated on 1.8.0. Missing legacy identity or an unsupported holder produces `recoveryWarning`, retaining the job for explicit inspection/clear rather than guessing its outcome.
+
+Individual damaged summary records do not prevent later valid jobs from restoring. Missing, damaged or unsupported snapshots preserve the summary and expose `persistenceWarning`; `resultsComplete` still compares available details with completed tests. A damaged entire history index cannot reconstruct independent snapshots. Old summary-only records stay readable, but their missing details cannot be recovered retroactively.
+
+History expires completed jobs after 30 minutes, keeps at most 128 jobs, and evicts oldest completed history when serialized snapshot data exceeds a 32 MiB UTF-8 budget. The active job and newest job are protected from size eviction; oversized results are retained intact and reported as `overBudget`. This budget is a retention target, not a hard bound on native/managed memory, response size or temporary serialization allocations. Expiry is checked on reads as well as admission, save and reload; removed snapshots are erased from SessionState.
+
+The additive `historyRetention` object reports `retainedJobs`, `maxJobs`, `expiryMinutes`, `snapshotBytes`, `snapshotBudgetBytes`, `evictions` and `overBudget`. Byte counts describe the last saved snapshots; a running job's latest callbacks may not yet be serialized. Server response limits still apply when retrieving large detailed results.
+
+A real native reload also exposed normal HTTP worker interruption being logged as an error. The bridge now lets `ThreadAbortException` propagate without logging or attempting a 500 response. Other request exceptions retain their existing diagnostics. This prevents the bridge's shutdown message from failing an otherwise valid Unity test.
 
 ## Evidence and limits
 
@@ -46,9 +58,13 @@ The subsequent [discovery and result report](validation/unity66-test-results.jso
 
 The earlier live suite checked the PlayMode passed count, which could hide an empty suite miscounted as a passing test. The expanded suite requires the exact test name in two consecutive PlayMode results without script reload, then waits for each slow test to actually start before requesting cancellation. Use this newer report for those execution guarantees.
 
-All ten result/discovery checks and the nineteen lifecycle regressions pass. The expanded current/released-server suites pass on Node 18 and 22, consecutively in one Unity editor. A real script reload after completion retains the summary but removes the detailed result; `resultsComplete` correctly changes from true to false. Full result persistence remains unfinished.
+All ten result/discovery checks and the nineteen lifecycle regressions pass. The expanded current/released-server suites pass on Node 18 and 22, consecutively in one Unity editor. That checkpoint also reproduced loss of completed-job details after a real reload; the subsequent persistence change below repairs it.
 
-All 70 editor sources pass the Unity 2021.3.18f1 API compiler check. Actual older-editor execution remains deferred by maintainer direction. Other operating systems, player-build test runs, actual script reload during a native test, complete result persistence and large-project native discovery costs need further coverage. These checks do not establish every Test Runner feature as complete.
+The [persistence report](validation/unity66-test-persistence.json) adds five reproduced restoration failures plus a passing legacy control, then twelve passing checks including corruption, current-test progress, native identity, all filters, count/age/byte retention and oversized newest results. The nineteen lifecycle checks and ten discovery/result checks remain green. A separate owned HTTP-worker fixture reproduces and fixes the shutdown error log.
+
+Actual completed-job reload preserves the two results, failure diagnostics, counts and timestamps. A native three-test suite completes two tests before reload and resumes the third with the same MCP job ID; it finishes with all three details, the intended failure and a single reload request. The current server and released server `826af5c` both pass these checks on Node 18 and 22, sequentially in the same editor. The fixture verifies a supported EditMode reload instruction, not arbitrary script changes or every PlayMode/player-build transition.
+
+All 71 editor sources pass the Unity 2021.3.18f1 API compiler check. Actual older-editor execution remains deferred by maintainer direction. Other operating systems, player-build test runs, arbitrary reload failures, future private Test Framework API changes and large-project native discovery/serialization costs need further coverage.
 
 ## Reproduce
 
@@ -73,3 +89,5 @@ From the plugin repository, in a closed disposable project:
 This controlled suite replaces the native scheduling delegate; it launches no native tests. It writes `Library/UnityMcpTestRunnerValidation.json` and restores the fixture settings before exiting.
 
 Use `-Suite TestResults` for controlled test-tree/result checks, which write `Library/UnityMcpTestResultsValidation.json`. These use synthetic Unity adaptors and the actual plugin callbacks; they also launch no native tests. To reproduce the empty-project check, discover tests in a marked project without any test assemblies: it should return `totalTests: 0`, `truncated: false` and an empty list.
+
+Use `-Suite TestPersistence` for the twelve controlled session/history checks and `-Suite RequestShutdown` for an owned HTTP worker aborted during its main-thread wait. Their reports are `Library/UnityMcpTestPersistenceValidation.json` and `Library/UnityMcpRequestShutdownValidation.json`. Run `npm run test:test-persistence` with the same marked open project for completed-job and in-flight native script reloads; this writes `Library/UnityMcpTestPersistence.json` and also accepts `UNITY_MCP_TESTING_SERVER_ENTRY`.

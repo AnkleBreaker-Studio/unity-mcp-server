@@ -530,5 +530,9 @@
       "testsPerJob": 163
     },
     "releasePublished": false
+  },
+  "persistenceFollowup": {
+    "report": "unity66-test-persistence.json",
+    "note": "Subsequent changes retain available detailed results and running-test state across script reload. The original completed-reload observation above remains baseline evidence."
   }
 }

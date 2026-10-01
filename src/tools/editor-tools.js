@@ -4510,7 +4510,9 @@ export const editorTools = [
     description:
       "Get the status and results of a test run job. If no jobId is provided, returns the latest job. " +
       "Poll this after calling unity_testing_run_tests until status is 'succeeded' or 'failed'. " +
-      "Use waitTimeout for server-side polling to avoid repeated calls.",
+      "Use waitTimeout for server-side polling to avoid repeated calls. " +
+      "With current plugins, results survive script reload within the editor session; retain the jobId after reconnecting. " +
+      "historyRetention reports expiry/eviction limits; persistenceWarning and recoveryWarning report incomplete restoration.",
     inputSchema: {
       type: "object",
       properties: {
