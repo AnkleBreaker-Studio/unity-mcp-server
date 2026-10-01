@@ -464,5 +464,25 @@
     "tests/live-agent-state.test.mjs": "a7d743b04cdb60980290d5ae8027cafa054244ea0c93ad483bafdca405ed6dc4",
     "tests/diagnostics/state-retention-audit.mjs": "f4490eda493a93e93bdb2dd8306f1ef6d6578ae65033fcd463e362f20ea4cbce",
     "package.json": "49b19fff6ee79439507cee2044c1a31c8efb82cc526664104d4c82cdcfa37317"
+  },
+  "serverCommit": "eae1ec10257541d11c000ef39e96f977a1ffd250",
+  "ci": {
+    "runId": 36836934911,
+    "url": "https://github.com/AnkleBreaker-Studio/unity-mcp-server/actions/runs/36836934911",
+    "passed": true,
+    "jobs": 8,
+    "nodeVersions": [
+      18,
+      20,
+      22,
+      24
+    ],
+    "platforms": [
+      "Windows",
+      "Linux"
+    ],
+    "tests": 243,
+    "failures": 0,
+    "verifiedLogJobId": 110286488033
   }
 }

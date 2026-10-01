@@ -28,7 +28,7 @@ Accounted identity bytes are **not heap usage**. Record overhead, bounded marker
 
 ## Validation
 
-The [report](validation/agent-state.json) records fourteen new regression checks, the 4,096-agent diagnostic and real Unity 6000.6.2f1 checks using the current and released plugin checkouts. Seven of the initial eight regression cases fail before the change; the unchanged single-editor control passes. The full ordinary suite passes 243 tests locally on Node 22.
+The [report](validation/agent-state.json) records fourteen new regression checks, the 4,096-agent diagnostic and real Unity 6000.6.2f1 checks using the current and released plugin checkouts. Seven of the initial eight regression cases fail before the change; the unchanged single-editor control passes. The full ordinary suite passes 243 tests locally on Node 22 and in all eight [Node 18/20/22/24 Windows/Linux CI jobs](https://github.com/AnkleBreaker-Studio/unity-mcp-server/actions/runs/36836934911) for server `eae1ec1`.
 
 The two-editor suite runs on Node 18 and 22 with a two-agent cap. It covers pressure eviction, unknown/returning agents, explicit routing, reselection, twelve overlapping reads, telemetry and clean final project states. It uses MCP stdio and does not mutate scene content. Existing concurrent-selection, cancellation, resource and protocol regressions remain in the ordinary suite.
 

@@ -75,4 +75,3 @@ Features for uninstalled packages return helpful messages explaining what to ins
 **"Category disabled" errors** — A feature category may be toggled off. Open `Window > AB Unity MCP > Dashboard` in Unity to check category settings.
 
 **Port conflicts** — Change `UNITY_BRIDGE_PORT` in your Claude config and update the port in Unity's MCP Dashboard settings.
-
