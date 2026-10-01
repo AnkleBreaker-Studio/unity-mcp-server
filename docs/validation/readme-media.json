@@ -19,11 +19,11 @@
     "reportedVulnerabilities": 0
   },
   "readmeAndComparisonLinkCheck": {
-    "checkedLinks": 154,
+    "checkedLinks": 143,
     "failures": [],
     "matchingDiagramCopies": true
   },
-  "additionalLocalLinks": 105,
+  "additionalLocalLinks": 85,
   "media": [
     {
       "name": "brickbreaker",
@@ -82,5 +82,92 @@
     "No new full Unity matrix run for documentation-only changes.",
     "Unity 2021 runtime remains deferred by maintainer direction."
   ],
-  "failures": []
+  "failures": [],
+  "hostedReadmes": {
+    "serverDocumentationCommit": "513fca2dc6bb052b7f7683895b4a738f042ca66b",
+    "pluginDocumentationCommit": "2bdf6a8",
+    "browser": "Chromium",
+    "checks": [
+      {
+        "repo": "unity-mcp-server",
+        "viewport": 1280,
+        "articleWidth": 838,
+        "articleScrollWidth": 838,
+        "allImagesLoaded": true,
+        "allImagesHaveAlt": true,
+        "previewNotice": true,
+        "performanceFiguresPresent": true,
+        "detailsExpanded": true
+      },
+      {
+        "repo": "unity-mcp-server",
+        "viewport": 390,
+        "articleWidth": 324,
+        "articleScrollWidth": 324,
+        "allImagesLoaded": true,
+        "allImagesHaveAlt": true,
+        "previewNotice": true,
+        "performanceFiguresPresent": true,
+        "detailsExpanded": true
+      },
+      {
+        "repo": "unity-mcp-plugin",
+        "viewport": 1280,
+        "articleWidth": 838,
+        "articleScrollWidth": 838,
+        "allImagesLoaded": true,
+        "allImagesHaveAlt": true,
+        "previewNotice": true,
+        "performanceFiguresPresent": true,
+        "detailsExpanded": true
+      },
+      {
+        "repo": "unity-mcp-plugin",
+        "viewport": 390,
+        "articleWidth": 324,
+        "articleScrollWidth": 324,
+        "allImagesLoaded": true,
+        "allImagesHaveAlt": true,
+        "previewNotice": true,
+        "performanceFiguresPresent": true,
+        "detailsExpanded": true
+      }
+    ]
+  },
+  "videoPlayback": {
+    "sourceMediaCommit": "513fca2dc6bb052b7f7683895b4a738f042ca66b",
+    "hosting": "jsDelivr serves the committed public MP4s as video/mp4; GitHub raw download links remain as fallback.",
+    "checks": [
+      {
+        "url": "https://cdn.jsdelivr.net/gh/AnkleBreaker-Studio/unity-mcp-server@513fca2/docs/media/showcase-brickbreaker.mp4",
+        "duration": 25,
+        "width": 820,
+        "height": 462,
+        "controls": true,
+        "started": true,
+        "seekedTo": 5,
+        "error": null
+      },
+      {
+        "url": "https://cdn.jsdelivr.net/gh/AnkleBreaker-Studio/unity-mcp-server@513fca2/docs/media/showcase-village.mp4",
+        "duration": 25,
+        "width": 820,
+        "height": 462,
+        "controls": true,
+        "started": true,
+        "seekedTo": 5,
+        "error": null
+      },
+      {
+        "url": "https://cdn.jsdelivr.net/gh/AnkleBreaker-Studio/unity-mcp-server@513fca2/docs/media/showcase-castle.mp4",
+        "duration": 18,
+        "width": 720,
+        "height": 406,
+        "controls": true,
+        "started": true,
+        "seekedTo": 5,
+        "error": null
+      }
+    ]
+  }
 }

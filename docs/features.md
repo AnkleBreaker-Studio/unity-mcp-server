@@ -11,7 +11,7 @@ Watch the inline GIFs below, or open the [video gallery with MP4 downloads and e
   <img src="unity-mcp-showcase-brickbreaker.gif" alt="Unity MCP AI building a neon brick breaker game in Unity Editor" width="800" />
 </p>
 
-[Open the 25-second video](media/showcase-brickbreaker.mp4).
+[Open the 25-second video](https://cdn.jsdelivr.net/gh/AnkleBreaker-Studio/unity-mcp-server@513fca2/docs/media/showcase-brickbreaker.mp4).
 
 ### 3D Medieval Village — AI-generated terrain, houses, and environment
 > From an empty scene to a fully decorated village: terrain sculpting, material creation, procedural house building via C# editor scripts, trees, fences, and pathways.
@@ -20,7 +20,7 @@ Watch the inline GIFs below, or open the [video gallery with MP4 downloads and e
   <img src="unity-mcp-showcase-village.gif" alt="Unity MCP — AI building a 3D medieval village with houses, trees, and terrain" width="800" />
 </p>
 
-[Open the 25-second video](media/showcase-village.mp4).
+[Open the 25-second video](https://cdn.jsdelivr.net/gh/AnkleBreaker-Studio/unity-mcp-server@513fca2/docs/media/showcase-village.mp4).
 
 ### 3D Castle — Complete level with FPS walkthrough
 > AI builds a multi-room castle with courtyard, throne room, armory, and guard room. Adjusts lighting, spawns the player, and runs an FPS walkthrough to verify the result.
@@ -29,7 +29,7 @@ Watch the inline GIFs below, or open the [video gallery with MP4 downloads and e
   <img src="unity-mcp-showcase-castle.gif" alt="Unity MCP — AI building a 3D castle with FPS walkthrough in Unity Editor" width="800" />
 </p>
 
-[Open the 18-second video](media/showcase-castle.mp4).
+[Open the 18-second video](https://cdn.jsdelivr.net/gh/AnkleBreaker-Studio/unity-mcp-server@513fca2/docs/media/showcase-castle.mp4).
 
 
 ## Features

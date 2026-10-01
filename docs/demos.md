@@ -4,9 +4,9 @@ These existing recordings show an AI assistant operating the Unity Editor throug
 
 ## Neon brick breaker
 
-[![AI assistant and Unity Editor building a neon brick breaker](unity-mcp-showcase-brickbreaker.gif)](media/showcase-brickbreaker.mp4)
+[![AI assistant and Unity Editor building a neon brick breaker](unity-mcp-showcase-brickbreaker.gif)](https://cdn.jsdelivr.net/gh/AnkleBreaker-Studio/unity-mcp-server@513fca2/docs/media/showcase-brickbreaker.mp4)
 
-**[Open the 25-second MP4](media/showcase-brickbreaker.mp4)** · [Download video](https://raw.githubusercontent.com/AnkleBreaker-Studio/unity-mcp-server/Development-Unity66-Modernization/docs/media/showcase-brickbreaker.mp4)
+**[Open the 25-second MP4](https://cdn.jsdelivr.net/gh/AnkleBreaker-Studio/unity-mcp-server@513fca2/docs/media/showcase-brickbreaker.mp4)** · [Download video](https://raw.githubusercontent.com/AnkleBreaker-Studio/unity-mcp-server/Development-Unity66-Modernization/docs/media/showcase-brickbreaker.mp4)
 
 Scene creation, brick layout, materials, C# gameplay scripts and visual iteration in one recorded workflow.
 
@@ -16,9 +16,9 @@ Try a similar prompt in a disposable prototype:
 
 ## Medieval village
 
-[![AI assistant building a village with terrain, houses, trees and paths in Unity](unity-mcp-showcase-village.gif)](media/showcase-village.mp4)
+[![AI assistant building a village with terrain, houses, trees and paths in Unity](unity-mcp-showcase-village.gif)](https://cdn.jsdelivr.net/gh/AnkleBreaker-Studio/unity-mcp-server@513fca2/docs/media/showcase-village.mp4)
 
-**[Open the 25-second MP4](media/showcase-village.mp4)** · [Download video](https://raw.githubusercontent.com/AnkleBreaker-Studio/unity-mcp-server/Development-Unity66-Modernization/docs/media/showcase-village.mp4)
+**[Open the 25-second MP4](https://cdn.jsdelivr.net/gh/AnkleBreaker-Studio/unity-mcp-server@513fca2/docs/media/showcase-village.mp4)** · [Download video](https://raw.githubusercontent.com/AnkleBreaker-Studio/unity-mcp-server/Development-Unity66-Modernization/docs/media/showcase-village.mp4)
 
 Terrain, repeated house construction, materials and environmental details, with the assistant inspecting and refining the scene.
 
@@ -26,9 +26,9 @@ Terrain, repeated house construction, materials and environmental details, with 
 
 ## Castle and first-person walkthrough
 
-[![AI assistant constructing and inspecting a castle in the Unity Editor](unity-mcp-showcase-castle.gif)](media/showcase-castle.mp4)
+[![AI assistant constructing and inspecting a castle in the Unity Editor](unity-mcp-showcase-castle.gif)](https://cdn.jsdelivr.net/gh/AnkleBreaker-Studio/unity-mcp-server@513fca2/docs/media/showcase-castle.mp4)
 
-**[Open the 18-second MP4](media/showcase-castle.mp4)** · [Download video](https://raw.githubusercontent.com/AnkleBreaker-Studio/unity-mcp-server/Development-Unity66-Modernization/docs/media/showcase-castle.mp4)
+**[Open the 18-second MP4](https://cdn.jsdelivr.net/gh/AnkleBreaker-Studio/unity-mcp-server@513fca2/docs/media/showcase-castle.mp4)** · [Download video](https://raw.githubusercontent.com/AnkleBreaker-Studio/unity-mcp-server/Development-Unity66-Modernization/docs/media/showcase-castle.mp4)
 
 Multi-room level construction, lighting adjustments and a playable walkthrough in the recorded project.
 
@@ -40,7 +40,7 @@ The prompts are starting points, not deterministic scripts. Results depend on th
 
 The README Dashboard image is an unchanged native capture from the [attached-editor validation](validation/unity66-editor-render.json), using `dashboard-640-800-top.png`. It shows an owned validation project and intentionally long test strings. Its counters are historical test data, not a live status feed.
 
-The MP4 files use H.264, YUV420p and a front-loaded MP4 index. They total about 1.9 MiB and are kept in `docs/media`; the plugin's copies live under `Documentation~/media`, which Unity excludes from package import. If your GitHub view does not offer a video player, download the MP4 and open it locally. The inline GIF previews remain available in either case.
+The MP4 files use H.264, YUV420p and a front-loaded MP4 index. They total about 1.9 MiB and are kept in `docs/media`; the plugin's copies live under `Documentation~/media`, which Unity excludes from package import. The **Open video** links serve those public repository files through jsDelivr, pinned to media commit `513fca2`, with the `video/mp4` content type so browsers offer playback controls. GitHub's raw endpoint downloads them instead. If the CDN is unavailable, use the adjacent GitHub download link and open the MP4 locally. Inline GIF previews do not depend on the video CDN.
 
 With FFmpeg installed, reproduce an export from the existing GIF:
 
