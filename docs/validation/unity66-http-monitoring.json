@@ -1478,5 +1478,24 @@
     "Refresh measurements exclude attached-panel layout/rendering and whole HTTP overhead",
     "HTTP successful writes do not prove client receipt",
     "Reload duration excludes script compilation and does not establish bridge readiness"
-  ]
+  ],
+  "published": {
+    "pluginCommit": "e72cc8b134566a6a86af397dac77662bc4e524e2",
+    "serverCommit": "581e35daed652ab937eb9e7af9e7f7e6f6d3c97a",
+    "pluginCi": "https://github.com/AnkleBreaker-Studio/unity-mcp-plugin/actions/runs/36813150164",
+    "serverCi": "https://github.com/AnkleBreaker-Studio/unity-mcp-server/actions/runs/36813155323",
+    "allEightServerJobsPassed": true,
+    "versionsUnchanged": true,
+    "releasePublished": false
+  },
+  "cleanup": {
+    "temporaryHealthEditorClosed": true,
+    "persistentEditors": [
+      "Queue66",
+      "Unity66"
+    ],
+    "compilationErrors": 0,
+    "scenesClean": true,
+    "outsidePlayMode": true
+  }
 }

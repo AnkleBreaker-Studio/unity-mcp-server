@@ -142,6 +142,8 @@ The [MPPM guide](multiplayer.md) and [raw multiplayer report](validation/unity66
 
 ## Version references
 
+HTTP monitoring checkpoint: plugin `e72cc8b`, server `581e35d`. [Plugin CI](https://github.com/AnkleBreaker-Studio/unity-mcp-plugin/actions/runs/36813150164) and all eight [server CI jobs](https://github.com/AnkleBreaker-Studio/unity-mcp-server/actions/runs/36813155323) pass. The [HTTP guide](http-monitoring.md) and [report](validation/unity66-http-monitoring.json) cover 14 controlled checks, interrupted-worker accounting, Dashboard reuse/allocation measurements, existing queue/input/monitoring regressions, 74-source minimum-API compilation and four live current/released-server combinations with actual domain reloads. Versions and release status remain unchanged.
+
 The [discovery identity guide](discovery.md) and [report](validation/discovery-identity.json) record 22 baseline failures and four passing controls, followed by 26 passing corrected checks. All 163 ordinary tests pass on Node 18 and 22. Live read-only checks preserve discovery, selection and repeated implicit routing with current/released plugins in Unity 6.6; the temporary released-plugin editor is closed afterward. This validates discovery, not authentication, and explicit-port routing retains its existing contract.
 
 Discovery checkpoint: server `04a3686`; [all eight Node 18/20/22/24 jobs on Windows and Linux passed](https://github.com/AnkleBreaker-Studio/unity-mcp-server/actions/runs/36789841044). Plugin runtime remains at `631b5d2`; versions and release status are unchanged.

@@ -38,6 +38,8 @@ The unchanged queue and HTTP sections each record **zero allocation events over 
 
 The owned-listener tests use HTTP keep-alive for early refusals with unread small bodies. An initial connection-close fixture encountered Mono connection resets before the client finished reading the error. Client receipt and native socket behavior remain distinct from the successful-write counters.
 
+Published checkpoints: plugin `e72cc8b` and server `581e35d`. The [plugin CI](https://github.com/AnkleBreaker-Studio/unity-mcp-plugin/actions/runs/36813150164) passes its 338-route check; the [server CI](https://github.com/AnkleBreaker-Studio/unity-mcp-server/actions/runs/36813155323) passes all eight Node 18/20/22/24 jobs on Windows/Linux, with 195 ordinary tests. Both persistent validation editors compile without errors and retain clean saved scenes outside Play Mode. The temporary live-test editor is closed. Package versions are unchanged; no release was published.
+
 ## Reproduce
 
 In the plugin repository, use a closed disposable marked project:
