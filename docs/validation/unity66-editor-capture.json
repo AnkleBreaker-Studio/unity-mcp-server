@@ -396,5 +396,25 @@
     "No user-window pixels captured",
     "Mixed DPI, multi-monitor crop placement and other desktop renderers not verified",
     "Old Unity runtime deferred by maintainer; minimum API compilation only"
-  ]
+  ],
+  "published": {
+    "pluginCommit": "5704ee63c4d8f2a6c5b79b4daed008088f161e0b",
+    "serverCommit": "3932ac24f72c20516c489e68b7c639764f2d0324",
+    "pluginCi": "https://github.com/AnkleBreaker-Studio/unity-mcp-plugin/actions/runs/36815187832",
+    "serverCi": "https://github.com/AnkleBreaker-Studio/unity-mcp-server/actions/runs/36815192626",
+    "allEightServerJobsPassed": true,
+    "versionsUnchanged": true,
+    "releasePublished": false
+  },
+  "cleanup": {
+    "temporaryHealthEditorClosed": true,
+    "liveFixtureSourceRemoved": true,
+    "persistentEditors": [
+      "Queue66",
+      "Unity66"
+    ],
+    "compilationErrors": 0,
+    "scenesClean": true,
+    "outsidePlayMode": true
+  }
 }

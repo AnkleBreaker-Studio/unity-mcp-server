@@ -28,6 +28,8 @@ The fixture creates two unshown Unity windows and an unshown dock to verify defa
 
 Four live MCP runs—current/released server, Node 18.20.8/22.18.0—verify exact string identities, ambiguous errors and refusal to display unshown fixtures. Each removes its two temporary windows and leaves the scene clean. These live runs do not capture user-window pixels. All 74 package editor sources compile against the declared Unity 2021.3.18f1 API; actual older-editor execution remains deferred by maintainer direction.
 
+Published checkpoints: plugin `5704ee6`, server `3932ac2`. The [plugin CI](https://github.com/AnkleBreaker-Studio/unity-mcp-plugin/actions/runs/36815187832) passes its 338-route check. All eight Node 18/20/22/24 jobs on Windows/Linux pass in [server CI](https://github.com/AnkleBreaker-Studio/unity-mcp-server/actions/runs/36815192626), with 195 ordinary tests. Both persistent validation editors compile cleanly and retain saved scenes outside Play Mode. The temporary editor is closed and its copied fixture is removed. Package versions remain unchanged; no release is published.
+
 Run the controlled suite from the plugin repository with a closed disposable project:
 
 ```powershell
