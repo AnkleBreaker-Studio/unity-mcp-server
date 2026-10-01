@@ -1,4 +1,4 @@
-import { getRequestContext, runWithRequestContext } from "./request-context.js";
+import { getRequestContext, runWithRequestContext, retainAgentState } from "./request-context.js";
 import { CONFIG } from "./config.js";
 
 const abortObservers = new WeakMap();
@@ -98,9 +98,11 @@ export async function shareRequestWork(cache, key, work) {
   if (!entry) {
     const controller = new AbortController();
     const context = { ...getRequestContext(), signal: controller.signal };
+    const releaseAgent = retainAgentState();
     entry = { controller, observers: 0, settled: false };
     entry.promise = Promise.resolve().then(() => runWithRequestContext(context, work)).finally(() => {
       entry.settled = true;
+      releaseAgent();
       if (cache.get(key) === entry) cache.delete(key);
     });
     cache.set(key, entry);

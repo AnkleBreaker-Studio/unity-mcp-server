@@ -1,0 +1,468 @@
+{
+  "date": "2026-10-01",
+  "scope": "Bound retained per-agent server bookkeeping without silently retargeting forgotten selections",
+  "serverBefore": "909f9e9",
+  "pluginCurrent": "f67c16c40881a4fede48dd1692b7bd49e9597744",
+  "pluginReleased": "0b8e76f7c50ed8c0bd5f359d893653211d0f2abe",
+  "versionsUnchanged": {
+    "server": "2.35.6",
+    "plugin": "2.39.7"
+  },
+  "baseline": {
+    "initialRegressionCases": 8,
+    "failed": 7,
+    "unchangedControlPassed": 1,
+    "retentionReport": "state-retention-audit.json",
+    "completedAgents": 4096,
+    "retainedSelections": 4096
+  },
+  "defaults": {
+    "agents": 1024,
+    "identityBytes": 8388608,
+    "agentIdBytes": 1024,
+    "selectionMetadataBytes": 65536,
+    "contextMarkersPerAgent": 16,
+    "idleTTL": false
+  },
+  "semantics": {
+    "eviction": "Least recently used inactive records under count or byte pressure",
+    "activeWork": "Request scopes and underlying shared work hold independent leases",
+    "unknownAfterEviction": "Explicit selection required for all unremembered IDs until process restart",
+    "explicitPort": "Per-call override remains usable when admission succeeds; does not commit a selection",
+    "noEditorAdmission": "Hub, tools/list and instance-list calls do not create agent records",
+    "context": "Hashed bounded markers; late failed fetches cannot clear newer markers"
+  },
+  "regression": {
+    "newTests": 14,
+    "fullNode22": {
+      "tests": 243,
+      "passed": 243,
+      "failed": 0
+    },
+    "focusedNode18": {
+      "tests": 32,
+      "passed": 32,
+      "failed": 0
+    },
+    "beforeLog": "agent-state-before.log",
+    "finalLog": "agent-state-final-node22.log"
+  },
+  "retention": [
+    {
+      "nodeVersion": "v18.20.8",
+      "scope": "Instrumented module copies and an isolated mock bridge; no real Unity connection",
+      "samples": [
+        {
+          "completedAgents": 1024,
+          "agents": 1024,
+          "limit": 1024,
+          "identityBytes": 255914,
+          "identityByteLimit": 8388608,
+          "activeAgents": 0,
+          "activeLeases": 0,
+          "selections": 1024,
+          "pendingSelections": 0,
+          "contextMarkers": 0,
+          "contextMarkersPerAgentLimit": 16,
+          "evictions": 0,
+          "capacityRefusals": 0,
+          "contextEvictions": 0,
+          "requiresExplicitSelectionForUnknownAgents": false,
+          "selectionRequirements": 1024
+        },
+        {
+          "completedAgents": 2048,
+          "agents": 1024,
+          "limit": 1024,
+          "identityBytes": 257024,
+          "identityByteLimit": 8388608,
+          "activeAgents": 0,
+          "activeLeases": 0,
+          "selections": 1024,
+          "pendingSelections": 0,
+          "contextMarkers": 0,
+          "contextMarkersPerAgentLimit": 16,
+          "evictions": 1024,
+          "capacityRefusals": 0,
+          "contextEvictions": 0,
+          "requiresExplicitSelectionForUnknownAgents": true,
+          "selectionRequirements": 1024
+        },
+        {
+          "completedAgents": 3072,
+          "agents": 1024,
+          "limit": 1024,
+          "identityBytes": 257024,
+          "identityByteLimit": 8388608,
+          "activeAgents": 0,
+          "activeLeases": 0,
+          "selections": 1024,
+          "pendingSelections": 0,
+          "contextMarkers": 0,
+          "contextMarkersPerAgentLimit": 16,
+          "evictions": 2048,
+          "capacityRefusals": 0,
+          "contextEvictions": 0,
+          "requiresExplicitSelectionForUnknownAgents": true,
+          "selectionRequirements": 1024
+        },
+        {
+          "completedAgents": 4096,
+          "agents": 1024,
+          "limit": 1024,
+          "identityBytes": 257024,
+          "identityByteLimit": 8388608,
+          "activeAgents": 0,
+          "activeLeases": 0,
+          "selections": 1024,
+          "pendingSelections": 0,
+          "contextMarkers": 0,
+          "contextMarkersPerAgentLimit": 16,
+          "evictions": 3072,
+          "capacityRefusals": 0,
+          "contextEvictions": 0,
+          "requiresExplicitSelectionForUnknownAgents": true,
+          "selectionRequirements": 1024
+        }
+      ],
+      "discoverySha256": "86e72fa2c071994598c52c76ce6a153ef17cfd181d141007f74ff9303d023162",
+      "reusingAnAgentDoesNotGrowMaps": true,
+      "completedWorkStillRetained": {
+        "agents": 1024,
+        "limit": 1024,
+        "identityBytes": 257021,
+        "identityByteLimit": 8388608,
+        "activeAgents": 0,
+        "activeLeases": 0,
+        "selections": 1024,
+        "pendingSelections": 0,
+        "contextMarkers": 0,
+        "contextMarkersPerAgentLimit": 16,
+        "evictions": 3073,
+        "capacityRefusals": 0,
+        "contextEvictions": 0,
+        "requiresExplicitSelectionForUnknownAgents": true,
+        "selectionRequirements": 1024
+      },
+      "loggerSha256": "14432063540521cb02326bcaca58bb4e20af0cde057a19a29e9a7cc1707d0327",
+      "logging": {
+        "entries": 96,
+        "messageCharacters": 65536,
+        "advertisedRotationBytes": 5242880,
+        "files": [
+          {
+            "name": "mcp-debug.log",
+            "bytes": 1048576
+          },
+          {
+            "name": "mcp-debug.log.old",
+            "bytes": 5242880
+          }
+        ]
+      },
+      "observations": {
+        "allCompletedAgentsStillSelected": false,
+        "allSelectionRequirementsStillRetained": false,
+        "pendingSelectionsReleased": true,
+        "debugLogExceedsAdvertisedThreshold": false
+      }
+    },
+    {
+      "nodeVersion": "v22.18.0",
+      "scope": "Instrumented module copies and an isolated mock bridge; no real Unity connection",
+      "samples": [
+        {
+          "completedAgents": 1024,
+          "agents": 1024,
+          "limit": 1024,
+          "identityBytes": 255914,
+          "identityByteLimit": 8388608,
+          "activeAgents": 0,
+          "activeLeases": 0,
+          "selections": 1024,
+          "pendingSelections": 0,
+          "contextMarkers": 0,
+          "contextMarkersPerAgentLimit": 16,
+          "evictions": 0,
+          "capacityRefusals": 0,
+          "contextEvictions": 0,
+          "requiresExplicitSelectionForUnknownAgents": false,
+          "selectionRequirements": 1024
+        },
+        {
+          "completedAgents": 2048,
+          "agents": 1024,
+          "limit": 1024,
+          "identityBytes": 257024,
+          "identityByteLimit": 8388608,
+          "activeAgents": 0,
+          "activeLeases": 0,
+          "selections": 1024,
+          "pendingSelections": 0,
+          "contextMarkers": 0,
+          "contextMarkersPerAgentLimit": 16,
+          "evictions": 1024,
+          "capacityRefusals": 0,
+          "contextEvictions": 0,
+          "requiresExplicitSelectionForUnknownAgents": true,
+          "selectionRequirements": 1024
+        },
+        {
+          "completedAgents": 3072,
+          "agents": 1024,
+          "limit": 1024,
+          "identityBytes": 257024,
+          "identityByteLimit": 8388608,
+          "activeAgents": 0,
+          "activeLeases": 0,
+          "selections": 1024,
+          "pendingSelections": 0,
+          "contextMarkers": 0,
+          "contextMarkersPerAgentLimit": 16,
+          "evictions": 2048,
+          "capacityRefusals": 0,
+          "contextEvictions": 0,
+          "requiresExplicitSelectionForUnknownAgents": true,
+          "selectionRequirements": 1024
+        },
+        {
+          "completedAgents": 4096,
+          "agents": 1024,
+          "limit": 1024,
+          "identityBytes": 257024,
+          "identityByteLimit": 8388608,
+          "activeAgents": 0,
+          "activeLeases": 0,
+          "selections": 1024,
+          "pendingSelections": 0,
+          "contextMarkers": 0,
+          "contextMarkersPerAgentLimit": 16,
+          "evictions": 3072,
+          "capacityRefusals": 0,
+          "contextEvictions": 0,
+          "requiresExplicitSelectionForUnknownAgents": true,
+          "selectionRequirements": 1024
+        }
+      ],
+      "discoverySha256": "86e72fa2c071994598c52c76ce6a153ef17cfd181d141007f74ff9303d023162",
+      "reusingAnAgentDoesNotGrowMaps": true,
+      "completedWorkStillRetained": {
+        "agents": 1024,
+        "limit": 1024,
+        "identityBytes": 257021,
+        "identityByteLimit": 8388608,
+        "activeAgents": 0,
+        "activeLeases": 0,
+        "selections": 1024,
+        "pendingSelections": 0,
+        "contextMarkers": 0,
+        "contextMarkersPerAgentLimit": 16,
+        "evictions": 3073,
+        "capacityRefusals": 0,
+        "contextEvictions": 0,
+        "requiresExplicitSelectionForUnknownAgents": true,
+        "selectionRequirements": 1024
+      },
+      "loggerSha256": "14432063540521cb02326bcaca58bb4e20af0cde057a19a29e9a7cc1707d0327",
+      "logging": {
+        "entries": 96,
+        "messageCharacters": 65536,
+        "advertisedRotationBytes": 5242880,
+        "files": [
+          {
+            "name": "mcp-debug.log",
+            "bytes": 1048576
+          },
+          {
+            "name": "mcp-debug.log.old",
+            "bytes": 5242880
+          }
+        ]
+      },
+      "observations": {
+        "allCompletedAgentsStillSelected": false,
+        "allSelectionRequirementsStillRetained": false,
+        "pendingSelectionsReleased": true,
+        "debugLogExceedsAdvertisedThreshold": false
+      }
+    }
+  ],
+  "live": [
+    {
+      "nodeVersion": "v18.20.8",
+      "passed": true,
+      "projects": [
+        {
+          "projectPath": "C:/Users/Francois/orca/workspaces/unity-mcp-server/validation/Health66",
+          "port": 7890,
+          "pluginVersion": "2.39.7",
+          "unityVersion": "6000.6.2f1",
+          "serverAgentState": {
+            "agents": 2,
+            "limit": 2,
+            "identityBytes": 1017,
+            "identityByteLimit": 8388608,
+            "activeAgents": 1,
+            "activeLeases": 1,
+            "selections": 2,
+            "pendingSelections": 0,
+            "contextMarkers": 3,
+            "contextMarkersPerAgentLimit": 16,
+            "evictions": 4,
+            "capacityRefusals": 0,
+            "contextEvictions": 0,
+            "requiresExplicitSelectionForUnknownAgents": true
+          }
+        },
+        {
+          "projectPath": "C:/Users/Francois/orca/workspaces/unity-mcp-server/validation/LegacyCompat66",
+          "port": 7894,
+          "pluginVersion": "2.39.7",
+          "unityVersion": "6000.6.2f1",
+          "serverAgentState": {
+            "agents": 2,
+            "limit": 2,
+            "identityBytes": 1017,
+            "identityByteLimit": 8388608,
+            "activeAgents": 1,
+            "activeLeases": 1,
+            "selections": 2,
+            "pendingSelections": 0,
+            "contextMarkers": 3,
+            "contextMarkersPerAgentLimit": 16,
+            "evictions": 4,
+            "capacityRefusals": 0,
+            "contextEvictions": 0,
+            "requiresExplicitSelectionForUnknownAgents": true
+          }
+        }
+      ],
+      "checks": [
+        {
+          "name": "Both plugin versions select and report the expected clean project",
+          "passed": true
+        },
+        {
+          "name": "Evicted and unknown agents require explicit selection after pressure",
+          "passed": true
+        },
+        {
+          "name": "Explicit port and reselection restore the intended project",
+          "passed": true
+        },
+        {
+          "name": "Twelve overlapping reads retain both targets at the two-agent capacity",
+          "passed": true
+        },
+        {
+          "name": "Bounded telemetry, released request leases and clean final editor states",
+          "passed": true
+        }
+      ]
+    },
+    {
+      "nodeVersion": "v22.18.0",
+      "passed": true,
+      "projects": [
+        {
+          "projectPath": "C:/Users/Francois/orca/workspaces/unity-mcp-server/validation/Health66",
+          "port": 7890,
+          "pluginVersion": "2.39.7",
+          "unityVersion": "6000.6.2f1",
+          "serverAgentState": {
+            "agents": 2,
+            "limit": 2,
+            "identityBytes": 1017,
+            "identityByteLimit": 8388608,
+            "activeAgents": 1,
+            "activeLeases": 1,
+            "selections": 2,
+            "pendingSelections": 0,
+            "contextMarkers": 3,
+            "contextMarkersPerAgentLimit": 16,
+            "evictions": 4,
+            "capacityRefusals": 0,
+            "contextEvictions": 0,
+            "requiresExplicitSelectionForUnknownAgents": true
+          }
+        },
+        {
+          "projectPath": "C:/Users/Francois/orca/workspaces/unity-mcp-server/validation/LegacyCompat66",
+          "port": 7894,
+          "pluginVersion": "2.39.7",
+          "unityVersion": "6000.6.2f1",
+          "serverAgentState": {
+            "agents": 2,
+            "limit": 2,
+            "identityBytes": 1017,
+            "identityByteLimit": 8388608,
+            "activeAgents": 1,
+            "activeLeases": 1,
+            "selections": 2,
+            "pendingSelections": 0,
+            "contextMarkers": 3,
+            "contextMarkersPerAgentLimit": 16,
+            "evictions": 4,
+            "capacityRefusals": 0,
+            "contextEvictions": 0,
+            "requiresExplicitSelectionForUnknownAgents": true
+          }
+        }
+      ],
+      "checks": [
+        {
+          "name": "Both plugin versions select and report the expected clean project",
+          "passed": true
+        },
+        {
+          "name": "Evicted and unknown agents require explicit selection after pressure",
+          "passed": true
+        },
+        {
+          "name": "Explicit port and reselection restore the intended project",
+          "passed": true
+        },
+        {
+          "name": "Twelve overlapping reads retain both targets at the two-agent capacity",
+          "passed": true
+        },
+        {
+          "name": "Bounded telemetry, released request leases and clean final editor states",
+          "passed": true
+        }
+      ]
+    }
+  ],
+  "cleanup": {
+    "ownedEditorPids": [
+      103968,
+      364108
+    ],
+    "ownedEditorsClosed": true,
+    "healthScene": "Clean empty untitled scene preserved",
+    "releasedPluginScene": "Assets/__McpValidation/Compatibility.unity preserved clean",
+    "sceneContentMutated": false,
+    "validationAssetsAdded": false
+  },
+  "limits": [
+    "Identity-byte accounting is not a heap measurement or total process memory quota",
+    "Active payloads, decoded arguments, SDK parsing, transport buffers and plugin memory remain separate",
+    "Live validation uses Windows Unity 6000.6.2f1; actual older Unity execution remains deferred by maintainer direction",
+    "Unknown IDs require explicit targeting after any eviction, including genuinely new IDs",
+    "Plugin source, versions and release status are unchanged"
+  ],
+  "sourceSha256": {
+    "src/agent-state.js": "0af8de88316ab5dc472135071674e3e3f8e6ef07d20c87e0ba58c8f0ddc95cce",
+    "src/config.js": "844b4f276857b6fae1a31532fbdc31b5fa63cd6f850627b36ab102b63263ddc9",
+    "src/index.js": "cdb112976d603077d645961d897f8958d787da8dfa16a1bd1e63ca6dc51dcb76",
+    "src/instance-discovery.js": "86e72fa2c071994598c52c76ce6a153ef17cfd181d141007f74ff9303d023162",
+    "src/request-context.js": "c27452a3a86682a61e972392909216a015b11c71822f4e8b13f2971f54eb5ec7",
+    "src/request-cancellation.js": "6f501169b31ce0b72291714c93192d91fb5a8a09e7d06a937ba575a3c7aad5ee",
+    "src/tools/editor-tools.js": "78976e1042c4193288692d7740ea0064d0b965b707b4b775186502cb602196fc",
+    "tests/agent-state.test.mjs": "bad020f39739bec6dc86f18d6b252bfcdee29d314c2a4d54e73d53a77d3d3949",
+    "tests/unit/agent-state.test.mjs": "438e3098fb864086fd46100ad9dfb3c14bc28537e773e8338043a8af63090784",
+    "tests/live-agent-state.test.mjs": "a7d743b04cdb60980290d5ae8027cafa054244ea0c93ad483bafdca405ed6dc4",
+    "tests/diagnostics/state-retention-audit.mjs": "f4490eda493a93e93bdb2dd8306f1ef6d6578ae65033fcd463e362f20ea4cbce",
+    "package.json": "49b19fff6ee79439507cee2044c1a31c8efb82cc526664104d4c82cdcfa37317"
+  }
+}

@@ -22,8 +22,8 @@ Legacy waiters expire after 30 seconds. Unstarted work is removed or skipped; an
 | State | Owner and lifetime |
 |---|---|
 | Agent ID, explicit port, pinned bridge URL, cancellation signal | One asynchronous MCP call |
-| Selected editor and selection requirement | Agent within a Node process |
-| Automatic context injection | Agent + target URL + known project path |
+| Selected editor, discovery and selection requirement | Bounded agent store within a Node process; active requests pin records |
+| Automatic context injection | Up to 16 hashed target URL/project-path markers per retained agent |
 | Queue protocol support | Bridge endpoint within a Node process |
 | Registry entries, heartbeat, port affinity | Editor instance / shared machine registry |
 | Pending, executing and completed tickets | Editor process; domain reload recreates static state |
@@ -31,6 +31,8 @@ Legacy waiters expire after 30 seconds. Unstarted work is removed or skipped; an
 | Test jobs and compilation diagnostics | Dedicated plugin command classes |
 
 Stdio does **not** serialize handler completion. Handlers overlap whenever they await I/O. Agent/port globals are therefore unsuitable for carrying request identity. The regression suite overlaps two real MCP calls and checks the returned project, injected context and polling headers.
+
+`agent-state.js` bounds retained agent count and serialized identity bytes. Inactive records can be evicted under pressure; afterward, unknown IDs require explicit selection. Request scopes and underlying shared work release their leases when settled. See [state admission and routing](agent-state.md).
 
 Project-context resources use the same routing isolation while retaining their category-relative URIs. A missing selection cannot read another project's default-port context; a vanished selected project keeps requiring explicit reselection. See [resource semantics and validation](resources.md).
 

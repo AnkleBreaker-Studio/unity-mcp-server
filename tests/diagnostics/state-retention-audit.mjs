@@ -24,9 +24,12 @@ try {
   const original = readFileSync(discoveryUrl, "utf8");
   report.discoverySha256 = createHash("sha256").update(original).digest("hex");
   // Read-only exports expose retention without changing selection or HTTP behavior.
+  const stateExport = original.includes("const _agentInstances = new Map()")
+    ? "export function auditState() { return { selections: _agentInstances.size, selectionRequirements: _agentSelectionRequired.size, pendingSelections: pendingSelections.size }; }"
+    : "export function auditState() { const state = agentState.snapshot(); return { ...state, selectionRequirements: state.agents }; }";
   const instrumented = original.replace(/from (["'])(\.\/.+?)\1/g,
     (_, quote, specifier) => `from ${quote}${new URL(specifier, discoveryUrl).href}${quote}`)
-    + "\nexport function auditState() { return { selections: _agentInstances.size, selectionRequirements: _agentSelectionRequired.size, pendingSelections: pendingSelections.size }; }\n";
+    + "\n" + stateExport + "\n";
   const discovery = await import("data:text/javascript;base64," + Buffer.from(instrumented).toString("base64"));
   const { runWithRequestContext } = await import(new URL("src/request-context.js", root));
   for (let batch = 0; batch < 128; batch++) {
@@ -45,7 +48,9 @@ try {
   await runWithRequestContext({ agentId: "audit-agent-0" }, async () => {
     assert.equal((await discovery.selectInstance(bridge.port)).success, true);
   });
-  report.reusingAnAgentDoesNotGrowMaps = JSON.stringify(beforeRepeat) === JSON.stringify(discovery.auditState());
+  const afterRepeat = discovery.auditState();
+  report.reusingAnAgentDoesNotGrowMaps = ["selections", "selectionRequirements", "pendingSelections"]
+    .every(key => beforeRepeat[key] === afterRepeat[key]);
   report.completedWorkStillRetained = discovery.auditState();
 
   const loggerUrl = new URL("src/state-persistence.js", root);

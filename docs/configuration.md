@@ -12,6 +12,8 @@
 | `UNITY_PORT_RANGE_START` | `7890` | Start of port scan range for multi-instance discovery |
 | `UNITY_PORT_RANGE_END` | `7899` | End of port scan range |
 | `UNITY_INSTANCE_REGISTRY` | OS-specific UnityMCP directory | Override the shared registry file path |
+| `UNITY_MCP_AGENT_STATE_LIMIT` | `1024` | Maximum remembered agents per MCP process; 1..65536; active requests are preserved |
+| `UNITY_MCP_AGENT_STATE_BYTES` | `8388608` | Accounted UTF-8 agent IDs and selected-instance metadata; minimum 1024; not a heap limit |
 | `UNITY_QUEUE_POLL_INTERVAL` | `150` | Initial ticket polling interval in ms |
 | `UNITY_QUEUE_POLL_MAX` | `1500` | Maximum polling interval in ms |
 | `UNITY_QUEUE_POLL_TIMEOUT` | `120000` | Total ticket observation timeout in ms; expiration does not undo a command |
@@ -31,6 +33,8 @@ Response budgets include JSON escaping and metadata. Invalid values fall back to
 The separate HTTP limit bounds each incoming editor response before JSON parsing, including older plugins, discovery and context reads. It does not raise the MCP result limits or cap total process memory. A limit failure after submission does not undo the Unity operation.
 
 Discovery validates successful ping bodies before adopting editor ports; a registry entry cannot turn an unrelated service into a Unity instance. See [identity checks and routing limits](discovery.md).
+
+Agent-state pressure can evict inactive selections. After the first eviction, unknown agents must select an editor explicitly; per-call ports still work when capacity is available. See [state limits, telemetry and recovery](agent-state.md).
 
 ## Optional Package Support
 

@@ -270,7 +270,12 @@
     "debugLogging": {
       "status": "corrected",
       "report": "debug-logging.json",
-      "agentStateRetentionStillOpen": true
+      "agentStateRetentionStillOpen": false
+    },
+    "agentState": {
+      "status": "corrected",
+      "report": "agent-state.json",
+      "remaining": "Decoded queued arguments, transport workers/output retention and broader multiplayer coverage"
     }
   }
 }

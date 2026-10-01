@@ -13,6 +13,15 @@ function byteLimit(name, fallback, minimum) {
   return fallback;
 }
 
+function agentLimit() {
+  const raw = process.env.UNITY_MCP_AGENT_STATE_LIMIT;
+  if (raw === undefined) return 1024;
+  const value = /^\d+$/.test(raw.trim()) ? Number(raw) : NaN;
+  if (Number.isSafeInteger(value) && value >= 1 && value <= 65536) return value;
+  console.error("[MCP] Invalid UNITY_MCP_AGENT_STATE_LIMIT; using 1024 agents (range 1..65536).");
+  return 1024;
+}
+
 // Reserve enough space to return a useful bounded error when a result cannot be delivered.
 const responseHardLimitBytes = byteLimit("UNITY_RESPONSE_HARD_LIMIT", 4 * 1024 * 1024, 1024);
 const responseSoftLimitBytes = Math.min(byteLimit("UNITY_RESPONSE_SOFT_LIMIT", 2 * 1024 * 1024, 1), responseHardLimitBytes);
@@ -41,6 +50,8 @@ export const CONFIG = {
   portRangeStart: parseInt(process.env.UNITY_PORT_RANGE_START || "7890"),
   portRangeEnd: parseInt(process.env.UNITY_PORT_RANGE_END || "7899"),
   instanceRegistryPath: process.env.UNITY_INSTANCE_REGISTRY || getRegistryPath(),
+  agentStateLimit: agentLimit(),
+  agentStateBytes: byteLimit("UNITY_MCP_AGENT_STATE_BYTES", 8 * 1024 * 1024, 1024),
 
   // Queue mode polling (for async ticket-based requests)
   queuePollIntervalMs: parseInt(process.env.UNITY_QUEUE_POLL_INTERVAL || "150"),

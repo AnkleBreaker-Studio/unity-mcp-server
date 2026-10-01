@@ -4,6 +4,12 @@ All notable changes to this package will be documented in this file.
 
 ## [Unreleased]
 
+### Agent state during long sessions
+- Bound retained agent selections, discovery state and context markers while preserving active requests and shared work through cancellation.
+- Require explicit targeting for unknown agents after eviction; keep normal single-editor discovery and current/released plugin routing compatible.
+- Add configurable record/identity-byte limits, oversized identity rejection and `serverAgentState` telemetry to `unity_queue_info`.
+- Validate fourteen new regressions, 4,096 completed agents and two real Unity 6.6 projects on Node 18/22. See [limits and evidence](docs/agent-state.md).
+
 ### Debug logging during long sessions
 - Rotate before an append crosses 5 MiB, retaining one previous generation; preserve the existing log path and disabled default.
 - Bound entries to 64 KiB with UTF-8-safe truncation. Keep filesystem/formatting failures out of MCP results and bound stderr diagnostics with a one-second retry delay.

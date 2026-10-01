@@ -10,11 +10,9 @@ import { CONFIG } from "./config.js";
 import { debugLog } from "./state-persistence.js";
 import { requestFetch, throwIfRequestCancelled } from "./request-cancellation.js";
 
-import { getRequestContext, getCurrentAgentId } from "./request-context.js";
+import { getRequestContext, getCurrentAgentId, getAgentState } from "./request-context.js";
 
-const _agentInstances = new Map();
-const _agentSelectionRequired = new Map();
-const pendingSelections = new Map();
+import { agentState } from "./agent-state.js";
 
 function selectionChanged() {
   return Object.assign(new Error("Unity selection changed or was superseded while discovering an editor. Retry with the intended editor's explicit port."), { code: "selection_changed" });
@@ -22,7 +20,7 @@ function selectionChanged() {
 
 function assertSelectionUnchanged(selected) {
   throwIfRequestCancelled();
-  if (getSelectedInstance() !== selected || pendingSelections.has(getCurrentAgentId())) throw selectionChanged();
+  if (getSelectedInstance() !== selected || getAgentState(false)?.pendingSelection) throw selectionChanged();
 }
 
 export function setPortOverride(port) {
@@ -42,7 +40,7 @@ export function setCurrentAgent(agentId) {
  * @returns {object|null} Selected instance info, or null if none selected.
  */
 export function getSelectedInstance() {
-  return _agentInstances.get(getCurrentAgentId()) || null;
+  return getAgentState(false)?.selectedInstance || null;
 }
 
 /**
@@ -60,7 +58,7 @@ export function getSelectedInstance() {
  * @returns {object|null} Validated instance, or null if validation cleared the selection.
  */
 export async function validateSelectedInstance() {
-  const currentInstance = _agentInstances.get(getCurrentAgentId());
+  const currentInstance = getAgentState(false)?.selectedInstance;
   if (!currentInstance) {
     return null;
   }
@@ -125,8 +123,8 @@ export async function validateSelectedInstance() {
 
   if (match) {
     debugLog(`Re-selected ${saved.projectName} on new port ${match.port} (was ${savedPort})`);
-    _agentInstances.set(getCurrentAgentId(), match);
-    _agentSelectionRequired.set(getCurrentAgentId(), false);
+    agentState.select(getAgentState(), match);
+    getAgentState().selectionRequired = false;
     return match;
   }
 
@@ -150,7 +148,7 @@ export async function validateSelectedInstance() {
         `Project "${saved.projectName}" found in registry on port ${registryFallback.port} (fresh) — likely compiling. Keeping selection.`
       );
       const updated = { ...saved, port: registryFallback.port };
-      _agentInstances.set(getCurrentAgentId(), updated);
+      agentState.select(getAgentState(), updated);
       return updated;
     }
   }
@@ -162,8 +160,8 @@ export async function validateSelectedInstance() {
   // project A silently landed in project B and still reported success. Require an explicit
   // re-selection instead.
   debugLog(`Project "${saved.projectName}" no longer found. Clearing selection for agent ${getCurrentAgentId()} and requiring re-selection.`);
-  _agentInstances.delete(getCurrentAgentId());
-  _agentSelectionRequired.set(getCurrentAgentId(), true);
+  agentState.select(getAgentState(), null);
+  getAgentState().selectionRequired = true;
   return null;
 }
 
@@ -171,23 +169,23 @@ export async function validateSelectedInstance() {
  * Check whether the session still needs the user to select an instance.
  */
 export function isInstanceSelectionRequired() {
-  return _agentSelectionRequired.get(getCurrentAgentId()) || false;
+  return getAgentState(false)?.selectionRequired ?? agentState.requiresExplicitSelectionForUnknownAgents;
 }
 
 /**
  * Mark that instance selection is required (multiple instances found, none selected).
  */
 export function setInstanceSelectionRequired(required) {
-  _agentSelectionRequired.set(getCurrentAgentId(), required);
+  getAgentState().selectionRequired = required;
 }
 
 /** Select by explicit port or unique case-insensitive name; only the latest attempt may change this agent's selection. */
 export async function selectInstance(port, projectName) {
-  const agentId = getCurrentAgentId(), attempt = {};
-  pendingSelections.set(agentId, attempt);
+  const agentId = getCurrentAgentId(), state = getAgentState(), attempt = {};
+  state.pendingSelection = attempt;
   const assertCurrent = () => {
     throwIfRequestCancelled();
-    if (pendingSelections.get(agentId) !== attempt) throw selectionChanged();
+    if (state.pendingSelection !== attempt) throw selectionChanged();
   };
   try {
     const instances = await discoverInstances();
@@ -221,8 +219,8 @@ export async function selectInstance(port, projectName) {
       error: `Unity instance on port ${port} (${match.projectName}) is unavailable or its identity changed. Discover instances again before selecting it.`,
     };
 
-    _agentInstances.set(agentId, match);
-    _agentSelectionRequired.set(agentId, false);
+    agentState.select(state, match);
+    state.selectionRequired = false;
     debugLog(`selectInstance: agent ${agentId} selected port ${port} (${match.projectName})`);
 
     return {
@@ -231,7 +229,7 @@ export async function selectInstance(port, projectName) {
       instance: match,
     };
   } finally {
-    if (pendingSelections.get(agentId) === attempt) pendingSelections.delete(agentId);
+    if (state.pendingSelection === attempt) state.pendingSelection = null;
   }
 }
 
@@ -248,7 +246,7 @@ export function getActiveBridgeUrl() {
   if (portOverride !== null) {
     return `http://${host}:${portOverride}`;
   }
-  const selected = _agentInstances.get(getCurrentAgentId());
+  const selected = getAgentState(false)?.selectedInstance;
   if (selected) {
     return `http://${host}:${selected.port}`;
   }
@@ -352,6 +350,8 @@ export async function discoverInstances(probes = new Map()) {
  * @returns {object} Result with auto-selected instance or selection requirement.
  */
 export async function autoSelectInstance() {
+  const state = getAgentState();
+  if (!state.selectedInstance && state.selectionRequired) return { autoSelected: false, instances: [], selectionRequired: true };
   const selected = getSelectedInstance();
   assertSelectionUnchanged(selected);
   const probes = new Map();
@@ -378,8 +378,8 @@ export async function autoSelectInstance() {
         alive: true,
         source: "default",
       };
-      _agentInstances.set(getCurrentAgentId(), defaultInstance);
-      _agentSelectionRequired.set(getCurrentAgentId(), false);
+      agentState.select(state, defaultInstance);
+      getAgentState().selectionRequired = false;
       debugLog(`autoSelect: agent ${getCurrentAgentId()} → single default instance on port ${CONFIG.editorBridgePort}`);
       return {
         autoSelected: true,
@@ -389,7 +389,7 @@ export async function autoSelectInstance() {
       };
     }
 
-    _agentSelectionRequired.set(getCurrentAgentId(), false);
+    getAgentState().selectionRequired = false;
     return {
       autoSelected: false,
       instances: [],
@@ -399,8 +399,8 @@ export async function autoSelectInstance() {
 
   if (instances.length === 1) {
     // Exactly one instance — auto-select it
-    _agentInstances.set(getCurrentAgentId(), instances[0]);
-    _agentSelectionRequired.set(getCurrentAgentId(), false);
+    agentState.select(state, instances[0]);
+    getAgentState().selectionRequired = false;
     debugLog(`autoSelect: agent ${getCurrentAgentId()} → single instance on port ${instances[0].port}`);
     return {
       autoSelected: true,
@@ -411,9 +411,9 @@ export async function autoSelectInstance() {
   }
 
   // Multiple instances — require user selection (but only if none already selected for this agent)
-  const agentSelected = _agentInstances.get(getCurrentAgentId());
+  const agentSelected = getAgentState(false)?.selectedInstance;
   if (!agentSelected) {
-    _agentSelectionRequired.set(getCurrentAgentId(), true);
+    getAgentState().selectionRequired = true;
     debugLog(`autoSelect: agent ${getCurrentAgentId()} → ${instances.length} instances found, selection required`);
   }
   return {

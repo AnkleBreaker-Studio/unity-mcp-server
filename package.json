@@ -11,7 +11,7 @@
   "scripts": {
     "start": "node src/index.js",
     "dev": "node --watch src/index.js",
-    "test": "node --test tests/protocol.test.mjs tests/hub.test.mjs tests/response-limits.test.mjs tests/http-response-limit.test.mjs tests/request-input-limit.test.mjs tests/unit/http-response-limit.test.mjs tests/cancellation.test.mjs tests/unit/request-cancellation.test.mjs tests/concurrency.test.mjs tests/discovery-identity.test.mjs tests/discovery-concurrency.test.mjs tests/debug-logging.test.mjs tests/retry-safety.test.mjs tests/build-variants.test.mjs tests/play-mode-recovery.test.mjs tests/unit/tool-tiers.test.mjs tests/unit/capabilities.test.mjs",
+    "test": "node --test tests/protocol.test.mjs tests/hub.test.mjs tests/response-limits.test.mjs tests/http-response-limit.test.mjs tests/request-input-limit.test.mjs tests/unit/http-response-limit.test.mjs tests/cancellation.test.mjs tests/unit/request-cancellation.test.mjs tests/concurrency.test.mjs tests/discovery-identity.test.mjs tests/discovery-concurrency.test.mjs tests/debug-logging.test.mjs tests/agent-state.test.mjs tests/unit/agent-state.test.mjs tests/retry-safety.test.mjs tests/build-variants.test.mjs tests/play-mode-recovery.test.mjs tests/unit/tool-tiers.test.mjs tests/unit/capabilities.test.mjs",
     "test:stress": "node tests/multi-agent-stress-test.mjs --mock",
     "pack": "npx @anthropic-ai/mcpb pack . unity-mcp.mcpb && npx @anthropic-ai/mcpb clean unity-mcp.mcpb",
     "test:live": "node --test tests/live-smoke.test.mjs tests/live-probuilder-level.test.mjs",
@@ -38,7 +38,8 @@
     "test:http-responses": "node --test tests/live-http-response-limit.test.mjs",
     "test:undo": "node --test tests/live-undo.test.mjs",
     "test:input": "node --test tests/live-request-input.test.mjs",
-    "test:selection": "node --test tests/live-selection-concurrency.test.mjs"
+    "test:selection": "node --test tests/live-selection-concurrency.test.mjs",
+    "test:agent-state": "node --test tests/live-agent-state.test.mjs"
   },
   "dependencies": {
     "@modelcontextprotocol/sdk": "1.27.1"

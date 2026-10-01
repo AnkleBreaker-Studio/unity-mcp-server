@@ -2,6 +2,7 @@
 import * as bridge from "../unity-editor-bridge.js";
 import { formatResult, looksLikeErrorObject } from "../response-format.js";
 import { isUnknownRouteResult } from "../capabilities.js";
+import { agentState } from "../agent-state.js";
 import { requestSleep } from "../request-cancellation.js";
 
 // Shared shaping for image-returning graphics tools.
@@ -4269,9 +4270,9 @@ export const editorTools = [
   {
     name: "unity_queue_info",
     description:
-      "Get queued/running counts, per-agent queue depths and completed cache size. Newer plugins also return aggregate HTTP statuses, active/peak requests, body bytes, input rejections, handler timings and domain reload metadata in http. HTTP counters reset on domain reload and count discovery/polling too; command outcomes remain in agent sessions.",
+      "Get queue counts, per-agent depths and completed cache size. Newer plugins add HTTP statuses, active/peak requests, body bytes, rejections, timings and reload metadata in http (resets on domain reload; includes polling). serverAgentState reports Node agent/identity-byte limits, active leases and evictions; bytes are not heap usage.",
     inputSchema: { type: "object", properties: {} },
-    handler: async () => formatResult(await bridge.getQueueInfo()),
+    handler: async () => formatResult({ ...await bridge.getQueueInfo(), serverAgentState: agentState.snapshot() }),
   },
   {
     name: "unity_queue_ticket_status",
