@@ -4,15 +4,28 @@
 
 # AnkleBreaker Unity MCP
 
-**Your AI assistants, connected to the whole Unity workflow.** Build scenes, inspect running games, coordinate multiplayer scenarios, manage packages and profile projects through Model Context Protocol. Built by [AnkleBreaker Studio](https://github.com/AnkleBreaker-Studio).
+[![Server regression tests](https://github.com/AnkleBreaker-Studio/unity-mcp-server/actions/workflows/test.yml/badge.svg?branch=Development-Unity66-Modernization)](https://github.com/AnkleBreaker-Studio/unity-mcp-server/actions/workflows/test.yml?query=branch%3ADevelopment-Unity66-Modernization)
+[![Plugin route checks](https://github.com/AnkleBreaker-Studio/unity-mcp-plugin/actions/workflows/checks.yml/badge.svg?branch=Development-Unity66-Modernization)](https://github.com/AnkleBreaker-Studio/unity-mcp-plugin/actions/workflows/checks.yml?query=branch%3ADevelopment-Unity66-Modernization)
 
-[Get started](#get-started) · [Multi-project workflows](#multiple-projects-multiple-agents) · [Tools & demos](docs/features.md) · [Configuration](docs/configuration.md) · [Architecture](docs/architecture.md) · [Changelog](CHANGELOG.md)
+**Build worlds. Coordinate agents. See every action.** Connect your AI assistants to scene authoring, running games, multiplayer scenarios, tests, builds and profiling through Model Context Protocol. Built by [AnkleBreaker Studio](https://github.com/AnkleBreaker-Studio) for workflows that span more than one editor and one assistant.
+
+[Get started](#get-started) · [Watch the demos](#watch-it-build-a-playable-prototype) · [Measured improvements](#measured-improvements) · [Multiple projects](#multiple-projects-multiple-agents) · [Tool catalog](docs/features.md) · [Changelog](CHANGELOG.md)
 
 | 347 named operations | 80 exposed MCP tools | 269 advanced tools on demand |
 |:---:|:---:|:---:|
 | Editor, Hub and integrations | Small initial discovery surface | Search a category, fetch one schema, run it |
 
 Counts reflect the checked-in definitions; optional tools require their corresponding Unity packages. The advanced proxy also discovers routes advertised by newer plugins.
+
+## Watch it build a playable prototype
+
+**Neon brick breaker:** scene construction, materials, gameplay scripts and visual iteration, with the assistant and Unity visible together.
+
+[![Watch the AI assistant build a neon brick-breaker prototype in the Unity Editor](docs/unity-mcp-showcase-brickbreaker.gif)](docs/media/showcase-brickbreaker.mp4)
+
+**[▶ Open video · 25 seconds](docs/media/showcase-brickbreaker.mp4)** · [Download MP4](https://raw.githubusercontent.com/AnkleBreaker-Studio/unity-mcp-server/Development-Unity66-Modernization/docs/media/showcase-brickbreaker.mp4) · [Village and castle demos](#from-environments-to-playable-levels)
+
+Recorded, accelerated excerpts. The silent videos export the same recordings as the GIFs; their duration is not a build-time benchmark. [Media details and example prompts](docs/demos.md).
 
 ## Built for demanding Unity workflows
 
@@ -25,6 +38,8 @@ Counts reflect the checked-in definitions; optional tools require their correspo
 | **A full production toolset** | Scene authoring, builds, profiling, packages and optional integrations, with advanced schemas discovered on demand. [Tool guide](docs/features.md) |
 
 The combination is the strength: routing, scheduling, multiplayer controls and observable results in one workflow. See [choosing a Unity integration](docs/comparison.md) for a sourced comparison.
+
+**Why choose AnkleBreaker?** Each agent keeps its project identity, each editor has its own queue, and supported actions leave a history you can inspect and undo. Advanced tools extend that workflow into multiplayer iteration, Unity Hub and project-specific integrations. Those behaviors have dedicated regression checks and real-editor evidence, not just a feature list.
 
 ## Get started
 
@@ -77,7 +92,33 @@ Editor discovery is automatic. Unity Hub is only needed for Hub commands; set `U
 
 > Inspect the scene's memory use and largest objects, then show me the actions performed by each agent.
 
+## From environments to playable levels
+
+### A village, built and refined in Unity
+
+Terrain, houses, materials, trees, fences and paths: the assistant constructs a scene and inspects the result as it goes.
+
+[![Recorded Unity MCP workflow building a medieval village with terrain and reusable houses](docs/unity-mcp-showcase-village.gif)](docs/media/showcase-village.mp4)
+
+**[▶ Open video · 25 seconds](docs/media/showcase-village.mp4)** · [Download MP4](https://raw.githubusercontent.com/AnkleBreaker-Studio/unity-mcp-server/Development-Unity66-Modernization/docs/media/showcase-village.mp4)
+
+### A castle you can walk through
+
+Multi-room construction, lighting adjustment and a first-person walkthrough in the recorded project.
+
+[![Recorded Unity MCP workflow constructing a castle and testing its lighting and walkthrough](docs/unity-mcp-showcase-castle.gif)](docs/media/showcase-castle.mp4)
+
+**[▶ Open video · 18 seconds](docs/media/showcase-castle.mp4)** · [Download MP4](https://raw.githubusercontent.com/AnkleBreaker-Studio/unity-mcp-server/Development-Unity66-Modernization/docs/media/showcase-castle.mp4)
+
+[All demonstrations, prompts and media formats →](docs/demos.md)
+
 ## Multiple projects, multiple agents
+
+<p align="center">
+  <img src="docs/workflow.svg" alt="AI assistants connect through request-local routing to independent Unity editor queues, with multiplayer scenarios and clone discovery" width="960" />
+</p>
+
+Keep an agent on your game, another on a package test project, and use the multiplayer tools to inspect Host/Client scenarios. Project routing and per-agent scheduling are separate responsibilities, so requests retain their destination while waiting for Unity.
 
 1. Call `unity_list_instances` and identify the project by name and path.
 2. Call `unity_select_instance` with `projectName` or a discovered `port`.
@@ -106,20 +147,41 @@ Within an editor, the plugin serializes writes and batches up to five reads per 
 
 Discover advanced capabilities with `unity_list_advanced_tools`. Filter by category or search, retrieve the schema for the tool you need, then call it through `unity_advanced_tool`. [Full category guide and examples →](docs/features.md)
 
-<details>
-<summary><strong>Watch a scene-building demo</strong></summary>
+## Workflows to try next
+
+| Goal | Ask your assistant | What makes it useful |
+|---|---|---|
+| **Compare two projects** | “List my editors, inspect the package versions and compilation errors in each, then summarize the differences.” | Explicit targets and independent queues. |
+| **Iterate on multiplayer** | “Find the MPPM tools, inspect the selected scenario and start its configured Host and Client players.” | Native scenario and virtual-player identity. [Guide](docs/multiplayer.md) |
+| **Validate a change** | “Run the selected EditMode tests, wait for the job, then show failures and fetch the detailed results in pages.” | Persistent job IDs, diagnostics and paginated reads. [Guide](docs/testing.md) |
+| **Review agent work** | “Show recent actions by agent and tell me which supported actions can be undone safely.” | Native stack checks and attributed action history. [Guide](docs/undo.md) |
+| **Find expensive content** | “Inspect memory consumers and mesh statistics, then capture the scene for review.” | Inspection without copying geometry buffers just to count it. [Guide](docs/mesh-metadata.md) |
+| **Maintain a package** | “Compare installed packages, check compilation and inspect my build settings before making changes.” | Package requests yield to editor updates. [Guide](docs/packages.md) |
+
+These are example prompts, not automatic scripts. Select the intended project first and let the assistant discover the current tool schemas and available packages.
+
+## Measured improvements
 
 <p align="center">
-  <img src="docs/unity-mcp-showcase-village.gif" alt="Existing demonstration of a village created through Unity MCP, with houses, terrain and environment details" width="800" />
+  <img src="docs/performance.svg" alt="Before and after: 20 code calls 15.85 to 1.01 seconds; history repaint 72.45 to 1.80 milliseconds; test result construction 14.21 to 0.036 milliseconds. Separate local fixtures, not whole-editor benchmarks." width="800" />
 </p>
 
-[More demonstrations: brick breaker, village and castle](docs/features.md).
+| Recorded workload | Before → after | Why it changed |
+|---|---|---|
+| 20 small code-execution calls | **15.85 s → 1.01 s** | Bounded compiler metadata reuse. [Measurement](docs/code-execution.md) |
+| History repaint with 5,000 retained actions | **72.45 ms → 1.80 ms** | Draw only visible rows; avoid per-selection native textures. [Measurement](docs/history-window.md) |
+| Construct 20 results from 10,000 stored tests | **14.21 ms → 0.036 ms** | Build the requested page instead of every detail record. [Measurement](docs/test-pagination.md) |
 
-</details>
+Measurements use separate before/after fixtures and historical baselines on Unity 6000.6.2f1 / Windows. Each linked report states its scope. These results do not measure whole-editor FPS or establish a speed ranking against other MCP products.
 
 ## Compatibility and validation
 
 The plugin declares **Unity 2021.3.18f1+** support. Server and plugin versions advance independently and do not need matching version numbers. Current live validation uses **Unity 6000.6.2f1 on Windows**; minimum-version C# compilation also passes. Actual older-editor execution is deferred.
+
+**263 server tests pass across eight CI configurations** (Node 18/20/22/24 on Windows/Linux), and the plugin's registry check covers **338 routes**. Real-editor workflows include mixed released/current components, two editors, MPPM Host/Client, ParrelSync and actual script reloads. These checks have different recorded source checkpoints; the [delivery summary](docs/modernization-audit.md) identifies them and the remaining coverage limits.
+
+<details>
+<summary><strong>Explore the tested workflows and their evidence</strong></summary>
 
 | Verified workflow | Evidence and limits |
 |---|---|
@@ -143,6 +205,8 @@ The plugin declares **Unity 2021.3.18f1+** support. Server and plugin versions a
 | Unity 6.6 builds | Five Windows Mono builds verify managed diagnostics and restoration of project settings. Other platforms and IL2CPP remain untested. [Build guide](docs/builds.md) |
 | UMA V3.1f1 | Asset creation, race changes and recipe renames, with the integration isolated from the core bridge. [UMA guide](docs/uma.md) |
 
+</details>
+
 Run the server's ordinary regression suite:
 
 ```bash
@@ -150,9 +214,15 @@ npm ci
 npm test
 ```
 
-These tests run the real MCP stdio process against isolated mock bridges. The companion plugin's Unity runner and the server's opt-in live suites are documented with their prerequisites and results in the linked guides. [Full evidence and remaining work](docs/modernization.md).
+These tests run the real MCP stdio process against isolated mock bridges. The companion plugin's Unity runner and the server's opt-in live suites are documented with their prerequisites and results in the linked guides. [Full evidence and follow-up limits](docs/modernization.md) · [Final documentation and media checks](docs/validation/readme-media.json).
 
 ## Monitor and troubleshoot
+
+<p align="center">
+  <img src="docs/media/dashboard-validation.png" alt="Actual Unity Dashboard in a validation project showing bridge status, three agent sessions, request queue and HTTP counters" width="640" />
+</p>
+
+*Actual Dashboard capture from a Unity 6.6 validation project. The deliberately long agent/request names exercise layout behavior; displayed counters belong to that test session.*
 
 The plugin Dashboard shows queue activity, agent sessions, HTTP activity and recent actions. Agent cards update in place, sections remember their state, and long request text stays readable through tooltips. HTTP counters include input refused before ticket creation, body traffic and domain reloads. [Dashboard behavior](docs/dashboard.md) · [HTTP fields and measurements](docs/http-monitoring.md).
 
@@ -167,6 +237,20 @@ Code execution reuses bounded compiler metadata and reports cache activity in `u
 - **Response too large:** request smaller read results; inspect the effects before repeating a write. [Response budgets and image handling](docs/response-limits.md).
 - **Stopped a request:** the server stops waiting and polling; accepted Unity work can still finish. [Cancellation behavior](docs/cancellation.md).
 - **Client registry limit:** set `UNITY_MCP_COMPACT_TOOLS=1`. Full parameter documentation remains available through advanced discovery.
+
+## Frequently asked questions
+
+**Which AI clients can use it?** Clients that support spawning an MCP stdio server can connect using the Node command above. Configuration syntax and image/tool support depend on the client; no specific model is required by the bridge.
+
+**Do I need every optional Unity package?** No. The core bridge works independently of optional integrations. Enable the relevant categories and install the packages needed for your workflow; use advanced discovery to inspect available tools.
+
+**Can several assistants work on the same project?** Yes. Requests are attributed and scheduled per agent. Assign ownership of shared objects: scheduling does not resolve conflicting design changes.
+
+**Can I undo every AI action?** Supported Unity writes have named undo groups and history. Filesystem operations, arbitrary code and some deferred workflows have different recovery limits. Inspect the [Undo contract](docs/undo.md) before relying on rollback.
+
+**Is this already a released upgrade?** No. This README documents the modernization branch. Existing server/plugin version numbers remain independent; the installation instructions above select the development preview explicitly.
+
+**How does it compare?** Start with the [sourced comparison](docs/comparison.md): routing, fair scheduling, retry recovery, multiplayer controls, monitoring and tool discovery. The measured gains above compare AnkleBreaker revisions under specific workloads.
 
 ## Support and license
 

@@ -1,0 +1,86 @@
+{
+  "reviewedAt": "2026-10-01T15:27:00.157Z",
+  "scope": "Documentation and media only; no server or plugin runtime changes.",
+  "implementationCheckpoints": {
+    "server": "edbb7113d83922f8b61a8c0efffe1d302913091b",
+    "plugin": "f9c7cc4e00039166135436e6dac6369fcd40bce1"
+  },
+  "localServerRegression": {
+    "node": "22.18.0",
+    "passed": 263,
+    "failed": 0,
+    "skipped": 0
+  },
+  "pluginRouteCheck": {
+    "passed": true,
+    "routes": 338
+  },
+  "npmAuditProduction": {
+    "reportedVulnerabilities": 0
+  },
+  "readmeAndComparisonLinkCheck": {
+    "checkedLinks": 154,
+    "failures": [],
+    "matchingDiagramCopies": true
+  },
+  "additionalLocalLinks": 105,
+  "media": [
+    {
+      "name": "brickbreaker",
+      "sourceGifSha256": "7080095c8b7d657e80f8c48afad95041e819c35a9e1c4f987289e7612a0d5935",
+      "videoSha256": "744b5d0c036ea85a23d10c4651826e9433747800974a758a0b9bfa4f35a89fc9",
+      "bytes": 548636,
+      "codec_name": "h264",
+      "width": 820,
+      "height": 462,
+      "sample_aspect_ratio": "1:1",
+      "pix_fmt": "yuv420p",
+      "duration": "25.000000",
+      "nb_frames": "200",
+      "fullDecodePassed": true,
+      "fastStart": true,
+      "matchingPluginCopy": true
+    },
+    {
+      "name": "village",
+      "sourceGifSha256": "4888137485a12782064aa0c52773ecc0341547d3effefabc22e31262c652ada3",
+      "videoSha256": "e0c2cb43cee8d2dbe434c8e5cca5fed7f010b31fd8f0b76f9c785029cff66489",
+      "bytes": 763525,
+      "codec_name": "h264",
+      "width": 820,
+      "height": 462,
+      "sample_aspect_ratio": "1:1",
+      "pix_fmt": "yuv420p",
+      "duration": "25.000000",
+      "nb_frames": "200",
+      "fullDecodePassed": true,
+      "fastStart": true,
+      "matchingPluginCopy": true
+    },
+    {
+      "name": "castle",
+      "sourceGifSha256": "a242f1375f8d7b3f9e2344a0464069277f957d9c048de46ea4cb2e5324976b20",
+      "videoSha256": "b228b1b0a3dd15a3d13d4228175ba4436da58eed8eed00f6bfa5025a89ef4323",
+      "bytes": 673272,
+      "codec_name": "h264",
+      "width": 720,
+      "height": 406,
+      "sample_aspect_ratio": "1:1",
+      "pix_fmt": "yuv420p",
+      "duration": "18.000000",
+      "nb_frames": "144",
+      "fullDecodePassed": true,
+      "fastStart": true,
+      "matchingPluginCopy": true
+    }
+  ],
+  "matchingNewDiagramAndDashboardCopies": true,
+  "dashboardSource": "Unchanged dashboard-640-800-top.png from the native editor-render validation, showing an owned test project and artificial long agent/request strings.",
+  "claimReview": "Performance figures trace to separate local before/after reports. Recordings are accelerated historical demonstrations. No universal best-product or competitor-speed assertion. Coplay multi-instance/transport and Unity Assistant gateway documentation rechecked on 2026-10-01.",
+  "limits": [
+    "Runtime CI evidence belongs to its exact source checkpoints.",
+    "No new full Unity matrix run for documentation-only changes.",
+    "Unity 2021 runtime remains deferred by maintainer direction."
+  ],
+  "failures": []
+}

@@ -2,12 +2,16 @@
 
 For serialized enum values, asset-result limits, capture cleanup and repeatable live validation, see [editor workflow contracts](editor-workflows.md).
 
-### Neon Brick Breaker — Built from scratch by AI in under 5 minutes
+Watch the inline GIFs below, or open the [video gallery with MP4 downloads and example prompts](demos.md). These are accelerated recordings, not timings for the current branch.
+
+### Neon Brick Breaker — From scene setup to a playable prototype
 > Claude creates the entire game: scene setup, neon materials with bloom post-processing, brick grid layout, game scripts, VFX, and UI — all through Unity MCP commands.
 
 <p align="center">
   <img src="unity-mcp-showcase-brickbreaker.gif" alt="Unity MCP AI building a neon brick breaker game in Unity Editor" width="800" />
 </p>
+
+[Open the 25-second video](media/showcase-brickbreaker.mp4).
 
 ### 3D Medieval Village — AI-generated terrain, houses, and environment
 > From an empty scene to a fully decorated village: terrain sculpting, material creation, procedural house building via C# editor scripts, trees, fences, and pathways.
@@ -16,12 +20,16 @@ For serialized enum values, asset-result limits, capture cleanup and repeatable 
   <img src="unity-mcp-showcase-village.gif" alt="Unity MCP — AI building a 3D medieval village with houses, trees, and terrain" width="800" />
 </p>
 
+[Open the 25-second video](media/showcase-village.mp4).
+
 ### 3D Castle — Complete level with FPS walkthrough
 > AI builds a multi-room castle with courtyard, throne room, armory, and guard room. Adjusts lighting, spawns the player, and runs an FPS walkthrough to verify the result.
 
 <p align="center">
   <img src="unity-mcp-showcase-castle.gif" alt="Unity MCP — AI building a 3D castle with FPS walkthrough in Unity Editor" width="800" />
 </p>
+
+[Open the 18-second video](media/showcase-castle.mp4).
 
 
 ## Features
