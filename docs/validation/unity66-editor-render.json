@@ -867,5 +867,40 @@
         "activeScenePath": "Assets/__McpValidation/MultiplayerScene.unity"
       }
     ]
+  },
+  "publication": {
+    "branch": "Development-Unity66-Modernization",
+    "pluginCommit": "d935808ba89865be99431dd64e9a6a0227786085",
+    "serverCommit": "e86e3c1040156592de4bc1c93ad53c1105211dc9",
+    "pluginCI": {
+      "runId": 36817269040,
+      "conclusion": "success",
+      "routes": 338,
+      "url": "https://github.com/AnkleBreaker-Studio/unity-mcp-plugin/actions/runs/36817269040"
+    },
+    "serverCI": {
+      "runId": 36817275036,
+      "conclusion": "success",
+      "jobs": 8,
+      "nodeVersions": [
+        18,
+        20,
+        22,
+        24
+      ],
+      "platforms": [
+        "Windows",
+        "Linux"
+      ],
+      "node18Windows": {
+        "jobId": 110224977290,
+        "tests": 195,
+        "passed": 195,
+        "failed": 0
+      },
+      "url": "https://github.com/AnkleBreaker-Studio/unity-mcp-server/actions/runs/36817275036"
+    },
+    "versionsUnchanged": true,
+    "releasePublished": false
   }
 }
