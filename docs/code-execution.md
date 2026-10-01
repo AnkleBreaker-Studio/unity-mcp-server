@@ -1,8 +1,22 @@
 # Code execution: compilation, monitoring and limits
 
-`unity_execute_code` compiles a C# method body and executes it on Unity's editor thread. Each successful compilation still creates a fresh assembly and executes once. Result serialization and the existing success/error envelopes are retained; this optimization does not reuse command results or compiled user methods.
+`unity_execute_code` compiles a C# method body and executes it on Unity's editor thread. Each successful compilation still creates a fresh assembly and executes once. Ordinary result shapes are retained; compilation caching does not reuse command results or compiled user methods. Result serialization now also has the explicit limits below.
 
 The compiler now emits to memory. Compilation failures and user exceptions leave no generated DLL on disk, and diagnostics report line numbers relative to the submitted body. A snippet's generated assembly no longer has a temporary DLL location. Error responses still include the original submitted code and compiler messages, or the user exception and stack trace.
+
+## Result preparation and errors
+
+Finite primitives, anonymous objects, dictionaries, lists, vectors and colors keep their existing JSON shapes. Top-level lists retain `result` and `count`; the existing 1,000-item per-container cap and truncation marker remain. The existing depth-four fallback also remains. Shared references are allowed.
+
+A per-result budget now limits conversion to **100,000 visited values**, including containers and scalar/null values. Per-container caps alone allowed branching graphs to expand far beyond 1,000 items. Exhaustion returns `code: "execution_result_limit"`, an error message, `executionCompleted: true`, `serializedValues`, `maxSerializedValues` and a recovery hint. An iterator failure during result preparation similarly returns `execution_result_serialization_failed` with `executionCompleted: true`. These errors discard the incomplete result; they do not rerun the snippet or undo its effects. Query those effects separately before retrying a write.
+
+Non-finite floating-point values are represented by the JSON strings `"NaN"`, `"Infinity"` and `"-Infinity"`, including vector/color components. The old bare tokens were invalid JSON. Finite values remain numbers. The shared JSON writer also formats integers independently of the editor culture and escapes unpaired UTF-16 surrogates, preserving string code units over UTF-8 transport.
+
+The HTTP writer counts escaped UTF-8 bytes while serializing and stops at its existing 16 MiB hard limit, before creating the final string/byte buffer for an oversized response. Its separate cycle/depth/value guards and failure contract are described in [response limits](response-limits.md#unity-http-serialization). Result objects can already occupy memory before conversion, and arbitrary getters, iterators or `ToString` methods can still block or allocate internally; the budgets do not interrupt user code or cap total editor memory.
+
+The [serialization report](validation/unity66-serialization.json) records seven reproduced failures/absent guards, two passing controls, sixteen corrected checks and real stdio runs using current/released servers on Node 18/22. SessionState counters verify exactly one execution when conversion fails or an oversized HTTP response is refused. The compiler/cache regression suite and Unity 2021 API compilation also pass.
+
+Use `-Suite Serialization` with the plugin's closed-project validation launcher for controlled serializer, result-conversion and owned-loopback HTTP checks. For an open marked project, set `UNITY_MCP_SERIALIZATION_PROJECT` and run `npm run test:serialization`; optionally set `UNITY_MCP_SERIALIZATION_SERVER_ENTRY` to a released server's entry point. This uses unique temporary SessionState markers and removes them afterward.
 
 ## Reference cache
 

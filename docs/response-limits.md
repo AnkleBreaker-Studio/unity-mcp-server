@@ -17,7 +17,21 @@ An oversized result becomes `isError: true` with a JSON text block containing `s
 
 **Omitting a response does not undo its operation.** This error does not establish whether a Unity write succeeded. Inspect its effects or the original ticket before repeating it. The size limiter never repeats the command. For reads, request smaller results: reduce hierarchy `maxNodes`/`maxDepth`, asset `maxResults`, image dimensions or the scope of the query. Discover each tool's schema for the parameters it supports.
 
-The same budget covers normal results, unknown-tool errors, selection errors and exceptions. It includes injected project-context blocks. The limiter runs after the tool has returned and the result has been assembled; it does not bound Unity allocations, the upstream HTTP response, or peak memory used while serializing that result.
+The same budget covers normal results, unknown-tool errors, selection errors and exceptions. It includes injected project-context blocks. The limiter runs after the tool has returned and the result has been assembled; it does not itself bound Unity allocations, the upstream HTTP response, or peak memory used while serializing that result. Current plugins now apply a separate bounded HTTP serializer below.
+
+## Unity HTTP serialization
+
+The current plugin retains its **8 MiB warning / 16 MiB hard** HTTP limits. The hard limit is now checked as escaped UTF-8 is appended, before allocating the complete oversized JSON string and UTF-8 buffer. Exact-limit output fits; the next byte fails. Valid surrogate pairs count as four UTF-8 bytes, and unpaired surrogates are escaped without losing their code units.
+
+An oversized response still returns HTTP 413 with `error: "response_too_large"`, `size`, `limit` and a message. Because serialization stops early, `size` is now explicitly marked `sizeIsLowerBound: true`; it is the first required byte count that exceeds the budget, not the length of a fully traversed result. The response adds `reason: "byte_limit"`, `outcomeUnknown: true` and a hint to inspect the original operation before retrying.
+
+The shared writer rejects reference cycles, more than 64 container levels and more than 1,000,000 visited values. Repeated references outside the current traversal path remain valid. Failed property getters retain the historical null behavior; failures while serializing a returned collection abort the response instead of leaving malformed partial JSON. These structural guards also apply to non-HTTP uses of MiniJson; its existing one-argument API remains available without the 16 MiB HTTP-specific byte budget.
+
+Other serialization failures return HTTP 500 with `error: "response_serialization_failed"`, a bounded message, `reason`, `outcomeUnknown: true` and the recovery hint. The command may already have completed. Current server queue polling retains the original ticket/request/session identifiers and reports an unknown outcome; it does not resubmit the operation. Released-server execution-count checks pass too, without claiming it exposes all newer diagnostic fields.
+
+These are serialized-output and traversal limits. They do not cap the original result graph, total managed/native memory, peak intermediate allocations, incoming request parsing or arbitrary property/iterator code. Node-side HTTP download limits for older/other plugins remain separate work.
+
+The [serialization report](validation/unity66-serialization.json) includes strict JSON parsing, culture/non-finite cases, cycles, shared references, deep/wide trees, UTF-8 boundaries, global execution-result expansion, legacy list shapes and actual HTTP 413/500 responses. A repeated 4 MiB-string fixture stops while visiting its fourth of eight entries. Real current/released-server checks on Node 18/22 confirm valid Unicode/non-finite results and no replay after 17 MiB output is refused.
 
 ## Images and resources
 

@@ -4,6 +4,10 @@ All notable changes to this package will be documented in this file.
 
 ## [Unreleased]
 
+### Unity result serialization
+- Add live current/released-server checks for non-finite values, Unicode, preserved list contracts, bounded result expansion and oversized HTTP responses. Verify failed result delivery never repeats the executed snippet.
+- Document the companion plugin's early byte limits and explicit serialization errors; clarify execution completion and recovery in the code tool description.
+
 ### Test job persistence
 - Add an opt-in live suite for completed results and native EditMode execution through actual script reloads. Reconnect to the marked editor and poll the original job ID.
 - Document retained details, native identity recovery, legacy summaries, corruption warnings and history limits in `docs/testing.md`.

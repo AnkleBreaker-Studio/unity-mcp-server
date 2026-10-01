@@ -505,7 +505,7 @@ export const editorTools = [
   },
   {
     name: "unity_execute_code",
-    description: "Execute arbitrary C# code inside the Unity Editor. The code runs in the editor context with access to all Unity APIs. Useful for one-off operations, queries, and automation. Return values are serialized to JSON.",
+    description: "Run C# in the Unity Editor with Unity API access. Return a small JSON result. If an error has executionCompleted=true, the code already ran; inspect its effects before retrying.",
     inputSchema: {
       type: "object",
       properties: {

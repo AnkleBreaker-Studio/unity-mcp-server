@@ -1,0 +1,497 @@
+{
+  "recordedAt": "2026-10-01T01:53:30.670Z",
+  "platform": "Windows",
+  "unityVersion": "6000.6.2f1",
+  "baselinePluginCommit": "4182701fad3ce3fecacea7222a320ee01c0de2f2",
+  "controlledBefore": {
+    "unityVersion": "6000.6.2f1",
+    "passed": false,
+    "checks": [
+      {
+        "name": "Finite primitive and getter-failure shapes remain compatible",
+        "passed": true,
+        "evidence": {
+          "json": "{\"Before\":1,\"Broken\":null,\"After\":2}"
+        }
+      },
+      {
+        "name": "Non-finite values produce valid JSON strings",
+        "passed": false,
+        "error": "[NaN,Infinity,-Infinity]"
+      },
+      {
+        "name": "Integers ignore the editor culture",
+        "passed": false,
+        "error": "[~1,~2,-3.25]"
+      },
+      {
+        "name": "Nested enumeration failure cannot leave partial JSON",
+        "passed": false,
+        "error": "Serializer returned malformed partial JSON: {\"Values\":[1null}"
+      },
+      {
+        "name": "Reference cycles stop before recursive enumeration",
+        "passed": false,
+        "error": "Cycle was enumerated 33 times"
+      },
+      {
+        "name": "Shared references are serialized independently",
+        "passed": true,
+        "evidence": {
+          "json": "[{\"value\":7},{\"value\":7}]"
+        }
+      },
+      {
+        "name": "Deep trees are rejected before stack exhaustion",
+        "passed": false,
+        "error": "A 100-level tree was accepted"
+      },
+      {
+        "name": "Bounded serialization counts escaped UTF-8 before allocation",
+        "passed": false,
+        "error": "No bounded serializer is available"
+      },
+      {
+        "name": "Execution result expansion has a global work budget",
+        "passed": false,
+        "error": "Result expansion visited 120001 values despite per-container limits"
+      }
+    ]
+  },
+  "controlledAfter": {
+    "unityVersion": "6000.6.2f1",
+    "passed": true,
+    "checks": [
+      {
+        "name": "Finite primitive and getter-failure shapes remain compatible",
+        "passed": true,
+        "evidence": {
+          "json": "{\"Before\":1,\"Broken\":null,\"After\":2}"
+        }
+      },
+      {
+        "name": "Non-finite values produce valid JSON strings",
+        "passed": true,
+        "evidence": {
+          "json": "[\"NaN\",\"Infinity\",\"-Infinity\"]"
+        }
+      },
+      {
+        "name": "Integers ignore the editor culture",
+        "passed": true,
+        "evidence": {
+          "json": "[-1,-2,-3.25]"
+        }
+      },
+      {
+        "name": "Nested enumeration failure cannot leave partial JSON",
+        "passed": true,
+        "evidence": {
+          "errorType": "SerializationException",
+          "message": "Controlled enumeration failure"
+        }
+      },
+      {
+        "name": "Reference cycles stop before recursive enumeration",
+        "passed": true,
+        "evidence": {
+          "enumerations": 1,
+          "message": "Serialization encountered a reference cycle"
+        }
+      },
+      {
+        "name": "Shared references are serialized independently",
+        "passed": true,
+        "evidence": {
+          "json": "[{\"value\":7},{\"value\":7}]"
+        }
+      },
+      {
+        "name": "Deep trees are rejected before stack exhaustion",
+        "passed": true,
+        "evidence": {
+          "message": "Serialization exceeded 64 container levels"
+        }
+      },
+      {
+        "name": "Bounded serialization counts escaped UTF-8 before allocation",
+        "passed": true,
+        "evidence": {
+          "bytes": 26,
+          "json": "\"Quote \\\" 中 😀 \\ud800\"",
+          "message": "Serialized response exceeded its UTF-8 byte limit"
+        }
+      },
+      {
+        "name": "Exhausted output budget does not evaluate the next property getter",
+        "passed": true,
+        "evidence": {
+          "laterGetterReads": 0
+        }
+      },
+      {
+        "name": "Execution result expansion has a global work budget",
+        "passed": true,
+        "evidence": {
+          "values": 100000,
+          "enumerations": 103,
+          "message": null
+        }
+      },
+      {
+        "name": "Reflected execution results cannot swallow global budget exhaustion",
+        "passed": true,
+        "evidence": {
+          "values": 99999,
+          "code": "execution_result_limit",
+          "executionCompleted": true
+        }
+      },
+      {
+        "name": "Execution enumeration failures report that code already ran",
+        "passed": true,
+        "evidence": {
+          "error": "Controlled enumeration failure",
+          "stackTrace": "  at UnityMcpSerializationValidation+EnumerationFailure+<GetEnumerator>d__0.MoveNext () [0x0003c] in C:\\Users\\Francois\\orca\\workspaces\\unity-mcp-server\\validation\\Packages66\\Assets\\Editor\\SerializationValidation.cs:39 \r\n  at UnityMCP.Editor.MCPEditorCommands.SerializeValue (System.Object value, System.Int32 depth, UnityMCP.Editor.MCPEditorCommands+ResultSerializationBudget budget) [0x0033d] in C:\\Users\\Francois\\orca\\workspaces\\unity-mcp-server\\unity-mcp-plugin\\Editor\\MCPEditorCommands.cs:560 \r\n  at UnityMCP.Editor.MCPEditorCommands.SerializeResult (System.Object result) [0x00020] in C:\\Users\\Francois\\orca\\workspaces\\unity-mcp-server\\unity-mcp-plugin\\Editor\\MCPEditorCommands.cs:462 ",
+          "code": "execution_result_serialization_failed",
+          "executionCompleted": true,
+          "serializedValues": 2,
+          "maxSerializedValues": 100000,
+          "hint": "The snippet already executed. Inspect its effects before retrying; return a smaller result."
+        }
+      },
+      {
+        "name": "Legacy list counts and per-container truncation remain compatible",
+        "passed": true,
+        "evidence": {
+          "count": 1001,
+          "last": "... (truncated at 1000 items)"
+        }
+      },
+      {
+        "name": "Wide generic serialization stops at its total value bound",
+        "passed": true,
+        "evidence": {
+          "message": "Serialization exceeded 1000000 values"
+        }
+      },
+      {
+        "name": "HTTP writer stops oversized traversal and returns a bounded 413",
+        "passed": true,
+        "evidence": {
+          "status": 413,
+          "valuesVisited": 4,
+          "result": {
+            "error": "response_too_large",
+            "reason": "byte_limit",
+            "outcomeUnknown": true,
+            "message": "Response exceeded size limit. Use pagination parameters (maxNodes, limit, maxResults) to request smaller chunks.",
+            "hint": "The original operation may already have completed. Inspect its effects or original ticket before repeating a write.",
+            "size": 16777217,
+            "sizeIsLowerBound": true,
+            "limit": 16777216
+          }
+        }
+      },
+      {
+        "name": "HTTP writer returns explicit cycle failure instead of invalid JSON",
+        "passed": true,
+        "evidence": {
+          "status": 500,
+          "result": {
+            "error": "response_serialization_failed",
+            "reason": "reference_cycle",
+            "outcomeUnknown": true,
+            "message": "Serialization encountered a reference cycle",
+            "hint": "The original operation may already have completed. Inspect its effects or original ticket before repeating a write."
+          }
+        }
+      }
+    ]
+  },
+  "strictJsonParsing": "All emitted JSON fixture strings and report parsed with Node JSON.parse",
+  "regressions": {
+    "queue": {
+      "passed": true,
+      "checks": [
+        "Object identity round-trip without JSON number conversion",
+        "Agent FIFO, round-robin writes, read batching and ticket results",
+        "Deferred completion is atomic, single-shot and stable after timeout",
+        "Concurrent submission retries share one ticket; conflicts, reload sessions and expired results never re-execute",
+        "Actual HTTP dispatcher validates scoped submission/polling, browser rejection, one-object retries and legacy compatibility",
+        "Legacy synchronous callers are signaled without lost wakeups",
+        "Legacy timeout preserves running outcomes and skips expired batched and queued work",
+        "Dashboard shows running-only work and separates failures from finished requests",
+        "Submission retry cache refuses new work at its bounded capacity",
+        "1000 status polls at queue depths 100 and 10000"
+      ]
+    },
+    "execution": {
+      "passed": true,
+      "failures": [],
+      "checks": [
+        "simpleExecution",
+        "diagnosticUsesSnippetLine",
+        "runtimeExceptionPreserved",
+        "listContract",
+        "everyCallExecutesWithFreshAssembly",
+        "metadataReferencesReused",
+        "noTemporaryDllsAfterFailures",
+        "unchangedReferenceReused",
+        "changedReferenceInvalidated",
+        "referenceCountBoundAndEviction",
+        "oversizedReferenceNotRetained",
+        "executionAfterCacheEviction",
+        "referenceFixtureRemoved",
+        "passed"
+      ]
+    },
+    "persistence": {
+      "passed": true,
+      "checks": 12
+    }
+  },
+  "live": [
+    {
+      "configuration": "node22",
+      "server": "current branch",
+      "nodeVersion": "v22.18.0",
+      "passed": true,
+      "checks": [
+        {
+          "name": "Finite numbers, non-finite representations, vectors and Unicode survive actual JSON transport",
+          "values": {
+            "finite": -7,
+            "notANumber": "NaN",
+            "infinity": "Infinity",
+            "vector": {
+              "x": "NaN",
+              "y": "-Infinity",
+              "z": 3
+            },
+            "text": "Quote \" 中 😀 \ud800"
+          }
+        },
+        {
+          "name": "Legacy list count and truncation shape remain intact",
+          "listCount": 3,
+          "truncatedCount": 1001
+        },
+        {
+          "name": "Global result expansion",
+          "code": "execution_result_limit",
+          "executionCompleted": true,
+          "executions": 1
+        },
+        {
+          "name": "Deferred iterator exception",
+          "code": "execution_result_serialization_failed",
+          "executionCompleted": true,
+          "executions": 1
+        },
+        {
+          "name": "Plugin HTTP serialization limit returns an error without replay",
+          "executions": 1,
+          "response": {
+            "success": false,
+            "outcomeUnknown": true,
+            "error": "Outcome unknown for editor/execute-code: HTTP 413: response_too_large. The original request may have executed. Inspect Unity before retrying.",
+            "ticketId": 16,
+            "requestId": "47e1abc75ac94c1aa56ed75e3fe9a998",
+            "queueSessionId": "9582d5a640e64a68a802a89a05b06bcf"
+          }
+        }
+      ],
+      "unityVersion": "6000.6.2f1",
+      "fixtureRemoved": true
+    },
+    {
+      "configuration": "node18",
+      "server": "current branch",
+      "nodeVersion": "v18.20.8",
+      "passed": true,
+      "checks": [
+        {
+          "name": "Finite numbers, non-finite representations, vectors and Unicode survive actual JSON transport",
+          "values": {
+            "finite": -7,
+            "notANumber": "NaN",
+            "infinity": "Infinity",
+            "vector": {
+              "x": "NaN",
+              "y": "-Infinity",
+              "z": 3
+            },
+            "text": "Quote \" 中 😀 \ud800"
+          }
+        },
+        {
+          "name": "Legacy list count and truncation shape remain intact",
+          "listCount": 3,
+          "truncatedCount": 1001
+        },
+        {
+          "name": "Global result expansion",
+          "code": "execution_result_limit",
+          "executionCompleted": true,
+          "executions": 1
+        },
+        {
+          "name": "Deferred iterator exception",
+          "code": "execution_result_serialization_failed",
+          "executionCompleted": true,
+          "executions": 1
+        },
+        {
+          "name": "Plugin HTTP serialization limit returns an error without replay",
+          "executions": 1,
+          "response": {
+            "success": false,
+            "outcomeUnknown": true,
+            "error": "Outcome unknown for editor/execute-code: HTTP 413: response_too_large. The original request may have executed. Inspect Unity before retrying.",
+            "ticketId": 36,
+            "requestId": "6f24d703b68847b0bd4c9398c621a8ed",
+            "queueSessionId": "9582d5a640e64a68a802a89a05b06bcf"
+          }
+        }
+      ],
+      "unityVersion": "6000.6.2f1",
+      "fixtureRemoved": true
+    },
+    {
+      "configuration": "released-node22",
+      "server": "826af5ce61db7e2d2d675fe90d24c941a83f3924",
+      "nodeVersion": "v22.18.0",
+      "passed": true,
+      "checks": [
+        {
+          "name": "Finite numbers, non-finite representations, vectors and Unicode survive actual JSON transport",
+          "values": {
+            "finite": -7,
+            "notANumber": "NaN",
+            "infinity": "Infinity",
+            "vector": {
+              "x": "NaN",
+              "y": "-Infinity",
+              "z": 3
+            },
+            "text": "Quote \" 中 😀 \ud800"
+          }
+        },
+        {
+          "name": "Legacy list count and truncation shape remain intact",
+          "listCount": 3,
+          "truncatedCount": 1001
+        },
+        {
+          "name": "Global result expansion",
+          "code": "execution_result_limit",
+          "executionCompleted": true,
+          "executions": 1
+        },
+        {
+          "name": "Deferred iterator exception",
+          "code": "execution_result_serialization_failed",
+          "executionCompleted": true,
+          "executions": 1
+        },
+        {
+          "name": "Plugin HTTP serialization limit returns an error without replay",
+          "executions": 1,
+          "response": {
+            "success": false,
+            "error": "Failed to poll queue status: HTTP 413: {\"error\":\"response_too_large\",\"reason\":\"byte_limit\",\"outcomeUnknown\":true,\"message\":\"Response exceeded size limit. Use pagination parameters (maxNodes, limit, maxResults) to request smaller chunks.\",\"hint\":\"The original operation may already have completed. Inspect its effects or original ticket before repeating a write.\",\"size\":16777217,\"sizeIsLowerBound\":true,\"limit\":16777216}"
+          }
+        }
+      ],
+      "unityVersion": "6000.6.2f1",
+      "fixtureRemoved": true
+    },
+    {
+      "configuration": "released-node18",
+      "server": "826af5ce61db7e2d2d675fe90d24c941a83f3924",
+      "nodeVersion": "v18.20.8",
+      "passed": true,
+      "checks": [
+        {
+          "name": "Finite numbers, non-finite representations, vectors and Unicode survive actual JSON transport",
+          "values": {
+            "finite": -7,
+            "notANumber": "NaN",
+            "infinity": "Infinity",
+            "vector": {
+              "x": "NaN",
+              "y": "-Infinity",
+              "z": 3
+            },
+            "text": "Quote \" 中 😀 \ud800"
+          }
+        },
+        {
+          "name": "Legacy list count and truncation shape remain intact",
+          "listCount": 3,
+          "truncatedCount": 1001
+        },
+        {
+          "name": "Global result expansion",
+          "code": "execution_result_limit",
+          "executionCompleted": true,
+          "executions": 1
+        },
+        {
+          "name": "Deferred iterator exception",
+          "code": "execution_result_serialization_failed",
+          "executionCompleted": true,
+          "executions": 1
+        },
+        {
+          "name": "Plugin HTTP serialization limit returns an error without replay",
+          "executions": 1,
+          "response": {
+            "success": false,
+            "error": "Failed to poll queue status: HTTP 413: {\"error\":\"response_too_large\",\"reason\":\"byte_limit\",\"outcomeUnknown\":true,\"message\":\"Response exceeded size limit. Use pagination parameters (maxNodes, limit, maxResults) to request smaller chunks.\",\"hint\":\"The original operation may already have completed. Inspect its effects or original ticket before repeating a write.\",\"size\":16777217,\"sizeIsLowerBound\":true,\"limit\":16777216}"
+          }
+        }
+      ],
+      "unityVersion": "6000.6.2f1",
+      "fixtureRemoved": true
+    }
+  ],
+  "minimumEditorApiCheck": {
+    "passed": true,
+    "unityVersion": "2021.3.18f1",
+    "sourceCount": 71,
+    "referenceCount": 211,
+    "excludedIntegrations": [
+      "UMA",
+      "ProBuilder"
+    ],
+    "scope": "C# compilation against installed Unity assemblies; no editor execution or package import"
+  },
+  "ordinaryServerTests": {
+    "nodeVersion": "v22.18.0",
+    "passed": 163,
+    "failed": 0,
+    "maxRichCatalogBytes": 48000,
+    "reportedRichCatalogKiB": 46.7,
+    "toolCount": 80
+  },
+  "limits": [
+    "Default MiniJson traversal: 64 container levels and 1,000,000 values. HTTP serialization uses the existing 16 MiB hard output limit and 8 MiB soft warning.",
+    "Execution-result normalization retains depth-four / 1,000 items per container and adds 100,000 values across the result.",
+    "Output/traversal limits do not cap original objects, total editor memory, intermediate allocations or arbitrary custom getters, iterators and ToString methods.",
+    "No Node HTTP download bound is claimed for old/other plugins; incoming JSON parser work remains separate.",
+    "Early HTTP size is explicitly a lower bound. Failed output is not evidence that a write did not execute.",
+    "Actual Unity 2021 runtime checks remain deferred by maintainer direction. Other operating systems and all optional-package result shapes remain unverified."
+  ],
+  "pluginImplementationCommits": [
+    "212af673a4ad9146dc666836db36b131790a4112",
+    "dd7bc5e"
+  ],
+  "cleanup": {
+    "temporaryBatchEditorClosed": true,
+    "liveFixtureMarkersRemoved": true,
+    "liveSceneDirty": false,
+    "livePlayMode": false
+  }
+}

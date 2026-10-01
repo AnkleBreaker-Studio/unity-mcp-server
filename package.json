@@ -27,7 +27,8 @@
     "test:discovery": "node --test tests/live-discovery-identity.test.mjs",
     "test:packages": "node --test tests/live-packages.test.mjs",
     "test:testing": "node --test tests/live-testing.test.mjs",
-    "test:test-persistence": "node --test tests/live-test-persistence.test.mjs"
+    "test:test-persistence": "node --test tests/live-test-persistence.test.mjs",
+    "test:serialization": "node --test tests/live-serialization.test.mjs"
   },
   "dependencies": {
     "@modelcontextprotocol/sdk": "1.27.1"
