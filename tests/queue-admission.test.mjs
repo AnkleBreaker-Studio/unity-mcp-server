@@ -6,7 +6,7 @@ import { tmpdir } from "node:os";
 import { MockBridge } from "./helpers/mock-bridge.mjs";
 import { McpTestClient } from "./helpers/mcp-client.mjs";
 
-async function exercise(mode, protocolVersion, check, options = {}) {
+async function exercise(mode, protocolVersion, check) {
   const bridge = new MockBridge({ mode, instance: { protocolVersion } });
   const receive = bridge._handle.bind(bridge), reply = bridge._json.bind(bridge);
   const attempts = [];
@@ -24,8 +24,6 @@ async function exercise(mode, protocolVersion, check, options = {}) {
     }
     if (!rejected) receive(req, res);
   };
-  bridge._json = (res, code, data) => reply(res, code, data.queueRetryWindowMs && options.shortWindow
-    ? { ...data, queueRetryWindowMs: 2200 } : data);
   await bridge.start();
   const env = bridge.env();
   const client = new McpTestClient({ env }).start();
@@ -79,11 +77,11 @@ test("protected retries reuse the refused identity and execute once when capacit
 test("exhausted protected admission retries remain explicitly unaccepted", async () => {
   await exercise("queue", 2, async ({ bridge, command, attempts }) => {
     const result = await command();
-    assert.equal(result.isError, true); assert.equal(result.payload.requestAccepted, false);
+    assert.equal(result.isError, true); assert.equal(result.payload.requestAccepted, false, result.payloadText);
     assert.equal(result.payload.code, "command_queue_busy"); assert.equal(result.payload.outcomeUnknown, undefined);
-    assert.ok(attempts.length >= 2); assert.equal(bridge.seen.length, 0);
+    assert.equal(attempts.length, 5); assert.equal(bridge.seen.length, 0);
     assert.ok(attempts.every(item => item.payload.requestId === attempts[0].payload.requestId));
-  }, { shortWindow: true });
+  });
 });
 
 test("a later admission refusal cannot erase an earlier uncertain acknowledgement", async () => {
@@ -94,6 +92,7 @@ test("a later admission refusal cannot erase an earlier uncertain acknowledgemen
     const result = await command();
     assert.equal(result.isError, true); assert.equal(result.payload.outcomeUnknown, true);
     assert.equal(result.payload.requestAccepted, undefined); assert.equal(bridge.seen.length, 1);
+    assert.equal(attempts.length, 5);
     assert.ok(attempts.every(item => item.payload.requestId === attempts[0].payload.requestId));
-  }, { shortWindow: true });
+  });
 });

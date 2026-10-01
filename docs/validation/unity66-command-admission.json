@@ -724,7 +724,7 @@
     "../unity-mcp-plugin/tools~/QueueAdmissionValidation.cs": "d88d324a601a24f7391d34f585b733495f4e5b48ce957cbaf47e2f881c6ea489",
     "../unity-mcp-plugin/tools~/PackageManagerValidation.cs": "067b506c10741558fc5c3cba959d06359a3c4c9df0c4a405ac36044e6edfbefe",
     "src/tools/editor-tools.js": "14d029455f76013beded1788231180786cff0f0c4460ad026849fd7bb8a96720",
-    "tests/queue-admission.test.mjs": "180b8e4f5069829146fec84e7f4fd76c2161884875b265133b537aa93475c19b",
+    "tests/queue-admission.test.mjs": "a87e44d4d3f27c8f591dad266ee5609874f53fd7a79b20e2e6ee0af97e05b28e",
     "tests/live-queue-admission.test.mjs": "786885e4a1bf99ffdab8cb04ef920dad04b389fd4e9328b4a07add807e6121a2",
     "package.json": "065f208e3cf07d447e02e1c5c574dc83dcba3f9557164522a84f732d028e26e5"
   },
@@ -736,5 +736,23 @@
     "No throughput or gameplay performance claim",
     "Actual older-Unity execution remains deferred; the 2021 check compiles source only"
   ],
-  "pluginCommit": "0e35f3f1b18f9618730c8ca0070c48ab49b57e37"
+  "pluginCommit": "0e35f3f1b18f9618730c8ca0070c48ab49b57e37",
+  "ciFixtureCorrection": {
+    "initialCommit": "443da411d1a06d325dbd7ae29ea15923b4587f33",
+    "initialRun": "https://github.com/AnkleBreaker-Studio/unity-mcp-server/actions/runs/36840737275",
+    "initialJobs": { "passed": 5, "failed": 3 },
+    "failingJobs": [
+      { "id": 110298984462, "node": 18, "os": "ubuntu-latest" },
+      { "id": 110298984509, "node": 20, "os": "ubuntu-latest" },
+      { "id": 110298984434, "node": 24, "os": "ubuntu-latest" }
+    ],
+    "failure": "Each failed job passed 247 of 248 tests. The exhausted protected refusal test expected requestAccepted:false but received undefined with the shortened retry window.",
+    "diagnosis": "The fixture mixed retry-count exhaustion with a deadline boundary: its 2200 ms advertisement could start a final HTTP attempt just before the shortened deadline. Production conservatively preserves uncertainty if an acknowledgement is lost; runtime behavior is unchanged.",
+    "correction": "Both protected exhaustion tests use the normal retry window and assert all five attempts, preserving known-refusal and unknown-outcome assertions.",
+    "previousFixtureSha256": "180b8e4f5069829146fec84e7f4fd76c2161884875b265133b537aa93475c19b",
+    "focused": [
+      { "node": "22.18.0", "tests": 5, "passed": 5, "failures": 0, "durationMs": 27821.786 },
+      { "node": "18.20.8", "tests": 5, "passed": 5, "failures": 0, "durationMs": 28345.864 }
+    ]
+  }
 }
