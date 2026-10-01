@@ -4,6 +4,10 @@ All notable changes to this package will be documented in this file.
 
 ## [Unreleased]
 
+### Plugin agent-session pressure
+- Add opt-in `test:session-retention` to exercise native identity pressure, returning generations, busy agents and protected results through current/released servers, followed by a real script reload.
+- Document the plugin's 1,024 idle-session ceiling, unchanged busy protection, additive metrics and nine controlled checks in the [session guide](docs/session-retention.md).
+
 ### Action History drawing and measurement accuracy
 - Add opt-in `test:history-window` for native GUI cost, resource lifetime and eight interactions with current/released servers on Node 18/22.
 - Document visible-row drawing and removal of leaked selection textures in the [window guide](docs/history-window.md).

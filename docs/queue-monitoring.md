@@ -46,7 +46,7 @@ Route-name heuristics previously batched `profiler/enable`, `profiler/memory-sna
 
 An agent is active when it has queued/running work or activity in the last five minutes. An old timestamp never hides outstanding work. Activity and retention deadlines use a monotonic clock; timestamps returned to clients remain UTC.
 
-During periodic cleanup, sessions without outstanding work expire after 30 minutes of inactivity. At most 256 inactive sessions are retained, with older ones removed first when that limit is exceeded. Active and busy sessions are excluded from this limit. A returning agent starts a fresh session after eviction. Individual logs remain capped at 100 entries; the separate action history and its supported undo records retain their own configured limits.
+During periodic cleanup, sessions without outstanding work expire after 30 minutes of inactivity. At most 256 inactive sessions are retained, with older ones removed first when that limit is exceeded. A separate immediate limit retains at most 1,024 sessions without outstanding work, including recently active identities. Busy sessions remain protected; under pressure, a recently completed identity can be evicted before the five-minute activity window ends. A returning agent starts a fresh session after eviction. Individual logs remain capped at 100 entries; the separate action history and its supported undo records retain their own configured limits. See [session pressure, generation isolation and compatibility](session-retention.md).
 
 `unity_queue_info` adds these fields without changing existing fields:
 
@@ -56,8 +56,11 @@ During periodic cleanup, sessions without outstanding work expire after 30 minut
 | `sessionRetentionSeconds` | Idle expiry, currently 1800 seconds. |
 | `maxInactiveSessions` | Inactive-session capacity, currently 256. |
 | `totalSessionsTracked` | Sessions currently retained, including active/busy sessions. |
+| `maxIdleSessions` | Capacity for all sessions without outstanding work, currently 1024. |
+| `idleSessionsTracked` | Retained sessions without outstanding work. |
+| `pressureEvictedSessions` | Sessions removed by the immediate idle limit; included in `evictedSessions`. |
 
-The policy bounds inactive session retention, not all memory used by active requests, command results or the editor. A large active workload still needs appropriate coordination. Cleanup also releases oversized session dictionary storage after substantial eviction.
+The policy bounds session counts without outstanding work, not all memory used by busy requests, retained text, command results or the editor. A large busy workload still needs appropriate coordination. Cleanup also releases oversized session dictionary storage after substantial eviction.
 
 ## Evidence and limits
 
