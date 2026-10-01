@@ -704,5 +704,36 @@
     "No Unity 2021 editor execution; compiler-only API compatibility.",
     "Idle allocation evidence is GC.Alloc sample Count, not bytes. GC.GetAllocatedBytesForCurrentThread remains invalid on the native runtime control.",
     "No benchmark against other MCP products."
-  ]
+  ],
+  "implementation": {
+    "pluginCommit": "3f3ac1cf7f5bb42d4fdffd382ea0c2b371121c45",
+    "serverCommit": "3eaa69781e15984622bcbbbc9f1dc5639b362936"
+  },
+  "ci": {
+    "plugin": {
+      "run": 36860098672,
+      "passed": true,
+      "routes": 338
+    },
+    "server": {
+      "run": 36860105397,
+      "passed": true,
+      "jobs": 8,
+      "nodeVersions": [
+        18,
+        20,
+        22,
+        24
+      ],
+      "platforms": [
+        "Windows",
+        "Linux"
+      ],
+      "testsPerJob": 255
+    }
+  },
+  "cleanup": {
+    "ownedEditorsClosed": true,
+    "copiedFixturesRemoved": true
+  }
 }
