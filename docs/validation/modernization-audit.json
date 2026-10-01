@@ -288,6 +288,12 @@
       "serverCommit": "45ececeee9dfe6ad37f0a376668224be56a734bb",
       "serverCi": "https://github.com/AnkleBreaker-Studio/unity-mcp-server/actions/runs/36841683235",
       "pluginCi": "https://github.com/AnkleBreaker-Studio/unity-mcp-plugin/actions/runs/36840673790"
+    },
+    "resultRetention": {
+      "status": "corrected",
+      "report": "unity66-result-retention.json",
+      "scope": "Completed polling-cache count/cost and pending-history result references",
+      "remaining": "Native/caller-owned references, mutable results, history metadata, transport workers/output and buffers"
     }
   }
 }

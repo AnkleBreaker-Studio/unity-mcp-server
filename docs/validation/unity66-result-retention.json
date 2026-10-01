@@ -1,0 +1,750 @@
+{
+  "date": "2026-10-01",
+  "scope": "Bound completed polling results and detach pending history from full result graphs",
+  "serverBefore": "716173bc23364ed7b445d63d0218b3573a5682c9",
+  "pluginBefore": "0e35f3f1b18f9618730c8ca0070c48ab49b57e37",
+  "releasedServer": "826af5ce61db7e2d2d675fe90d24c941a83f3924",
+  "versionsUnchanged": {
+    "server": "2.35.6",
+    "plugin": "2.39.7"
+  },
+  "limits": {
+    "completedTickets": 4096,
+    "resultCostUnits": 268435456,
+    "depth": 64,
+    "visitedValues": 65536,
+    "targetTextCharacters": 4096,
+    "historyExceptionCharacters": 2048,
+    "queueProtocolVersion": 3
+  },
+  "baseline": {
+    "unityVersion": "6000.6.2f1",
+    "passed": false,
+    "checks": [
+      {
+        "name": "Ordinary terminal polling preserves the result and transport status",
+        "passed": true,
+        "evidence": true
+      },
+      {
+        "name": "Completed polling cache remains bounded during a burst",
+        "passed": false,
+        "error": "Retained 4100 terminal tickets; expected at most 4096"
+      },
+      {
+        "name": "Weighted result pressure evicts old results before the count ceiling",
+        "passed": false,
+        "error": "Missing or exceeded result-cost budget"
+      },
+      {
+        "name": "Pending history does not keep unrelated expired result payloads alive",
+        "passed": false,
+        "error": "An expired 1 MiB payload is still rooted by pending history"
+      }
+    ]
+  },
+  "final": {
+    "unityVersion": "6000.6.2f1",
+    "passed": true,
+    "checks": [
+      {
+        "name": "Ordinary terminal polling preserves the result and transport status",
+        "passed": true,
+        "evidence": true
+      },
+      {
+        "name": "Completed polling cache remains bounded during a burst",
+        "passed": true,
+        "evidence": {
+          "retained": 4096,
+          "metrics": {
+            "count": 4096,
+            "maxCount": 4096,
+            "costBytes": 1605632,
+            "maxCostBytes": 268435456,
+            "peakCostBytes": 1605632,
+            "evictions": 4,
+            "oversizedNotCached": 0
+          }
+        }
+      },
+      {
+        "name": "Weighted result pressure evicts old results before the count ceiling",
+        "passed": true,
+        "evidence": {
+          "metrics": {
+            "count": 15,
+            "maxCount": 4096,
+            "costBytes": 251664120,
+            "maxCostBytes": 268435456,
+            "peakCostBytes": 251664120,
+            "evictions": 9,
+            "oversizedNotCached": 0
+          },
+          "sharedPayload": true,
+          "actualHeapMeasurement": false
+        }
+      },
+      {
+        "name": "Pending history does not keep unrelated expired result payloads alive",
+        "passed": true,
+        "evidence": true
+      },
+      {
+        "name": "Expiry releases cache accounting and order links",
+        "passed": true,
+        "evidence": true
+      },
+      {
+        "name": "Protected retry cannot execute an evicted result again",
+        "passed": true,
+        "evidence": {
+          "StatusCode": 410,
+          "Code": "result_expired"
+        }
+      },
+      {
+        "name": "A synchronous waiter keeps its result after polling-cache eviction",
+        "passed": true,
+        "evidence": true
+      },
+      {
+        "name": "Cost accounting and history never call custom getters or conversions",
+        "passed": true,
+        "evidence": true
+      },
+      {
+        "name": "History snapshots bounded target text before later result mutation",
+        "passed": true,
+        "evidence": true
+      },
+      {
+        "name": "A custom result comparer cannot interrupt terminal publication",
+        "passed": true,
+        "evidence": true
+      },
+      {
+        "name": "Cycles and deep graphs terminate accounting without invoking serialization",
+        "passed": true,
+        "evidence": {
+          "count": 1,
+          "maxCount": 4096,
+          "costBytes": 268435456,
+          "maxCostBytes": 268435456,
+          "peakCostBytes": 268435456,
+          "evictions": 12,
+          "oversizedNotCached": 0
+        }
+      },
+      {
+        "name": "Oversized accounting does not evict an unrelated usable result",
+        "passed": true,
+        "evidence": {
+          "metrics": {
+            "count": 1,
+            "maxCount": 4096,
+            "costBytes": 392,
+            "maxCostBytes": 268435456,
+            "peakCostBytes": 268435456,
+            "evictions": 12,
+            "oversizedNotCached": 1
+          },
+          "sharedPayload": true
+        }
+      },
+      {
+        "name": "Reserved collection capacity contributes to accounting",
+        "passed": true,
+        "evidence": {
+          "count": 1,
+          "maxCount": 4096,
+          "costBytes": 3476584,
+          "maxCostBytes": 268435456,
+          "peakCostBytes": 268435456,
+          "evictions": 12,
+          "oversizedNotCached": 1
+        }
+      },
+      {
+        "name": "Duplicate deferred completion cannot change result-cache accounting",
+        "passed": true,
+        "evidence": true
+      }
+    ]
+  },
+  "regressions": {
+    "queue": {
+      "unityVersion": "6000.6.2f1",
+      "passed": true,
+      "checks": [
+        "Object identity round-trip without JSON number conversion",
+        "Agent FIFO, round-robin writes, read batching and ticket results",
+        "Deferred completion is atomic, single-shot and stable after timeout",
+        "Concurrent submission retries share one ticket; conflicts, reload sessions and expired results never re-execute",
+        "Actual HTTP dispatcher validates scoped submission/polling, browser rejection, one-object retries and legacy compatibility",
+        "Legacy synchronous callers are signaled without lost wakeups",
+        "Legacy timeout preserves running outcomes and skips expired batched and queued work",
+        "Dashboard shows running-only work and separates failures from finished requests",
+        "Submission retry cache refuses new work at its bounded capacity",
+        "1000 status polls at queue depths 100 and 10000"
+      ],
+      "polling100Ms": 3.2094,
+      "polling10000Ms": 4.2431,
+      "error": ""
+    },
+    "monitoring": {
+      "unityVersion": "6000.6.2f1",
+      "passed": true,
+      "resultCases": 15,
+      "classificationMismatches": 0,
+      "rawResultsPreserved": true,
+      "commandErrors": 7,
+      "exceptions": 1,
+      "duplicateCallbacks": 20,
+      "deferredHistoryRecords": 1,
+      "timedOutHistoryRecords": 1,
+      "lateCallbackIgnored": true,
+      "legacyResultPreserved": true,
+      "dashboardShowsCommandError": true,
+      "dashboardShowsExceptionCount": true,
+      "dashboardErrorRow": true,
+      "historyEndpointError": true,
+      "diagnosticBounded": true,
+      "undoPreserved": true,
+      "undoWithHistoryBacklog": true,
+      "pendingHistorySavedBeforeReload": true,
+      "clearIncludesPendingHistory": true,
+      "historyRoundTrip": true,
+      "oldHistoryLoads": true,
+      "maximumPendingHistory": 10000,
+      "historyRecordsDropped": 1,
+      "backlogDrained": true,
+      "error": ""
+    },
+    "admission": {
+      "unityVersion": "6000.6.2f1",
+      "passed": true,
+      "checks": [
+        {
+          "name": "Ordinary queued and legacy reads preserve their response forms",
+          "passed": true,
+          "evidence": true
+        },
+        {
+          "name": "HTTP command count is bounded after body readers have finished",
+          "passed": true,
+          "evidence": {
+            "activeCount": 256,
+            "maxCount": 256,
+            "argumentCostBytes": 63488,
+            "maxArgumentCostBytes": 268435456,
+            "peakCount": 256,
+            "peakArgumentCostBytes": 63488,
+            "admissionRefusals": 1
+          }
+        },
+        {
+          "name": "Queue pressure refuses legacy dispatch without a ticket or side effects",
+          "passed": true,
+          "evidence": {
+            "error": "Command queue admission is full. No command was accepted; retry after outstanding commands complete.",
+            "code": "command_queue_busy",
+            "requestAccepted": false
+          }
+        },
+        {
+          "name": "Protected replay succeeds at capacity and a refused identity remains reusable",
+          "passed": true,
+          "evidence": {
+            "originalTicket": 515,
+            "acceptedAfterCapacity": 771
+          }
+        },
+        {
+          "name": "Completed work releases its count and argument budget",
+          "passed": true,
+          "evidence": {
+            "releasedCostBytes": 840
+          }
+        },
+        {
+          "name": "Queued and legacy deferred routes share the admission limit",
+          "passed": true,
+          "evidence": true
+        },
+        {
+          "name": "Decoded value count contributes to the argument budget",
+          "passed": true,
+          "evidence": {
+            "sourceCharacters": 50012,
+            "accountedBytes": 740396
+          }
+        },
+        {
+          "name": "Ordinary multi-megabyte input remains admissible and releases after execution",
+          "passed": true,
+          "evidence": {
+            "sourceCharacters": 4194315,
+            "accountedBytes": 8389002
+          }
+        },
+        {
+          "name": "An exact byte-budget fit passes and one additional byte fails without creating a ticket",
+          "passed": true,
+          "evidence": {
+            "accountedLimit": 268435456,
+            "syntheticAccountingOnly": true
+          }
+        },
+        {
+          "name": "Concurrent reservations never exceed the aggregate argument budget",
+          "passed": true,
+          "evidence": {
+            "accepted": 16,
+            "rejected": 16,
+            "syntheticAccountingOnly": true
+          }
+        },
+        {
+          "name": "Deferred work keeps its reservation while executing and releases once",
+          "passed": true,
+          "evidence": true
+        },
+        {
+          "name": "Queued timeout releases admission without executing its action",
+          "passed": true,
+          "evidence": true
+        },
+        {
+          "name": "Deferred timeout releases admission and a late callback cannot release it again",
+          "passed": true,
+          "evidence": true
+        },
+        {
+          "name": "Failed work releases the same admission as completed work",
+          "passed": true,
+          "evidence": true
+        },
+        {
+          "name": "Polling and queue information remain usable while command admission is full",
+          "passed": true,
+          "evidence": true
+        }
+      ]
+    },
+    "serialization": {
+      "unityVersion": "6000.6.2f1",
+      "passed": true,
+      "checks": [
+        {
+          "name": "Finite primitive and getter-failure shapes remain compatible",
+          "passed": true,
+          "evidence": {
+            "json": "{\"Before\":1,\"Broken\":null,\"After\":2}"
+          }
+        },
+        {
+          "name": "Non-finite values produce valid JSON strings",
+          "passed": true,
+          "evidence": {
+            "json": "[\"NaN\",\"Infinity\",\"-Infinity\"]"
+          }
+        },
+        {
+          "name": "Integers ignore the editor culture",
+          "passed": true,
+          "evidence": {
+            "json": "[-1,-2,-3.25]"
+          }
+        },
+        {
+          "name": "Nested enumeration failure cannot leave partial JSON",
+          "passed": true,
+          "evidence": {
+            "errorType": "SerializationException",
+            "message": "Controlled enumeration failure"
+          }
+        },
+        {
+          "name": "Reference cycles stop before recursive enumeration",
+          "passed": true,
+          "evidence": {
+            "enumerations": 1,
+            "message": "Serialization encountered a reference cycle"
+          }
+        },
+        {
+          "name": "Shared references are serialized independently",
+          "passed": true,
+          "evidence": {
+            "json": "[{\"value\":7},{\"value\":7}]"
+          }
+        },
+        {
+          "name": "Deep trees are rejected before stack exhaustion",
+          "passed": true,
+          "evidence": {
+            "message": "Serialization exceeded 64 container levels"
+          }
+        },
+        {
+          "name": "Bounded serialization counts escaped UTF-8 before allocation",
+          "passed": true,
+          "evidence": {
+            "bytes": 26,
+            "json": "\"Quote \\\" 中 😀 \\ud800\"",
+            "message": "Serialized response exceeded its UTF-8 byte limit"
+          }
+        },
+        {
+          "name": "Exhausted output budget does not evaluate the next property getter",
+          "passed": true,
+          "evidence": {
+            "laterGetterReads": 0
+          }
+        },
+        {
+          "name": "Execution result expansion has a global work budget",
+          "passed": true,
+          "evidence": {
+            "values": 100000,
+            "enumerations": 103,
+            "message": null
+          }
+        },
+        {
+          "name": "Reflected execution results cannot swallow global budget exhaustion",
+          "passed": true,
+          "evidence": {
+            "values": 99999,
+            "code": "execution_result_limit",
+            "executionCompleted": true
+          }
+        },
+        {
+          "name": "Execution enumeration failures report that code already ran",
+          "passed": true,
+          "evidence": {
+            "error": "Controlled enumeration failure",
+            "stackTrace": "  at UnityMcpSerializationValidation+EnumerationFailure+<GetEnumerator>d__0.MoveNext () [0x0003c] in C:\\Users\\Francois\\orca\\workspaces\\unity-mcp-server\\validation\\Queue66\\Assets\\Editor\\SerializationValidation.cs:39 \r\n  at UnityMCP.Editor.MCPEditorCommands.SerializeValue (System.Object value, System.Int32 depth, UnityMCP.Editor.MCPEditorCommands+ResultSerializationBudget budget) [0x0033d] in C:\\Users\\Francois\\orca\\workspaces\\unity-mcp-server\\unity-mcp-plugin\\Editor\\MCPEditorCommands.cs:560 \r\n  at UnityMCP.Editor.MCPEditorCommands.SerializeResult (System.Object result) [0x00020] in C:\\Users\\Francois\\orca\\workspaces\\unity-mcp-server\\unity-mcp-plugin\\Editor\\MCPEditorCommands.cs:462 ",
+            "code": "execution_result_serialization_failed",
+            "executionCompleted": true,
+            "serializedValues": 2,
+            "maxSerializedValues": 100000,
+            "hint": "The snippet already executed. Inspect its effects before retrying; return a smaller result."
+          }
+        },
+        {
+          "name": "Legacy list counts and per-container truncation remain compatible",
+          "passed": true,
+          "evidence": {
+            "count": 1001,
+            "last": "... (truncated at 1000 items)"
+          }
+        },
+        {
+          "name": "Wide generic serialization stops at its total value bound",
+          "passed": true,
+          "evidence": {
+            "message": "Serialization exceeded 1000000 values"
+          }
+        },
+        {
+          "name": "HTTP writer stops oversized traversal and returns a bounded 413",
+          "passed": true,
+          "evidence": {
+            "status": 413,
+            "valuesVisited": 4,
+            "result": {
+              "error": "response_too_large",
+              "reason": "byte_limit",
+              "outcomeUnknown": true,
+              "message": "Response exceeded size limit. Use pagination parameters (maxNodes, limit, maxResults) to request smaller chunks.",
+              "hint": "The original operation may already have completed. Inspect its effects or original ticket before repeating a write.",
+              "size": 16777217,
+              "sizeIsLowerBound": true,
+              "limit": 16777216
+            }
+          }
+        },
+        {
+          "name": "HTTP writer returns explicit cycle failure instead of invalid JSON",
+          "passed": true,
+          "evidence": {
+            "status": 500,
+            "result": {
+              "error": "response_serialization_failed",
+              "reason": "reference_cycle",
+              "outcomeUnknown": true,
+              "message": "Serialization encountered a reference cycle",
+              "hint": "The original operation may already have completed. Inspect its effects or original ticket before repeating a write."
+            }
+          }
+        }
+      ]
+    }
+  },
+  "serverTests": {
+    "newTests": 3,
+    "node18": {
+      "passed": 3,
+      "failures": 0
+    },
+    "node22": {
+      "passed": 3,
+      "failures": 0
+    },
+    "fullNode22": {
+      "tests": 251,
+      "passed": 251,
+      "failures": 0
+    }
+  },
+  "live": [
+    {
+      "nodeVersion": "v22.18.0",
+      "serverEntry": "current",
+      "passed": true,
+      "checks": [
+        {
+          "name": "Native pressure inside a real MCP command expires the old result without replay",
+          "passed": true,
+          "evidence": {
+            "executions": 1,
+            "replayStatus": 410,
+            "replayCode": "result_expired",
+            "pollingMissing": true,
+            "metrics": {
+              "count": 4096,
+              "maxCount": 4096,
+              "costBytes": 1843200,
+              "maxCostBytes": 268435456,
+              "peakCostBytes": 1856682,
+              "evictions": 11,
+              "oversizedNotCached": 0
+            }
+          }
+        },
+        {
+          "name": "Owned pressure tickets are cleaned and a subsequent MCP read succeeds",
+          "passed": true,
+          "metrics": {
+            "count": 1,
+            "maxCount": 4096,
+            "costBytes": 3040,
+            "maxCostBytes": 268435456,
+            "peakCostBytes": 1856682,
+            "evictions": 11,
+            "oversizedNotCached": 0
+          }
+        }
+      ],
+      "project": {
+        "projectPath": "C:/Users/Francois/orca/workspaces/unity-mcp-server/validation/Health66",
+        "port": 7890,
+        "unityVersion": "6000.6.2f1",
+        "pluginVersion": "2.39.7"
+      }
+    },
+    {
+      "nodeVersion": "v18.20.8",
+      "serverEntry": "current",
+      "passed": true,
+      "checks": [
+        {
+          "name": "Native pressure inside a real MCP command expires the old result without replay",
+          "passed": true,
+          "evidence": {
+            "executions": 1,
+            "replayStatus": 410,
+            "replayCode": "result_expired",
+            "pollingMissing": true,
+            "metrics": {
+              "count": 4096,
+              "maxCount": 4096,
+              "costBytes": 1843200,
+              "maxCostBytes": 268435456,
+              "peakCostBytes": 1856682,
+              "evictions": 19,
+              "oversizedNotCached": 0
+            }
+          }
+        },
+        {
+          "name": "Owned pressure tickets are cleaned and a subsequent MCP read succeeds",
+          "passed": true,
+          "metrics": {
+            "count": 1,
+            "maxCount": 4096,
+            "costBytes": 3040,
+            "maxCostBytes": 268435456,
+            "peakCostBytes": 1856682,
+            "evictions": 19,
+            "oversizedNotCached": 0
+          }
+        }
+      ],
+      "project": {
+        "projectPath": "C:/Users/Francois/orca/workspaces/unity-mcp-server/validation/Health66",
+        "port": 7890,
+        "unityVersion": "6000.6.2f1",
+        "pluginVersion": "2.39.7"
+      }
+    },
+    {
+      "nodeVersion": "v18.20.8",
+      "serverEntry": "C:/Users/Francois/orca/workspaces/unity-mcp-server/validation/compat-server-baseline/src/index.js",
+      "passed": true,
+      "checks": [
+        {
+          "name": "Native pressure inside a real MCP command expires the old result without replay",
+          "passed": true,
+          "evidence": {
+            "executions": 1,
+            "replayStatus": 410,
+            "replayCode": "result_expired",
+            "pollingMissing": true,
+            "metrics": {
+              "count": 4096,
+              "maxCount": 4096,
+              "costBytes": 1843200,
+              "maxCostBytes": 268435456,
+              "peakCostBytes": 1856682,
+              "evictions": 27,
+              "oversizedNotCached": 0
+            }
+          }
+        },
+        {
+          "name": "Owned pressure tickets are cleaned and a subsequent MCP read succeeds",
+          "passed": true,
+          "metrics": {
+            "count": 1,
+            "maxCount": 4096,
+            "costBytes": 3040,
+            "maxCostBytes": 268435456,
+            "peakCostBytes": 1856682,
+            "evictions": 27,
+            "oversizedNotCached": 0
+          }
+        }
+      ],
+      "project": {
+        "projectPath": "C:/Users/Francois/orca/workspaces/unity-mcp-server/validation/Health66",
+        "port": 7890,
+        "unityVersion": "6000.6.2f1",
+        "pluginVersion": "2.39.7"
+      }
+    },
+    {
+      "nodeVersion": "v22.18.0",
+      "serverEntry": "C:/Users/Francois/orca/workspaces/unity-mcp-server/validation/compat-server-baseline/src/index.js",
+      "passed": true,
+      "checks": [
+        {
+          "name": "Native pressure inside a real MCP command expires the old result without replay",
+          "passed": true,
+          "evidence": {
+            "executions": 1,
+            "replayStatus": 410,
+            "replayCode": "result_expired",
+            "pollingMissing": true,
+            "metrics": {
+              "count": 4096,
+              "maxCount": 4096,
+              "costBytes": 1843200,
+              "maxCostBytes": 268435456,
+              "peakCostBytes": 1856682,
+              "evictions": 35,
+              "oversizedNotCached": 0
+            }
+          }
+        },
+        {
+          "name": "Owned pressure tickets are cleaned and a subsequent MCP read succeeds",
+          "passed": true,
+          "metrics": {
+            "count": 1,
+            "maxCount": 4096,
+            "costBytes": 3040,
+            "maxCostBytes": 268435456,
+            "peakCostBytes": 1856682,
+            "evictions": 35,
+            "oversizedNotCached": 0
+          }
+        }
+      ],
+      "project": {
+        "projectPath": "C:/Users/Francois/orca/workspaces/unity-mcp-server/validation/Health66",
+        "port": 7890,
+        "unityVersion": "6000.6.2f1",
+        "pluginVersion": "2.39.7"
+      }
+    }
+  ],
+  "minimumVersionApi": {
+    "unityVersion": "2021.3.18f1",
+    "passed": true,
+    "referenceCount": 211,
+    "log": "C:\\Users\\Francois\\orca\\workspaces\\unity-mcp-server\\validation\\Unity2021Api\\compiler.log",
+    "packageAssemblies": [
+      {
+        "sha256": "AF83F70ECAC09EE676571E37C62595B7FF26148B636CE498F9151A2F7A9697A3",
+        "file": "C:\\Users\\Francois\\orca\\workspaces\\unity-mcp-server\\validation\\Editors\\2021.3.18f1\\Editor\\Data\\Resources\\PackageManager\\ProjectTemplates\\libcache\\com.unity.template.universal-2d-1.1.4\\ScriptAssemblies\\UnityEngine.UI.dll"
+      },
+      {
+        "sha256": "AAAF5BC1E371F6CFA67138DCB6E77634A8075D30E0C1DF27670A5B0028CC5523",
+        "file": "C:\\Users\\Francois\\orca\\workspaces\\unity-mcp-server\\validation\\Editors\\2021.3.18f1\\Editor\\Data\\Resources\\PackageManager\\ProjectTemplates\\libcache\\com.unity.template.universal-2d-1.1.4\\ScriptAssemblies\\UnityEngine.TestRunner.dll"
+      },
+      {
+        "sha256": "6995901F60508B79F4B648FE2E3B64D8D1BD545B3CB3817134F079842FA82832",
+        "file": "C:\\Users\\Francois\\orca\\workspaces\\unity-mcp-server\\validation\\Editors\\2021.3.18f1\\Editor\\Data\\Resources\\PackageManager\\ProjectTemplates\\libcache\\com.unity.template.universal-2d-1.1.4\\ScriptAssemblies\\UnityEditor.TestRunner.dll"
+      }
+    ],
+    "excludedIntegrations": [
+      "UMA",
+      "ProBuilder"
+    ],
+    "sourceCount": 76,
+    "check": "C# compilation against installed Unity assemblies; no editor execution or package import",
+    "exitCode": 0
+  },
+  "reviewCorrection": "Skip automatic target capture for custom dictionary comparers so metadata observation cannot interrupt terminal publication. Final native, monitoring and all four live runs include this guard.",
+  "sourceSha256": {
+    "../unity-mcp-plugin/Editor/MCPResultRetention.cs": "ab6efb636fb9c7288c0cb389097c01f38efa1b3aae5e452704229d0a0a1adc52",
+    "../unity-mcp-plugin/Editor/MCPResultRetention.cs.meta": "a2ad27c26a6ef63b13208f8254dd8e951adaf9c8e32bf2f9939099f0efa23edb",
+    "../unity-mcp-plugin/Editor/MCPRequestQueue.cs": "ec32840743622696990fb8bb5c86eb1e7c00f5adcef1a68e92a129be8b42b79a",
+    "../unity-mcp-plugin/Editor/MCPActionRecord.cs": "0cd44f0f33ce7847974a0fbe878c7d413ac224d77a170c8e8a277c1cd52c84c9",
+    "../unity-mcp-plugin/tools~/ResultRetentionValidation.cs": "2437fa31d46873a301f1e377fa3221e6962c91c5cb80ade47c5e6bd5614cbdfc",
+    "../unity-mcp-plugin/tools~/validate-unity.ps1": "b5d93a73666db7886e359bd155d9f5120a7ba606a6c2f6830920e4fcf4eecb0c",
+    "src/tools/editor-tools.js": "db2c64166dbb09f645b0cb2b37429f61b043c3109f8abe4d98f805308f0c4241",
+    "tests/result-retention.test.mjs": "973a74de61b0522348513e0ae938a8a922af1f22646c7ab732bebf4f53bd2b47",
+    "tests/live-result-retention.test.mjs": "10e78cdf2a87310256ae082a0a346b9685d5d616e9f1fca89a599edcf7d48285",
+    "package.json": "ca93ef6d43778af01dabadd02bc70f80e2a6ca17d195d27eae90e5c9cb575861"
+  },
+  "limitsOfEvidence": [
+    "Weighted result cost is not measured heap use or a total editor-memory quota",
+    "Accounting is a completion-time observation; later native mutations and external ticket/callback references have independent lifetimes",
+    "Native Unity resources, in-progress response objects and transport buffers are outside this cache budget",
+    "Large shared-string fixtures exercise accounting pressure without allocating the represented total heap",
+    "Weak-reference checks force managed collection in a marked disposable editor; no process-wide leak rate or throughput claim",
+    "Real MCP runs invoke synthetic native queue pressure within a command; network acknowledgement loss is covered by isolated Node fixtures",
+    "Unity 2021 validation compiles source only; runtime execution remains deferred by maintainer direction"
+  ],
+  "cleanup": {
+    "ownedEditorsClosed": true,
+    "finalOwnedHealthEditorPid": 414428,
+    "cleanEmptyScenePreserved": true,
+    "ownedPressureTicketsExpired": true,
+    "ownedHistoryRowsRemoved": true,
+    "sceneAssetsAdded": false,
+    "copiedFixturesRemoved": [
+      "ResultRetentionValidation.cs",
+      "ValidationRunner.cs",
+      "MonitoringValidation.cs",
+      "QueueAdmissionValidation.cs",
+      "SerializationValidation.cs"
+    ]
+  },
+  "pluginCommit": "63afda528bc0158b40acdb09f91cf9c7dde6eae9"
+}

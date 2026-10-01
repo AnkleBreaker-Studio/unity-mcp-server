@@ -37,7 +37,7 @@ The plugin checks the session and deadline before admission. Under the queue loc
 
 The replay record retains only hashes, the ticket ID and deadline. It does not retain the request body, work closure or result. The cache holds at most 10,000 records and rejects new protected submissions when full. Expired records are removed periodically and when capacity is reached. Replays with the original expired deadline remain rejected after eviction.
 
-Result retention is separate: a completed ticket lasts 60 seconds, a timed-out ticket 30 seconds, until cleanup. If its replay record remains but the result was evicted, the plugin returns 410 and does not execute the request again. Domain reload creates a new session; these records are not persisted across it.
+Result retention is separate: completed/failed tickets expire after 60 seconds and timed-out tickets after 30 seconds, when cleanup runs. Updated plugins also bound the polling cache to 4,096 tickets and 256 MiB of weighted cost; pressure can evict results earlier. If a replay record remains but the result was evicted, the plugin returns 410 and does not execute the request again. See [result accounting and recovery](result-retention.md). Domain reload creates a new session; these records are not persisted across it.
 
 | HTTP status / code | Meaning |
 |---|---|

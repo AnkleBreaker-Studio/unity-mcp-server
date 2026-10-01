@@ -4,6 +4,10 @@ All notable changes to this package will be documented in this file.
 
 ## [Unreleased]
 
+### Completed result retention
+- Describe plugin polling-cache count/cost limits and history snapshots through `unity_queue_info.data.completedResults`.
+- Add missing-result and lost-acknowledgement checks plus real current/published-server pressure workflows on Node 18/22. Preserve unknown outcomes and prevent protected re-execution; see [retention and recovery](docs/result-retention.md).
+
 ### Plugin command admission
 - Expose command count/argument-cost limits and refusals through `unity_queue_info.data.httpCommands` on updated plugins.
 - Add five refusal/retry checks and live current/released-server saturation checks on Node 18/22. Preserve the existing retry and unknown-outcome contracts; see [admission limits](docs/command-admission.md).
