@@ -5,58 +5,48 @@ import { CONFIG } from "./config.js";
 
 const execFileAsync = promisify(execFile);
 
-/**
- * Execute a Unity Hub CLI command
- */
-async function runHubCommand(args, timeoutMs = 30000) {
+async function runHubCommand(args, { timeoutMs = 30000, mutates = false } = {}) {
   const hubPath = CONFIG.unityHubPath;
+  const prefix = process.platform === "linux" ? ["--headless"] : ["--", "--headless"];
 
-  // Strategies in order: modern CLI (3.x+), legacy CLI (2.x), shell-based fallback (Windows)
-  const strategies = [
-    { name: "modern", args: ["--headless", ...args] },
-    { name: "legacy", args: ["--", "--headless", ...args] },
-  ];
-
-  const errors = [];
-
-  for (const strategy of strategies) {
-    try {
-      const { stdout, stderr } = await execFileAsync(hubPath, strategy.args, {
-        timeout: timeoutMs,
-        windowsHide: true,
-        // Capture output even on non-zero exit codes
-        maxBuffer: 10 * 1024 * 1024,
-      });
-      const out = (stdout || "").trim();
-      const err = (stderr || "").trim();
-      // Some Hub versions return data on stderr, check both
-      if (out || err) {
-        return { success: true, stdout: out, stderr: err };
-      }
-    } catch (error) {
-      const msg = error.message || String(error);
-      const out = (error.stdout || "").trim();
-      const err = (error.stderr || "").trim();
-      errors.push({ strategy: strategy.name, message: msg, stdout: out, stderr: err });
-      // If Hub returned data despite non-zero exit code, it might still be usable
-      if (out && !msg.includes("ENOENT")) {
-        return { success: true, stdout: out, stderr: err };
-      }
-    }
+  // Headless syntax depends on the OS; retrying another prefix can repeat a partially applied install.
+  try {
+    const { stdout, stderr } = await execFileAsync(hubPath, [...prefix, ...args], {
+      timeout: timeoutMs,
+      windowsHide: true,
+      maxBuffer: 10 * 1024 * 1024,
+    });
+    return { success: true, stdout: (stdout || "").trim(), stderr: (stderr || "").trim() };
+  } catch (error) {
+    const code = typeof error.code === "string" ? error.code : null;
+    const exitCode = Number.isInteger(error.code) ? error.code : null;
+    const timedOut = error.killed === true && code !== "ERR_CHILD_PROCESS_STDIO_MAXBUFFER";
+    const notStarted = error.syscall?.startsWith("spawn") || code === "ERR_INVALID_ARG_TYPE" || code === "ERR_OUT_OF_RANGE";
+    const outcomeUnknown = mutates && !notStarted;
+    let message = timedOut
+      ? `Unity Hub command exceeded its ${timeoutMs} ms timeout.`
+      : exitCode !== null
+        ? `Unity Hub exited with code ${exitCode}.`
+        : `Unity Hub command failed: ${String(error.message || error).split("\n")[0]}`;
+    if (code === "ENOENT") message += ` Unity Hub not found at "${hubPath}". Set UNITY_HUB_PATH to the executable path.`;
+    if (outcomeUnknown) message += " The outcome is unknown; inspect Unity Hub before retrying because changes may already have occurred.";
+    return {
+      success: false,
+      error: message,
+      stdout: (error.stdout || "").trim(),
+      stderr: (error.stderr || "").trim(),
+      code,
+      exitCode,
+      signal: error.signal || null,
+      timedOut,
+      outcomeUnknown,
+    };
   }
+}
 
-  // All strategies failed — build helpful error message
-  const lastErr = errors[errors.length - 1] || {};
-  const isNotFound = errors.some((e) => e.message.includes("ENOENT"));
-  const hint = isNotFound
-    ? ` Unity Hub not found at "${hubPath}". Set UNITY_HUB_PATH environment variable to the correct path.`
-    : " Ensure Unity Hub is installed and supports CLI mode (--headless).";
-  return {
-    success: false,
-    error: (lastErr.message || "Unknown error") + hint,
-    stdout: lastErr.stdout || "",
-    stderr: lastErr.stderr || "",
-  };
+function outputText(result) {
+  // Some Hub versions put command data on stderr, including successful editor lists.
+  return [result.stdout, result.stderr].filter(Boolean).join("\n");
 }
 
 /**
@@ -64,18 +54,25 @@ async function runHubCommand(args, timeoutMs = 30000) {
  */
 export async function listInstalledEditors() {
   const result = await runHubCommand(["editors", "--installed"]);
-  if (!result.success) return { error: result.error, raw: result.stderr };
+  if (!result.success) return { ...result, raw: outputText(result) };
 
   const editors = [];
-  const lines = result.stdout.split("\n").filter((l) => l.trim());
+  const raw = outputText(result);
+  const lines = raw.split("\n").map((line) => line.trim()).filter(Boolean);
+  const seen = new Set();
   for (const line of lines) {
     // Parse lines like: "2022.3.0f1 , installed at C:\Program Files\Unity\..."
     const match = line.match(/^([\d.]+\w+)\s*,?\s*installed at\s+(.+)$/i);
     if (match) {
-      editors.push({ version: match[1].trim(), path: match[2].trim() });
+      const editor = { version: match[1].trim(), path: match[2].trim() };
+      const key = `${editor.version}\0${editor.path}`;
+      if (!seen.has(key)) {
+        seen.add(key);
+        editors.push(editor);
+      }
     }
   }
-  return { editors, raw: result.stdout };
+  return { editors, raw };
 }
 
 /**
@@ -83,8 +80,8 @@ export async function listInstalledEditors() {
  */
 export async function listAvailableReleases() {
   const result = await runHubCommand(["editors", "--releases"]);
-  if (!result.success) return { error: result.error };
-  return { raw: result.stdout };
+  if (!result.success) return { ...result, raw: outputText(result) };
+  return { raw: outputText(result) };
 }
 
 /**
@@ -95,7 +92,7 @@ export async function installEditor(version, modules = []) {
   for (const mod of modules) {
     args.push("--module", mod);
   }
-  const result = await runHubCommand(args, 600000); // 10min timeout for installs
+  const result = await runHubCommand(args, { timeoutMs: 600000, mutates: true });
   return result;
 }
 
@@ -107,7 +104,7 @@ export async function installModules(version, modules) {
   for (const mod of modules) {
     args.push("--module", mod);
   }
-  const result = await runHubCommand(args, 300000);
+  const result = await runHubCommand(args, { timeoutMs: 300000, mutates: true });
   return result;
 }
 
@@ -120,6 +117,6 @@ export async function getInstallPath() {
 }
 
 export async function setInstallPath(path) {
-  const result = await runHubCommand(["install-path", "--set", path]);
+  const result = await runHubCommand(["install-path", "--set", path], { mutates: true });
   return result;
 }

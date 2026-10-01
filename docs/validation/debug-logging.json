@@ -1,0 +1,220 @@
+{
+  "date": "2026-10-01",
+  "scope": "Opt-in Node debug logging; plugin and wire contracts unchanged",
+  "baseline": {
+    "serverCommit": "cc4f37b",
+    "loggerSha256": "72bbc6724f6a305e2d9182f841eed4b3c08ea7f09298143c2b4d1cf8062b49f1",
+    "checks": [
+      {
+        "name": "disabled debugging creates no files and does not format messages",
+        "passed": true
+      },
+      {
+        "name": "small debug entries preserve timestamp, PID and text without stdout output",
+        "passed": true
+      },
+      {
+        "name": "sustained logging rotates within one process",
+        "passed": false
+      },
+      {
+        "name": "repeated rotations keep only one previous generation",
+        "passed": false
+      },
+      {
+        "name": "large Unicode entries are bounded and end on a valid UTF-8 boundary",
+        "passed": false
+      },
+      {
+        "name": "an existing oversized log is preserved as the previous generation",
+        "passed": true
+      },
+      {
+        "name": "failed rotation does not append past the threshold and logging can recover",
+        "passed": false
+      },
+      {
+        "name": "file failures emit bounded, rate-limited stderr diagnostics",
+        "passed": false
+      },
+      {
+        "name": "message conversion failures cannot escape debugLog",
+        "passed": false
+      },
+      {
+        "name": "concurrent processes retain rotating UTF-8 logs without protocol output",
+        "passed": false
+      }
+    ],
+    "logging": {
+      "entries": 96,
+      "messageCharacters": 65536,
+      "advertisedRotationBytes": 5242880,
+      "files": [
+        {
+          "name": "mcp-debug.log",
+          "bytes": 6295296
+        }
+      ]
+    }
+  },
+  "corrected": {
+    "node22": [
+      {
+        "name": "disabled debugging creates no files and does not format messages",
+        "passed": true
+      },
+      {
+        "name": "small debug entries preserve timestamp, PID and text without stdout output",
+        "passed": true
+      },
+      {
+        "name": "sustained logging rotates within one process",
+        "passed": true
+      },
+      {
+        "name": "repeated rotations keep only one previous generation",
+        "passed": true
+      },
+      {
+        "name": "large Unicode entries are bounded and end on a valid UTF-8 boundary",
+        "passed": true
+      },
+      {
+        "name": "an existing oversized log is preserved as the previous generation",
+        "passed": true
+      },
+      {
+        "name": "truncation remains valid across multibyte character boundaries",
+        "passed": true
+      },
+      {
+        "name": "failed rotation does not append past the threshold and logging can recover",
+        "passed": true
+      },
+      {
+        "name": "file failures emit bounded, rate-limited stderr diagnostics",
+        "passed": true
+      },
+      {
+        "name": "message conversion failures cannot escape debugLog",
+        "passed": true
+      },
+      {
+        "name": "concurrent processes retain rotating UTF-8 logs without protocol output",
+        "passed": true
+      },
+      {
+        "name": "logging failures preserve actual MCP responses and stdout framing",
+        "passed": true
+      }
+    ],
+    "node18": [
+      {
+        "name": "disabled debugging creates no files and does not format messages",
+        "passed": true
+      },
+      {
+        "name": "small debug entries preserve timestamp, PID and text without stdout output",
+        "passed": true
+      },
+      {
+        "name": "sustained logging rotates within one process",
+        "passed": true
+      },
+      {
+        "name": "repeated rotations keep only one previous generation",
+        "passed": true
+      },
+      {
+        "name": "large Unicode entries are bounded and end on a valid UTF-8 boundary",
+        "passed": true
+      },
+      {
+        "name": "an existing oversized log is preserved as the previous generation",
+        "passed": true
+      },
+      {
+        "name": "truncation remains valid across multibyte character boundaries",
+        "passed": true
+      },
+      {
+        "name": "failed rotation does not append past the threshold and logging can recover",
+        "passed": true
+      },
+      {
+        "name": "file failures emit bounded, rate-limited stderr diagnostics",
+        "passed": true
+      },
+      {
+        "name": "message conversion failures cannot escape debugLog",
+        "passed": true
+      },
+      {
+        "name": "concurrent processes retain rotating UTF-8 logs without protocol output",
+        "passed": true
+      },
+      {
+        "name": "logging failures preserve actual MCP responses and stdout framing",
+        "passed": true
+      }
+    ],
+    "logging": {
+      "entries": 96,
+      "messageCharacters": 65536,
+      "advertisedRotationBytes": 5242880,
+      "files": [
+        {
+          "name": "mcp-debug.log",
+          "bytes": 1048576
+        },
+        {
+          "name": "mcp-debug.log.old",
+          "bytes": 5242880
+        }
+      ]
+    },
+    "remainingAgentState": {
+      "selections": 4096,
+      "selectionRequirements": 4096,
+      "pendingSelections": 0
+    },
+    "serverCommit": "74158a90ea6e043f7516a1a424ce906809c8fe6f"
+  },
+  "serverTests": {
+    "node": "22.18.0",
+    "passed": 229,
+    "failed": 0
+  },
+  "limits": [
+    "Shared-process rotation is best effort, not a global file-size transaction",
+    "An existing oversized historical log is preserved as one backup until the next rotation",
+    "Logging stays synchronous when enabled; no throughput gain is claimed",
+    "Caller allocations, retained agent state and total process memory are outside this change"
+  ],
+  "sourceSha256": {
+    "src/state-persistence.js": "14432063540521cb02326bcaca58bb4e20af0cde057a19a29e9a7cc1707d0327",
+    "tests/debug-logging.test.mjs": "d4366287642d9ed18de79054fd2e1f9e7e76764d0c44325ba83c30a3e5ae25bc",
+    "tests/fixtures/debug-log-worker.mjs": "eec6261ab1997fed3d6ad75054fb92c7e8f8257a078e37847d26e2a23eb16974",
+    "package.json": "c3747ac8d90af18d67b86b4e1ca7c55d6f445c3d256ddad9476c4310a8accef5"
+  },
+  "ci": {
+    "runId": 36834180163,
+    "url": "https://github.com/AnkleBreaker-Studio/unity-mcp-server/actions/runs/36834180163",
+    "passed": true,
+    "jobs": 8,
+    "nodeVersions": [
+      18,
+      20,
+      22,
+      24
+    ],
+    "platforms": [
+      "Windows",
+      "Linux"
+    ],
+    "tests": 229,
+    "failed": 0,
+    "verifiedLogJobId": 110277488359
+  }
+}

@@ -1,0 +1,350 @@
+{
+  "recordedAt": "2026-10-01T00:17:43.404Z",
+  "platform": "Windows",
+  "unityVersion": "6000.6.2f1",
+  "testFrameworkVersion": "1.8.0",
+  "baselinePluginCommit": "003757859b50331816ce20f31db4cf599818afc8",
+  "baseline": {
+    "nativeTestsLaunched": false,
+    "cases": [
+      {
+        "scenario": "startup-exception",
+        "settingsRestored": false,
+        "currentJobReleased": false,
+        "status": "running",
+        "passed": false
+      },
+      {
+        "scenario": "framework-error",
+        "settingsRestored": false,
+        "currentJobReleased": false,
+        "status": "running",
+        "passed": false
+      },
+      {
+        "scenario": "clear-stuck",
+        "settingsRestored": false,
+        "currentJobReleased": true,
+        "status": "failed",
+        "passed": false
+      },
+      {
+        "scenario": "normal-completion",
+        "settingsRestored": true,
+        "currentJobReleased": true,
+        "status": "succeeded",
+        "passed": true
+      }
+    ],
+    "additionalFailures": [
+      {
+        "scenario": "clear-without-active-job",
+        "reproduction": "Controlled ScheduleJob delegate through MCP execute_code",
+        "scheduled": 1,
+        "nativeTestsLaunched": false
+      },
+      {
+        "scenario": "restored-timestamps-stay-utc",
+        "reproduction": "Live suite after script refresh returned an older restored job as latest; restored Local dates sorted ahead of newer Utc dates"
+      }
+    ]
+  },
+  "controlled": {
+    "unityVersion": "6000.6.2f1",
+    "passed": true,
+    "nativeTestsLaunched": false,
+    "playModeOptionCases": 16,
+    "checks": [
+      {
+        "scenario": "startup-exception",
+        "optionMask": 0,
+        "settingsRestored": true,
+        "currentJobReleased": true,
+        "status": "failed",
+        "passed": true
+      },
+      {
+        "scenario": "framework-error",
+        "optionMask": 0,
+        "settingsRestored": true,
+        "currentJobReleased": true,
+        "status": "failed",
+        "passed": true
+      },
+      {
+        "scenario": "clear-stuck",
+        "optionMask": 0,
+        "settingsRestored": true,
+        "currentJobReleased": true,
+        "status": "failed",
+        "passed": true
+      },
+      {
+        "scenario": "normal-completion",
+        "optionMask": 0,
+        "settingsRestored": true,
+        "currentJobReleased": true,
+        "status": "succeeded",
+        "passed": true
+      },
+      {
+        "scenario": "startup-exception",
+        "optionMask": 1,
+        "settingsRestored": true,
+        "currentJobReleased": true,
+        "status": "failed",
+        "passed": true
+      },
+      {
+        "scenario": "framework-error",
+        "optionMask": 1,
+        "settingsRestored": true,
+        "currentJobReleased": true,
+        "status": "failed",
+        "passed": true
+      },
+      {
+        "scenario": "clear-stuck",
+        "optionMask": 1,
+        "settingsRestored": true,
+        "currentJobReleased": true,
+        "status": "failed",
+        "passed": true
+      },
+      {
+        "scenario": "normal-completion",
+        "optionMask": 1,
+        "settingsRestored": true,
+        "currentJobReleased": true,
+        "status": "succeeded",
+        "passed": true
+      },
+      {
+        "scenario": "startup-exception",
+        "optionMask": 2,
+        "settingsRestored": true,
+        "currentJobReleased": true,
+        "status": "failed",
+        "passed": true
+      },
+      {
+        "scenario": "framework-error",
+        "optionMask": 2,
+        "settingsRestored": true,
+        "currentJobReleased": true,
+        "status": "failed",
+        "passed": true
+      },
+      {
+        "scenario": "clear-stuck",
+        "optionMask": 2,
+        "settingsRestored": true,
+        "currentJobReleased": true,
+        "status": "failed",
+        "passed": true
+      },
+      {
+        "scenario": "normal-completion",
+        "optionMask": 2,
+        "settingsRestored": true,
+        "currentJobReleased": true,
+        "status": "succeeded",
+        "passed": true
+      },
+      {
+        "scenario": "startup-exception",
+        "optionMask": 3,
+        "settingsRestored": true,
+        "currentJobReleased": true,
+        "status": "failed",
+        "passed": true
+      },
+      {
+        "scenario": "framework-error",
+        "optionMask": 3,
+        "settingsRestored": true,
+        "currentJobReleased": true,
+        "status": "failed",
+        "passed": true
+      },
+      {
+        "scenario": "clear-stuck",
+        "optionMask": 3,
+        "settingsRestored": true,
+        "currentJobReleased": true,
+        "status": "failed",
+        "passed": true
+      },
+      {
+        "scenario": "normal-completion",
+        "optionMask": 3,
+        "settingsRestored": true,
+        "currentJobReleased": true,
+        "status": "succeeded",
+        "passed": true
+      },
+      {
+        "scenario": "clear-without-active-job",
+        "scheduled": 0,
+        "passed": true
+      },
+      {
+        "scenario": "late-callback-and-session-restore",
+        "passed": true
+      },
+      {
+        "scenario": "restored-timestamps-stay-utc",
+        "passed": true
+      }
+    ]
+  },
+  "liveCurrent": [
+    {
+      "nodeVersion": "v18.20.8",
+      "passed": true,
+      "checks": [
+        "Real EditMode pass/failure and detailed results",
+        "Real prebuild failure releases the job and restores Play Mode options",
+        "Real PlayMode success after a prebuild failure",
+        "Native EditMode/PlayMode cancellation and rejection during cleanup",
+        "A new job succeeds after cancelled jobs finish cleanup",
+        "Clearing an absent job leaves the latest job unchanged and starts no native run"
+      ],
+      "unityVersion": "6000.6.2f1",
+      "prebuildError": "Multiple unexpected errors happened while running tests.",
+      "originalSettingsRestored": true
+    },
+    {
+      "nodeVersion": "v22.18.0",
+      "passed": true,
+      "checks": [
+        "Real EditMode pass/failure and detailed results",
+        "Real prebuild failure releases the job and restores Play Mode options",
+        "Real PlayMode success after a prebuild failure",
+        "Native EditMode/PlayMode cancellation and rejection during cleanup",
+        "A new job succeeds after cancelled jobs finish cleanup",
+        "Clearing an absent job leaves the latest job unchanged and starts no native run"
+      ],
+      "unityVersion": "6000.6.2f1",
+      "prebuildError": "Multiple unexpected errors happened while running tests.",
+      "originalSettingsRestored": true
+    }
+  ],
+  "liveReleasedServer": {
+    "commit": "826af5ce61db7e2d2d675fe90d24c941a83f3924",
+    "sequential": true,
+    "runs": [
+      {
+        "nodeVersion": "v18.20.8",
+        "passed": true,
+        "checks": [
+          "Real EditMode pass/failure and detailed results",
+          "Real prebuild failure releases the job and restores Play Mode options",
+          "Real PlayMode success after a prebuild failure",
+          "Native EditMode/PlayMode cancellation and rejection during cleanup",
+          "A new job succeeds after cancelled jobs finish cleanup",
+          "Clearing an absent job leaves the latest job unchanged and starts no native run"
+        ],
+        "unityVersion": "6000.6.2f1",
+        "prebuildError": "Multiple unexpected errors happened while running tests.",
+        "originalSettingsRestored": true
+      },
+      {
+        "nodeVersion": "v22.18.0",
+        "passed": true,
+        "checks": [
+          "Real EditMode pass/failure and detailed results",
+          "Real prebuild failure releases the job and restores Play Mode options",
+          "Real PlayMode success after a prebuild failure",
+          "Native EditMode/PlayMode cancellation and rejection during cleanup",
+          "A new job succeeds after cancelled jobs finish cleanup",
+          "Clearing an absent job leaves the latest job unchanged and starts no native run"
+        ],
+        "unityVersion": "6000.6.2f1",
+        "prebuildError": "Multiple unexpected errors happened while running tests.",
+        "originalSettingsRestored": true
+      }
+    ]
+  },
+  "ordinaryServerSuite": [
+    {
+      "nodeVersion": 18,
+      "passed": 163,
+      "failed": 0
+    },
+    {
+      "nodeVersion": 22,
+      "passed": 163,
+      "failed": 0
+    }
+  ],
+  "minimumApi": {
+    "unityVersion": "2021.3.18f1",
+    "sourceCount": 70,
+    "passed": true,
+    "check": "C# compilation against installed Unity assemblies; no editor execution or package import"
+  },
+  "registry": {
+    "registeredRoutes": 338,
+    "passed": true
+  },
+  "notCovered": [
+    "Unity 2021 runtime (deferred by maintainer)",
+    "Other operating systems and player-build test runs",
+    "Actual script reload during a native test and complete detailed-result persistence",
+    "Long-running jobs and the existing five-minute stale-job heuristic",
+    "Large-suite or empty-suite discovery, exact-limit truncation and aggregate count restoration",
+    "Blocking native tests that cannot process cooperative cancellation"
+  ],
+  "cleanup": {
+    "temporaryEditor": "Health66",
+    "originalSettingsRestored": true,
+    "temporaryEditorClosed": true,
+    "fixturesRetainedInMarkedProject": true,
+    "persistentEditors": [
+      {
+        "project": "Queue66",
+        "compilationErrors": 0,
+        "isPlaying": false,
+        "sceneDirty": false
+      },
+      {
+        "project": "Unity66",
+        "compilationErrors": 0,
+        "isPlaying": false,
+        "sceneDirty": false
+      }
+    ]
+  },
+  "implementationPluginCommit": "ad7e8adb009799c43f85034f7b3c6aa415fa1f61",
+  "published": {
+    "pluginCommit": "ad7e8adb009799c43f85034f7b3c6aa415fa1f61",
+    "serverValidationCommit": "8a852bb280b6cb68af0a89a7a4d48b729ec4d42a",
+    "pluginCi": {
+      "url": "https://github.com/AnkleBreaker-Studio/unity-mcp-plugin/actions/runs/36795622609",
+      "conclusion": "success",
+      "scope": "338-route registry; Unity validation is local"
+    },
+    "serverCi": {
+      "url": "https://github.com/AnkleBreaker-Studio/unity-mcp-server/actions/runs/36795625065",
+      "conclusion": "success",
+      "jobs": 8,
+      "nodeVersions": [
+        18,
+        20,
+        22,
+        24
+      ],
+      "platforms": [
+        "Windows",
+        "Linux"
+      ],
+      "testsPerJob": 163
+    },
+    "releasePublished": false
+  },
+  "followup": {
+    "report": "unity66-test-results.json",
+    "scope": "The original live PlayMode success check used an aggregate count. Empty-suite miscounting could hide a native zero-test run. The expanded suite requires exact test names across consecutive PlayMode runs and actual slow-test start before cancellation."
+  }
+}

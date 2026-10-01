@@ -1,0 +1,19 @@
+{
+    "unityVersion": "6000.6.2f1",
+    "passed": true,
+    "checks": [
+        "Object identity round-trip without JSON number conversion",
+        "Agent FIFO, round-robin writes, read batching and ticket results",
+        "Deferred completion is atomic, single-shot and stable after timeout",
+        "Concurrent submission retries share one ticket; conflicts, reload sessions and expired results never re-execute",
+        "Actual HTTP dispatcher validates scoped submission/polling, browser rejection, one-object retries and legacy compatibility",
+        "Legacy synchronous callers are signaled without lost wakeups",
+        "Legacy timeout preserves running outcomes and skips expired batched and queued work",
+        "Dashboard shows running-only work and separates failures from finished requests",
+        "Submission retry cache refuses new work at its bounded capacity",
+        "1000 status polls at queue depths 100 and 10000"
+    ],
+    "polling100Ms": 3.113,
+    "polling10000Ms": 3.8991000000000002,
+    "error": ""
+}

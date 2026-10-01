@@ -1,381 +1,19 @@
-// Unity Editor HTTP Bridge Client
-// Communicates with the C# plugin running inside Unity Editor
-// Supports both queue mode (async ticket-based) and legacy sync mode
+// Unity Editor HTTP bridge wrappers.
+import { getRequestContext, getCurrentAgentId } from "./request-context.js";
 import { CONFIG } from "./config.js";
-import { getActiveBridgeUrl } from "./instance-discovery.js";
+import { getActiveBridgeUrl, bridgeIdentity } from "./instance-discovery.js";
+import { sendQueuedCommand } from "./queue-transport.js";
+import { pluginSupports } from "./capabilities.js";
+import { requestFetch, throwIfRequestCancelled } from "./request-cancellation.js";
 
-// Dynamic bridge URL â€" resolved per-call based on selected instance
-function getBridgeUrl() {
-  return getActiveBridgeUrl();
-}
+function getBridgeUrl() { return getActiveBridgeUrl(); }
 
-// Agent identity â€" tracks which AI agent is making requests
-let _currentAgentId = "default";
-
-// Mode detection â€" cached to avoid repeated 404 checks
-let _useQueueMode = true;
-let _queueModeDetermined = false;
-
-/**
- * Set the current agent ID. All subsequent sendCommand calls include this as X-Agent-Id header.
- */
 export function setAgentId(agentId) {
-  _currentAgentId = agentId || "default";
+  getRequestContext().agentId = agentId || "default";
 }
 
-// Retry settings â€" handles Unity domain reloads (1-3 sec server downtime)
-const MAX_RETRIES = 4;
-const RETRY_BASE_DELAY_MS = 800; // 800ms, 1600ms, 3200ms, 6400ms
-
-/**
- * Sleep helper for retry backoff
- */
-function sleep(ms) {
-  return new Promise((resolve) => setTimeout(resolve, ms));
-}
-
-/**
- * Returns true if the error looks like a transient connection issue
- * (server temporarily down during Unity domain reload).
- */
-function isTransientError(error, response) {
-  if (error) {
-    // Connection refused / reset / aborted â€" server is restarting
-    const msg = error.message || "";
-    return (
-      error.code === "ECONNREFUSED" ||
-      error.code === "ECONNRESET" ||
-      msg.includes("ECONNREFUSED") ||
-      msg.includes("ECONNRESET") ||
-      msg.includes("fetch failed") ||
-      error.name === "AbortError"
-    );
-  }
-  // HTTP 500/503 during domain reload (server half-alive)
-  if (response && (response.status === 503 || response.status === 500)) {
-    return true;
-  }
-  return false;
-}
-
-/**
- * Submit a command to the queue and get a ticket ID.
- * POST /api/queue/submit with {apiPath, method, body, agentId}
- */
-async function submitToQueue(apiPath, bodyString) {
-  const url = `${getBridgeUrl()}/api/queue/submit`;
-
-  const response = await fetch(url, {
-    method: "POST",
-    headers: {
-      "Content-Type": "application/json",
-      "X-Agent-Id": _currentAgentId,
-    },
-    body: JSON.stringify({
-      apiPath,
-      method: "POST",
-      body: bodyString,
-      agentId: _currentAgentId,
-    }),
-    signal: AbortSignal.timeout(CONFIG.editorBridgeTimeout),
-  });
-
-  if (!response.ok) {
-    const text = await response.text();
-    throw new Error(`HTTP ${response.status}: ${text}`);
-  }
-
-  const data = await response.json();
-  return data; // { ticketId, queuePosition, ... }
-}
-
-/**
- * Poll the queue status for a ticket until completion.
- * GET /api/queue/status?ticketId=X
- */
-async function pollQueueStatus(ticketId) {
-  let pollIntervalMs = CONFIG.queuePollIntervalMs;
-  // Cap the growth of the poll interval at the configured max (default 1500ms). This used
-  // to be Math.min(1000, ...), which silently clamped the documented UNITY_QUEUE_POLL_MAX
-  // and the default to 1000.
-  const maxIntervalMs = CONFIG.queuePollMaxMs;
-  const startTime = Date.now();
-  // Use dedicated poll timeout (longer than bridge timeout to handle slow operations like execute_code)
-  const timeoutMs = CONFIG.queuePollTimeoutMs || CONFIG.editorBridgeTimeout;
-  let consecutive404s = 0;
-  let consecutiveTransient = 0;
-  const max404Grace = 5; // Allow a few 404s during the dequeueâ†'execute race window
-
-  while (true) {
-    // Check timeout
-    if (Date.now() - startTime > timeoutMs) {
-      return {
-        success: false,
-        error: `Queue polling timed out after ${timeoutMs}ms for ticket ${ticketId}`,
-      };
-    }
-
-    // Poll status
-    try {
-      const url = `${getBridgeUrl()}/api/queue/status?ticketId=${ticketId}`;
-      const response = await fetch(url, {
-        method: "GET",
-        headers: {
-          "X-Agent-Id": _currentAgentId,
-        },
-        signal: AbortSignal.timeout(10000), // 10s per individual poll request
-      });
-
-      if (!response.ok) {
-        // Grace period for 404 â€" ticket may be between dequeue and execution tracking
-        if (response.status === 404) {
-          consecutive404s++;
-          if (consecutive404s < max404Grace) {
-            await sleep(pollIntervalMs);
-            pollIntervalMs = Math.min(Math.ceil(pollIntervalMs * 1.5), maxIntervalMs);
-            continue;
-          }
-        }
-        const text = await response.text();
-        return {
-          success: false,
-          error: `Failed to poll queue status: HTTP ${response.status}: ${text}`,
-        };
-      }
-
-      // Reset the 404 and transient-error counters on any successful poll response.
-      consecutive404s = 0;
-      consecutiveTransient = 0;
-
-      const statusData = await response.json();
-
-      // Check completion status
-      if (statusData.status === "Completed") {
-        // Extract result — explicit undefined check so falsy results (null, 0, false, "") pass
-        // through. A ticket with NO result field completes with a minimal status object;
-        // returning the whole ticket here used to leak queue metadata into tool output.
-        return {
-          success: true,
-          data: statusData.result !== undefined ? statusData.result : { status: "Completed" },
-        };
-      } else if (statusData.status === "Failed") {
-        // The queue ticket carries the Unity-side exception in `errorMessage`
-        // (MCPRequestQueue.TicketToDict) — reading only `error` here silently discarded
-        // EVERY real diagnostic and returned the generic fallback for all routes, which
-        // pushed agents into retrying non-idempotent writes blind. `error` is still
-        // accepted for the legacy synchronous shape.
-        return {
-          success: false,
-          error: statusData.errorMessage || statusData.error || "Queue processing failed",
-        };
-      } else if (statusData.status === "TimedOut") {
-        // Terminal on the plugin side — surface it now instead of polling a doomed ticket
-        // until it's evicted (which then reads back as a misleading 404 ~30-60s later).
-        return {
-          success: false,
-          error:
-            statusData.errorMessage ||
-            statusData.error ||
-            `Unity-side execution timed out for ticket ${ticketId}`,
-        };
-      }
-
-      // Still processing â€" wait before polling again
-      await sleep(pollIntervalMs);
-
-      // Increase poll interval up to max
-      pollIntervalMs = Math.min(
-        Math.ceil(pollIntervalMs * 1.5),
-        maxIntervalMs
-      );
-    } catch (error) {
-      // A transient poll failure (ECONNRESET/"fetch failed"/AbortError) commonly happens
-      // when the command triggered a domain reload that briefly drops the bridge — Unity
-      // still finishes the ticket. Failing here made the client retry a NON-idempotent
-      // command that already ran (duplicate GameObject, double package add). Keep polling
-      // through transient errors until the deadline; only give up on a non-transient one.
-      if (isTransientError(error, null)) {
-        consecutiveTransient++;
-        console.error(
-          `[MCP Bridge] Transient poll error for ticket ${ticketId} (${error.message}), retrying (${consecutiveTransient})...`
-        );
-        await sleep(pollIntervalMs);
-        pollIntervalMs = Math.min(Math.ceil(pollIntervalMs * 1.5), maxIntervalMs);
-        continue;
-      }
-      return {
-        success: false,
-        error: `Error polling queue: ${error.message}`,
-      };
-    }
-  }
-}
-
-/**
- * Send command via legacy sync mode (direct POST).
- * Falls back to the original implementation.
- */
-async function sendCommandLegacyMode(command, params = {}) {
-  const url = `${getBridgeUrl()}/api/${command}`;
-  let lastError = null;
-
-  for (let attempt = 0; attempt <= MAX_RETRIES; attempt++) {
-    const controller = new AbortController();
-    const timeout = setTimeout(() => controller.abort(), CONFIG.editorBridgeTimeout);
-
-    try {
-      const response = await fetch(url, {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          "X-Agent-Id": _currentAgentId,
-        },
-        body: JSON.stringify(params),
-        signal: controller.signal,
-      });
-      clearTimeout(timeout);
-
-      // Transient server error â€" retry
-      if (isTransientError(null, response) && attempt < MAX_RETRIES) {
-        const delay = RETRY_BASE_DELAY_MS * Math.pow(2, attempt);
-        console.error(
-          `[MCP Bridge] HTTP ${response.status} on ${command}, retrying in ${delay}ms (${attempt + 1}/${MAX_RETRIES})...`
-        );
-        await sleep(delay);
-        continue;
-      }
-
-      if (!response.ok) {
-        const text = await response.text();
-        return { success: false, error: `HTTP ${response.status}: ${text}` };
-      }
-
-      const data = await response.json();
-
-      // If we retried, log that we recovered
-      if (attempt > 0) {
-        console.error(
-          `[MCP Bridge] Recovered after ${attempt} retries for ${command}`
-        );
-      }
-
-      return { success: true, data };
-    } catch (error) {
-      clearTimeout(timeout);
-      lastError = error;
-
-      // Transient connection error â€" retry with backoff
-      if (isTransientError(error, null) && attempt < MAX_RETRIES) {
-        const delay = RETRY_BASE_DELAY_MS * Math.pow(2, attempt);
-        console.error(
-          `[MCP Bridge] ${error.code || error.name || "Error"} on ${command}, retrying in ${delay}ms (${attempt + 1}/${MAX_RETRIES})...`
-        );
-        await sleep(delay);
-        continue;
-      }
-    }
-  }
-
-  // All retries exhausted
-  if (lastError?.name === "AbortError") {
-    return {
-      success: false,
-      error:
-        "Request timed out after retries. Unity Editor may be in a long domain reload or not running.",
-    };
-  }
-  return {
-    success: false,
-    error: `Connection failed after ${MAX_RETRIES} retries: ${lastError?.message}. Unity Editor may be reloading or not running.`,
-  };
-}
-
-/**
- * Send a command to the Unity Editor bridge.
- * Tries queue mode first (async ticket-based), falls back to legacy sync mode if 404.
- * Automatically retries on transient failures (e.g. Unity domain reload)
- * with exponential backoff so multi-agent workflows stay resilient.
- */
 export async function sendCommand(command, params = {}) {
-  const bodyString = JSON.stringify(params);
-
-  // If we've determined the plugin doesn't support queue mode, use legacy
-  if (_queueModeDetermined && !_useQueueMode) {
-    return sendCommandLegacyMode(command, params);
-  }
-
-  // Try queue mode (if not yet determined it's unavailable)
-  if (!_queueModeDetermined || _useQueueMode) {
-    try {
-      // Submit to queue with retry logic
-      let submitLastError = null;
-      for (let attempt = 0; attempt <= MAX_RETRIES; attempt++) {
-        try {
-          const ticketData = await submitToQueue(command, bodyString);
-          const ticketId = ticketData.ticketId;
-
-          // Log to stderr, not stdout — stdout is reserved for the MCP JSON-RPC
-          // transport and any non-JSON data there closes strict clients (e.g. Codex).
-          console.error(`[MCP Bridge] Submitted ${command} to queue, ticket: ${ticketId}`);
-
-          // Poll for completion
-          const result = await pollQueueStatus(ticketId);
-
-          // Queue submission succeeded (we got a ticket), so queue mode is confirmed
-          _queueModeDetermined = true;
-          _useQueueMode = true;
-          return result;
-        } catch (submitError) {
-          submitLastError = submitError;
-
-          // Check if it's a transient error worth retrying
-          if (isTransientError(submitError, null) && attempt < MAX_RETRIES) {
-            const delay = RETRY_BASE_DELAY_MS * Math.pow(2, attempt);
-            console.error(
-              `[MCP Bridge] Error submitting to queue: ${submitError.message}, retrying in ${delay}ms (${attempt + 1}/${MAX_RETRIES})...`
-            );
-            await sleep(delay);
-            continue;
-          }
-
-          // Check if it's a 404 (queue not supported) â€" match "HTTP 404" or raw status code
-          if (submitError.status === 404 || (submitError.message && /HTTP\s*404/.test(submitError.message))) {
-            console.warn(
-              `[MCP Bridge] Queue mode not supported (HTTP 404), falling back to legacy sync mode`
-            );
-            _queueModeDetermined = true;
-            _useQueueMode = false;
-            return sendCommandLegacyMode(command, params);
-          }
-
-          // Other errors â€" don't retry, mark mode as undetermined and try legacy
-          break;
-        }
-      }
-
-      // If we get here, queue submit failed after retries
-      if (submitLastError) {
-        // A TRANSIENT failure (editor not up yet, domain reload longer than the retry window,
-        // connection reset) is NOT evidence the plugin lacks queue mode — only the HTTP 404
-        // above is. Latching here downgraded the session permanently and irreversibly: legacy
-        // mode loses agent attribution, per-action undo grouping and read-batching, and nothing
-        // ever reset the flags. Fall back for THIS call, leave the mode undetermined so the
-        // next call re-probes.
-        console.warn(
-          `[MCP Bridge] Queue submit failed after retries, using legacy sync for this call (mode left undetermined): ${submitLastError.message}`
-        );
-        return sendCommandLegacyMode(command, params);
-      }
-    } catch (error) {
-      console.warn(
-        `[MCP Bridge] Unexpected error in queue mode, using legacy sync for this call (mode left undetermined): ${error.message}`
-      );
-      return sendCommandLegacyMode(command, params);
-    }
-  }
-
-  // Fallback (should not reach here, but just in case)
-  return sendCommandLegacyMode(command, params);
+  return sendQueuedCommand(command, params, getBridgeUrl(), getCurrentAgentId());
 }
 
 /**
@@ -385,22 +23,22 @@ export async function sendCommand(command, params = {}) {
 export async function getQueueInfo() {
   try {
     const url = `${getBridgeUrl()}/api/queue/info`;
-    const response = await fetch(url, {
+    const response = await requestFetch(url, {
       method: "GET",
       headers: {
-        "X-Agent-Id": _currentAgentId,
+        "X-Agent-Id": getCurrentAgentId(),
       },
-      signal: AbortSignal.timeout(CONFIG.editorBridgeTimeout),
-    });
+    }, CONFIG.editorBridgeTimeout);
 
     if (!response.ok) {
-      const text = await response.text();
+      const text = response.text;
       return { success: false, error: `HTTP ${response.status}: ${text}` };
     }
 
-    const data = await response.json();
+    const data = JSON.parse(response.text);
     return { success: true, data };
   } catch (error) {
+    throwIfRequestCancelled();
     return {
       success: false,
       error: `Failed to get queue info: ${error.message}`,
@@ -415,22 +53,22 @@ export async function getQueueInfo() {
 export async function getTicketStatus(ticketId) {
   try {
     const url = `${getBridgeUrl()}/api/queue/status?ticketId=${ticketId}`;
-    const response = await fetch(url, {
+    const response = await requestFetch(url, {
       method: "GET",
       headers: {
-        "X-Agent-Id": _currentAgentId,
+        "X-Agent-Id": getCurrentAgentId(),
       },
-      signal: AbortSignal.timeout(CONFIG.editorBridgeTimeout),
-    });
+    }, CONFIG.editorBridgeTimeout);
 
     if (!response.ok) {
-      const text = await response.text();
+      const text = response.text;
       return { success: false, error: `HTTP ${response.status}: ${text}` };
     }
 
-    const data = await response.json();
+    const data = JSON.parse(response.text);
     return { success: true, data };
   } catch (error) {
+    throwIfRequestCancelled();
     return {
       success: false,
       error: `Failed to get ticket status: ${error.message}`,
@@ -443,16 +81,17 @@ export async function getTicketStatus(ticketId) {
  */
 export async function ping() {
   try {
-    const response = await fetch(`${getBridgeUrl()}/api/ping`, {
+    const response = await requestFetch(`${getBridgeUrl()}/api/ping`, {
       method: "GET",
-      signal: AbortSignal.timeout(3000),
-    });
+    }, 3000);
     if (response.ok) {
-      const data = await response.json();
+      const data = JSON.parse(response.text);
+      if (!bridgeIdentity(data)) return { connected: false, error: "The endpoint did not identify a Unity Editor bridge" };
       return { connected: true, ...data };
     }
     return { connected: false, error: `HTTP ${response.status}` };
   } catch {
+    throwIfRequestCancelled();
     return { connected: false, error: "Unity Editor bridge not reachable" };
   }
 }
@@ -559,6 +198,12 @@ export async function updateScript(params) {
 }
 
 export async function buildProject(params) {
+  if (params?.managedCodeVariant !== undefined) {
+    const info = await getQueueInfo();
+    if (!info.success) return info;
+    if (!pluginSupports(info.data, "MANAGED_CODE_VARIANT"))
+      return { success: false, error: "managedCodeVariant requires a plugin supporting protocol 3 or newer. Update the plugin before building with this option." };
+  }
   return sendCommand("build/start", params);
 }
 
@@ -1710,17 +1355,16 @@ export async function getProjectContext(category = null) {
     ? `${getBridgeUrl()}/api/context/${encodeURIComponent(category)}`
     : `${getBridgeUrl()}/api/context`;
 
-  const response = await fetch(url, {
+  const response = await requestFetch(url, {
     method: "GET",
-    headers: { "X-Agent-Id": _currentAgentId },
-    signal: AbortSignal.timeout(5000),
-  });
+    headers: { "X-Agent-Id": getCurrentAgentId() },
+  }, 5000);
 
   if (!response.ok) {
     throw new Error(`Context request failed: HTTP ${response.status}`);
   }
 
-  return response.json();
+  return JSON.parse(response.text);
 }
 
 // ─── Testing ───

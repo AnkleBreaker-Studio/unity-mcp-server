@@ -1,0 +1,14 @@
+{
+    "unityVersion": "6000.6.2f1",
+    "passed": true,
+    "checks": [
+        "Object identity round-trip without JSON number conversion",
+        "Agent FIFO, round-robin writes, read batching and ticket results",
+        "Deferred ticket remains queryable until its callback completes",
+        "Legacy synchronous callers are signaled without lost wakeups",
+        "1000 status polls at queue depths 100 and 10000"
+    ],
+    "polling100Ms": 2.9633000000000003,
+    "polling10000Ms": 2.9057,
+    "error": ""
+}

@@ -1,0 +1,303 @@
+{
+  "checkedOn": "2026-10-01",
+  "assessment": "In progress; evidence confirms major improvements and identifies remaining lifetime and coverage work",
+  "components": {
+    "serverCommit": "e9e76747c12bc7336d42a7f4281ef2a2e6e41bd4",
+    "pluginCommit": "f67c16c40881a4fede48dd1692b7bd49e9597744",
+    "serverVersion": "2.35.6",
+    "pluginVersion": "2.39.7",
+    "branch": "Development-Unity66-Modernization",
+    "released": false
+  },
+  "refreshedCompatibility": {
+    "report": "unity66-version-compatibility.json",
+    "nodeVersions": [
+      "18.20.8",
+      "22.18.0"
+    ],
+    "combinationsPerNode": 4,
+    "allPassed": true,
+    "mixedCallsPerNode": 12,
+    "agentsPerNode": 4,
+    "editorsPerNode": 2,
+    "toolNamesPreserved": 384,
+    "addedMandatoryArguments": 0,
+    "unityVersion": "6000.6.2f1",
+    "platform": "Windows"
+  },
+  "readme": {
+    "localRenderer": "Chromium, marked 18, existing local GitHub-style stylesheet",
+    "localChecks": [
+      {
+        "document": "readme",
+        "title": "readme preview",
+        "viewport": 390,
+        "articleWidth": 390,
+        "articleScrollWidth": 390,
+        "images": [
+          {
+            "src": "docs/hero.svg",
+            "loaded": true
+          },
+          {
+            "src": "docs/unity-mcp-showcase-village.gif",
+            "loaded": true
+          }
+        ],
+        "openDetails": 1,
+        "tables": 4,
+        "textLength": 10861
+      },
+      {
+        "document": "readme",
+        "title": "readme preview",
+        "viewport": 1280,
+        "articleWidth": 960,
+        "articleScrollWidth": 960,
+        "images": [
+          {
+            "src": "docs/hero.svg",
+            "loaded": true
+          },
+          {
+            "src": "docs/unity-mcp-showcase-village.gif",
+            "loaded": true
+          }
+        ],
+        "openDetails": 1,
+        "tables": 4,
+        "textLength": 10861
+      },
+      {
+        "document": "plugin",
+        "title": "plugin preview",
+        "viewport": 1280,
+        "articleWidth": 960,
+        "articleScrollWidth": 960,
+        "images": [
+          {
+            "src": "Documentation~/hero.svg",
+            "loaded": true
+          },
+          {
+            "src": "docs/unity-mcp-showcase-village.gif",
+            "loaded": true
+          }
+        ],
+        "openDetails": 2,
+        "tables": 5,
+        "textLength": 12849
+      },
+      {
+        "document": "plugin",
+        "title": "plugin preview",
+        "viewport": 390,
+        "articleWidth": 390,
+        "articleScrollWidth": 390,
+        "images": [
+          {
+            "src": "Documentation~/hero.svg",
+            "loaded": true
+          },
+          {
+            "src": "docs/unity-mcp-showcase-village.gif",
+            "loaded": true
+          }
+        ],
+        "openDetails": 2,
+        "tables": 5,
+        "textLength": 12849
+      }
+    ],
+    "hostedChecks": [
+      {
+        "repo": "unity-mcp-server",
+        "viewport": 390,
+        "articleWidth": 324,
+        "articleScrollWidth": 324,
+        "images": [
+          {
+            "src": "/AnkleBreaker-Studio/unity-mcp-server/raw/Development-Unity66-Modernization/docs/hero.svg",
+            "loaded": true
+          },
+          {
+            "src": "/AnkleBreaker-Studio/unity-mcp-server/raw/Development-Unity66-Modernization/docs/unity-mcp-showcase-village.gif",
+            "loaded": true
+          },
+          {
+            "src": "https://github.com/AnkleBreaker-Studio/unity-mcp-server/raw/Development-Unity66-Modernization/docs/unity-mcp-showcase-village.gif",
+            "loaded": true
+          }
+        ],
+        "openDetails": 1,
+        "previewNotice": true
+      },
+      {
+        "repo": "unity-mcp-server",
+        "viewport": 1280,
+        "articleWidth": 838,
+        "articleScrollWidth": 838,
+        "images": [
+          {
+            "src": "/AnkleBreaker-Studio/unity-mcp-server/raw/Development-Unity66-Modernization/docs/hero.svg",
+            "loaded": true
+          },
+          {
+            "src": "/AnkleBreaker-Studio/unity-mcp-server/raw/Development-Unity66-Modernization/docs/unity-mcp-showcase-village.gif",
+            "loaded": true
+          },
+          {
+            "src": "https://github.com/AnkleBreaker-Studio/unity-mcp-server/raw/Development-Unity66-Modernization/docs/unity-mcp-showcase-village.gif",
+            "loaded": true
+          }
+        ],
+        "openDetails": 1,
+        "previewNotice": true
+      },
+      {
+        "repo": "unity-mcp-plugin",
+        "viewport": 390,
+        "articleWidth": 324,
+        "articleScrollWidth": 324,
+        "images": [
+          {
+            "src": "/AnkleBreaker-Studio/unity-mcp-plugin/raw/Development-Unity66-Modernization/Documentation~/hero.svg",
+            "loaded": true
+          },
+          {
+            "src": "/AnkleBreaker-Studio/unity-mcp-plugin/raw/Development-Unity66-Modernization/docs/unity-mcp-showcase-village.gif",
+            "loaded": true
+          },
+          {
+            "src": "https://github.com/AnkleBreaker-Studio/unity-mcp-plugin/raw/Development-Unity66-Modernization/docs/unity-mcp-showcase-village.gif",
+            "loaded": true
+          }
+        ],
+        "openDetails": 2,
+        "previewNotice": true
+      },
+      {
+        "repo": "unity-mcp-plugin",
+        "viewport": 1280,
+        "articleWidth": 838,
+        "articleScrollWidth": 838,
+        "images": [
+          {
+            "src": "/AnkleBreaker-Studio/unity-mcp-plugin/raw/Development-Unity66-Modernization/Documentation~/hero.svg",
+            "loaded": true
+          },
+          {
+            "src": "/AnkleBreaker-Studio/unity-mcp-plugin/raw/Development-Unity66-Modernization/docs/unity-mcp-showcase-village.gif",
+            "loaded": true
+          },
+          {
+            "src": "https://github.com/AnkleBreaker-Studio/unity-mcp-plugin/raw/Development-Unity66-Modernization/docs/unity-mcp-showcase-village.gif",
+            "loaded": true
+          }
+        ],
+        "openDetails": 2,
+        "previewNotice": true
+      }
+    ],
+    "checkedLocalOrBranchMappedLinks": 92,
+    "brokenLinks": 0,
+    "heroCopiesMatch": true,
+    "workflowCopiesMatch": true,
+    "visualInspection": "Local server desktop/mobile headers, local plugin mobile header and hosted plugin desktop header; DOM geometry/images/details checked on both documents at both widths"
+  },
+  "comparison": {
+    "checkedPrimarySources": [
+      "https://coplaydev.github.io/unity-mcp/guides/multi-instance",
+      "https://coplaydev.github.io/unity-mcp/architecture/transports",
+      "https://docs.unity.cn/Packages/com.unity.ai.assistant@2.9/manual/integration/ai-gateway-intro.html"
+    ],
+    "scope": "Documented capabilities and scheduling/retry mechanisms; no comparative execution benchmark"
+  },
+  "lifetimeFindings": {
+    "report": "state-retention-audit.json",
+    "selectionMaps": "4096 completed distinct agents remain retained in both maps; same-agent reuse does not grow them; pending selections are released",
+    "debugLog": "96 messages of 65536 characters produce 6295296 bytes without rotation, above the documented 5242880-byte threshold",
+    "routingConstraint": "Expiring state must not silently permit a returning agent to operate another project",
+    "remaining": "Selection/discovery/context lifetimes, bounded debug logging, queued decoded arguments and transport worker/output retention"
+  },
+  "cleanup": {
+    "ownedEditorsClosed": true,
+    "temporarySceneRemoved": true,
+    "baselineSavedScenePreserved": true,
+    "headlessBrowserClosed": true
+  },
+  "limits": [
+    "The four-pair matrix exercises common commands, not all named operations",
+    "Node CI on Linux does not validate a Linux Unity Editor",
+    "Actual older-Unity execution is deferred at the maintainer's request; compiler-only checks are separate",
+    "MPPM evidence covers native editor orchestration, not game networking or ParrelSync lifecycle",
+    "Runtime files were not changed during this audit"
+  ],
+  "sourceSha256": {
+    "README.md": "538b4352bf29a07702230ccd62b74a56995fe2bb5cfbb3a531658c9e39e1e245",
+    "../unity-mcp-plugin/README.md": "2b12c7948478685daa1c02d5b7d252012d921648becefac1e087b39fb78a1eda",
+    "docs/hero.svg": "0b37b7f27e4a9e0ab37f7f460153afa59b68f8b6f680183f7df3c81274cc09f3",
+    "docs/workflow.svg": "a98bb32fcce2ab386a329250513e9610739c9e540cebd9bc3ad2cccee65f7a31",
+    "src/index.js": "bed37daae182d0677fe97b8c78171fb181d29ea1f172a7ffe44c74a674a7958e",
+    "src/instance-discovery.js": "d846d3e2b15a323f8e8d80201ac44767d0e7d818ef926a84d02f5b1818f287f4",
+    "src/state-persistence.js": "72bbc6724f6a305e2d9182f841eed4b3c08ea7f09298143c2b4d1cf8062b49f1",
+    "src/request-context.js": "46949560796b7909fdb15f6dcba9804ede3ed3553d824db17561a9c2268eeaa0",
+    "src/queue-transport.js": "9bab7c1883a78446b8e69d1b4cb2f49c13ee85e96375fdefc2e6265b611c7fa1",
+    "tests/live-version-compatibility.test.mjs": "7e204ab90ccc8567b802028a0b0c31dffb12b7b3b2b41554bc021cc09d1c1675",
+    "tests/diagnostics/state-retention-audit.mjs": "39e551727027c2683592799e0559f7a64b28b6d200d8c9848ffcea8c300fb5a2"
+  },
+  "auditCommit": "8d186251239808407e95425149bd42add1eb464e",
+  "ci": {
+    "runId": 36832779588,
+    "url": "https://github.com/AnkleBreaker-Studio/unity-mcp-server/actions/runs/36832779588",
+    "passed": true,
+    "jobs": 8,
+    "nodeVersions": [
+      18,
+      20,
+      22,
+      24
+    ],
+    "platforms": [
+      "Windows",
+      "Linux"
+    ],
+    "tests": 217,
+    "failures": 0,
+    "verifiedLogJobId": 110272979793
+  },
+  "followUps": {
+    "debugLogging": {
+      "status": "corrected",
+      "report": "debug-logging.json",
+      "agentStateRetentionStillOpen": false
+    },
+    "agentState": {
+      "status": "corrected",
+      "report": "agent-state.json",
+      "remaining": "Decoded queued arguments, transport workers/output retention and broader multiplayer coverage",
+      "serverCommit": "eae1ec10257541d11c000ef39e96f977a1ffd250",
+      "ci": "https://github.com/AnkleBreaker-Studio/unity-mcp-server/actions/runs/36836934911"
+    },
+    "commandAdmission": {
+      "status": "corrected",
+      "report": "unity66-command-admission.json",
+      "scope": "HTTP ticket count and weighted decoded-argument accounting",
+      "remaining": "Parsing before admission, completed results/history, transport workers/output and native buffers",
+      "pluginCommit": "0e35f3f1b18f9618730c8ca0070c48ab49b57e37",
+      "serverCommit": "45ececeee9dfe6ad37f0a376668224be56a734bb",
+      "serverCi": "https://github.com/AnkleBreaker-Studio/unity-mcp-server/actions/runs/36841683235",
+      "pluginCi": "https://github.com/AnkleBreaker-Studio/unity-mcp-plugin/actions/runs/36840673790"
+    },
+    "resultRetention": {
+      "status": "corrected",
+      "report": "unity66-result-retention.json",
+      "scope": "Completed polling-cache count/cost and pending-history result references",
+      "remaining": "Native/caller-owned references, mutable results, history metadata, transport workers/output and buffers",
+      "pluginCommit": "63afda528bc0158b40acdb09f91cf9c7dde6eae9",
+      "serverCommit": "565f4af94377e2c04db885b25b447ede4b4b0f4d",
+      "serverCi": "https://github.com/AnkleBreaker-Studio/unity-mcp-server/actions/runs/36844619880",
+      "pluginCi": "https://github.com/AnkleBreaker-Studio/unity-mcp-plugin/actions/runs/36844555925"
+    }
+  }
+}

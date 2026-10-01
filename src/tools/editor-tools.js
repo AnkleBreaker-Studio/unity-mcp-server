@@ -2,6 +2,8 @@
 import * as bridge from "../unity-editor-bridge.js";
 import { formatResult, looksLikeErrorObject } from "../response-format.js";
 import { isUnknownRouteResult } from "../capabilities.js";
+import { agentState } from "../agent-state.js";
+import { requestSleep } from "../request-cancellation.js";
 
 // Shared shaping for image-returning graphics tools.
 // The bridge wraps plugin payloads as { success, data: { ..., base64 } } (queue mode)
@@ -13,7 +15,7 @@ function imageResultBlocks(result, noImageError) {
   const imageData = result.data?.base64 || result.base64;
   if (!imageData || typeof imageData !== "string") {
     // noImageError last so an empty-string result.error can't clobber the message.
-    return formatResult({ ...result, error: noImageError });
+    return formatResult({ ...result, success: false, error: noImageError });
   }
   const metadata = { ...result };
   delete metadata.base64;
@@ -260,14 +262,14 @@ export const editorTools = [
   },
   {
     name: "unity_component_set_property",
-    description: "Set a property value on a component. Supports floats, ints, strings, bools, vectors, colors, and object references. For ObjectReference properties, pass value as: an asset path string, a scene object name string, null to clear, or an object with {assetPath}, {instanceId}, or {gameObject, componentType}.",
+    description: "Set a serialized component property: numbers, strings, bools, vectors, colors, enums or object references.",
     inputSchema: {
       type: "object",
       properties: {
         gameObjectPath: { type: "string", description: "Path or name of target GameObject" },
         componentType: { type: "string", description: "Component type name" },
         propertyName: { type: "string", description: "Name of the property to set" },
-        value: { type: ["string", "number", "boolean", "object", "array", "null"], description: "Value to set. ObjectReference accepts: asset path, scene object name, null, or {assetPath?, instanceId?, gameObject?, componentType?}" },
+        value: { type: ["string", "number", "boolean", "object", "array", "null"], description: "ObjectReference: asset path, scene name, null, or {assetPath?,instanceId?,gameObject?,componentType?}. Enum: name, index (0-based), or {enumValue:int} for flags/raw values." },
       },
       required: ["gameObjectPath", "componentType", "propertyName", "value"],
     },
@@ -396,7 +398,7 @@ export const editorTools = [
         type: { type: "string", description: "Asset type filter: Script, Scene, Prefab, Material, Texture, AudioClip, AnimationClip, Shader, Font, Mesh, Model" },
         search: { type: "string", description: "Search query string" },
         recursive: { type: "boolean", description: "Search recursively in subfolders (default: true)" },
-        maxResults: { type: "number", description: "Maximum assets to return (default: 500). Use lower values for large projects." },
+        maxResults: { type: "number", minimum: 1, maximum: 10000, description: "Limit 1-10000 (default 500). Returns totalCount and truncated." },
       },
     },
     handler: async (params) => formatResult(await bridge.getAssetList(params)),
@@ -504,7 +506,7 @@ export const editorTools = [
   },
   {
     name: "unity_execute_code",
-    description: "Execute arbitrary C# code inside the Unity Editor. The code runs in the editor context with access to all Unity APIs. Useful for one-off operations, queries, and automation. Return values are serialized to JSON.",
+    description: "Run C# in the Unity Editor with Unity API access. Return a small JSON result. If an error has executionCompleted=true, the code already ran; inspect its effects before retrying.",
     inputSchema: {
       type: "object",
       properties: {
@@ -550,22 +552,27 @@ export const editorTools = [
   // â”€â”€â”€ Build â”€â”€â”€
   {
     name: "unity_build",
-    description: "Start a build of the Unity project for a target platform.",
+    description: "Build the project for a target platform.",
     inputSchema: {
       type: "object",
       properties: {
         target: {
           type: "string",
-          description: "Build target platform",
+          description: "Platform",
           enum: ["StandaloneWindows64", "StandaloneOSX", "StandaloneLinux64", "Android", "iOS", "WebGL"],
         },
-        outputPath: { type: "string", description: "Output path for the build" },
+        outputPath: { type: "string", description: "Build output path" },
         scenes: {
           type: "array",
           items: { type: "string" },
-          description: "Scene paths to include (default: scenes in build settings)",
+          description: "Scene paths; default: enabled Build Settings scenes",
         },
-        developmentBuild: { type: "boolean", description: "Enable development build (default: false)" },
+        developmentBuild: { type: "boolean", description: "Development build (default: false)" },
+        managedCodeVariant: {
+          type: "string",
+          enum: ["Release", "Instrumented", "Checked", "Debug"],
+          description: "Unity 6.6+, protocol 3. Default: Checked for Development, Release otherwise. This build only.",
+        },
       },
       required: ["target", "outputPath"],
     },
@@ -632,21 +639,18 @@ export const editorTools = [
     },
     handler: async ({ action }) => {
       const result = await bridge.playMode(action);
-      // Entering/exiting play mode triggers a domain reload that evicts queue tickets —
-      // the status poll then 404s while the mode switch actually happened (a false
-      // negative). Before propagating that specific failure, verify the editor state:
-      // if it matches the requested action, the operation succeeded.
-      const ticketLost =
+      // Reload can lose the result after a successful switch. Read back; never replay it.
+      // Pause toggles state, so its intended final value cannot be inferred here.
+      const needsVerification = (action === "play" || action === "stop") &&
         result && result.success === false &&
-        /HTTP 404|not found or expired/i.test(result.error || "");
-      if (ticketLost) {
+        (result.outcomeUnknown === true || /HTTP 404|not found or expired/i.test(result.error || ""));
+      if (needsVerification) {
         try {
           const state = await bridge.getEditorState();
           const s = state && state.data !== undefined ? state.data : state;
           const confirmed =
             (action === "play" && s.isPlaying === true) ||
-            (action === "stop" && s.isPlaying === false) ||
-            (action === "pause" && s.isPaused === true);
+            (action === "stop" && s.isPlaying === false);
           if (confirmed) {
             return formatResult({
               success: true,
@@ -655,7 +659,7 @@ export const editorTools = [
                 isPlaying: s.isPlaying,
                 isPaused: s.isPaused,
                 verifiedViaEditorState: true,
-                note: "The play-mode domain reload evicted the queue ticket; the editor state confirms the switch happened.",
+                note: "The command result was unavailable; the editor state confirms the requested Play Mode state.",
               },
             });
           }
@@ -2839,9 +2843,7 @@ export const editorTools = [
   },
   {
     name: "unity_undo_last",
-    description:
-      "Revert the most recent undoable MCP action as a whole (create/edit/boolean, not one internal step — each write runs in its own named undo group). With agentId, targets that agent's most recent action. " +
-      "Unity's undo is LINEAR: reverting an action also reverts anything newer stacked on it, so this refuses to cascade and lists what would be affected unless force:true. (execute-code and reads are never targets.)",
+    description: "Revert the latest verified MCP Undo group, optionally by agentId. Newer MCP/native groups require force:true. Only Unity-registered changes are covered; this revert creates no Redo step. Use unity_undo for normal Undo/Redo. Reads and execute-code are not targets.",
     inputSchema: {
       type: "object",
       properties: {
@@ -2859,7 +2861,7 @@ export const editorTools = [
   },
   {
     name: "unity_undo_history",
-    description: "List recent MCP actions with undo state: per-agent attribution, whether each is still undoable, target, and the current undo group. Use it to decide what unity_undo_last reverts or to pick an agentId.",
+    description: "Show which recorded MCP actions can still be reverted, with agent, target and current Unity Undo state.",
     inputSchema: {
       type: "object",
       properties: {
@@ -2901,8 +2903,8 @@ export const editorTools = [
       type: "object",
       properties: {
         path: { type: "string", description: "Save path (default: Assets/Screenshots/SceneView_timestamp.png)" },
-        width: { type: "number", description: "Image width (default: 1920)" },
-        height: { type: "number", description: "Image height (default: 1080)" },
+        width: { type: "number", minimum: 1, maximum: 8192, description: "Width 1-8192 (default 1920), at most 33554432 pixels total." },
+        height: { type: "number", minimum: 1, maximum: 8192, description: "Height 1-8192 (default 1080)." },
       },
     },
     handler: async (params) => formatResult(await bridge.captureSceneView(params)),
@@ -2910,16 +2912,15 @@ export const editorTools = [
   {
     name: "unity_screenshot_editor_window",
     description:
-      "Capture a specific Editor window (Inspector, Project, Console, custom) to a PNG file via Win32 PrintWindow — works even when occluded, no focus steal. " +
-      "USE ONLY ON EXPLICIT USER REQUEST — never proactively or for your own inspection. " +
-      "WINDOWS EDITOR ONLY: on macOS/Linux it returns { success:false, platform } — do not retry, tell the user it's unavailable there. " +
-      "For game/scene views use unity_screenshot_game / unity_screenshot_scene (cross-platform).",
+      "Capture an existing EditorWindow to PNG (Windows PrintWindow) without requesting keyboard focus. Hidden tabs require activateTab:true; ambiguous names return id: candidates. GPU/minimized windows can refuse capture. " +
+      "USE ONLY ON EXPLICIT USER REQUEST; never proactively or for your own inspection. On macOS/Linux report unsupported, do not retry; use Game/Scene captures there.",
     inputSchema: {
       type: "object",
       properties: {
-        window: { type: "string", description: "EditorWindow type FullName (e.g. 'UnityEditor.InspectorWindow'), simple type name, or tab title." },
+        window: { type: "string", description: "Full type name, simple name, tab title, or id: selector from candidates." },
         path: { type: "string", description: "Save path ending in .png (default: Assets/Screenshots/EditorWindow_<time>.png)." },
-        maxDimension: { type: "number", description: "Max pixels per side (default 8192, clamped to GPU max)." },
+        maxDimension: { type: "number", description: "Max side (default 8192, clamped to GPU). Full window and crop each limited to 33554432 pixels." },
+        activateTab: { type: "boolean", description: "Temporarily select an existing tab, then restore its predecessor (default false; newer plugins). Does not request keyboard focus." },
       },
       required: ["window"],
     },
@@ -2954,7 +2955,7 @@ export const editorTools = [
   {
     name: "unity_graphics_asset_preview",
     description:
-      "Get a visual preview thumbnail of any Unity asset (prefab, material, texture, mesh, etc.) as an inline image. Returns base64 PNG image that Claude can see directly.",
+      "Inline PNG from Unity's asynchronous asset preview, with thumbnail fallback. Maximum 33554432 pixels.",
     inputSchema: {
       type: "object",
       properties: {
@@ -2965,11 +2966,15 @@ export const editorTools = [
         },
         width: {
           type: "number",
-          description: "Preview width in pixels (default: 256)",
+          minimum: 1,
+          maximum: 8192,
+          description: "Pixel width (default: native preview width)",
         },
         height: {
           type: "number",
-          description: "Preview height in pixels (default: 256)",
+          minimum: 1,
+          maximum: 8192,
+          description: "Pixel height (default: native preview height)",
         },
       },
       required: ["assetPath"],
@@ -2980,16 +2985,20 @@ export const editorTools = [
   {
     name: "unity_graphics_scene_capture",
     description:
-      "Capture the current Scene View as an inline image. Returns base64 PNG that Claude can see directly. Use to visually inspect the scene layout.",
+      "Render the Scene View camera to inline PNG. Whole-pixel sizes within device limits, at most 33554432 pixels.",
     inputSchema: {
       type: "object",
       properties: {
         width: {
           type: "number",
+          minimum: 1,
+          maximum: 8192,
           description: "Image width in pixels (default: 512)",
         },
         height: {
           type: "number",
+          minimum: 1,
+          maximum: 8192,
           description: "Image height in pixels (default: 512)",
         },
       },
@@ -3000,22 +3009,26 @@ export const editorTools = [
   {
     name: "unity_graphics_game_capture",
     description:
-      "Capture the Game View camera as an inline image. Returns base64 PNG that Claude can see directly. Use to see what the player sees.",
+      "Render one camera to inline PNG, without Game View composition or overlay UI. Whole-pixel sizes within device limits, at most 33554432 pixels.",
     inputSchema: {
       type: "object",
       properties: {
         width: {
           type: "number",
+          minimum: 1,
+          maximum: 8192,
           description: "Image width in pixels (default: 512)",
         },
         height: {
           type: "number",
+          minimum: 1,
+          maximum: 8192,
           description: "Image height in pixels (default: 512)",
         },
         cameraName: {
           type: "string",
           description:
-            "Name of camera to use (default: Camera.main / MainCamera tag)",
+            "Active object's name/path; omitted: Camera.main. Missing explicit camera is an error.",
         },
       },
     },
@@ -3025,7 +3038,7 @@ export const editorTools = [
   {
     name: "unity_graphics_prefab_render",
     description:
-      "Render a prefab from a configurable angle as an inline image. Returns base64 PNG that Claude can see directly. Great for previewing 3D models and prefabs.",
+      "Return Unity's prefab preview as inline PNG, with thumbnail fallback. Native preview controls framing; at most 33554432 pixels.",
     inputSchema: {
       type: "object",
       properties: {
@@ -3035,26 +3048,30 @@ export const editorTools = [
         },
         width: {
           type: "number",
-          description: "Image width in pixels (default: 512)",
+          minimum: 1,
+          maximum: 8192,
+          description: "Pixel width (default: native preview width)",
         },
         height: {
           type: "number",
-          description: "Image height in pixels (default: 512)",
+          minimum: 1,
+          maximum: 8192,
+          description: "Pixel height (default: native preview height)",
         },
         rotationY: {
           type: "number",
           description:
-            "Horizontal rotation angle in degrees (default: 30). Controls left-right viewing angle.",
+            "Compatibility parameter; native previews currently ignore this angle.",
         },
         rotationX: {
           type: "number",
           description:
-            "Vertical rotation angle in degrees (default: 20). Controls up-down viewing angle.",
+            "Compatibility parameter; native previews currently ignore this angle.",
         },
         padding: {
           type: "number",
           description:
-            "Padding multiplier around the object (default: 1.2). Higher = more space around object.",
+            "Compatibility parameter; native previews currently control padding.",
         },
       },
       required: ["assetPath"],
@@ -3065,7 +3082,7 @@ export const editorTools = [
   {
     name: "unity_graphics_mesh_info",
     description:
-      "Get detailed mesh geometry information: vertex count, triangle count, submeshes, UV channels, blend shapes, bone count, bounds. Works on mesh assets or scene GameObjects with MeshFilter/SkinnedMeshRenderer.",
+      "Get mesh metadata: vertex count, triangle count (including triangulated quads), submeshes, populated UV channels 0-7, blend shapes, bone count and bounds. Works on mesh assets or scene GameObjects with MeshFilter/SkinnedMeshRenderer.",
     inputSchema: {
       type: "object",
       properties: {
@@ -3135,8 +3152,10 @@ export const editorTools = [
         },
         previewSize: {
           type: "number",
+          minimum: 0,
+          maximum: 8192,
           description:
-            "Preview thumbnail size in pixels (default: 128). Set 0 to skip preview.",
+            "Whole-pixel maximum edge; preserves aspect without upscaling. Omit for native size; 0 skips preview.",
         },
       },
       required: ["assetPath"],
@@ -4251,9 +4270,9 @@ export const editorTools = [
   {
     name: "unity_queue_info",
     description:
-      "Get the current state of the multi-agent request queue: total queued requests, active agents, per-agent queue depths, and completed cache size. Useful for monitoring when multiple agents are working on the same Unity project.",
+      "Queue depths, agents and results. Plugin metrics: http, httpCommands (admission), completedResults (cost/evictions), historyNotifications (backlog), historyPersistence (file limits/failures). Reset on reload. serverAgentState: Node agent/identity limits, leases, evictions. Accounted bytes are not heap usage.",
     inputSchema: { type: "object", properties: {} },
-    handler: async () => formatResult(await bridge.getQueueInfo()),
+    handler: async () => formatResult({ ...await bridge.getQueueInfo(), serverAgentState: agentState.snapshot() }),
   },
   {
     name: "unity_queue_ticket_status",
@@ -4384,6 +4403,7 @@ export const editorTools = [
         virtualEditors: {
           type: "integer",
           minimum: 0,
+          maximum: 3,
           description: "Number of Virtual Editor instances (clones) to add. Default 1.",
         },
         virtualRole: {
@@ -4481,7 +4501,7 @@ export const editorTools = [
         },
         clearStuck: {
           type: "boolean",
-          description: "Force-clear a stuck test job before starting a new one",
+          description: "Clear the active MCP test job. Start the next run in a separate call after Unity finishes cleanup. Updated plugins request native cancellation when supported and do nothing if no job is active.",
         },
       },
     },
@@ -4491,7 +4511,7 @@ export const editorTools = [
       // live under .data. Reading the top level made this early-feedback branch dead.
       const started = result.data ?? result;
       if (started.jobId && started.status === "running") {
-        await new Promise((r) => setTimeout(r, 2000));
+        await requestSleep(2000);
         try {
           return formatResult(await bridge.getTestJob({ jobId: started.jobId }));
         } catch (_) {
@@ -4506,7 +4526,10 @@ export const editorTools = [
     description:
       "Get the status and results of a test run job. If no jobId is provided, returns the latest job. " +
       "Poll this after calling unity_testing_run_tests until status is 'succeeded' or 'failed'. " +
-      "Use waitTimeout for server-side polling to avoid repeated calls.",
+      "Use waitTimeout for server-side polling to avoid repeated calls. " +
+      "With current plugins, results survive script reload within the editor session; retain the jobId after reconnecting. " +
+      "historyRetention reports expiry/eviction limits; persistenceWarning and recoveryWarning report incomplete restoration. " +
+      "resultOffset/resultLimit opt into detail pages on updated plugins. Use the returned jobId for following pages and wait for terminal status for stable enumeration.",
     inputSchema: {
       type: "object",
       properties: {
@@ -4522,6 +4545,14 @@ export const editorTools = [
           type: "boolean",
           description: "Include detailed results only for failed/inconclusive tests",
         },
+        resultOffset: {
+          type: "integer", minimum: 0, maximum: 2147483647,
+          description: "Offset in filtered results. Opts into paging (default limit: 200). Requires an updated plugin.",
+        },
+        resultLimit: {
+          type: "integer", minimum: 1, maximum: 10000,
+          description: "Maximum details per page. Implies includeDetails; includeFailedOnly still filters. Omit both pagination fields to keep the full legacy response.",
+        },
         waitTimeout: {
           type: "number",
           description:
@@ -4532,6 +4563,15 @@ export const editorTools = [
     },
     handler: async (params) => {
       const waitTimeout = params?.waitTimeout;
+      const paged = params?.resultOffset !== undefined || params?.resultLimit !== undefined;
+      const formatJob = result => {
+        const job = result?.data ?? result;
+        if (paged && job?.jobId && !job.resultPage) {
+          return formatResult({ error: "This Unity plugin does not support test-result pagination. Update the plugin, or omit resultOffset and resultLimit for the legacy response.",
+            code: "test_result_pagination_unsupported", jobId: job.jobId, status: job.status });
+        }
+        return formatResult(result);
+      };
       if (waitTimeout && waitTimeout > 0) {
         // Server-side polling loop. Terminal status lives under .data (bridge envelope);
         // reading the top level meant this never short-circuited and always burned the
@@ -4541,16 +4581,18 @@ export const editorTools = [
         let lastResult;
         while (Date.now() < deadline) {
           lastResult = await bridge.getTestJob(params);
-          const status = (lastResult?.data?.status ?? lastResult?.status ?? "").toLowerCase();
-          if (TERMINAL.has(status)) {
-            return formatResult(lastResult);
+          const job = lastResult?.data ?? lastResult;
+          const status = (job?.status ?? "").toLowerCase();
+          if (TERMINAL.has(status) || looksLikeErrorObject(lastResult) || looksLikeErrorObject(job)
+            || (paged && job?.jobId && !job.resultPage)) {
+            return formatJob(lastResult);
           }
-          await new Promise((r) => setTimeout(r, 2000));
+          await requestSleep(2000);
         }
         // Timeout — return last known state
-        return formatResult(lastResult || (await bridge.getTestJob(params)));
+        return formatJob(lastResult || (await bridge.getTestJob(params)));
       }
-      return formatResult(await bridge.getTestJob(params));
+      return formatJob(await bridge.getTestJob(params));
     },
   },
   {
@@ -4572,7 +4614,7 @@ export const editorTools = [
         },
         maxResults: {
           type: "number",
-          description: "Maximum number of tests to return (default: 200)",
+          description: "Maximum number of tests to return (integer 1-10000, default: 200). Updated plugins set truncated only when another matching test exists.",
         },
       },
     },

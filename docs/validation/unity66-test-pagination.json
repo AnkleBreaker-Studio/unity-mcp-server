@@ -1,0 +1,1612 @@
+{
+  "recordedOn": "2026-10-01",
+  "baselinePluginCommit": "4981f6abcc8b937b0a952f146b231cc5837e20d4",
+  "baselineServerCommit": "7c0c6934eeb8219884936c7a0ecc2824c37876b5",
+  "releasedPluginCommit": "0b8e76f7c50ed8c0bd5f359d893653211d0f2abe",
+  "releasedServerCommit": "826af5ce61db7e2d2d675fe90d24c941a83f3924",
+  "environment": {
+    "unity": "6000.6.2f1",
+    "platform": "Windows",
+    "runtime": "Mono"
+  },
+  "baseline": {
+    "unityVersion": "6000.6.2f1",
+    "passed": false,
+    "checks": [
+      {
+        "name": "Unpaged callers retain full details and summary-only responses",
+        "passed": true,
+        "evidence": true
+      },
+      {
+        "name": "Requested result limit bounds materialized details",
+        "passed": false,
+        "error": "Returned 5000 details for a 20-result page"
+      },
+      {
+        "name": "Successive pages enumerate every result once with unchanged records",
+        "passed": false,
+        "error": "Missing resultPage metadata"
+      },
+      {
+        "name": "Failure filtering applies before page offsets",
+        "passed": false,
+        "error": "Missing resultPage metadata"
+      },
+      {
+        "name": "Empty, exact-end and extreme offsets have no continuation",
+        "passed": false,
+        "error": "Missing resultPage metadata"
+      },
+      {
+        "name": "Offset alone opts into the default 200-result page",
+        "passed": false,
+        "error": "Missing resultPage metadata"
+      },
+      {
+        "name": "Invalid pagination returns command errors",
+        "passed": false,
+        "error": "Accepted invalid resultOffset: "
+      },
+      {
+        "name": "Running and incomplete results keep their separate meanings",
+        "passed": false,
+        "error": "Missing resultPage metadata"
+      }
+    ],
+    "measurements": [
+      {
+        "stored": 100,
+        "requested": 20,
+        "returned": 100,
+        "medianAllocationEvents": 659,
+        "medianMilliseconds": 0.1273
+      },
+      {
+        "stored": 1000,
+        "requested": 20,
+        "returned": 1000,
+        "medianAllocationEvents": 6059,
+        "medianMilliseconds": 1.1158000000000001
+      },
+      {
+        "stored": 10000,
+        "requested": 20,
+        "returned": 10000,
+        "medianAllocationEvents": 60059,
+        "medianMilliseconds": 14.214400000000001
+      }
+    ],
+    "allocationControlEvents": 1,
+    "measurement": "Median of 11 warmed-up GetTestJob calls; result construction only, not JSON serialization, native discovery or the whole editor frame. GC.Alloc sample Count measures allocation events, not bytes."
+  },
+  "corrected": {
+    "unityVersion": "6000.6.2f1",
+    "passed": true,
+    "checks": [
+      {
+        "name": "Unpaged callers retain full details and summary-only responses",
+        "passed": true,
+        "evidence": true
+      },
+      {
+        "name": "Requested result limit bounds materialized details",
+        "passed": true,
+        "evidence": {
+          "offset": 0,
+          "limit": 20,
+          "returned": 20,
+          "total": 5000,
+          "hasMore": true,
+          "nextOffset": 20,
+          "stable": true
+        }
+      },
+      {
+        "name": "Successive pages enumerate every result once with unchanged records",
+        "passed": true,
+        "evidence": {
+          "visited": 23
+        }
+      },
+      {
+        "name": "Failure filtering applies before page offsets",
+        "passed": true,
+        "evidence": {
+          "offset": 3,
+          "limit": 2,
+          "returned": 2,
+          "total": 10,
+          "hasMore": true,
+          "nextOffset": 5,
+          "stable": true
+        }
+      },
+      {
+        "name": "Empty, exact-end and extreme offsets have no continuation",
+        "passed": true,
+        "evidence": true
+      },
+      {
+        "name": "Offset alone opts into the default 200-result page",
+        "passed": true,
+        "evidence": {
+          "offset": 0,
+          "limit": 200,
+          "returned": 200,
+          "total": 250,
+          "hasMore": true,
+          "nextOffset": 200,
+          "stable": true
+        }
+      },
+      {
+        "name": "Invalid pagination returns command errors",
+        "passed": true,
+        "evidence": {
+          "rejected": 18
+        }
+      },
+      {
+        "name": "Running and incomplete results keep their separate meanings",
+        "passed": true,
+        "evidence": true
+      }
+    ],
+    "measurements": [
+      {
+        "stored": 100,
+        "requested": 20,
+        "returned": 20,
+        "medianAllocationEvents": 191,
+        "medianMilliseconds": 0.035500000000000004
+      },
+      {
+        "stored": 1000,
+        "requested": 20,
+        "returned": 20,
+        "medianAllocationEvents": 191,
+        "medianMilliseconds": 0.0347
+      },
+      {
+        "stored": 10000,
+        "requested": 20,
+        "returned": 20,
+        "medianAllocationEvents": 191,
+        "medianMilliseconds": 0.0359
+      }
+    ],
+    "allocationControlEvents": 1,
+    "measurement": "Median of 11 warmed-up GetTestJob calls; result construction only, not JSON serialization, native discovery or the whole editor frame. GC.Alloc sample Count measures allocation events, not bytes."
+  },
+  "serverRegressionStages": {
+    "initial": {
+      "passed": 4,
+      "failed": 2,
+      "missing": [
+        "Pagination schema",
+        "Explicit unsupported-plugin error"
+      ]
+    },
+    "beforePollingFix": {
+      "passed": 6,
+      "failed": 2,
+      "missing": [
+        "Stop polling unsupported running job",
+        "Stop polling native validation error"
+      ]
+    },
+    "corrected": {
+      "passed": 8,
+      "failed": 0
+    }
+  },
+  "live": [
+    {
+      "combination": "current22",
+      "nodeVersion": "v22.18.0",
+      "serverEntry": "current",
+      "passed": true,
+      "project": {
+        "port": 7890,
+        "projectName": "Health66",
+        "projectPath": "C:/Users/Francois/orca/workspaces/unity-mcp-server/validation/Health66",
+        "unityVersion": "6000.6.2f1",
+        "isClone": false,
+        "cloneIndex": -1,
+        "isVirtualPlayer": false,
+        "mainProjectPath": "C:/Users/Francois/orca/workspaces/unity-mcp-server/validation/Health66",
+        "pluginVersion": "2.39.7",
+        "source": "registry",
+        "isSelected": false
+      },
+      "controlled": {
+        "unityVersion": "6000.6.2f1",
+        "passed": true,
+        "checks": [
+          {
+            "name": "Unpaged callers retain full details and summary-only responses",
+            "passed": true,
+            "evidence": true
+          },
+          {
+            "name": "Requested result limit bounds materialized details",
+            "passed": true,
+            "evidence": {
+              "offset": 0,
+              "limit": 20,
+              "returned": 20,
+              "total": 5000,
+              "hasMore": true,
+              "nextOffset": 20,
+              "stable": true
+            }
+          },
+          {
+            "name": "Successive pages enumerate every result once with unchanged records",
+            "passed": true,
+            "evidence": {
+              "visited": 23
+            }
+          },
+          {
+            "name": "Failure filtering applies before page offsets",
+            "passed": true,
+            "evidence": {
+              "offset": 3,
+              "limit": 2,
+              "returned": 2,
+              "total": 10,
+              "hasMore": true,
+              "nextOffset": 5,
+              "stable": true
+            }
+          },
+          {
+            "name": "Empty, exact-end and extreme offsets have no continuation",
+            "passed": true,
+            "evidence": true
+          },
+          {
+            "name": "Offset alone opts into the default 200-result page",
+            "passed": true,
+            "evidence": {
+              "offset": 0,
+              "limit": 200,
+              "returned": 200,
+              "total": 250,
+              "hasMore": true,
+              "nextOffset": 200,
+              "stable": true
+            }
+          },
+          {
+            "name": "Invalid pagination returns command errors",
+            "passed": true,
+            "evidence": {
+              "rejected": 18
+            }
+          },
+          {
+            "name": "Running and incomplete results keep their separate meanings",
+            "passed": true,
+            "evidence": true
+          }
+        ],
+        "measurements": [
+          {
+            "stored": 100,
+            "requested": 20,
+            "returned": 20,
+            "medianAllocationEvents": 191,
+            "medianMilliseconds": 0.0714
+          },
+          {
+            "stored": 1000,
+            "requested": 20,
+            "returned": 20,
+            "medianAllocationEvents": 191,
+            "medianMilliseconds": 0.06760000000000001
+          },
+          {
+            "stored": 10000,
+            "requested": 20,
+            "returned": 20,
+            "medianAllocationEvents": 191,
+            "medianMilliseconds": 0.0666
+          }
+        ],
+        "allocationControlEvents": 1,
+        "measurement": "Median of 11 warmed-up GetTestJob calls; result construction only, not JSON serialization, native discovery or the whole editor frame. GC.Alloc sample Count measures allocation events, not bytes."
+      },
+      "largeResponse": {
+        "records": 1000,
+        "pages": 10,
+        "maxPayloadBytes": 14165,
+        "unpagedRejected": true,
+        "unpagedCode": "response_too_large",
+        "hardLimitAssertion": true
+      },
+      "native": {
+        "jobId": "4ab5f733b3f6",
+        "summary": {
+          "total": 6,
+          "passed": 3,
+          "failed": 1,
+          "skipped": 2,
+          "duration": 0.03
+        },
+        "resultCount": 6,
+        "pages": 3,
+        "failurePages": 2,
+        "exactDetails": true
+      },
+      "reload": {
+        "originalJobIdRetained": true,
+        "exactDetails": true,
+        "settingsRestored": true,
+        "scenePreserved": true
+      }
+    },
+    {
+      "combination": "current18",
+      "nodeVersion": "v18.20.8",
+      "serverEntry": "current",
+      "passed": true,
+      "project": {
+        "port": 7890,
+        "projectName": "Health66",
+        "projectPath": "C:/Users/Francois/orca/workspaces/unity-mcp-server/validation/Health66",
+        "unityVersion": "6000.6.2f1",
+        "isClone": false,
+        "cloneIndex": -1,
+        "isVirtualPlayer": false,
+        "mainProjectPath": "C:/Users/Francois/orca/workspaces/unity-mcp-server/validation/Health66",
+        "pluginVersion": "2.39.7",
+        "source": "registry",
+        "isSelected": false
+      },
+      "controlled": {
+        "unityVersion": "6000.6.2f1",
+        "passed": true,
+        "checks": [
+          {
+            "name": "Unpaged callers retain full details and summary-only responses",
+            "passed": true,
+            "evidence": true
+          },
+          {
+            "name": "Requested result limit bounds materialized details",
+            "passed": true,
+            "evidence": {
+              "offset": 0,
+              "limit": 20,
+              "returned": 20,
+              "total": 5000,
+              "hasMore": true,
+              "nextOffset": 20,
+              "stable": true
+            }
+          },
+          {
+            "name": "Successive pages enumerate every result once with unchanged records",
+            "passed": true,
+            "evidence": {
+              "visited": 23
+            }
+          },
+          {
+            "name": "Failure filtering applies before page offsets",
+            "passed": true,
+            "evidence": {
+              "offset": 3,
+              "limit": 2,
+              "returned": 2,
+              "total": 10,
+              "hasMore": true,
+              "nextOffset": 5,
+              "stable": true
+            }
+          },
+          {
+            "name": "Empty, exact-end and extreme offsets have no continuation",
+            "passed": true,
+            "evidence": true
+          },
+          {
+            "name": "Offset alone opts into the default 200-result page",
+            "passed": true,
+            "evidence": {
+              "offset": 0,
+              "limit": 200,
+              "returned": 200,
+              "total": 250,
+              "hasMore": true,
+              "nextOffset": 200,
+              "stable": true
+            }
+          },
+          {
+            "name": "Invalid pagination returns command errors",
+            "passed": true,
+            "evidence": {
+              "rejected": 18
+            }
+          },
+          {
+            "name": "Running and incomplete results keep their separate meanings",
+            "passed": true,
+            "evidence": true
+          }
+        ],
+        "measurements": [
+          {
+            "stored": 100,
+            "requested": 20,
+            "returned": 20,
+            "medianAllocationEvents": 192,
+            "medianMilliseconds": 0.0596
+          },
+          {
+            "stored": 1000,
+            "requested": 20,
+            "returned": 20,
+            "medianAllocationEvents": 192,
+            "medianMilliseconds": 0.0592
+          },
+          {
+            "stored": 10000,
+            "requested": 20,
+            "returned": 20,
+            "medianAllocationEvents": 192,
+            "medianMilliseconds": 0.0483
+          }
+        ],
+        "allocationControlEvents": 1,
+        "measurement": "Median of 11 warmed-up GetTestJob calls; result construction only, not JSON serialization, native discovery or the whole editor frame. GC.Alloc sample Count measures allocation events, not bytes."
+      },
+      "largeResponse": {
+        "records": 1000,
+        "pages": 10,
+        "maxPayloadBytes": 14168,
+        "unpagedRejected": true,
+        "unpagedCode": "response_too_large",
+        "hardLimitAssertion": true
+      },
+      "native": {
+        "jobId": "4b54457bd8e5",
+        "summary": {
+          "total": 6,
+          "passed": 3,
+          "failed": 1,
+          "skipped": 2,
+          "duration": 0.5
+        },
+        "resultCount": 6,
+        "pages": 3,
+        "failurePages": 2,
+        "exactDetails": true
+      },
+      "reload": {
+        "originalJobIdRetained": true,
+        "exactDetails": true,
+        "settingsRestored": true,
+        "scenePreserved": true
+      }
+    },
+    {
+      "combination": "released22",
+      "nodeVersion": "v22.18.0",
+      "serverEntry": "C:/Users/Francois/orca/workspaces/unity-mcp-server/validation/compat-server-baseline/src/index.js",
+      "passed": true,
+      "project": {
+        "port": 7890,
+        "projectName": "Health66",
+        "projectPath": "C:/Users/Francois/orca/workspaces/unity-mcp-server/validation/Health66",
+        "unityVersion": "6000.6.2f1",
+        "isClone": false,
+        "cloneIndex": -1,
+        "pluginVersion": "2.39.7",
+        "source": "portscan",
+        "isSelected": false
+      },
+      "controlled": {
+        "unityVersion": "6000.6.2f1",
+        "passed": true,
+        "checks": [
+          {
+            "name": "Unpaged callers retain full details and summary-only responses",
+            "passed": true,
+            "evidence": true
+          },
+          {
+            "name": "Requested result limit bounds materialized details",
+            "passed": true,
+            "evidence": {
+              "offset": 0,
+              "limit": 20,
+              "returned": 20,
+              "total": 5000,
+              "hasMore": true,
+              "nextOffset": 20,
+              "stable": true
+            }
+          },
+          {
+            "name": "Successive pages enumerate every result once with unchanged records",
+            "passed": true,
+            "evidence": {
+              "visited": 23
+            }
+          },
+          {
+            "name": "Failure filtering applies before page offsets",
+            "passed": true,
+            "evidence": {
+              "offset": 3,
+              "limit": 2,
+              "returned": 2,
+              "total": 10,
+              "hasMore": true,
+              "nextOffset": 5,
+              "stable": true
+            }
+          },
+          {
+            "name": "Empty, exact-end and extreme offsets have no continuation",
+            "passed": true,
+            "evidence": true
+          },
+          {
+            "name": "Offset alone opts into the default 200-result page",
+            "passed": true,
+            "evidence": {
+              "offset": 0,
+              "limit": 200,
+              "returned": 200,
+              "total": 250,
+              "hasMore": true,
+              "nextOffset": 200,
+              "stable": true
+            }
+          },
+          {
+            "name": "Invalid pagination returns command errors",
+            "passed": true,
+            "evidence": {
+              "rejected": 18
+            }
+          },
+          {
+            "name": "Running and incomplete results keep their separate meanings",
+            "passed": true,
+            "evidence": true
+          }
+        ],
+        "measurements": [
+          {
+            "stored": 100,
+            "requested": 20,
+            "returned": 20,
+            "medianAllocationEvents": 192,
+            "medianMilliseconds": 0.0606
+          },
+          {
+            "stored": 1000,
+            "requested": 20,
+            "returned": 20,
+            "medianAllocationEvents": 192,
+            "medianMilliseconds": 0.0359
+          },
+          {
+            "stored": 10000,
+            "requested": 20,
+            "returned": 20,
+            "medianAllocationEvents": 192,
+            "medianMilliseconds": 0.0424
+          }
+        ],
+        "allocationControlEvents": 1,
+        "measurement": "Median of 11 warmed-up GetTestJob calls; result construction only, not JSON serialization, native discovery or the whole editor frame. GC.Alloc sample Count measures allocation events, not bytes."
+      },
+      "largeResponse": {
+        "records": 1000,
+        "pages": 10,
+        "maxPayloadBytes": 14168,
+        "unpagedRejected": false,
+        "unpagedCode": null,
+        "hardLimitAssertion": false
+      },
+      "native": {
+        "jobId": "ecd1b0c1051c",
+        "summary": {
+          "total": 6,
+          "passed": 3,
+          "failed": 1,
+          "skipped": 2,
+          "duration": 0.41
+        },
+        "resultCount": 6,
+        "pages": 3,
+        "failurePages": 2,
+        "exactDetails": true
+      },
+      "reload": {
+        "originalJobIdRetained": true,
+        "exactDetails": true,
+        "settingsRestored": true,
+        "scenePreserved": true
+      }
+    },
+    {
+      "combination": "released18",
+      "nodeVersion": "v18.20.8",
+      "serverEntry": "C:/Users/Francois/orca/workspaces/unity-mcp-server/validation/compat-server-baseline/src/index.js",
+      "passed": true,
+      "project": {
+        "port": 7890,
+        "projectName": "Health66",
+        "projectPath": "C:/Users/Francois/orca/workspaces/unity-mcp-server/validation/Health66",
+        "unityVersion": "6000.6.2f1",
+        "isClone": false,
+        "cloneIndex": -1,
+        "pluginVersion": "2.39.7",
+        "source": "registry",
+        "isSelected": false
+      },
+      "controlled": {
+        "unityVersion": "6000.6.2f1",
+        "passed": true,
+        "checks": [
+          {
+            "name": "Unpaged callers retain full details and summary-only responses",
+            "passed": true,
+            "evidence": true
+          },
+          {
+            "name": "Requested result limit bounds materialized details",
+            "passed": true,
+            "evidence": {
+              "offset": 0,
+              "limit": 20,
+              "returned": 20,
+              "total": 5000,
+              "hasMore": true,
+              "nextOffset": 20,
+              "stable": true
+            }
+          },
+          {
+            "name": "Successive pages enumerate every result once with unchanged records",
+            "passed": true,
+            "evidence": {
+              "visited": 23
+            }
+          },
+          {
+            "name": "Failure filtering applies before page offsets",
+            "passed": true,
+            "evidence": {
+              "offset": 3,
+              "limit": 2,
+              "returned": 2,
+              "total": 10,
+              "hasMore": true,
+              "nextOffset": 5,
+              "stable": true
+            }
+          },
+          {
+            "name": "Empty, exact-end and extreme offsets have no continuation",
+            "passed": true,
+            "evidence": true
+          },
+          {
+            "name": "Offset alone opts into the default 200-result page",
+            "passed": true,
+            "evidence": {
+              "offset": 0,
+              "limit": 200,
+              "returned": 200,
+              "total": 250,
+              "hasMore": true,
+              "nextOffset": 200,
+              "stable": true
+            }
+          },
+          {
+            "name": "Invalid pagination returns command errors",
+            "passed": true,
+            "evidence": {
+              "rejected": 18
+            }
+          },
+          {
+            "name": "Running and incomplete results keep their separate meanings",
+            "passed": true,
+            "evidence": true
+          }
+        ],
+        "measurements": [
+          {
+            "stored": 100,
+            "requested": 20,
+            "returned": 20,
+            "medianAllocationEvents": 192,
+            "medianMilliseconds": 0.040600000000000004
+          },
+          {
+            "stored": 1000,
+            "requested": 20,
+            "returned": 20,
+            "medianAllocationEvents": 192,
+            "medianMilliseconds": 0.0631
+          },
+          {
+            "stored": 10000,
+            "requested": 20,
+            "returned": 20,
+            "medianAllocationEvents": 192,
+            "medianMilliseconds": 0.0483
+          }
+        ],
+        "allocationControlEvents": 1,
+        "measurement": "Median of 11 warmed-up GetTestJob calls; result construction only, not JSON serialization, native discovery or the whole editor frame. GC.Alloc sample Count measures allocation events, not bytes."
+      },
+      "largeResponse": {
+        "records": 1000,
+        "pages": 10,
+        "maxPayloadBytes": 14168,
+        "unpagedRejected": false,
+        "unpagedCode": null,
+        "hardLimitAssertion": false
+      },
+      "native": {
+        "jobId": "aa7be176df20",
+        "summary": {
+          "total": 6,
+          "passed": 3,
+          "failed": 1,
+          "skipped": 2,
+          "duration": 0.55
+        },
+        "resultCount": 6,
+        "pages": 3,
+        "failurePages": 2,
+        "exactDetails": true
+      },
+      "reload": {
+        "originalJobIdRetained": true,
+        "exactDetails": true,
+        "settingsRestored": true,
+        "scenePreserved": true
+      }
+    }
+  ],
+  "olderPlugin": [
+    {
+      "combination": "legacy22",
+      "nodeVersion": "v22.18.0",
+      "passed": true,
+      "project": {
+        "port": 7894,
+        "projectName": "LegacyCompat66",
+        "projectPath": "C:/Users/Francois/orca/workspaces/unity-mcp-server/validation/LegacyCompat66",
+        "unityVersion": "6000.6.2f1",
+        "isClone": false,
+        "cloneIndex": -1,
+        "pluginVersion": "2.39.7",
+        "source": "registry",
+        "isSelected": false
+      },
+      "legacyDetailsPreserved": true,
+      "unsupportedCode": "test_result_pagination_unsupported"
+    },
+    {
+      "combination": "legacy18",
+      "nodeVersion": "v18.20.8",
+      "passed": true,
+      "project": {
+        "port": 7894,
+        "projectName": "LegacyCompat66",
+        "projectPath": "C:/Users/Francois/orca/workspaces/unity-mcp-server/validation/LegacyCompat66",
+        "unityVersion": "6000.6.2f1",
+        "isClone": false,
+        "cloneIndex": -1,
+        "pluginVersion": "2.39.7",
+        "source": "registry",
+        "isSelected": false
+      },
+      "legacyDetailsPreserved": true,
+      "unsupportedCode": "test_result_pagination_unsupported"
+    }
+  ],
+  "regressions": {
+    "results": {
+      "unityVersion": "6000.6.2f1",
+      "passed": true,
+      "nativeTestsLaunched": false,
+      "checks": [
+        {
+          "name": "Empty suites are not discovered as tests",
+          "passed": true,
+          "evidence": {
+            "count": 0
+          }
+        },
+        {
+          "name": "Empty suites contribute no progress or result entries",
+          "passed": true,
+          "evidence": {
+            "jobId": "381db66d47f5",
+            "status": "succeeded",
+            "mode": "EditMode",
+            "startedAt": "2026-10-01T12:24:27.0643004Z",
+            "resultsComplete": true,
+            "historyRetention": {
+              "retainedJobs": 1,
+              "maxJobs": 128,
+              "expiryMinutes": 30,
+              "snapshotBytes": 183,
+              "snapshotBudgetBytes": 33554432,
+              "evictions": 0,
+              "overBudget": false
+            },
+            "progress": {
+              "completed": 0,
+              "total": 0,
+              "passed": 0,
+              "failed": 0,
+              "skipped": 0
+            },
+            "completedAt": "2026-10-01T12:24:27.0740128Z",
+            "totalDuration": 0,
+            "summary": {
+              "total": 0,
+              "passed": 0,
+              "failed": 0,
+              "skipped": 0,
+              "duration": 0
+            },
+            "tests": []
+          }
+        },
+        {
+          "name": "Final tree reconciles missed and duplicate callbacks",
+          "passed": true,
+          "evidence": {
+            "jobId": "d0d5aa69f5f9",
+            "status": "failed",
+            "mode": "EditMode",
+            "startedAt": "2026-10-01T12:24:27.0800630Z",
+            "resultsComplete": true,
+            "historyRetention": {
+              "retainedJobs": 1,
+              "maxJobs": 128,
+              "expiryMinutes": 30,
+              "snapshotBytes": 638,
+              "snapshotBudgetBytes": 33554432,
+              "evictions": 0,
+              "overBudget": false
+            },
+            "progress": {
+              "completed": 4,
+              "total": 4,
+              "passed": 1,
+              "failed": 1,
+              "skipped": 2,
+              "failuresSoFar": [
+                {
+                  "name": "Fail",
+                  "fullName": "Fail",
+                  "message": "Controlled result failure"
+                }
+              ]
+            },
+            "completedAt": "2026-10-01T12:24:27.0810841Z",
+            "totalDuration": 0,
+            "summary": {
+              "total": 4,
+              "passed": 1,
+              "failed": 1,
+              "skipped": 2,
+              "duration": 0
+            },
+            "tests": [
+              {
+                "name": "Pass",
+                "fullName": "Pass",
+                "status": "Passed",
+                "duration": 0,
+                "message": "",
+                "stackTrace": ""
+              },
+              {
+                "name": "Fail",
+                "fullName": "Fail",
+                "status": "Failed",
+                "duration": 0,
+                "message": "Controlled result failure",
+                "stackTrace": "Controlled fixture stack"
+              },
+              {
+                "name": "Skip",
+                "fullName": "Skip",
+                "status": "Skipped",
+                "duration": 0,
+                "message": "",
+                "stackTrace": ""
+              },
+              {
+                "name": "Inconclusive",
+                "fullName": "Inconclusive",
+                "status": "Inconclusive",
+                "duration": 0,
+                "message": "",
+                "stackTrace": ""
+              }
+            ]
+          }
+        },
+        {
+          "name": "Suite-level failure remains failed without leaf failures",
+          "passed": true,
+          "evidence": {
+            "jobId": "6c68a4885f31",
+            "status": "failed",
+            "mode": "EditMode",
+            "startedAt": "2026-10-01T12:24:27.0826081Z",
+            "resultsComplete": true,
+            "historyRetention": {
+              "retainedJobs": 1,
+              "maxJobs": 128,
+              "expiryMinutes": 30,
+              "snapshotBytes": 183,
+              "snapshotBudgetBytes": 33554432,
+              "evictions": 0,
+              "overBudget": false
+            },
+            "progress": {
+              "completed": 0,
+              "total": 0,
+              "passed": 0,
+              "failed": 0,
+              "skipped": 0
+            },
+            "completedAt": "2026-10-01T12:24:27.0838999Z",
+            "totalDuration": 0,
+            "error": "Controlled result failure",
+            "summary": {
+              "total": 0,
+              "passed": 0,
+              "failed": 0,
+              "skipped": 0,
+              "duration": 0
+            }
+          }
+        },
+        {
+          "name": "Normal success retains its counts and result",
+          "passed": true,
+          "evidence": {
+            "jobId": "ed117a464d1c",
+            "status": "succeeded",
+            "mode": "EditMode",
+            "startedAt": "2026-10-01T12:24:27.0838999Z",
+            "resultsComplete": true,
+            "historyRetention": {
+              "retainedJobs": 1,
+              "maxJobs": 128,
+              "expiryMinutes": 30,
+              "snapshotBytes": 278,
+              "snapshotBudgetBytes": 33554432,
+              "evictions": 0,
+              "overBudget": false
+            },
+            "progress": {
+              "completed": 1,
+              "total": 1,
+              "passed": 1,
+              "failed": 0,
+              "skipped": 0
+            },
+            "completedAt": "2026-10-01T12:24:27.0849191Z",
+            "totalDuration": 0,
+            "summary": {
+              "total": 1,
+              "passed": 1,
+              "failed": 0,
+              "skipped": 0,
+              "duration": 0
+            },
+            "tests": [
+              {
+                "name": "Pass",
+                "fullName": "Pass",
+                "status": "Passed",
+                "duration": 0,
+                "message": "",
+                "stackTrace": ""
+              }
+            ]
+          }
+        },
+        {
+          "name": "Discovery reports truncation only for another matching test",
+          "passed": true,
+          "evidence": {
+            "limits": [
+              1,
+              2,
+              3,
+              4
+            ]
+          }
+        },
+        {
+          "name": "Discovery stops after the first matching overflow",
+          "passed": true,
+          "evidence": {
+            "returned": 2,
+            "examined": 3
+          }
+        },
+        {
+          "name": "Invalid discovery limits fail before native discovery",
+          "passed": true,
+          "evidence": {
+            "rejected": 9
+          }
+        },
+        {
+          "name": "Null discovery mode returns a command error",
+          "passed": true,
+          "evidence": {
+            "error": "Unknown test mode: . Use 'EditMode' or 'PlayMode'."
+          }
+        },
+        {
+          "name": "Missing native result details are explicitly incomplete",
+          "passed": true,
+          "evidence": {
+            "jobId": "dd1cea01c5b9",
+            "status": "succeeded",
+            "mode": "EditMode",
+            "startedAt": "2026-10-01T12:24:27.0879268Z",
+            "resultsComplete": false,
+            "historyRetention": {
+              "retainedJobs": 1,
+              "maxJobs": 128,
+              "expiryMinutes": 30,
+              "snapshotBytes": 183,
+              "snapshotBudgetBytes": 33554432,
+              "evictions": 0,
+              "overBudget": false
+            },
+            "progress": {
+              "completed": 3,
+              "total": 3,
+              "passed": 3,
+              "failed": 0,
+              "skipped": 0
+            },
+            "completedAt": "2026-10-01T12:24:27.0884270Z",
+            "totalDuration": 0,
+            "summary": {
+              "total": 3,
+              "passed": 3,
+              "failed": 0,
+              "skipped": 0,
+              "duration": 0
+            },
+            "tests": []
+          }
+        }
+      ]
+    },
+    "persistence": {
+      "unityVersion": "6000.6.2f1",
+      "passed": true,
+      "nativeTestsLaunched": false,
+      "checks": [
+        {
+          "name": "Completed details and failure diagnostics survive reload",
+          "passed": true,
+          "evidence": {
+            "detailCount": 2,
+            "unicodeAndStackTracePreserved": true
+          }
+        },
+        {
+          "name": "Running test name, timer and filters survive reload",
+          "passed": true,
+          "evidence": {
+            "status": "running",
+            "currentTest": "Fixture.Slow",
+            "elapsed": 20
+          }
+        },
+        {
+          "name": "A long-running native job is not failed by its age",
+          "passed": true,
+          "evidence": {
+            "status": "running"
+          }
+        },
+        {
+          "name": "An orphaned native job becomes a terminal failure",
+          "passed": true,
+          "evidence": {
+            "status": "failed",
+            "error": "Unity Test Runner no longer has the native run after script reload; tests were not restarted"
+          }
+        },
+        {
+          "name": "A damaged summary does not hide later valid jobs",
+          "passed": true,
+          "evidence": {
+            "restored": "abbd843f94dd"
+          }
+        },
+        {
+          "name": "Legacy summaries remain readable",
+          "passed": true,
+          "evidence": {
+            "status": "succeeded",
+            "resultsComplete": false
+          }
+        },
+        {
+          "name": "A damaged snapshot preserves the summary and reports missing details",
+          "passed": true,
+          "evidence": {
+            "warning": "Detailed results could not be restored: JSON parse error: Missing a name for object member."
+          }
+        },
+        {
+          "name": "A legacy active job with unknown native identity stays explicit",
+          "passed": true,
+          "evidence": {
+            "warning": "Native run recovery is uncertain: The saved job has no native run ID. Inspect Unity Test Runner before using clearStuck."
+          }
+        },
+        {
+          "name": "A resumed RunStarted retains progress and all filters",
+          "passed": true,
+          "evidence": {
+            "completed": 2,
+            "filterFamilies": 4
+          }
+        },
+        {
+          "name": "Count retention evicts old snapshots and preserves the latest job",
+          "passed": true,
+          "evidence": {
+            "retained": 128
+          }
+        },
+        {
+          "name": "Expired history is removed on read without starting another run",
+          "passed": true,
+          "evidence": {
+            "error": "Job '9a944b6eb280' not found"
+          }
+        },
+        {
+          "name": "Snapshot byte pressure evicts old jobs but keeps oversized newest results",
+          "passed": true,
+          "evidence": {
+            "retained": 1,
+            "snapshotBytes": 35651937,
+            "overBudget": true
+          }
+        }
+      ]
+    },
+    "testing": {
+      "unityVersion": "6000.6.2f1",
+      "passed": true,
+      "controlledCases": 16,
+      "nativeTestsLaunched": false,
+      "results": [
+        {
+          "scenario": "startup-exception",
+          "optionMask": 0,
+          "expectedEnabled": false,
+          "expectedOptions": 0,
+          "actualEnabled": false,
+          "actualOptions": 0,
+          "settingsRestored": true,
+          "currentJobReleased": true,
+          "status": "failed",
+          "thrown": null,
+          "response": {
+            "error": "Controlled startup failure",
+            "jobId": "2965d913ed48"
+          },
+          "passed": true
+        },
+        {
+          "scenario": "framework-error",
+          "optionMask": 0,
+          "expectedEnabled": false,
+          "expectedOptions": 0,
+          "actualEnabled": false,
+          "actualOptions": 0,
+          "settingsRestored": true,
+          "currentJobReleased": true,
+          "status": "failed",
+          "thrown": null,
+          "response": {
+            "success": true,
+            "jobId": "5dd0cd4b18ef",
+            "status": "running",
+            "mode": "PlayMode"
+          },
+          "passed": true
+        },
+        {
+          "scenario": "clear-stuck",
+          "optionMask": 0,
+          "expectedEnabled": false,
+          "expectedOptions": 0,
+          "actualEnabled": false,
+          "actualOptions": 0,
+          "settingsRestored": true,
+          "currentJobReleased": true,
+          "status": "failed",
+          "thrown": null,
+          "response": {
+            "success": true,
+            "message": "Stuck job cleared",
+            "clearedJobId": "cf5754e8425b",
+            "cancellationRequested": false,
+            "cancellationError": null,
+            "nativeRunMayContinue": false
+          },
+          "passed": true
+        },
+        {
+          "scenario": "normal-completion",
+          "optionMask": 0,
+          "expectedEnabled": false,
+          "expectedOptions": 0,
+          "actualEnabled": false,
+          "actualOptions": 0,
+          "settingsRestored": true,
+          "currentJobReleased": true,
+          "status": "succeeded",
+          "thrown": null,
+          "response": {
+            "success": true,
+            "jobId": "c9e6e9c769c4",
+            "status": "running",
+            "mode": "PlayMode"
+          },
+          "passed": true
+        },
+        {
+          "scenario": "startup-exception",
+          "optionMask": 1,
+          "expectedEnabled": true,
+          "expectedOptions": 1,
+          "actualEnabled": true,
+          "actualOptions": 1,
+          "settingsRestored": true,
+          "currentJobReleased": true,
+          "status": "failed",
+          "thrown": null,
+          "response": {
+            "error": "Controlled startup failure",
+            "jobId": "e24d1569cb62"
+          },
+          "passed": true
+        },
+        {
+          "scenario": "framework-error",
+          "optionMask": 1,
+          "expectedEnabled": true,
+          "expectedOptions": 1,
+          "actualEnabled": true,
+          "actualOptions": 1,
+          "settingsRestored": true,
+          "currentJobReleased": true,
+          "status": "failed",
+          "thrown": null,
+          "response": {
+            "success": true,
+            "jobId": "bbe962f50240",
+            "status": "running",
+            "mode": "PlayMode"
+          },
+          "passed": true
+        },
+        {
+          "scenario": "clear-stuck",
+          "optionMask": 1,
+          "expectedEnabled": true,
+          "expectedOptions": 1,
+          "actualEnabled": true,
+          "actualOptions": 1,
+          "settingsRestored": true,
+          "currentJobReleased": true,
+          "status": "failed",
+          "thrown": null,
+          "response": {
+            "success": true,
+            "message": "Stuck job cleared",
+            "clearedJobId": "c9ca9df42021",
+            "cancellationRequested": false,
+            "cancellationError": null,
+            "nativeRunMayContinue": false
+          },
+          "passed": true
+        },
+        {
+          "scenario": "normal-completion",
+          "optionMask": 1,
+          "expectedEnabled": true,
+          "expectedOptions": 1,
+          "actualEnabled": true,
+          "actualOptions": 1,
+          "settingsRestored": true,
+          "currentJobReleased": true,
+          "status": "succeeded",
+          "thrown": null,
+          "response": {
+            "success": true,
+            "jobId": "b148f88c5ca3",
+            "status": "running",
+            "mode": "PlayMode"
+          },
+          "passed": true
+        },
+        {
+          "scenario": "startup-exception",
+          "optionMask": 2,
+          "expectedEnabled": true,
+          "expectedOptions": 2,
+          "actualEnabled": true,
+          "actualOptions": 2,
+          "settingsRestored": true,
+          "currentJobReleased": true,
+          "status": "failed",
+          "thrown": null,
+          "response": {
+            "error": "Controlled startup failure",
+            "jobId": "f1c1a24f38a2"
+          },
+          "passed": true
+        },
+        {
+          "scenario": "framework-error",
+          "optionMask": 2,
+          "expectedEnabled": true,
+          "expectedOptions": 2,
+          "actualEnabled": true,
+          "actualOptions": 2,
+          "settingsRestored": true,
+          "currentJobReleased": true,
+          "status": "failed",
+          "thrown": null,
+          "response": {
+            "success": true,
+            "jobId": "d458c60f398d",
+            "status": "running",
+            "mode": "PlayMode"
+          },
+          "passed": true
+        },
+        {
+          "scenario": "clear-stuck",
+          "optionMask": 2,
+          "expectedEnabled": true,
+          "expectedOptions": 2,
+          "actualEnabled": true,
+          "actualOptions": 2,
+          "settingsRestored": true,
+          "currentJobReleased": true,
+          "status": "failed",
+          "thrown": null,
+          "response": {
+            "success": true,
+            "message": "Stuck job cleared",
+            "clearedJobId": "af7a43e3e89d",
+            "cancellationRequested": false,
+            "cancellationError": null,
+            "nativeRunMayContinue": false
+          },
+          "passed": true
+        },
+        {
+          "scenario": "normal-completion",
+          "optionMask": 2,
+          "expectedEnabled": true,
+          "expectedOptions": 2,
+          "actualEnabled": true,
+          "actualOptions": 2,
+          "settingsRestored": true,
+          "currentJobReleased": true,
+          "status": "succeeded",
+          "thrown": null,
+          "response": {
+            "success": true,
+            "jobId": "25482767fdbf",
+            "status": "running",
+            "mode": "PlayMode"
+          },
+          "passed": true
+        },
+        {
+          "scenario": "startup-exception",
+          "optionMask": 3,
+          "expectedEnabled": true,
+          "expectedOptions": 3,
+          "actualEnabled": true,
+          "actualOptions": 3,
+          "settingsRestored": true,
+          "currentJobReleased": true,
+          "status": "failed",
+          "thrown": null,
+          "response": {
+            "error": "Controlled startup failure",
+            "jobId": "75180cf95a62"
+          },
+          "passed": true
+        },
+        {
+          "scenario": "framework-error",
+          "optionMask": 3,
+          "expectedEnabled": true,
+          "expectedOptions": 3,
+          "actualEnabled": true,
+          "actualOptions": 3,
+          "settingsRestored": true,
+          "currentJobReleased": true,
+          "status": "failed",
+          "thrown": null,
+          "response": {
+            "success": true,
+            "jobId": "446e5a3ed5c1",
+            "status": "running",
+            "mode": "PlayMode"
+          },
+          "passed": true
+        },
+        {
+          "scenario": "clear-stuck",
+          "optionMask": 3,
+          "expectedEnabled": true,
+          "expectedOptions": 3,
+          "actualEnabled": true,
+          "actualOptions": 3,
+          "settingsRestored": true,
+          "currentJobReleased": true,
+          "status": "failed",
+          "thrown": null,
+          "response": {
+            "success": true,
+            "message": "Stuck job cleared",
+            "clearedJobId": "c7cab271a37f",
+            "cancellationRequested": false,
+            "cancellationError": null,
+            "nativeRunMayContinue": false
+          },
+          "passed": true
+        },
+        {
+          "scenario": "normal-completion",
+          "optionMask": 3,
+          "expectedEnabled": true,
+          "expectedOptions": 3,
+          "actualEnabled": true,
+          "actualOptions": 3,
+          "settingsRestored": true,
+          "currentJobReleased": true,
+          "status": "succeeded",
+          "thrown": null,
+          "response": {
+            "success": true,
+            "jobId": "18a965a58947",
+            "status": "running",
+            "mode": "PlayMode"
+          },
+          "passed": true
+        },
+        {
+          "scenario": "clear-without-active-job",
+          "scheduled": 0,
+          "response": {
+            "success": true,
+            "message": "No active MCP test job to clear",
+            "clearedJobId": null,
+            "cancellationRequested": false,
+            "cancellationError": null,
+            "nativeRunMayContinue": false
+          },
+          "passed": true
+        },
+        {
+          "scenario": "late-callback-and-session-restore",
+          "passed": true
+        },
+        {
+          "scenario": "restored-timestamps-stay-utc",
+          "passed": true
+        }
+      ]
+    }
+  },
+  "minimumApi": {
+    "unityVersion": "2021.3.18f1",
+    "passed": true,
+    "referenceCount": 211,
+    "log": "C:\\Users\\Francois\\orca\\workspaces\\unity-mcp-server\\validation\\Unity2021Api\\compiler.log",
+    "packageAssemblies": [
+      {
+        "sha256": "AF83F70ECAC09EE676571E37C62595B7FF26148B636CE498F9151A2F7A9697A3",
+        "file": "C:\\Users\\Francois\\orca\\workspaces\\unity-mcp-server\\validation\\Editors\\2021.3.18f1\\Editor\\Data\\Resources\\PackageManager\\ProjectTemplates\\libcache\\com.unity.template.universal-2d-1.1.4\\ScriptAssemblies\\UnityEngine.UI.dll"
+      },
+      {
+        "sha256": "AAAF5BC1E371F6CFA67138DCB6E77634A8075D30E0C1DF27670A5B0028CC5523",
+        "file": "C:\\Users\\Francois\\orca\\workspaces\\unity-mcp-server\\validation\\Editors\\2021.3.18f1\\Editor\\Data\\Resources\\PackageManager\\ProjectTemplates\\libcache\\com.unity.template.universal-2d-1.1.4\\ScriptAssemblies\\UnityEngine.TestRunner.dll"
+      },
+      {
+        "sha256": "6995901F60508B79F4B648FE2E3B64D8D1BD545B3CB3817134F079842FA82832",
+        "file": "C:\\Users\\Francois\\orca\\workspaces\\unity-mcp-server\\validation\\Editors\\2021.3.18f1\\Editor\\Data\\Resources\\PackageManager\\ProjectTemplates\\libcache\\com.unity.template.universal-2d-1.1.4\\ScriptAssemblies\\UnityEditor.TestRunner.dll"
+      }
+    ],
+    "excludedIntegrations": [
+      "UMA",
+      "ProBuilder"
+    ],
+    "sourceCount": 77,
+    "check": "C# compilation against installed Unity assemblies; no editor execution or package import",
+    "exitCode": 0
+  },
+  "ordinaryServerTests": {
+    "node": "22.18.0",
+    "passed": 263,
+    "failed": 0
+  },
+  "limits": [
+    "Optional pagination only; unpaged clients still receive all requested details.",
+    "Count bounds do not limit diagnostic text bytes, retained native trees, job memory or snapshot serialization.",
+    "Filtered pages scan all available results to count matches; unfiltered pages use direct indexing.",
+    "Running pages are provisional and can reorder at final reconciliation.",
+    "Measurements cover result construction, excluding serialization, network and whole editor frames; allocation events are not bytes.",
+    "Older Unity runtime execution remains deferred; minimum-version evidence is compiler-only."
+  ],
+  "implementation": {
+    "pluginCommit": "f9c7cc4e00039166135436e6dac6369fcd40bce1",
+    "serverCommit": "edbb7113d83922f8b61a8c0efffe1d302913091b"
+  },
+  "ci": {
+    "plugin": {
+      "run": 36863206966,
+      "passed": true,
+      "routes": 338
+    },
+    "server": {
+      "run": 36863215277,
+      "passed": true,
+      "jobs": 8,
+      "nodeVersions": [
+        18,
+        20,
+        22,
+        24
+      ],
+      "platforms": [
+        "Windows",
+        "Linux"
+      ],
+      "testsPerJob": 263
+    }
+  },
+  "cleanup": {
+    "ownedEditorsClosed": true,
+    "copiedFixturesRemoved": true,
+    "localDocumentationLinksChecked": 331
+  }
+}

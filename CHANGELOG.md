@@ -2,6 +2,205 @@
 
 All notable changes to this package will be documented in this file.
 
+## [Unreleased]
+
+### Test result pagination and polling
+- Expose optional detail-page parameters and report an explicit compatibility error when an older plugin returns an unpaged job.
+- Stop server-side job polling on command errors or unsupported pagination while preserving the original diagnostic.
+- Add eight ordinary stdio regressions and opt-in live current/released component checks; document native construction measurements and exact details across script reload.
+
+### Plugin agent-session pressure
+- Add opt-in `test:session-retention` to exercise native identity pressure, returning generations, busy agents and protected results through current/released servers, followed by a real script reload.
+- Document the plugin's 1,024 idle-session ceiling, unchanged busy protection, additive metrics and nine controlled checks in the [session guide](docs/session-retention.md).
+
+### Action History drawing and measurement accuracy
+- Add opt-in `test:history-window` for native GUI cost, resource lifetime and eight interactions with current/released servers on Node 18/22.
+- Document visible-row drawing and removal of leaked selection textures in the [window guide](docs/history-window.md).
+- Correct 39 mislabeled allocation-byte values across seven historical reports. Preserve their raw values with units, retain measured event counts/timings, and withdraw the unsupported history byte-reduction percentage.
+
+### Action history persistence
+- Describe additive `historyPersistence` limits, restoration counts, warnings and failure counters while retaining the tool-catalog size budget.
+- Extend the live Undo fixture to inspect available persistence diagnostics after actual script reload; preserve compatibility with plugins predating these fields.
+- Document eighteen native checks and current/released-server reload/Undo validation on Node 18/22 in the [persistence guide](docs/history-persistence.md).
+
+### Action history monitoring
+- Describe additive `historyNotifications` backlog, delivery and drop metrics while retaining the tool-catalog size budget.
+- Add opt-in `test:history` for actual editor-update observer delivery, native pressure/clear and script reload with current/released servers on Node 18/22.
+- Record bounded observer retention, grouped Action History refreshes, filter/selection fixes and measured local costs in the [history guide](docs/history-notifications.md).
+
+### ParrelSync identity and lifecycle
+- Keep unknown clone indices readable in discovery banners; preserve clone metadata and existing tool schemas.
+- Document native marker-based plugin identity and original-project resolution, including ordinary projects whose names resemble clones.
+- Add four stdio checks and opt-in `test:parrelsync` for real parent/clone routing, Play Mode, shared recompilation, settings persistence and restart on Node 18/22. Record the limits of cross-process preference propagation.
+
+### Completed result retention
+- Describe plugin polling-cache count/cost limits and history snapshots through `unity_queue_info.data.completedResults`.
+- Add missing-result and lost-acknowledgement checks plus real current/published-server pressure workflows on Node 18/22. Preserve unknown outcomes and prevent protected re-execution; see [retention and recovery](docs/result-retention.md).
+
+### Plugin command admission
+- Expose command count/argument-cost limits and refusals through `unity_queue_info.data.httpCommands` on updated plugins.
+- Add five refusal/retry checks and live current/released-server saturation checks on Node 18/22. Preserve the existing retry and unknown-outcome contracts; see [admission limits](docs/command-admission.md).
+
+### Agent state during long sessions
+- Bound retained agent selections, discovery state and context markers while preserving active requests and shared work through cancellation.
+- Require explicit targeting for unknown agents after eviction; keep normal single-editor discovery and current/released plugin routing compatible.
+- Add configurable record/identity-byte limits, oversized identity rejection and `serverAgentState` telemetry to `unity_queue_info`.
+- Validate fourteen new regressions, 4,096 completed agents and two real Unity 6.6 projects on Node 18/22. See [limits and evidence](docs/agent-state.md).
+
+### Debug logging during long sessions
+- Rotate before an append crosses 5 MiB, retaining one previous generation; preserve the existing log path and disabled default.
+- Bound entries to 64 KiB with UTF-8-safe truncation. Keep filesystem/formatting failures out of MCP results and bound stderr diagnostics with a one-second retry delay.
+- Add twelve checks covering repeated rotation, historical files, failure recovery, concurrent processes and actual stdio framing. Document shared-writer and disk-quota limits.
+
+### Whole-product review
+- Refresh all four released/current server-plugin pairs on Node 18/22 after the mesh changes, including mixed-project agent isolation and unchanged published tool names.
+- Recheck both current READMEs locally and on GitHub, 92 links and primary comparison sources.
+- Add an isolated state-lifetime diagnostic that reproduces retained agent selections and debug logging beyond its advertised threshold; record these as open implementation work.
+
+### Mesh and renderer metadata
+- Describe all eight UV channels and triangulated quad counts while retaining tool names and input schemas.
+- Add opt-in `test:meshes` for current/released servers on Node 18/22, checking both path names, errors and non-readable metadata through the editor queue.
+- Record four failed baseline checks, twenty passing plugin checks and measured command costs without claiming end-to-end latency or gameplay gains.
+
+### Responsive asset previews
+- Describe honored preview sizes, optional image suppression and native prefab framing. Retain tool names and correct the previously inaccurate fixed-size defaults.
+- Add opt-in `test:previews` for current/released servers on Node 18/22, including native cold-preview dispatch, independent queued reads and decoded PNG verification.
+- Record eleven baseline failures, 26 passing plugin checks, 17 capture regressions and matching native-preview pixel hashes. Distinguish reduced main-thread occupation from total rendering latency.
+
+### Inline graphics captures
+- Describe camera-only rendering, explicit camera errors and bounded whole-pixel dimensions while preserving tool names, defaults and image results.
+- Add opt-in `test:graphics` with decoded PNG, refusal and cleanup checks through direct MCP calls. Current and released servers pass on Node 18/22 with the updated plugin.
+- Document nine reproduced plugin failures, seventeen passing controlled checks, removed GPU uploads and the limits of local timing measurements. Keep the existing tool-catalog size gate.
+
+### Concurrent editor selection
+- Keep the identity resolved by a project name through verification. Remove the second discovery that could silently adopt a replacement project; two-editor selection drops from five ping requests to three.
+- Supersede older explicit choices per agent and reject stale automatic discovery/validation before it can clear or restore a project over a newer selection. Preserve independent agents, explicit-port calls, ambiguity handling and cancellation cleanup.
+- Add fifteen controlled checks, with twelve failures reproduced against the preceding server using the final fixture, and opt-in `test:selection` for two real editors. All 217 ordinary tests pass locally and in eight CI jobs; 71 focused checks also pass on Node 18.
+
+### Upload refusal and body monitoring
+- Preserve explicit input non-acceptance across legacy, ordinary and guarded submission errors, including busy HTTP 503 responses. Keep a prior lost acknowledgement uncertain and retain existing retry identity/policy.
+- Add seven retry regressions and extend live HTTP monitoring to body readers, reservations, refusal/deadline counters and reload reset. All 202 ordinary tests pass locally; focused retry checks pass on Node 18 and 22.
+- Document the plugin's admission, framing and deadline fixes with 12 controlled checks, four real current/released-server runs and Dashboard pixel review.
+
+### Rendered editor validation
+- Add opt-in `test:editor-render` for real floating/docked UI Toolkit and IMGUI pixels, focus/tab preservation and Dashboard layouts on Node 18/22.
+- Record the plugin's corrected dock crop and context-help wrapping with before/after evidence, local pixel review and restored fixture state.
+
+### Editor-window capture
+- Describe background capture, ambiguity candidates and optional temporary tab selection for the updated plugin. Keep the tool-catalog payload below its existing 48,000-byte gate.
+- Add opt-in live MCP checks for string window identities, safe refusals and current/released-server compatibility on Node 18/22.
+
+### HTTP monitoring validation
+- Add an opt-in live MCP suite for concurrent traffic, command/HTTP outcome separation, refused input and actual domain reload, including released-server compatibility.
+- Document the companion plugin's additive HTTP counters, reload metadata and lighter Dashboard queue snapshots with controlled and live evidence.
+
+### Request input validation
+- Check the complete UTF-8 queue envelope against the plugin's advertised byte limit before upload. Report explicit non-acceptance without retries; retain older-plugin behavior when metadata is absent or invalid.
+- Add ten server checks and an opt-in live suite for current/released servers on Node 18/22. Document plugin grammar/depth/value validation before dispatch and the separate input/output limits.
+
+### Native Undo validation
+- Add an opt-in MCP suite for transform rollback, multiple agents, native Undo/Redo, clearing, explicit native cascades and action identity through actual script reload.
+- Clarify targeted group-revert behavior, its lack of Redo, current native eligibility and the companion plugin's additive recovery fields in tool descriptions and `docs/undo.md`.
+
+### HTTP response downloads
+- Bound incoming decompressed editor HTTP bodies before JSON parsing with `UNITY_HTTP_RESPONSE_LIMIT` (32 MiB by default). Preserve exact-limit UTF-8 decoding, cancellation and body deadlines.
+- Stop retries after overflow; report unknown outcomes after submission with known recovery identifiers. Cover queue, legacy, discovery, diagnostics and context paths without changing tool schemas.
+- Add 22 focused checks and live current/released-plugin validation on Node 18/22. All 185 ordinary tests pass locally; document the distinction between a per-response limit and total process memory.
+
+### Unity result serialization
+- Add live current/released-server checks for non-finite values, Unicode, preserved list contracts, bounded result expansion and oversized HTTP responses. Verify failed result delivery never repeats the executed snippet.
+- Document the companion plugin's early byte limits and explicit serialization errors; clarify execution completion and recovery in the code tool description.
+
+### Test job persistence
+- Add an opt-in live suite for completed results and native EditMode execution through actual script reloads. Reconnect to the marked editor and poll the original job ID.
+- Document retained details, native identity recovery, legacy summaries, corruption warnings and history limits in `docs/testing.md`.
+- Reproduce an HTTP-worker shutdown error that fails native tests during reload; the companion plugin now preserves normal thread-abort behavior without logging a false failure.
+
+### Test discovery and results
+- Expand the live Test Runner fixture with parameterized, ignored/inconclusive and fixture-setup failure cases. Check discovery truncation, invalid limits, final counts and detailed-result completeness.
+- Document the companion plugin's exclusion of empty suites, bounded result collection and reconciliation from Unity's final result tree. Reload persistence is covered by the subsequent change above.
+- Require exact test identities across consecutive PlayMode runs and wait for slow tests to start before cancellation. These checks expose a native Test Framework 1.8 assembly-cache defect previously masked by empty-suite counting.
+
+### Test Runner validation
+- Add an opt-in live fixture for EditMode/PlayMode results, real prebuild failures, native cancellation, cleanup admission and restored settings. Keep released-server checks available through an explicit server entry point.
+- Clarify that clearing a job and starting its replacement are separate calls. Document the companion plugin's lifecycle fixes, cancellation diagnostics, UTC restoration and remaining limits in `docs/testing.md`.
+
+### Package Manager validation
+- Add an opt-in live package workflow covering list/info/search, overlapping reads, command errors and a local package add/remove cycle with manifest restoration.
+- Validate the plugin's deferred package scheduler on Node 18 and 22, including sequential compatibility with the released server. See `docs/packages.md` for measured editor waits, timeouts and remaining coverage.
+
+### Editor identity and discovery
+- Reject unrecognized successful ping bodies across scans, registry validation, default-port fallback and explicit selection. Fresh registry entries cannot override a live foreign identity.
+- Recheck recovery ports and selection identity, retain legacy project/version formats, and stop copying stale project paths into live pathless responses. Reuse probes within one discovery attempt.
+- Block implicit editor commands when no editor is verified; keep cached schemas and ping diagnostics available. Failed results leave automatic context for the next successful call.
+- Add 26 checks, including 22 baseline failures; all 163 ordinary tests pass locally on Node 18 and 22. Read-only live checks pass with released/current plugins in Unity 6.6. See `docs/discovery.md` for compatibility and scope.
+
+### Request cancellation
+- Propagate SDK cancellation through editor HTTP/body reads, discovery, queue negotiation, retry delays, ticket polling and test-job waits. Do not submit deferred commands or fetch automatic context after cancellation.
+- Keep shared work alive for remaining callers; abort and evict it when its last observer leaves. Preserve selections after cancelled validation and remove completed timers/listeners.
+- Add 16 behavior regressions and three cleanup/cache checks; 15 behavior failures reproduce on the prior server. All 137 tests pass locally on Node 18 and 22. Live Unity 6.6 checks prove observation stops while accepted work executes once. See `docs/cancellation.md` for the distinction from cancelling Unity operations.
+
+### Response budgets and image outcomes
+- Count serialized UTF-8 bytes, including JSON escaping and image/metadata overhead; validate limit settings and cover early errors and project-context reads.
+- Return an explicit bounded error for oversized tool results, retaining recovery details when they fit. Prepend soft warnings without exceeding the hard limit or replacing the final structured result.
+- Preserve image blocks for Scene/Game captures through the advanced proxy, including future parameters. Report missing images and image-metadata failures as MCP errors.
+- Add 14 reproduced stdio regressions and an opt-in live response suite. All 118 ordinary tests and live Unity 6.6 checks pass on Node 18 and 22. See `docs/response-limits.md` for recovery and measurement limits.
+
+### Unity Hub command outcomes
+- Preserve nonzero exits, timeouts and output-buffer failures as MCP errors even when Hub prints progress. Retain process diagnostics and identify unknown outcomes after failed writes.
+- Execute each command once, including silent success, with the documented platform headless prefix. Remove retries that could repeat an installation or setting change.
+- Preserve editor/release data from stderr and deduplicate identical installed-editor lines. Keep the six tool schemas, successful result fields and process timeout values.
+- Add 15 stdio/child-process regressions; all 104 ordinary tests pass locally on Node 18 and 22. Read-only Hub 3.16.2 checks preserve actual path/editor results. See `docs/hub.md` for scope and limits.
+
+### Live version compatibility
+- Add an opt-in `test:compatibility` suite using separate released/current server checkouts and real Unity editors with old/new plugins.
+- Verify four combinations, object/undo/error/history workflows, 384 retained tool names, and four-agent concurrency across mixed plugin versions. Record Node 18/22 evidence and restore fixture scenes/counters.
+
+### Dashboard evidence
+- Document the companion plugin's card reuse, project-scoped section preferences, corrected narrow-window layout and accurate latest-request label.
+- Record baseline/corrected refresh measurements, attached-window geometry and script-reload checks, monitoring regressions and compiler-only minimum-version validation. The changing-agent workload records 83% fewer allocation events; see `docs/dashboard.md` for measurement limits.
+
+### Code execution evidence
+- Document the companion plugin's bounded metadata reuse, in-memory compilation, source-relative diagnostics and additive compiler counters in editor state.
+- Record baseline failures and a local twenty-call measurement of 15.85 s before / 1.01 s after, with cache-pressure and live workflow checks. See `docs/code-execution.md` for runtime and measurement limits.
+
+### Optional integration validation
+- Document and record actual UMA V3.1f1 compatibility, asset generation and rename validation in the companion plugin. Keep existing tool names and schemas; unavailable UMA integration now gives explicit installation/define diagnostics.
+- Record reproduced compiler errors, unrelated-folder deletion, stale name hashes, skipped legacy recipe references and rename-collision changes, with passing corrected checks. See `docs/uma.md` for scope, reproduction and UMA 2/runtime limitations.
+
+### Fixed
+- A fresh registry entry could override a conflicting live identity after another project reused the selected port. Reject that fallback and require a new selection before dispatching a command.
+- Resource list/read requests ignored agent identity and could return another project's documentation. Apply request-local identity, validated port overrides and selection checks while preserving existing category URIs.
+- Initial discovery could replace an explicit custom-port selection after its registry entry vanished. Validate that selection before auto-discovery.
+- Repeated calls after a selected project disappeared could eventually auto-select another editor. Keep the selection requirement until an explicit new choice, for tools and resources.
+- Accept the UTF-8 BOM written by older Unity instance registries, including discovery outside the fallback port-scan range.
+- Verify the requested Play/Stop state after protocol-2+ session loss instead of reporting a false failure or repeating the command. Ambiguous Pause toggles remain unknown.
+- Isolate project routing and agent identity per asynchronous MCP request. Overlapping calls retain their own target through submission, polling and context injection.
+- Cache queue support per bridge endpoint so a legacy plugin cannot downgrade other open projects.
+- Use the live ping identity when a registry port has been reused; reject invalid routing ports before contacting an editor.
+- Share concurrent initial discovery for an agent so a second call cannot bypass required instance selection.
+- Prevent lost queue acknowledgements and legacy HTTP server errors from repeating accepted commands. Use protocol-2 protected retries when available; report unknown outcomes on older plugins without replaying writes.
+- Scope protected polling to the editor queue session, retry transient GET failures, and include response-body reads in per-request and overall polling deadlines.
+
+### Changed
+- Document explicit stored enum values while retaining numeric indices. Expose asset-result and Scene screenshot bounds used by the updated companion plugin; keep the rich tool registry under its existing 48 KB budget.
+- Preserve MPPM virtual-player identity through registry discovery, port scanning and instance listings. Add `isVirtualPlayer`, `mainProjectPath` and `virtualPlayerId` without changing ParrelSync fields; older plugins may omit the new metadata.
+- Expose optional `managedCodeVariant` for Unity 6.6 builds and require plugin protocol 3 before submitting an explicit variant; older plugins keep accepting existing build arguments.
+- Remove duplicate identity/liveness pings from discovery and selection validation.
+- Pin the existing MCP SDK version and refresh compatible transitive dependencies; the current npm audit reports no known vulnerabilities.
+- Rebuild the README around multi-project workflows, an original vector diagram and linked architecture, configuration, feature and validation guides.
+- Isolate queue transport in `queue-transport.js` and document the bounded retry contract and old/new compatibility matrix.
+
+### Validation
+- Add opt-in `test:features` for scenes, sparse enums/flags, references, materials, prefabs, asset/hierarchy limits and Scene captures. Verify invalid writes preserve data and failed captures restore render targets without retaining capture textures.
+- Record a compiler-only Unity 2021.3.18f1 check and the Dashboard namespace correction it exposed. Actual older-editor execution is deferred; this does not certify package import or runtime behavior.
+- Add opt-in `test:multiplayer` for MPPM 3.0 on Unity 6.6: native scenario settings, Host/Client launch, invalid-create rejection, two sets of 12 concurrent commands across separate processes, shared script recompilation and fixture restoration.
+- Cover BOM registry reading and MPPM identity through both discovery paths.
+- Document and retain companion-plugin command-outcome evidence: distinct command errors, exceptions and timeouts; exactly-once callback history; legacy result and history compatibility; bounded history backlog and preserved undo behavior.
+- Add opt-in `test:monitoring` for a real handler error across stdio MCP, session counters and the plugin history endpoint.
+- Cover concurrency/discovery, nine transport fault regressions, build capability gates and Play Mode recovery. The companion plugin's Unity 6000.6.2f1 runner also exercises its actual HTTP dispatcher and guarded retries.
+- Add opt-in live build and editor lifecycle suites: compiled diagnostics and restoration after success/failure, two real editors, four reload configurations and a lost result across actual script reload.
+
 ## [2.35.6] - 2026-07-27
 
 Companion to plugin **2.39.5** (community-reported fixes).

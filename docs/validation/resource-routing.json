@@ -1,0 +1,221 @@
+{
+  "baselineServerCommit": "9461c668467ae198c7c420c9dfa6d4f89bd8fa9d",
+  "baseline": {
+    "beforeSelection": {
+      "resources": [
+        {
+          "uri": "unity-context://AlphaRules",
+          "name": "Project Context: AlphaRules",
+          "description": "Project-specific documentation for AlphaRules",
+          "mimeType": "text/markdown"
+        }
+      ]
+    },
+    "lists": [
+      {
+        "resources": [
+          {
+            "uri": "unity-context://AlphaRules",
+            "name": "Project Context: AlphaRules",
+            "description": "Project-specific documentation for AlphaRules",
+            "mimeType": "text/markdown"
+          }
+        ]
+      },
+      {
+        "resources": [
+          {
+            "uri": "unity-context://AlphaRules",
+            "name": "Project Context: AlphaRules",
+            "description": "Project-specific documentation for AlphaRules",
+            "mimeType": "text/markdown"
+          }
+        ]
+      }
+    ],
+    "reads": [
+      {
+        "contents": [
+          {
+            "uri": "unity-context://Rules",
+            "mimeType": "text/markdown",
+            "text": "Alpha rules"
+          }
+        ]
+      },
+      {
+        "contents": [
+          {
+            "uri": "unity-context://Rules",
+            "mimeType": "text/markdown",
+            "text": "Alpha rules"
+          }
+        ]
+      }
+    ],
+    "correctPerAgentResources": false,
+    "blocksUnselectedProject": false,
+    "retainedSelectedProject": "Alpha"
+  },
+  "corrected": {
+    "beforeSelection": {
+      "resources": []
+    },
+    "lists": [
+      {
+        "resources": [
+          {
+            "uri": "unity-context://AlphaRules",
+            "name": "Project Context: AlphaRules",
+            "description": "Project-specific documentation for AlphaRules",
+            "mimeType": "text/markdown"
+          }
+        ]
+      },
+      {
+        "resources": [
+          {
+            "uri": "unity-context://BetaRules",
+            "name": "Project Context: BetaRules",
+            "description": "Project-specific documentation for BetaRules",
+            "mimeType": "text/markdown"
+          }
+        ]
+      }
+    ],
+    "reads": [
+      {
+        "contents": [
+          {
+            "uri": "unity-context://Rules",
+            "mimeType": "text/markdown",
+            "text": "Alpha rules"
+          }
+        ]
+      },
+      {
+        "contents": [
+          {
+            "uri": "unity-context://Rules",
+            "mimeType": "text/markdown",
+            "text": "Beta rules"
+          }
+        ]
+      }
+    ],
+    "correctPerAgentResources": true,
+    "blocksUnselectedProject": true,
+    "retainedSelectedProject": "Beta"
+  },
+  "recordedAt": "2026-09-30T21:27:35.041Z",
+  "mockTransport": "Real MCP stdio servers with two isolated HTTP bridge fixtures",
+  "ordinaryTests": {
+    "node18": {
+      "version": "18.20.8",
+      "passed": 89,
+      "failed": 0
+    },
+    "node22": {
+      "version": "22.18.0",
+      "passed": 89,
+      "failed": 0
+    }
+  },
+  "regressions": [
+    "Concurrent resource lists and reads retain agent selection",
+    "Explicit resource ports do not change saved selection",
+    "Default-client resource selection and legacy category URIs remain supported",
+    "Both agent metadata aliases and invalid port/agent inputs",
+    "Unselected clients cannot read an arbitrary project",
+    "Explicit custom-port selection survives a missing registry entry",
+    "Three repeated tool/resource attempts after project loss require explicit reselection",
+    "A fresh registry entry cannot override a live identity conflict, before or after the first command"
+  ],
+  "liveNode22": {
+    "nodeVersion": "v22.18.0",
+    "projects": [
+      {
+        "unityVersion": "6000.6.2f1",
+        "pluginVersion": "2.39.7"
+      },
+      {
+        "unityVersion": "6000.6.2f1",
+        "pluginVersion": "2.39.7"
+      }
+    ],
+    "passed": true,
+    "concurrentLists": true,
+    "concurrentReads": true,
+    "explicitPortOverride": true,
+    "selectionRetained": true,
+    "defaultClientSelection": true,
+    "legacyUriPreserved": true,
+    "restored": true
+  },
+  "liveNode18": {
+    "nodeVersion": "v18.20.8",
+    "projects": [
+      {
+        "unityVersion": "6000.6.2f1",
+        "pluginVersion": "2.39.7"
+      },
+      {
+        "unityVersion": "6000.6.2f1",
+        "pluginVersion": "2.39.7"
+      }
+    ],
+    "passed": true,
+    "concurrentLists": true,
+    "concurrentReads": true,
+    "explicitPortOverride": true,
+    "selectionRetained": true,
+    "defaultClientSelection": true,
+    "legacyUriPreserved": true,
+    "restored": true
+  },
+  "liveScope": "Two Unity 6000.6.2f1 editors on Windows; actual context reads with temporary Library fixtures and restored settings",
+  "limits": [
+    "Resource URIs remain relative to the current selection, not globally bound to project identity",
+    "Agent and port metadata route requests; they do not authenticate or authorize agents",
+    "Other editor versions and operating systems were not exercised by the live fixture"
+  ],
+  "liveValidatedServerCommit": "1cc33ea56f9c37bb68275382b13ac01fe4928f85",
+  "liveValidatedServerCi": "https://github.com/AnkleBreaker-Studio/unity-mcp-server/actions/runs/36779733155",
+  "reusedPort": {
+    "baselineServerCommit": "1cc33ea56f9c37bb68275382b13ac01fe4928f85",
+    "baseline": {
+      "blocked": false,
+      "response": {
+        "success": true,
+        "data": {
+          "projectName": "Replacement"
+        }
+      },
+      "replacementCommands": 1
+    },
+    "corrected": {
+      "blocked": true,
+      "response": null,
+      "replacementCommands": 0,
+      "selectionRequested": true
+    },
+    "warmAndColdSelectionTestsPassed": true
+  },
+  "correctedServerCommit": "acf10cf5f1a64a08192123cb3926bdd452a75004",
+  "ci": {
+    "url": "https://github.com/AnkleBreaker-Studio/unity-mcp-server/actions/runs/36780224199",
+    "conclusion": "success",
+    "jobs": 8,
+    "nodeVersions": [
+      18,
+      20,
+      22,
+      24
+    ],
+    "operatingSystems": [
+      "Windows",
+      "Linux"
+    ],
+    "ordinaryTests": 89
+  }
+}

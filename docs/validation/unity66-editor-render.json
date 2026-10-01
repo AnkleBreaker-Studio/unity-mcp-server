@@ -1,0 +1,917 @@
+{
+  "recordedAt": "2026-10-01T04:51:19.861Z",
+  "platform": "Windows",
+  "unityVersion": "6000.6.2f1",
+  "baselinePluginCommit": "5704ee63c4d8f2a6c5b79b4daed008088f161e0b",
+  "baselineServerCommit": "c3dfa6c",
+  "sourceSha256": {
+    "capture": "efc990836f434196bf7c262f8dc02040dd7b5235930224b122dc2c24a04c21a2",
+    "dashboard": "27219304a05b99ececf0845558b2c38edf7ed28499ae8600e1ede8d3f7a58c4a",
+    "fixture": "e13d8d0648662723cb2baecc5da5dbe78fd9f82436523520ea22067d099adb2f"
+  },
+  "baseline": {
+    "docked": {
+      "width": 1045,
+      "height": 407,
+      "quadrantPixelCounts": [
+        106692,
+        106488,
+        93617,
+        93438
+      ]
+    },
+    "dockedContentCoverage": 0.941031941031941,
+    "dockBorderPixels": 24,
+    "context": {
+      "text": "No context files found. Click 'Create Templates' to get started.",
+      "width": 282,
+      "height": 13,
+      "naturalWidth": 294,
+      "naturalHeight": 13,
+      "whiteSpace": "NoWrap"
+    }
+  },
+  "runs": [
+    {
+      "nodeVersion": "v22.18.0",
+      "passed": true,
+      "pixelsPerPoint": 1,
+      "floatingPattern": {
+        "width": 376,
+        "height": 359,
+        "quadrantPixelCounts": [
+          28800,
+          28800,
+          28800,
+          28800
+        ],
+        "contentCoverage": 0.8534344811236887
+      },
+      "dockedPatterns": [
+        {
+          "name": "docked-uitk",
+          "selected": {
+            "width": 1045,
+            "height": 407,
+            "quadrantPixelCounts": [
+              106692,
+              106488,
+              106169,
+              105966
+            ],
+            "contentCoverage": 1
+          },
+          "activated": {
+            "width": 1045,
+            "height": 407,
+            "quadrantPixelCounts": [
+              106692,
+              106488,
+              106169,
+              105966
+            ],
+            "contentCoverage": 1
+          },
+          "inactiveRefused": true
+        },
+        {
+          "name": "docked-imgui",
+          "selected": {
+            "width": 1045,
+            "height": 407,
+            "quadrantPixelCounts": [
+              106488,
+              106488,
+              105966,
+              105966
+            ],
+            "contentCoverage": 0.999043062200957
+          },
+          "activated": {
+            "width": 1045,
+            "height": 407,
+            "quadrantPixelCounts": [
+              106488,
+              106488,
+              105966,
+              105966
+            ],
+            "contentCoverage": 0.999043062200957
+          },
+          "inactiveRefused": true
+        }
+      ],
+      "captures": [
+        {
+          "name": "floating-pattern",
+          "width": 376,
+          "height": 359,
+          "foregroundPreserved": true,
+          "selectedTabPreserved": true,
+          "previousDockTabPreserved": true
+        },
+        {
+          "name": "dashboard-360-500-top",
+          "width": 376,
+          "height": 539,
+          "foregroundPreserved": true,
+          "selectedTabPreserved": true,
+          "previousDockTabPreserved": true
+        },
+        {
+          "name": "dashboard-360-500-bottom",
+          "width": 376,
+          "height": 539,
+          "foregroundPreserved": true,
+          "selectedTabPreserved": true,
+          "previousDockTabPreserved": true
+        },
+        {
+          "name": "dashboard-360-800-top",
+          "width": 376,
+          "height": 839,
+          "foregroundPreserved": true,
+          "selectedTabPreserved": true,
+          "previousDockTabPreserved": true
+        },
+        {
+          "name": "dashboard-360-800-bottom",
+          "width": 376,
+          "height": 839,
+          "foregroundPreserved": true,
+          "selectedTabPreserved": true,
+          "previousDockTabPreserved": true
+        },
+        {
+          "name": "dashboard-640-800-top",
+          "width": 656,
+          "height": 839,
+          "foregroundPreserved": true,
+          "selectedTabPreserved": true,
+          "previousDockTabPreserved": true
+        },
+        {
+          "name": "dashboard-640-800-bottom",
+          "width": 656,
+          "height": 839,
+          "foregroundPreserved": true,
+          "selectedTabPreserved": true,
+          "previousDockTabPreserved": true
+        },
+        {
+          "name": "dashboard-project-context-top",
+          "width": 376,
+          "height": 539,
+          "foregroundPreserved": true,
+          "selectedTabPreserved": true,
+          "previousDockTabPreserved": true
+        },
+        {
+          "name": "dashboard-project-context-bottom",
+          "width": 376,
+          "height": 539,
+          "foregroundPreserved": true,
+          "selectedTabPreserved": true,
+          "previousDockTabPreserved": true
+        },
+        {
+          "name": "dashboard-feature-categories-top",
+          "width": 376,
+          "height": 539,
+          "foregroundPreserved": true,
+          "selectedTabPreserved": true,
+          "previousDockTabPreserved": true
+        },
+        {
+          "name": "dashboard-feature-categories-bottom",
+          "width": 376,
+          "height": 539,
+          "foregroundPreserved": true,
+          "selectedTabPreserved": true,
+          "previousDockTabPreserved": true
+        },
+        {
+          "name": "dashboard-settings-top",
+          "width": 376,
+          "height": 539,
+          "foregroundPreserved": true,
+          "selectedTabPreserved": true,
+          "previousDockTabPreserved": true
+        },
+        {
+          "name": "dashboard-settings-bottom",
+          "width": 376,
+          "height": 539,
+          "foregroundPreserved": true,
+          "selectedTabPreserved": true,
+          "previousDockTabPreserved": true
+        },
+        {
+          "name": "docked-uitk-selected",
+          "width": 1045,
+          "height": 407,
+          "foregroundPreserved": true,
+          "selectedTabPreserved": true,
+          "previousDockTabPreserved": true
+        },
+        {
+          "name": "docked-uitk-activated",
+          "width": 1045,
+          "height": 407,
+          "foregroundPreserved": true,
+          "selectedTabPreserved": true,
+          "previousDockTabPreserved": true
+        },
+        {
+          "name": "docked-imgui-selected",
+          "width": 1045,
+          "height": 407,
+          "foregroundPreserved": true,
+          "selectedTabPreserved": true,
+          "previousDockTabPreserved": true
+        },
+        {
+          "name": "docked-imgui-activated",
+          "width": 1045,
+          "height": 407,
+          "foregroundPreserved": true,
+          "selectedTabPreserved": true,
+          "previousDockTabPreserved": true
+        }
+      ],
+      "layouts": [
+        {
+          "name": "dashboard-360-500",
+          "width": 360,
+          "height": 500,
+          "panelAttached": true,
+          "textElements": 44,
+          "horizontalGeometryOverflow": []
+        },
+        {
+          "name": "dashboard-360-800",
+          "width": 360,
+          "height": 800,
+          "panelAttached": true,
+          "textElements": 44,
+          "horizontalGeometryOverflow": []
+        },
+        {
+          "name": "dashboard-640-800",
+          "width": 640,
+          "height": 800,
+          "panelAttached": true,
+          "textElements": 40,
+          "horizontalGeometryOverflow": []
+        },
+        {
+          "name": "dashboard-project-context",
+          "width": 360,
+          "height": 500,
+          "panelAttached": true,
+          "textElements": 25,
+          "horizontalGeometryOverflow": [],
+          "contextHelp": {
+            "text": "No context files found. Click 'Create Templates' to get started.",
+            "tooltip": "",
+            "x": 40,
+            "y": 370,
+            "width": 282,
+            "height": 25,
+            "naturalWidth": 294,
+            "naturalHeight": 13,
+            "whiteSpace": "Normal",
+            "overflow": "Clip"
+          }
+        },
+        {
+          "name": "dashboard-feature-categories",
+          "width": 360,
+          "height": 500,
+          "panelAttached": true,
+          "textElements": 67,
+          "horizontalGeometryOverflow": []
+        },
+        {
+          "name": "dashboard-settings",
+          "width": 360,
+          "height": 500,
+          "panelAttached": true,
+          "textElements": 30,
+          "horizontalGeometryOverflow": []
+        }
+      ],
+      "cleanup": [
+        {
+          "closed": 2,
+          "preferencesRestored": true,
+          "dockRestored": true,
+          "foregroundPreserved": true
+        },
+        {
+          "closed": 1,
+          "preferencesRestored": true,
+          "dockRestored": true,
+          "foregroundPreserved": true
+        },
+        {
+          "closed": 1,
+          "preferencesRestored": true,
+          "dockRestored": true,
+          "foregroundPreserved": true
+        },
+        {
+          "closed": 0,
+          "preferencesRestored": true,
+          "dockRestored": true,
+          "foregroundPreserved": true
+        }
+      ]
+    },
+    {
+      "nodeVersion": "v18.20.8",
+      "passed": true,
+      "pixelsPerPoint": 1,
+      "floatingPattern": {
+        "width": 376,
+        "height": 359,
+        "quadrantPixelCounts": [
+          28800,
+          28800,
+          28800,
+          28800
+        ],
+        "contentCoverage": 0.8534344811236887
+      },
+      "dockedPatterns": [
+        {
+          "name": "docked-uitk",
+          "selected": {
+            "width": 1045,
+            "height": 407,
+            "quadrantPixelCounts": [
+              106692,
+              106488,
+              106169,
+              105966
+            ],
+            "contentCoverage": 1
+          },
+          "activated": {
+            "width": 1045,
+            "height": 407,
+            "quadrantPixelCounts": [
+              106692,
+              106488,
+              106169,
+              105966
+            ],
+            "contentCoverage": 1
+          },
+          "inactiveRefused": true
+        },
+        {
+          "name": "docked-imgui",
+          "selected": {
+            "width": 1045,
+            "height": 407,
+            "quadrantPixelCounts": [
+              106488,
+              106488,
+              105966,
+              105966
+            ],
+            "contentCoverage": 0.999043062200957
+          },
+          "activated": {
+            "width": 1045,
+            "height": 407,
+            "quadrantPixelCounts": [
+              106488,
+              106488,
+              105966,
+              105966
+            ],
+            "contentCoverage": 0.999043062200957
+          },
+          "inactiveRefused": true
+        }
+      ],
+      "captures": [
+        {
+          "name": "floating-pattern",
+          "width": 376,
+          "height": 359,
+          "foregroundPreserved": true,
+          "selectedTabPreserved": true,
+          "previousDockTabPreserved": true
+        },
+        {
+          "name": "dashboard-360-500-top",
+          "width": 376,
+          "height": 539,
+          "foregroundPreserved": true,
+          "selectedTabPreserved": true,
+          "previousDockTabPreserved": true
+        },
+        {
+          "name": "dashboard-360-500-bottom",
+          "width": 376,
+          "height": 539,
+          "foregroundPreserved": true,
+          "selectedTabPreserved": true,
+          "previousDockTabPreserved": true
+        },
+        {
+          "name": "dashboard-360-800-top",
+          "width": 376,
+          "height": 839,
+          "foregroundPreserved": true,
+          "selectedTabPreserved": true,
+          "previousDockTabPreserved": true
+        },
+        {
+          "name": "dashboard-360-800-bottom",
+          "width": 376,
+          "height": 839,
+          "foregroundPreserved": true,
+          "selectedTabPreserved": true,
+          "previousDockTabPreserved": true
+        },
+        {
+          "name": "dashboard-640-800-top",
+          "width": 656,
+          "height": 839,
+          "foregroundPreserved": true,
+          "selectedTabPreserved": true,
+          "previousDockTabPreserved": true
+        },
+        {
+          "name": "dashboard-640-800-bottom",
+          "width": 656,
+          "height": 839,
+          "foregroundPreserved": true,
+          "selectedTabPreserved": true,
+          "previousDockTabPreserved": true
+        },
+        {
+          "name": "dashboard-project-context-top",
+          "width": 376,
+          "height": 539,
+          "foregroundPreserved": true,
+          "selectedTabPreserved": true,
+          "previousDockTabPreserved": true
+        },
+        {
+          "name": "dashboard-project-context-bottom",
+          "width": 376,
+          "height": 539,
+          "foregroundPreserved": true,
+          "selectedTabPreserved": true,
+          "previousDockTabPreserved": true
+        },
+        {
+          "name": "dashboard-feature-categories-top",
+          "width": 376,
+          "height": 539,
+          "foregroundPreserved": true,
+          "selectedTabPreserved": true,
+          "previousDockTabPreserved": true
+        },
+        {
+          "name": "dashboard-feature-categories-bottom",
+          "width": 376,
+          "height": 539,
+          "foregroundPreserved": true,
+          "selectedTabPreserved": true,
+          "previousDockTabPreserved": true
+        },
+        {
+          "name": "dashboard-settings-top",
+          "width": 376,
+          "height": 539,
+          "foregroundPreserved": true,
+          "selectedTabPreserved": true,
+          "previousDockTabPreserved": true
+        },
+        {
+          "name": "dashboard-settings-bottom",
+          "width": 376,
+          "height": 539,
+          "foregroundPreserved": true,
+          "selectedTabPreserved": true,
+          "previousDockTabPreserved": true
+        },
+        {
+          "name": "docked-uitk-selected",
+          "width": 1045,
+          "height": 407,
+          "foregroundPreserved": true,
+          "selectedTabPreserved": true,
+          "previousDockTabPreserved": true
+        },
+        {
+          "name": "docked-uitk-activated",
+          "width": 1045,
+          "height": 407,
+          "foregroundPreserved": true,
+          "selectedTabPreserved": true,
+          "previousDockTabPreserved": true
+        },
+        {
+          "name": "docked-imgui-selected",
+          "width": 1045,
+          "height": 407,
+          "foregroundPreserved": true,
+          "selectedTabPreserved": true,
+          "previousDockTabPreserved": true
+        },
+        {
+          "name": "docked-imgui-activated",
+          "width": 1045,
+          "height": 407,
+          "foregroundPreserved": true,
+          "selectedTabPreserved": true,
+          "previousDockTabPreserved": true
+        }
+      ],
+      "layouts": [
+        {
+          "name": "dashboard-360-500",
+          "width": 360,
+          "height": 500,
+          "panelAttached": true,
+          "textElements": 48,
+          "horizontalGeometryOverflow": []
+        },
+        {
+          "name": "dashboard-360-800",
+          "width": 360,
+          "height": 800,
+          "panelAttached": true,
+          "textElements": 48,
+          "horizontalGeometryOverflow": []
+        },
+        {
+          "name": "dashboard-640-800",
+          "width": 640,
+          "height": 800,
+          "panelAttached": true,
+          "textElements": 48,
+          "horizontalGeometryOverflow": []
+        },
+        {
+          "name": "dashboard-project-context",
+          "width": 360,
+          "height": 500,
+          "panelAttached": true,
+          "textElements": 25,
+          "horizontalGeometryOverflow": [],
+          "contextHelp": {
+            "text": "No context files found. Click 'Create Templates' to get started.",
+            "tooltip": "",
+            "x": 40,
+            "y": 370,
+            "width": 282,
+            "height": 25,
+            "naturalWidth": 294,
+            "naturalHeight": 13,
+            "whiteSpace": "Normal",
+            "overflow": "Clip"
+          }
+        },
+        {
+          "name": "dashboard-feature-categories",
+          "width": 360,
+          "height": 500,
+          "panelAttached": true,
+          "textElements": 67,
+          "horizontalGeometryOverflow": []
+        },
+        {
+          "name": "dashboard-settings",
+          "width": 360,
+          "height": 500,
+          "panelAttached": true,
+          "textElements": 29,
+          "horizontalGeometryOverflow": []
+        }
+      ],
+      "cleanup": [
+        {
+          "closed": 2,
+          "preferencesRestored": true,
+          "dockRestored": true,
+          "foregroundPreserved": true
+        },
+        {
+          "closed": 1,
+          "preferencesRestored": true,
+          "dockRestored": true,
+          "foregroundPreserved": true
+        },
+        {
+          "closed": 1,
+          "preferencesRestored": true,
+          "dockRestored": true,
+          "foregroundPreserved": true
+        },
+        {
+          "closed": 0,
+          "preferencesRestored": true,
+          "dockRestored": true,
+          "foregroundPreserved": true
+        }
+      ]
+    }
+  ],
+  "regressions": {
+    "editorCapture": {
+      "unityVersion": "6000.6.2f1",
+      "passed": true,
+      "checks": [
+        {
+          "name": "Duplicate full type names are refused",
+          "passed": true,
+          "evidence": 2
+        },
+        {
+          "name": "Duplicate simple type names are refused",
+          "passed": true,
+          "evidence": 2
+        },
+        {
+          "name": "Unique title retains exact matching",
+          "passed": true,
+          "evidence": true
+        },
+        {
+          "name": "Ambiguous substrings are refused",
+          "passed": true,
+          "evidence": 2
+        },
+        {
+          "name": "String object identity selects one duplicate",
+          "passed": true,
+          "evidence": {
+            "id": "1099511641239"
+          }
+        },
+        {
+          "name": "Missing identity does not fall back to a different window",
+          "passed": true,
+          "evidence": true
+        },
+        {
+          "name": "Ambiguous capture returns usable string identities",
+          "passed": true,
+          "evidence": {
+            "success": false,
+            "error": "Ambiguous: 2 windows match 'UnityMcpCaptureFixture.CaptureWindow'. Use a unique title or an id: selector from candidates.",
+            "code": "ambiguous_window",
+            "candidates": [
+              {
+                "window": "id:1099511641239",
+                "type": "UnityMcpCaptureFixture.CaptureWindow",
+                "title": "__Capture_Second"
+              },
+              {
+                "window": "id:3298534896761",
+                "type": "UnityMcpCaptureFixture.CaptureWindow",
+                "title": "__Capture_First"
+              }
+            ]
+          }
+        },
+        {
+          "name": "Unshown windows fail before native capture",
+          "passed": true,
+          "evidence": {
+            "success": false,
+            "error": "The window is not a visible tab. Select it first, or explicitly pass activateTab:true to temporarily switch an existing tab.",
+            "code": "window_not_visible"
+          }
+        },
+        {
+          "name": "Capture pixel limits include the full backing window",
+          "passed": true,
+          "evidence": true
+        },
+        {
+          "name": "Inactive tabs require opt-in and restore the previous tab after native failure",
+          "passed": true,
+          "evidence": {
+            "success": false,
+            "error": "Could not resolve the main editor window handle."
+          }
+        },
+        {
+          "name": "GDI resource counter detects an owned DC",
+          "passed": true,
+          "evidence": true
+        },
+        {
+          "name": "Native full-window PNG has exact opaque pixels",
+          "passed": true,
+          "evidence": {
+            "width": 64,
+            "height": 48,
+            "opaqueWhitePixels": 3072
+          }
+        },
+        {
+          "name": "Native crop PNG has exact dimensions and pixels",
+          "passed": true,
+          "evidence": {
+            "width": 24,
+            "height": 16,
+            "opaqueWhitePixels": 384
+          }
+        },
+        {
+          "name": "Rejected dimensions do not allocate GDI resources",
+          "passed": true,
+          "evidence": {
+            "success": false,
+            "error": "Capture exceeds the 32-pixel side limit or 33554432-pixel total limit."
+          }
+        },
+        {
+          "name": "Repeated captures release GDI objects and textures",
+          "passed": true,
+          "evidence": {
+            "iterations": 20,
+            "before": 7,
+            "after": 7
+          }
+        },
+        {
+          "name": "Filesystem failure also releases capture resources",
+          "passed": true,
+          "evidence": true
+        },
+        {
+          "name": "Owned captures preserve OS foreground and leave Unity windows unshown",
+          "passed": true,
+          "evidence": true
+        }
+      ],
+      "scope": "Unshown Unity fixtures and a 64x48 native white window behind existing windows without activation; no user-window pixels"
+    },
+    "dashboard": {
+      "unityVersion": "6000.6.2f1",
+      "idle": {
+        "iterations": 100,
+        "elapsedMs": 23.1762,
+        "allocations": 30400,
+        "profilerControlAllocations": 1,
+        "rawRecorderValue": 706200,
+        "rawRecorderUnit": "TimeNanoseconds"
+      },
+      "unchangedQueueSection": {
+        "iterations": 100,
+        "elapsedMs": 0.0198,
+        "allocations": 0,
+        "profilerControlAllocations": 1,
+        "rawRecorderValue": 0,
+        "rawRecorderUnit": "TimeNanoseconds"
+      },
+      "unchangedHttpSection": {
+        "iterations": 100,
+        "elapsedMs": 0.0199,
+        "allocations": 0,
+        "profilerControlAllocations": 1,
+        "rawRecorderValue": 0,
+        "rawRecorderUnit": "TimeNanoseconds"
+      },
+      "httpActiveRequestVisible": true,
+      "httpRefusalVisible": true,
+      "httpControlsReused": true,
+      "twentyStableAgents": {
+        "iterations": 100,
+        "elapsedMs": 21.6403,
+        "allocations": 30400,
+        "profilerControlAllocations": 1,
+        "rawRecorderValue": 682500,
+        "rawRecorderUnit": "TimeNanoseconds"
+      },
+      "unshownActivityDoesNotRebuild": true,
+      "visibleMetricsRefresh": true,
+      "changingAgents": {
+        "iterations": 100,
+        "elapsedMs": 26.139300000000002,
+        "allocations": 31800,
+        "profilerControlAllocations": 1,
+        "rawRecorderValue": 707800,
+        "rawRecorderUnit": "TimeNanoseconds"
+      },
+      "changedAndUnchangedCardsReused": true,
+      "oldOutstandingSessionVisible": true,
+      "idleSessionExpiresWithoutRebuildingOthers": true,
+      "returningSessionVisible": true,
+      "emptyStateRestored": true,
+      "newAgentReplacesEmptyState": true,
+      "scrollRootsBefore": 1,
+      "scrollRootsAfter": 1,
+      "recreateGuiDoesNotDuplicateControls": true,
+      "savedFoldoutStateRestored": true,
+      "httpPreferenceAndCountersRestored": true,
+      "failures": [],
+      "passed": true,
+      "fixtureSessionsRemoved": true
+    },
+    "server": {
+      "nodeVersion": "22.18.0",
+      "passed": 195,
+      "failed": 0
+    },
+    "minimumApi": {
+      "version": "2021.3.18f1",
+      "sourceCount": 74,
+      "exitCode": 0,
+      "scope": "Compiler-only; no old editor launched, per maintainer direction"
+    }
+  },
+  "visualReview": {
+    "inspected": [
+      "floating color quadrants",
+      "docked UI Toolkit and IMGUI quadrants",
+      "Dashboard 360x500/360x800 top and bottom",
+      "Dashboard 640x800 top",
+      "Project Context help and actions",
+      "Feature Categories top/bottom",
+      "Settings bottom"
+    ],
+    "result": "Corrected dock crop excludes tab strip and keeps full content. Context help wraps. Long agent/request labels use ellipses; HTTP text wraps and bottom controls remain reachable by scrolling."
+  },
+  "limitations": [
+    "Windows at pixelsPerPoint=1 only; mixed DPI and other monitors remain unverified",
+    "PrintWindow remains renderer dependent; these owned fixtures do not certify every editor window",
+    "Attached render CPU/GPU costs were not benchmarked",
+    "Screenshots remain local validation artifacts, not committed"
+  ],
+  "cleanup": {
+    "remainingFixtureWindows": 0,
+    "temporaryEditorClosed": true,
+    "copiedFixtureRemoved": true,
+    "persistentEditors": [
+      {
+        "project": "Queue66",
+        "isCompiling": false,
+        "compileErrors": 0,
+        "isPlaying": false,
+        "sceneDirty": false,
+        "activeScenePath": "Assets/__McpValidation/BuildScene.unity"
+      },
+      {
+        "project": "Unity66",
+        "isCompiling": false,
+        "compileErrors": 0,
+        "isPlaying": false,
+        "sceneDirty": false,
+        "activeScenePath": "Assets/__McpValidation/MultiplayerScene.unity"
+      }
+    ]
+  },
+  "publication": {
+    "branch": "Development-Unity66-Modernization",
+    "pluginCommit": "d935808ba89865be99431dd64e9a6a0227786085",
+    "serverCommit": "e86e3c1040156592de4bc1c93ad53c1105211dc9",
+    "pluginCI": {
+      "runId": 36817269040,
+      "conclusion": "success",
+      "routes": 338,
+      "url": "https://github.com/AnkleBreaker-Studio/unity-mcp-plugin/actions/runs/36817269040"
+    },
+    "serverCI": {
+      "runId": 36817275036,
+      "conclusion": "success",
+      "jobs": 8,
+      "nodeVersions": [
+        18,
+        20,
+        22,
+        24
+      ],
+      "platforms": [
+        "Windows",
+        "Linux"
+      ],
+      "node18Windows": {
+        "jobId": 110224977290,
+        "tests": 195,
+        "passed": 195,
+        "failed": 0
+      },
+      "url": "https://github.com/AnkleBreaker-Studio/unity-mcp-server/actions/runs/36817275036"
+    },
+    "versionsUnchanged": true,
+    "releasePublished": false
+  },
+  "measurementCorrection": {
+    "recordedOn": "2026-10-01",
+    "affectedValues": 5,
+    "reason": "GC.Alloc sample Value was incorrectly labeled allocatedBytes. The native Unity 6000.6.2f1 recorder reports TimeNanoseconds; its artificial marker duration is not allocation size or allocation CPU time.",
+    "preserved": "Original numeric values are retained as rawRecorderValue. Previously recorded allocation-event counts and independent Stopwatch timings are unchanged. This annotation is not a rerun of the historical checks."
+  }
+}

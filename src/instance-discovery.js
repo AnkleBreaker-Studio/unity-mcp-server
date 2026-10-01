@@ -8,59 +8,31 @@
 import { readFileSync } from "fs";
 import { CONFIG } from "./config.js";
 import { debugLog } from "./state-persistence.js";
+import { requestFetch, throwIfRequestCancelled } from "./request-cancellation.js";
 
-// ─── Per-Agent Session State ───
-// Tracks which Unity instance each agent is targeting.
-// State is stored in Maps keyed by agent ID because a SINGLE MCP process serves
-// ALL agents/tasks in the same Claude Desktop session. Without per-agent state,
-// Agent A selecting ProjectA would cause Agent B's commands to also route to
-// ProjectA — the classic "cross-agent contamination" bug.
-//
-// The MCP stdio transport processes requests sequentially (no concurrency),
-// so we use a "set current agent before handler" pattern: index.js calls
-// setCurrentAgent(agentId) before each tool handler, and all state functions
-// read/write from the Map entry for _currentAgentId.
-const _agentInstances = new Map();          // agentId → { port, projectName, projectPath, ... }
-const _agentSelectionRequired = new Map();  // agentId → boolean
-let _currentAgentId = "default";
+import { getRequestContext, getCurrentAgentId, getAgentState } from "./request-context.js";
 
-// ─── Per-Request Port Override ───
-// When multiple agents share a single MCP process (e.g. parallel Cowork tasks),
-// the per-agent state above can get overwritten between sequential requests.
-// The port override provides a stateless routing mechanism: each tool call can
-// include a `port` parameter, and ALL HTTP requests during that handler execution
-// will be routed to that port — bypassing the shared agent state entirely.
-// This is safe because stdio transport is sequential (one request at a time).
-let _portOverride = null;
+import { agentState } from "./agent-state.js";
 
-/**
- * Set a per-request port override. All bridge URL lookups will use this port
- * until clearPortOverride() is called. Must be called before the tool handler
- * and cleared in a finally block after it completes.
- * @param {number} port - The port to route to for this request.
- */
+function selectionChanged() {
+  return Object.assign(new Error("Unity selection changed or was superseded while discovering an editor. Retry with the intended editor's explicit port."), { code: "selection_changed" });
+}
+
+function assertSelectionUnchanged(selected) {
+  throwIfRequestCancelled();
+  if (getSelectedInstance() !== selected || getAgentState(false)?.pendingSelection) throw selectionChanged();
+}
+
 export function setPortOverride(port) {
-  _portOverride = port;
-  debugLog(`setPortOverride: routing to port ${port} for this request`);
+  getRequestContext().portOverride = port;
 }
 
-/**
- * Clear the per-request port override. Must be called after tool handler completes.
- */
 export function clearPortOverride() {
-  if (_portOverride !== null) {
-    debugLog(`clearPortOverride: cleared (was ${_portOverride})`);
-    _portOverride = null;
-  }
+  getRequestContext().portOverride = null;
 }
 
-/**
- * Set the current agent context for subsequent state operations.
- * Must be called before any tool handler execution.
- * @param {string} agentId - The agent ID for the current request.
- */
 export function setCurrentAgent(agentId) {
-  _currentAgentId = agentId || "default";
+  getRequestContext().agentId = agentId || "default";
 }
 
 /**
@@ -68,7 +40,7 @@ export function setCurrentAgent(agentId) {
  * @returns {object|null} Selected instance info, or null if none selected.
  */
 export function getSelectedInstance() {
-  return _agentInstances.get(_currentAgentId) || null;
+  return getAgentState(false)?.selectedInstance || null;
 }
 
 /**
@@ -86,20 +58,23 @@ export function getSelectedInstance() {
  * @returns {object|null} Validated instance, or null if validation cleared the selection.
  */
 export async function validateSelectedInstance() {
-  const currentInstance = _agentInstances.get(_currentAgentId);
+  const currentInstance = getAgentState(false)?.selectedInstance;
   if (!currentInstance) {
     return null;
   }
 
   const saved = currentInstance;
+  assertSelectionUnchanged(saved);
   const savedPath = saved.projectPath;
   const savedPort = saved.port;
 
   // Ping the saved port and check what project is actually there
-  const alive = await pingInstance(savedPort);
-  if (alive) {
-    const info = await getInstanceInfo(savedPort);
-    if (info && info.projectPath && info.projectPath === savedPath) {
+  const probes = new Map();
+  const probe = await probeInstance(savedPort, probes);
+  assertSelectionUnchanged(saved);
+  const info = probe.info;
+  if (info) {
+    if (sameProject(info, saved)) {
       return currentInstance;
     }
 
@@ -111,7 +86,7 @@ export async function validateSelectedInstance() {
       );
     }
     // Fall through to re-discovery (swap or info unavailable)
-  } else {
+  } else if (probe.status === "unavailable") {
     // Port not responding — could be compiling, could be shut down.
     // Check the registry file as a secondary signal before assuming the worst.
     const registryEntries = readRegistryFile();
@@ -139,16 +114,17 @@ export async function validateSelectedInstance() {
     debugLog(`Port ${savedPort} unresponsive and not in registry — re-discovering...`);
   }
 
-  // Re-discover all instances and find the one matching our saved projectPath
-  const instances = await discoverInstances();
+  // Find the selected project's current port before considering registry recovery.
+  const instances = await discoverInstances(probes);
+  assertSelectionUnchanged(saved);
   const match = instances.find(
-    (inst) => inst.projectPath && inst.projectPath === savedPath
+    (inst) => sameProject(inst, saved)
   );
 
   if (match) {
     debugLog(`Re-selected ${saved.projectName} on new port ${match.port} (was ${savedPort})`);
-    _agentInstances.set(_currentAgentId, match);
-    _agentSelectionRequired.set(_currentAgentId, false);
+    agentState.select(getAgentState(), match);
+    getAgentState().selectionRequired = false;
     return match;
   }
 
@@ -157,7 +133,13 @@ export async function validateSelectedInstance() {
     (entry) => entry.projectPath && entry.projectPath === savedPath
   );
   if (registryFallback && registryFallback.port) {
-    if (isRegistryEntryStale(registryFallback)) {
+    const fallbackProbe = await probeInstance(registryFallback.port, probes);
+    assertSelectionUnchanged(saved);
+    const knownConflict = fallbackProbe.status === "unrecognized"
+      || (fallbackProbe.info && !sameProject(fallbackProbe.info, saved));
+    if (knownConflict) {
+      debugLog(`Registry fallback for "${saved.projectName}" conflicts with the live editor identity. Requiring re-selection.`);
+    } else if (isRegistryEntryStale(registryFallback)) {
       debugLog(
         `Project "${saved.projectName}" found in registry but entry is STALE. Clearing selection.`
       );
@@ -166,7 +148,7 @@ export async function validateSelectedInstance() {
         `Project "${saved.projectName}" found in registry on port ${registryFallback.port} (fresh) — likely compiling. Keeping selection.`
       );
       const updated = { ...saved, port: registryFallback.port };
-      _agentInstances.set(_currentAgentId, updated);
+      agentState.select(getAgentState(), updated);
       return updated;
     }
   }
@@ -177,9 +159,9 @@ export async function validateSelectedInstance() {
   // which in any multi-project session is a DIFFERENT live Unity — so a write intended for
   // project A silently landed in project B and still reported success. Require an explicit
   // re-selection instead.
-  debugLog(`Project "${saved.projectName}" no longer found. Clearing selection for agent ${_currentAgentId} and requiring re-selection.`);
-  _agentInstances.delete(_currentAgentId);
-  _agentSelectionRequired.set(_currentAgentId, true);
+  debugLog(`Project "${saved.projectName}" no longer found. Clearing selection for agent ${getCurrentAgentId()} and requiring re-selection.`);
+  agentState.select(getAgentState(), null);
+  getAgentState().selectionRequired = true;
   return null;
 }
 
@@ -187,51 +169,68 @@ export async function validateSelectedInstance() {
  * Check whether the session still needs the user to select an instance.
  */
 export function isInstanceSelectionRequired() {
-  return _agentSelectionRequired.get(_currentAgentId) || false;
+  return getAgentState(false)?.selectionRequired ?? agentState.requiresExplicitSelectionForUnknownAgents;
 }
 
 /**
  * Mark that instance selection is required (multiple instances found, none selected).
  */
 export function setInstanceSelectionRequired(required) {
-  _agentSelectionRequired.set(_currentAgentId, required);
+  getAgentState().selectionRequired = required;
 }
 
-/**
- * Select a Unity instance by port number.
- * All subsequent bridge commands will be routed to this port.
- * @param {number} port - The port of the instance to select.
- * @returns {object} The selected instance info, or error.
- */
-export async function selectInstance(port) {
-  const instances = await discoverInstances();
-  const match = instances.find((inst) => inst.port === port);
+/** Select by explicit port or unique case-insensitive name; only the latest attempt may change this agent's selection. */
+export async function selectInstance(port, projectName) {
+  const agentId = getCurrentAgentId(), state = getAgentState(), attempt = {};
+  state.pendingSelection = attempt;
+  const assertCurrent = () => {
+    throwIfRequestCancelled();
+    if (state.pendingSelection !== attempt) throw selectionChanged();
+  };
+  try {
+    const instances = await discoverInstances();
+    assertCurrent();
+    let match;
+    if (port) match = instances.find(inst => inst.port === port);
+    else {
+      const needle = projectName.toLowerCase();
+      const matches = instances.filter(inst => (inst.projectName || "").toLowerCase() === needle);
+      if (matches.length === 0) return {
+        success: false,
+        error: `No running instance named "${projectName}". Available: ${instances.map(inst => inst.projectName).join(", ") || "none"}.`,
+      };
+      if (matches.length > 1) return {
+        success: false,
+        error: `${matches.length} instances named "${projectName}" (ports ${matches.map(inst => inst.port).join(", ")}). Select by port instead.`,
+      };
+      match = matches[0]; port = match.port;
+    }
 
-  if (!match) {
-    return {
+    if (!match) return {
       success: false,
       error: `No Unity instance found on port ${port}. Use unity_list_instances to see available instances.`,
     };
-  }
 
-  // Verify the instance is actually reachable
-  const alive = await pingInstance(port);
-  if (!alive) {
-    return {
+    // Keep the resolved identity through verification; a second scan could silently replace a named project.
+    const verified = await probeInstance(port);
+    assertCurrent();
+    if (!verified.info || !sameProject(verified.info, match)) return {
       success: false,
-      error: `Unity instance on port ${port} (${match.projectName}) is not responding. It may have shut down.`,
+      error: `Unity instance on port ${port} (${match.projectName}) is unavailable or its identity changed. Discover instances again before selecting it.`,
     };
+
+    agentState.select(state, match);
+    state.selectionRequired = false;
+    debugLog(`selectInstance: agent ${agentId} selected port ${port} (${match.projectName})`);
+
+    return {
+      success: true,
+      message: `Selected Unity instance: ${match.projectName} (port ${port})`,
+      instance: match,
+    };
+  } finally {
+    if (state.pendingSelection === attempt) state.pendingSelection = null;
   }
-
-  _agentInstances.set(_currentAgentId, match);
-  _agentSelectionRequired.set(_currentAgentId, false);
-  debugLog(`selectInstance: agent ${_currentAgentId} selected port ${port} (${match.projectName})`);
-
-  return {
-    success: true,
-    message: `Selected Unity instance: ${match.projectName} (port ${port})`,
-    instance: match,
-  };
 }
 
 /**
@@ -240,12 +239,14 @@ export async function selectInstance(port) {
  * @returns {string} The base URL for HTTP bridge commands.
  */
 export function getActiveBridgeUrl() {
+  const { bridgeUrl, portOverride } = getRequestContext();
+  if (bridgeUrl) return bridgeUrl;
   const host = CONFIG.editorBridgeHost;
   // Per-request override takes highest priority (stateless routing for parallel agents)
-  if (_portOverride !== null) {
-    return `http://${host}:${_portOverride}`;
+  if (portOverride !== null) {
+    return `http://${host}:${portOverride}`;
   }
-  const selected = _agentInstances.get(_currentAgentId);
+  const selected = getAgentState(false)?.selectedInstance;
   if (selected) {
     return `http://${host}:${selected.port}`;
   }
@@ -260,7 +261,7 @@ export function getActiveBridgeUrl() {
  *
  * @returns {Array<object>} List of discovered instances with their metadata.
  */
-export async function discoverInstances() {
+export async function discoverInstances(probes = new Map()) {
   let instances = [];
 
   // Step 1: Read registry file
@@ -275,10 +276,18 @@ export async function discoverInstances() {
 
           // Validation ping doubles as capability capture: the ping body carries
           // protocolVersion/pluginVersion on newer plugins (absent = pre-handshake).
-          const info = await getInstanceInfo(port);
-          if (info === null) return null;
+          const { info } = await probeInstance(port, probes);
+          if (!info) return null;
           return {
             ...entry,
+            projectName: info.projectName || `Unknown (port ${port})`,
+            projectPath: info.projectPath || "",
+            unityVersion: info.unityVersion,
+            isClone: info.isClone,
+            cloneIndex: info.cloneIndex,
+            isVirtualPlayer: info.isVirtualPlayer,
+            mainProjectPath: info.mainProjectPath,
+            virtualPlayerId: info.virtualPlayerId,
             protocolVersion: info.protocolVersion,
             pluginVersion: info.pluginVersion,
             alive: true,
@@ -290,6 +299,7 @@ export async function discoverInstances() {
       instances = validated.filter((inst) => inst !== null);
     }
   } catch (err) {
+    throwIfRequestCancelled();
     console.error(`[MCP Discovery] Error reading registry: ${err.message}`);
   }
 
@@ -302,10 +312,8 @@ export async function discoverInstances() {
 
     scanPromises.push(
       (async () => {
-        const alive = await pingInstance(port);
-        if (alive) {
-          // Try to get project info from the instance
-          const info = await getInstanceInfo(port);
+        const { info } = await probeInstance(port, probes);
+        if (info) {
           return {
             port,
             projectName: info?.projectName || `Unknown (port ${port})`,
@@ -313,6 +321,9 @@ export async function discoverInstances() {
             unityVersion: info?.unityVersion || "",
             isClone: info?.isClone || false,
             cloneIndex: info?.cloneIndex ?? -1,
+            isVirtualPlayer: info?.isVirtualPlayer,
+            mainProjectPath: info?.mainProjectPath,
+            virtualPlayerId: info?.virtualPlayerId,
             protocolVersion: info?.protocolVersion,
             pluginVersion: info?.pluginVersion,
             alive: true,
@@ -339,28 +350,37 @@ export async function discoverInstances() {
  * @returns {object} Result with auto-selected instance or selection requirement.
  */
 export async function autoSelectInstance() {
-  const instances = await discoverInstances();
+  const state = getAgentState();
+  if (!state.selectedInstance && state.selectionRequired) return { autoSelected: false, instances: [], selectionRequired: true };
+  const selected = getSelectedInstance();
+  assertSelectionUnchanged(selected);
+  const probes = new Map();
+  const instances = await discoverInstances(probes);
+  assertSelectionUnchanged(selected);
 
   if (instances.length === 0) {
     // No instances found — try default port as last resort
-    const defaultAlive = await pingInstance(CONFIG.editorBridgePort);
-    if (defaultAlive) {
-      const info = await getInstanceInfo(CONFIG.editorBridgePort);
+    const { info } = await probeInstance(CONFIG.editorBridgePort, probes);
+    assertSelectionUnchanged(selected);
+    if (info) {
       const defaultInstance = {
         port: CONFIG.editorBridgePort,
         projectName: info?.projectName || "Unity Editor",
         projectPath: info?.projectPath || "",
         unityVersion: info?.unityVersion || "",
-        isClone: false,
-        cloneIndex: -1,
+        isClone: info.isClone,
+        cloneIndex: info.cloneIndex,
+        isVirtualPlayer: info.isVirtualPlayer,
+        mainProjectPath: info.mainProjectPath,
+        virtualPlayerId: info.virtualPlayerId,
         protocolVersion: info?.protocolVersion,
         pluginVersion: info?.pluginVersion,
         alive: true,
         source: "default",
       };
-      _agentInstances.set(_currentAgentId, defaultInstance);
-      _agentSelectionRequired.set(_currentAgentId, false);
-      debugLog(`autoSelect: agent ${_currentAgentId} → single default instance on port ${CONFIG.editorBridgePort}`);
+      agentState.select(state, defaultInstance);
+      getAgentState().selectionRequired = false;
+      debugLog(`autoSelect: agent ${getCurrentAgentId()} → single default instance on port ${CONFIG.editorBridgePort}`);
       return {
         autoSelected: true,
         instance: defaultInstance,
@@ -369,7 +389,7 @@ export async function autoSelectInstance() {
       };
     }
 
-    _agentSelectionRequired.set(_currentAgentId, false);
+    getAgentState().selectionRequired = false;
     return {
       autoSelected: false,
       instances: [],
@@ -379,9 +399,9 @@ export async function autoSelectInstance() {
 
   if (instances.length === 1) {
     // Exactly one instance — auto-select it
-    _agentInstances.set(_currentAgentId, instances[0]);
-    _agentSelectionRequired.set(_currentAgentId, false);
-    debugLog(`autoSelect: agent ${_currentAgentId} → single instance on port ${instances[0].port}`);
+    agentState.select(state, instances[0]);
+    getAgentState().selectionRequired = false;
+    debugLog(`autoSelect: agent ${getCurrentAgentId()} → single instance on port ${instances[0].port}`);
     return {
       autoSelected: true,
       instance: instances[0],
@@ -391,10 +411,10 @@ export async function autoSelectInstance() {
   }
 
   // Multiple instances — require user selection (but only if none already selected for this agent)
-  const agentSelected = _agentInstances.get(_currentAgentId);
+  const agentSelected = getAgentState(false)?.selectedInstance;
   if (!agentSelected) {
-    _agentSelectionRequired.set(_currentAgentId, true);
-    debugLog(`autoSelect: agent ${_currentAgentId} → ${instances.length} instances found, selection required`);
+    getAgentState().selectionRequired = true;
+    debugLog(`autoSelect: agent ${getCurrentAgentId()} → ${instances.length} instances found, selection required`);
   }
   return {
     autoSelected: false,
@@ -449,7 +469,8 @@ function isRegistryEntryStale(entry) {
 function readRegistryFile() {
   try {
     const raw = readFileSync(CONFIG.instanceRegistryPath, "utf-8");
-    const data = JSON.parse(raw);
+    // Older Unity plugins write a UTF-8 marker; JSON.parse rejects it before any registry entry can be read.
+    const data = JSON.parse(raw.charCodeAt(0) === 0xFEFF ? raw.slice(1) : raw);
     if (Array.isArray(data)) return data;
     return [];
   } catch {
@@ -458,51 +479,55 @@ function readRegistryFile() {
   }
 }
 
-/**
- * Ping a Unity instance at a specific port (fast timeout for discovery).
- * @param {number} port
- * @returns {boolean} True if the instance is alive.
- */
-async function pingInstance(port) {
-  try {
-    const url = `http://${CONFIG.editorBridgeHost}:${port}/api/ping`;
-    const response = await fetch(url, {
-      method: "GET",
-      signal: AbortSignal.timeout(1500), // Short timeout for discovery
-    });
-    return response.ok;
-  } catch {
-    return false;
-  }
+function identityText(value) {
+  return typeof value === "string" && value.trim().length > 0 ? value : null;
 }
 
-/**
- * Get project information from a Unity instance via its ping endpoint.
- * @param {number} port
- * @returns {object|null} Project info, or null if unavailable.
- */
-async function getInstanceInfo(port) {
-  try {
-    const url = `http://${CONFIG.editorBridgeHost}:${port}/api/ping`;
-    const response = await fetch(url, {
-      method: "GET",
-      signal: AbortSignal.timeout(2000),
-    });
+export function bridgeIdentity(data) {
+  if (!data || typeof data !== "object" || Array.isArray(data)) return null;
+  if ((data.status !== undefined && data.status !== "ok") || data.success === false || data.error) return null;
+  const projectName = identityText(data.projectName) || identityText(data.project);
+  const projectPath = identityText(data.projectPath);
+  const unityVersion = identityText(data.unityVersion) || identityText(data.version);
+  // Original plugins provide project identity and Unity version, without protocol or plugin-version fields.
+  if (!unityVersion || (!projectName && !projectPath)) return null;
+  return {
+    projectName,
+    projectPath,
+    unityVersion,
+    isClone: data.isClone === true,
+    cloneIndex: Number.isInteger(data.cloneIndex) ? data.cloneIndex : -1,
+    isVirtualPlayer: typeof data.isVirtualPlayer === "boolean" ? data.isVirtualPlayer : undefined,
+    mainProjectPath: identityText(data.mainProjectPath) ?? undefined,
+    virtualPlayerId: identityText(data.virtualPlayerId) ?? undefined,
+    protocolVersion: Number.isInteger(data.protocolVersion) ? data.protocolVersion : undefined,
+    pluginVersion: identityText(data.pluginVersion) ?? undefined,
+  };
+}
 
-    if (!response.ok) return null;
+function sameProject(info, selected) {
+  if (info.projectPath && selected.projectPath) return info.projectPath === selected.projectPath;
+  return !!info.projectName && info.projectName === selected.projectName;
+}
 
-    const data = await response.json();
-    return {
-      projectName: data.projectName || data.project || null,
-      projectPath: data.projectPath || null,
-      unityVersion: data.unityVersion || data.version || null,
-      isClone: data.isClone || false,
-      cloneIndex: data.cloneIndex ?? -1,
-      // Capability handshake fields (plugins >= protocolVersion 1; else undefined)
-      protocolVersion: typeof data.protocolVersion === "number" ? data.protocolVersion : undefined,
-      pluginVersion: typeof data.pluginVersion === "string" ? data.pluginVersion : undefined,
-    };
-  } catch {
-    return null;
-  }
+function probeInstance(port, probes = new Map()) {
+  // Reuse observations within one discovery attempt; later calls probe again.
+  if (probes.has(port)) return probes.get(port);
+  const pending = (async () => {
+    let response;
+    try {
+      const url = `http://${CONFIG.editorBridgeHost}:${port}/api/ping`;
+      response = await requestFetch(url, { method: "GET" }, 2000);
+    } catch {
+      throwIfRequestCancelled();
+      return { status: "unavailable", info: null };
+    }
+    if (!response.ok) return { status: "unavailable", info: null };
+    let info;
+    try { info = bridgeIdentity(JSON.parse(response.text)); } catch { info = null; }
+    // An unrelated successful response must not gain an editor identity from an old registry entry.
+    return { status: info ? "bridge" : "unrecognized", info };
+  })();
+  probes.set(port, pending);
+  return pending;
 }

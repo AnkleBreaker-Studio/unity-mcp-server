@@ -12,21 +12,34 @@ const DEBUG_LOG = join(STATE_DIR, "mcp-debug.log");
 
 const DEBUG_ENABLED = process.env.UNITY_MCP_DEBUG === "1";
 
-// Rotate once per process: if the previous log outgrew the cap, move it aside
-// (replacing any older rotation) so the log can never grow without bound.
 const MAX_LOG_BYTES = 5 * 1024 * 1024;
-let _rotationChecked = false;
+const MAX_ENTRY_BYTES = 64 * 1024;
+const RETRY_DELAY_MS = 1000;
+let retryAfter = 0;
 
-function rotateIfOversized() {
-  if (_rotationChecked) return;
-  _rotationChecked = true;
+function rotateForEntry(bytes) {
   try {
-    if (statSync(DEBUG_LOG).size > MAX_LOG_BYTES) {
+    if (statSync(DEBUG_LOG).size + bytes > MAX_LOG_BYTES) {
       renameSync(DEBUG_LOG, `${DEBUG_LOG}.old`);
     }
-  } catch {
-    // Log doesn't exist yet or can't be rotated — nothing to do.
+  } catch (error) {
+    // Another process may already have rotated this shared file.
+    if (error.code !== "ENOENT") throw error;
   }
+}
+
+function formatEntry(message) {
+  const prefix = Buffer.from(`[${new Date().toISOString()}] [PID:${process.pid}] `);
+  const text = String(message);
+  // Bound encoding work even when the caller supplies a much larger string.
+  const body = Buffer.from(text.slice(0, MAX_ENTRY_BYTES));
+  if (text.length <= MAX_ENTRY_BYTES && prefix.length + body.length + 1 <= MAX_ENTRY_BYTES)
+    return Buffer.concat([prefix, body, Buffer.from("\n")]);
+
+  const suffix = Buffer.from(" [truncated]\n");
+  let end = MAX_ENTRY_BYTES - prefix.length - suffix.length;
+  while (end > 0 && (body[end] & 0xc0) === 0x80) end--;
+  return Buffer.concat([prefix, body.subarray(0, end), suffix]);
 }
 
 /**
@@ -34,14 +47,17 @@ function rotateIfOversized() {
  * @param {string} message
  */
 export function debugLog(message) {
-  if (!DEBUG_ENABLED) return;
+  if (!DEBUG_ENABLED || performance.now() < retryAfter) return;
   try {
-    rotateIfOversized();
-    const ts = new Date().toISOString();
+    const entry = formatEntry(message);
     mkdirSync(STATE_DIR, { recursive: true });
-    appendFileSync(DEBUG_LOG, `[${ts}] [PID:${process.pid}] ${message}\n`);
-  } catch {
-    // Last-resort: stderr (never stdout — that's the MCP JSON-RPC transport).
-    console.error(`[MCP Debug] ${message}`);
+    rotateForEntry(entry.length);
+    appendFileSync(DEBUG_LOG, entry);
+  } catch (error) {
+    retryAfter = performance.now() + RETRY_DELAY_MS;
+    try {
+      const code = typeof error?.code === "string" ? error.code.slice(0, 32).replace(/[\r\n]/g, " ") : "format-or-write";
+      console.error(`[MCP Debug] File logging unavailable (${code}); entry skipped, retrying on a later call after 1 second.`);
+    } catch { /* Diagnostics must never interrupt the MCP request. */ }
   }
 }

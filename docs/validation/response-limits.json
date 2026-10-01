@@ -1,0 +1,161 @@
+{
+  "checkedOn": "2026-10-01",
+  "baselineServer": "9b091e9a6ad28a301d717c82e0f9ac252049e3b8",
+  "pluginRuntimeChanged": false,
+  "reproduction": {
+    "method": "Actual MCP stdio server against isolated mock bridges; final regression suite run against an unmodified baseline checkout.",
+    "baselineTests": 14,
+    "baselineFailures": 14,
+    "correctedResponseTests": 14,
+    "failedBaselineChecks": [
+      "response limit counts UTF-8 bytes",
+      "response limit counts emoji bytes",
+      "response limit counts JSON escaping bytes",
+      "hard limit reports missing results as an MCP error without repeating the command",
+      "soft-limit warning preserves the last text block as the tool result",
+      "a soft-limit warning cannot push an otherwise valid result over the hard limit",
+      "image blocks and metadata overhead count toward the response limit",
+      "oversized failures retain bounded error details and recovery identifiers",
+      "an invalid hard-limit setting cannot disable the default protection",
+      "an image tool reporting no image is an MCP error",
+      "logical errors in image metadata retain the MCP error flag",
+      "oversized unknown-tool errors are bounded before dispatch",
+      "oversized project resources fail explicitly while smaller reads remain intact",
+      "core capture proxies retain image blocks and pass future parameters unchanged"
+    ]
+  },
+  "localTests": {
+    "node18": {
+      "nodeVersion": "v18.20.8",
+      "tests": 118,
+      "passed": 118,
+      "failed": 0
+    },
+    "node22": {
+      "nodeVersion": "v22.18.0",
+      "tests": 118,
+      "passed": 118,
+      "failed": 0
+    }
+  },
+  "liveUnity": {
+    "platform": "Windows",
+    "node18": {
+      "nodeVersion": "v18.20.8",
+      "project": "Queue66 (marked disposable validation project)",
+      "passed": true,
+      "unityVersion": "6000.6.2f1",
+      "port": 7891,
+      "softLimit": {
+        "bytes": 1600,
+        "resultLength": 1400,
+        "warningBeforeResult": true
+      },
+      "unicodeLimit": {
+        "bytes": 343,
+        "originalBytes": 9101,
+        "code": "response_too_large"
+      },
+      "image": {
+        "mimeType": "image/png",
+        "base64Length": 1320,
+        "resultBytes": 1482
+      },
+      "missingImageIsError": true
+    },
+    "node22": {
+      "nodeVersion": "v22.18.0",
+      "project": "Queue66 (marked disposable validation project)",
+      "passed": true,
+      "unityVersion": "6000.6.2f1",
+      "port": 7891,
+      "softLimit": {
+        "bytes": 1600,
+        "resultLength": 1400,
+        "warningBeforeResult": true
+      },
+      "unicodeLimit": {
+        "bytes": 343,
+        "originalBytes": 9101,
+        "code": "response_too_large"
+      },
+      "image": {
+        "mimeType": "image/png",
+        "base64Length": 1320,
+        "resultBytes": 1482
+      },
+      "missingImageIsError": true
+    },
+    "sceneAssetsAndSettingsChanged": false
+  },
+  "behavior": {
+    "accounting": "UTF-8 bytes of JSON.stringify(result), including content, metadata and escaping",
+    "excluded": "JSON-RPC envelope, request ID and transport newline",
+    "hardDefaultBytes": 4194304,
+    "softDefaultBytes": 2097152,
+    "hardMinimumBytes": 1024,
+    "softMinimumBytes": 1,
+    "invalidValuesUseDefaults": true,
+    "softLimitClampedToHard": true,
+    "oversizedToolResultIsError": true,
+    "oversizedResourceReadThrows": true,
+    "warningPrecedesOriginalContent": true,
+    "warningMustFitHardLimit": true,
+    "limiterReplaysCommands": false,
+    "coreCaptureProxyPreservesImagesAndAdditionalParameters": true
+  },
+  "limitations": [
+    "Post-serialization output budget; does not bound upstream Unity allocations, HTTP downloads or peak serialization memory.",
+    "Recovery fields are retained only when they fit; omission of a response does not undo or establish success of an operation.",
+    "New budgets cover tools/call and resources/read; tools/list and resources/list remain outside this change.",
+    "Live Scene capture tested; Game capture proxy parity is covered by the isolated regression.",
+    "Client cancellation is unchanged; older-editor runtime validation remains deferred."
+  ],
+  "ci": {
+    "runId": 36786300833,
+    "url": "https://github.com/AnkleBreaker-Studio/unity-mcp-server/actions/runs/36786300833",
+    "commit": "7fb73c9ecb9add21ae5e6353811dc13af132244c",
+    "jobs": [
+      {
+        "name": "node 24 on ubuntu-latest",
+        "status": "completed",
+        "conclusion": "success"
+      },
+      {
+        "name": "node 24 on windows-latest",
+        "status": "completed",
+        "conclusion": "success"
+      },
+      {
+        "name": "node 18 on windows-latest",
+        "status": "completed",
+        "conclusion": "success"
+      },
+      {
+        "name": "node 22 on windows-latest",
+        "status": "completed",
+        "conclusion": "success"
+      },
+      {
+        "name": "node 18 on ubuntu-latest",
+        "status": "completed",
+        "conclusion": "success"
+      },
+      {
+        "name": "node 20 on windows-latest",
+        "status": "completed",
+        "conclusion": "success"
+      },
+      {
+        "name": "node 20 on ubuntu-latest",
+        "status": "completed",
+        "conclusion": "success"
+      },
+      {
+        "name": "node 22 on ubuntu-latest",
+        "status": "completed",
+        "conclusion": "success"
+      }
+    ]
+  }
+}

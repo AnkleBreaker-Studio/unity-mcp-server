@@ -1,0 +1,39 @@
+{
+  "unityVersion": "2021.3.18f1",
+  "passed": true,
+  "referenceCount": 211,
+  "packageAssemblies": [
+    {
+      "file": "UnityEngine.UI.dll",
+      "sha256": "AF83F70ECAC09EE676571E37C62595B7FF26148B636CE498F9151A2F7A9697A3"
+    },
+    {
+      "file": "UnityEngine.TestRunner.dll",
+      "sha256": "AAAF5BC1E371F6CFA67138DCB6E77634A8075D30E0C1DF27670A5B0028CC5523"
+    },
+    {
+      "file": "UnityEditor.TestRunner.dll",
+      "sha256": "6995901F60508B79F4B648FE2E3B64D8D1BD545B3CB3817134F079842FA82832"
+    }
+  ],
+  "excludedIntegrations": [
+    "UMA",
+    "ProBuilder"
+  ],
+  "sourceCount": 70,
+  "check": "C# compilation against installed Unity assemblies; no editor execution or package import",
+  "exitCode": 0,
+  "recordedAt": "2026-09-30T20:27:11.209Z",
+  "platform": "Windows Editor assemblies",
+  "compiler": "Official editor DotNetSdkRoslyn/csc.dll through its bundled NetCoreRuntime; C# 9",
+  "packageAssemblySource": "Official editor Resources/PackageManager/ProjectTemplates/libcache/com.unity.template.universal-2d-1.1.4/ScriptAssemblies",
+  "baselineFinding": "Dashboard IntegerField is UnityEditor.UIElements.IntegerField on the minimum editor; unqualified UnityEngine.UIElements lookup failed compilation.",
+  "fix": "Conditional UnityEditor.UIElements.IntegerField alias before UNITY_2022_1_OR_NEWER",
+  "actualEditorAttempt": {
+    "exitCode": 1,
+    "reachedPackageImport": false,
+    "message": "No ULF license found",
+    "followup": "Maintainer deferred additional older-editor execution; revisit for reported compatibility issues"
+  },
+  "officialRelease": "https://unity.com/releases/editor/whats-new/2021.3.18f1"
+}

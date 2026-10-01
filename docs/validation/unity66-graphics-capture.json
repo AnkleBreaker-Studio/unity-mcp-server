@@ -1,0 +1,585 @@
+{
+  "date": "2026-10-01",
+  "implementationCommits": {
+    "plugin": "0b93577f4970f5a76f78dcabe121ef9646812e0d",
+    "server": "bdf59d9d717cd0c9d9f4522731e505be4acd35c9"
+  },
+  "ci": {
+    "server": {
+      "runId": 36825599951,
+      "url": "https://github.com/AnkleBreaker-Studio/unity-mcp-server/actions/runs/36825599951",
+      "passedJobs": 8,
+      "nodeVersions": [18, 20, 22, 24],
+      "platforms": ["Windows", "Linux"],
+      "tests": 217,
+      "failed": 0
+    },
+    "plugin": {
+      "runId": 36825596239,
+      "url": "https://github.com/AnkleBreaker-Studio/unity-mcp-plugin/actions/runs/36825596239",
+      "passed": true,
+      "routes": 338
+    }
+  },
+  "scope": "Inline Game/Scene camera rendering and asset preview render-state restoration",
+  "baselinePluginCommit": "5cd25e8b839968c1744aa3b99738ece1fa7dcd3e",
+  "baselinePluginRuntimeCommit": "0e450a9faeffd98122b873670747ce926b9b2b9a",
+  "releasedServerCommit": "826af5ce61db7e2d2d675fe90d24c941a83f3924",
+  "baseline": {
+    "failed": 9,
+    "passingControls": 4,
+    "unityVersion": "6000.6.2f1",
+    "graphicsDevice": "Direct3D12",
+    "maxTextureSize": 16384,
+    "pipeline": "Built-in",
+    "passed": false,
+    "checks": [
+      {
+        "name": "Default game camera retains 512-square red PNG output",
+        "passed": true,
+        "evidence": {
+          "width": 512,
+          "height": 512,
+          "pngBytes": 4404,
+          "checkedPixels": 262144
+        }
+      },
+      {
+        "name": "Explicit camera renders its own pixels at requested dimensions",
+        "passed": true,
+        "evidence": {
+          "width": 64,
+          "height": 40,
+          "pngBytes": 178,
+          "checkedPixels": 2560
+        }
+      },
+      {
+        "name": "Missing explicit camera cannot fall back to MainCamera",
+        "passed": false,
+        "error": "Capture succeeded instead of refusing the request"
+      },
+      {
+        "name": "Explicit object without a Camera cannot fall back",
+        "passed": false,
+        "error": "Capture succeeded instead of refusing the request"
+      },
+      {
+        "name": "Fractional dimensions are refused instead of rounded",
+        "passed": false,
+        "error": "Capture succeeded instead of refusing the request"
+      },
+      {
+        "name": "Dimensions above the per-side limit are refused",
+        "passed": false,
+        "error": "Capture succeeded instead of refusing the request"
+      },
+      {
+        "name": "Oversized integer input returns a structured dimension error",
+        "passed": false,
+        "error": "Value was either too large or too small for an Int32."
+      },
+      {
+        "name": "Pixel budget is checked before camera lookup without a large allocation",
+        "passed": false,
+        "error": "Wrong refusal: No camera found. Ensure a Camera exists with tag 'MainCamera' or specify cameraName."
+      },
+      {
+        "name": "Game capture restores both borrowed render targets",
+        "passed": false,
+        "error": "Active render target changed"
+      },
+      {
+        "name": "Scene capture restores both borrowed render targets",
+        "passed": false,
+        "error": "Scene camera target changed"
+      },
+      {
+        "name": "Asset preview restores the borrowed active render target",
+        "passed": false,
+        "error": "Asset preview changed active target"
+      },
+      {
+        "name": "Repeated game captures do not retain capture texture objects",
+        "passed": true,
+        "evidence": {
+          "before": 163,
+          "after": 163,
+          "repetitions": 20,
+          "scope": "Live texture objects after warmup; not total GPU memory"
+        }
+      },
+      {
+        "name": "Game capture timing samples preserve successful PNG results",
+        "passed": true,
+        "evidence": {
+          "width": 1024,
+          "height": 1024,
+          "iterationsPerSample": 10,
+          "samplesMs": [
+            189.1437,
+            190.4327,
+            212.94050000000001,
+            196.4469,
+            192.25490000000002
+          ],
+          "medianMs": 192.25490000000002
+        }
+      }
+    ],
+    "fixtureAssetsRemoved": true
+  },
+  "corrected": {
+    "unityVersion": "6000.6.2f1",
+    "graphicsDevice": "Direct3D12",
+    "maxTextureSize": 16384,
+    "pipeline": "Built-in",
+    "passed": true,
+    "checks": [
+      {
+        "name": "Default game camera retains 512-square red PNG output",
+        "passed": true,
+        "evidence": {
+          "width": 512,
+          "height": 512,
+          "pngBytes": 4404,
+          "checkedPixels": 262144
+        }
+      },
+      {
+        "name": "Explicit camera renders its own pixels at requested dimensions",
+        "passed": true,
+        "evidence": {
+          "width": 64,
+          "height": 40,
+          "pngBytes": 178,
+          "checkedPixels": 2560
+        }
+      },
+      {
+        "name": "Missing explicit camera cannot fall back to MainCamera",
+        "passed": true,
+        "evidence": true
+      },
+      {
+        "name": "Explicit object without a Camera cannot fall back",
+        "passed": true,
+        "evidence": true
+      },
+      {
+        "name": "Fractional dimensions are refused instead of rounded",
+        "passed": true,
+        "evidence": true
+      },
+      {
+        "name": "Dimensions above the per-side limit are refused",
+        "passed": true,
+        "evidence": true
+      },
+      {
+        "name": "Oversized integer input returns a structured dimension error",
+        "passed": true,
+        "evidence": true
+      },
+      {
+        "name": "Pixel budget is checked before camera lookup without a large allocation",
+        "passed": true,
+        "evidence": true
+      },
+      {
+        "name": "Exact pixel budget remains admissible before missing-camera lookup",
+        "passed": true,
+        "evidence": true
+      },
+      {
+        "name": "Invalid dimension forms return errors without changing render state",
+        "passed": true,
+        "evidence": true
+      },
+      {
+        "name": "Whole-number numeric forms retain valid capture behavior",
+        "passed": true,
+        "evidence": true
+      },
+      {
+        "name": "Game capture restores both borrowed render targets",
+        "passed": true,
+        "evidence": {
+          "width": 64,
+          "height": 40,
+          "pngBytes": 175,
+          "checkedPixels": 2560
+        }
+      },
+      {
+        "name": "Scene capture restores both borrowed render targets",
+        "passed": true,
+        "evidence": {
+          "width": 64,
+          "height": 40,
+          "pngBytes": 825,
+          "checkedPixels": 0
+        }
+      },
+      {
+        "name": "Scene capture enforces the same dimension boundary",
+        "passed": true,
+        "evidence": true
+      },
+      {
+        "name": "Asset preview restores the borrowed active render target",
+        "passed": true,
+        "evidence": {
+          "width": 16,
+          "height": 16,
+          "pngBytes": 91,
+          "checkedPixels": 256
+        }
+      },
+      {
+        "name": "Repeated game captures do not retain capture texture objects",
+        "passed": true,
+        "evidence": {
+          "before": 161,
+          "after": 161,
+          "repetitions": 20,
+          "scope": "Live texture objects after warmup; not total GPU memory"
+        }
+      },
+      {
+        "name": "Game capture timing samples preserve successful PNG results",
+        "passed": true,
+        "evidence": {
+          "width": 1024,
+          "height": 1024,
+          "iterationsPerSample": 10,
+          "samplesMs": [
+            197.5582,
+            209.61520000000002,
+            222.24370000000002,
+            241.77270000000001,
+            206.2288
+          ],
+          "medianMs": 209.61520000000002
+        }
+      }
+    ],
+    "fixtureAssetsRemoved": true
+  },
+  "fixtureEvolution": "The initial thirteen checks reproduced nine failures. Four further boundary/type/Scene-admission checks expanded the corrected suite to seventeen. The final asset check also verifies all 256 green pixels.",
+  "timing": {
+    "scope": "Five samples of ten 1024x1024 captures, after three warmups. Includes PNG encoding and fixture JSON roundtrip validation; local Editor Built-in/Direct3D12, not standalone gameplay.",
+    "baseline": {
+      "width": 1024,
+      "height": 1024,
+      "iterationsPerSample": 10,
+      "samplesMs": [
+        189.1437,
+        190.4327,
+        212.94050000000001,
+        196.4469,
+        192.25490000000002
+      ],
+      "medianMs": 192.25490000000002
+    },
+    "correctedRuns": [
+      {
+        "width": 1024,
+        "height": 1024,
+        "iterationsPerSample": 10,
+        "samplesMs": [
+          177.6338,
+          178.3913,
+          181.7579,
+          215.7191,
+          173.3403
+        ],
+        "medianMs": 178.3913
+      },
+      {
+        "width": 1024,
+        "height": 1024,
+        "iterationsPerSample": 10,
+        "samplesMs": [
+          179.7931,
+          181.1981,
+          182.2096,
+          199.93640000000002,
+          181.83960000000002
+        ],
+        "medianMs": 181.83960000000002
+      },
+      {
+        "width": 1024,
+        "height": 1024,
+        "iterationsPerSample": 10,
+        "samplesMs": [
+          197.5582,
+          209.61520000000002,
+          222.24370000000002,
+          241.77270000000001,
+          206.2288
+        ],
+        "medianMs": 209.61520000000002
+      }
+    ],
+    "conclusion": "No established latency improvement across runs. The code removes a redundant CPU-to-GPU Apply upload; readback still synchronizes with the GPU."
+  },
+  "live": [
+    {
+      "server": "current",
+      "nodeVersion": "v18.20.8",
+      "invocation": "direct core tools",
+      "passed": true,
+      "checks": [
+        {
+          "name": "unity_graphics_game_capture returns a valid inline PNG",
+          "passed": true,
+          "width": 64,
+          "height": 40,
+          "pngBytes": 178,
+          "checkedPixels": 2560
+        },
+        {
+          "name": "unity_graphics_scene_capture returns a valid inline PNG",
+          "passed": true,
+          "width": 64,
+          "height": 40,
+          "pngBytes": 961,
+          "checkedPixels": 0
+        },
+        {
+          "name": "missing camera returns an MCP error without an image",
+          "passed": true
+        },
+        {
+          "name": "object without Camera returns an MCP error without an image",
+          "passed": true
+        },
+        {
+          "name": "oversized dimensions returns an MCP error without an image",
+          "passed": true
+        },
+        {
+          "name": "fractional dimensions returns an MCP error without an image",
+          "passed": true
+        }
+      ],
+      "unityVersion": "6000.6.2f1",
+      "cleanup": {
+        "remaining": 0,
+        "sceneCountRestored": true,
+        "originalSceneClean": true
+      }
+    },
+    {
+      "server": "current",
+      "nodeVersion": "v22.18.0",
+      "invocation": "direct core tools",
+      "passed": true,
+      "checks": [
+        {
+          "name": "unity_graphics_game_capture returns a valid inline PNG",
+          "passed": true,
+          "width": 64,
+          "height": 40,
+          "pngBytes": 178,
+          "checkedPixels": 2560
+        },
+        {
+          "name": "unity_graphics_scene_capture returns a valid inline PNG",
+          "passed": true,
+          "width": 64,
+          "height": 40,
+          "pngBytes": 961,
+          "checkedPixels": 0
+        },
+        {
+          "name": "missing camera returns an MCP error without an image",
+          "passed": true
+        },
+        {
+          "name": "object without Camera returns an MCP error without an image",
+          "passed": true
+        },
+        {
+          "name": "oversized dimensions returns an MCP error without an image",
+          "passed": true
+        },
+        {
+          "name": "fractional dimensions returns an MCP error without an image",
+          "passed": true
+        }
+      ],
+      "unityVersion": "6000.6.2f1",
+      "cleanup": {
+        "remaining": 0,
+        "sceneCountRestored": true,
+        "originalSceneClean": true
+      }
+    },
+    {
+      "server": "released",
+      "nodeVersion": "v18.20.8",
+      "invocation": "direct core tools",
+      "passed": true,
+      "checks": [
+        {
+          "name": "unity_graphics_game_capture returns a valid inline PNG",
+          "passed": true,
+          "width": 64,
+          "height": 40,
+          "pngBytes": 178,
+          "checkedPixels": 2560
+        },
+        {
+          "name": "unity_graphics_scene_capture returns a valid inline PNG",
+          "passed": true,
+          "width": 64,
+          "height": 40,
+          "pngBytes": 961,
+          "checkedPixels": 0
+        },
+        {
+          "name": "missing camera returns an MCP error without an image",
+          "passed": true
+        },
+        {
+          "name": "object without Camera returns an MCP error without an image",
+          "passed": true
+        },
+        {
+          "name": "oversized dimensions returns an MCP error without an image",
+          "passed": true
+        },
+        {
+          "name": "fractional dimensions returns an MCP error without an image",
+          "passed": true
+        }
+      ],
+      "unityVersion": "6000.6.2f1",
+      "cleanup": {
+        "remaining": 0,
+        "sceneCountRestored": true,
+        "originalSceneClean": true
+      }
+    },
+    {
+      "server": "released",
+      "nodeVersion": "v22.18.0",
+      "invocation": "direct core tools",
+      "passed": true,
+      "checks": [
+        {
+          "name": "unity_graphics_game_capture returns a valid inline PNG",
+          "passed": true,
+          "width": 64,
+          "height": 40,
+          "pngBytes": 178,
+          "checkedPixels": 2560
+        },
+        {
+          "name": "unity_graphics_scene_capture returns a valid inline PNG",
+          "passed": true,
+          "width": 64,
+          "height": 40,
+          "pngBytes": 961,
+          "checkedPixels": 0
+        },
+        {
+          "name": "missing camera returns an MCP error without an image",
+          "passed": true
+        },
+        {
+          "name": "object without Camera returns an MCP error without an image",
+          "passed": true
+        },
+        {
+          "name": "oversized dimensions returns an MCP error without an image",
+          "passed": true
+        },
+        {
+          "name": "fractional dimensions returns an MCP error without an image",
+          "passed": true
+        }
+      ],
+      "unityVersion": "6000.6.2f1",
+      "cleanup": {
+        "remaining": 0,
+        "sceneCountRestored": true,
+        "originalSceneClean": true
+      }
+    }
+  ],
+  "compatibility": {
+    "toolInvocation": "Direct core tools provide image blocks on both servers. The released advanced proxy returns JSON for these core tools; current proxy image checks also passed during fixture development.",
+    "defaults": "512x512 and Camera.main when name omitted/empty retained; successful response fields preserved.",
+    "changedInvalidBehavior": "Explicit missing cameras and invalid/oversized/fractional dimensions now return errors instead of silently falling back, rounding or allocating.",
+    "oldUnityRuntime": "Deferred by maintainer direction; no old editor launched for this checkpoint."
+  },
+  "minimumVersionCompile": {
+    "unityVersion": "2021.3.18f1",
+    "passed": true,
+    "sourceCount": 74,
+    "referenceCount": 211,
+    "excludedIntegrations": [
+      "UMA",
+      "ProBuilder"
+    ],
+    "check": "C# compilation against installed Unity assemblies; no editor execution or package import",
+    "exitCode": 0
+  },
+  "serverTests": {
+    "nodeVersion": "v22.18.0",
+    "tests": 217,
+    "passed": 217,
+    "failed": 0,
+    "richToolCatalogBelow48000Bytes": true
+  },
+  "routeRegistry": {
+    "passed": true,
+    "routes": 338
+  },
+  "cleanup": {
+    "temporaryEditorsClosed": true,
+    "copiedFixtureRemoved": true,
+    "temporarySavedBaselineDeleted": true,
+    "liveFixtureRemaining": 0,
+    "persistentEditors": [
+      {
+        "project": "Unity66",
+        "scene": "Assets/__McpValidation/MultiplayerScene.unity",
+        "isPlaying": false,
+        "isCompiling": false,
+        "sceneDirty": false,
+        "compilationErrors": 0
+      },
+      {
+        "project": "Queue66",
+        "scene": "Assets/__McpValidation/BuildScene.unity",
+        "isPlaying": false,
+        "isCompiling": false,
+        "sceneDirty": false,
+        "compilationErrors": 0
+      }
+    ]
+  },
+  "limits": [
+    "Only Built-in rendering and Direct3D12 on Windows Unity 6000.6.2f1 were exercised here; URP/HDRP and other graphics APIs remain unverified.",
+    "Largest dimensions are checked before missing-camera lookup; no maximum-size image is allocated.",
+    "Stable texture object counts are within each warmed run, not a total GPU/process-memory measurement or a comparison of Unity cache size between runs.",
+    "Composed Game View, screen-space overlay UI, duplicate/inactive camera selection and file-based Game screenshot are separate work.",
+    "Asset preview still uses existing synchronous retry/loading and native preview dimensions."
+  ],
+  "sources": {
+    "readPixels": "https://docs.unity3d.com/6000.0/Documentation/ScriptReference/Texture2D.ReadPixels.html",
+    "apply": "https://docs.unity3d.com/6000.0/Documentation/ScriptReference/Texture2D.Apply.html"
+  },
+  "sourceSha256": {
+    "../unity-mcp-plugin/Editor/MCPGraphicsCommands.cs": "ea41971082a18922f7a23bad6403b611c6772dc74031b41e39942b0d7d1bd195",
+    "../unity-mcp-plugin/tools~/GraphicsCaptureValidation.cs": "24095f5dd3375352e756992d4fbd29b2a43b8bd97a9f8363ecfae7874da037d1",
+    "../unity-mcp-plugin/tools~/validate-unity.ps1": "18990ce2f8e74b38c2bbc3abd717efa14fc20d135936751a4d2a8ccd0bab277e",
+    "src/tools/editor-tools.js": "577fb0e7a3eac2321e613a7b32af4f5e860a6dbe647bd343bbeb52f488fc9484",
+    "tests/live-graphics-capture.test.mjs": "250439807f2b6fa375c7221195cf24e7d484ab8f33536e8c0561d75b9d2bc0e9"
+  }
+}

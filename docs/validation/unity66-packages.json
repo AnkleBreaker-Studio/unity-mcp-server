@@ -1,0 +1,190 @@
+{
+  "recordedAt": "2026-09-30T23:39:32.833Z",
+  "platform": "Windows",
+  "unityVersion": "6000.6.2f1",
+  "baselinePluginCommit": "efbc3abaa5ec549cfda8922285e82a900e9428c2",
+  "baselineRuntimeCommit": "631b5d264b11f5e9af7b3cc1c15a0f6c4ae4956b",
+  "before": [
+    {
+      "operation": "ListPackages",
+      "blockedMilliseconds": 61.673500000000004,
+      "editorUpdatesDuringOperation": 0,
+      "resultCount": 1
+    },
+    {
+      "operation": "SearchPackage",
+      "blockedMilliseconds": 185.2836,
+      "editorUpdatesDuringOperation": 0,
+      "resultCount": 1
+    }
+  ],
+  "after": [
+    {
+      "operation": "ListPackages",
+      "dispatchMilliseconds": 1.2685,
+      "elapsedMilliseconds": 118.91210000000001,
+      "editorUpdatesDuringOperation": 2,
+      "resultCount": 1
+    },
+    {
+      "operation": "SearchPackage",
+      "dispatchMilliseconds": 0.3902,
+      "elapsedMilliseconds": 216.45350000000002,
+      "editorUpdatesDuringOperation": 1,
+      "resultCount": 1
+    }
+  ],
+  "measurements": "Single-run handler dispatch and completion times; excludes isolated measurement of native start/import/frame costs. Registry total latency did not improve.",
+  "scheduler": {
+    "unityVersion": "6000.6.2f1",
+    "passed": true,
+    "checks": [
+      "Pending package operations return immediately and run sequentially while other agent reads execute",
+      "Expired pending requests never start; expired active requests retain their slot until completion",
+      "Start and result failures resolve once and release the next request",
+      "The queue execution deadline skips pending package changes and keeps terminal outcomes stable",
+      "Legacy synchronous workers receive deferred results without blocking the main thread",
+      "All five package routes and test discovery preserve category gates and input validation",
+      "Idle polling unsubscribes; reload cleanup abandons pending callbacks"
+    ],
+    "error": ""
+  },
+  "queueRegression": {
+    "unityVersion": "6000.6.2f1",
+    "passed": true,
+    "checks": [
+      "Object identity round-trip without JSON number conversion",
+      "Agent FIFO, round-robin writes, read batching and ticket results",
+      "Deferred completion is atomic, single-shot and stable after timeout",
+      "Concurrent submission retries share one ticket; conflicts, reload sessions and expired results never re-execute",
+      "Actual HTTP dispatcher validates scoped submission/polling, browser rejection, one-object retries and legacy compatibility",
+      "Legacy synchronous callers are signaled without lost wakeups",
+      "Legacy timeout preserves running outcomes and skips expired batched and queued work",
+      "Dashboard shows running-only work and separates failures from finished requests",
+      "Submission retry cache refuses new work at its bounded capacity",
+      "1000 status polls at queue depths 100 and 10000"
+    ],
+    "polling100Ms": 3.4503000000000004,
+    "polling10000Ms": 3.3416,
+    "error": ""
+  },
+  "liveCurrent": [
+    {
+      "nodeVersion": "v18.20.8",
+      "concurrentReads": true,
+      "passed": true,
+      "checks": [
+        "List/info payloads and overlapping agents",
+        "Registry search payload and package name",
+        "Missing package and invalid input remain tool errors",
+        "Local package add/info/remove and restored manifest",
+        "Clean editor and MCP stdout after package changes"
+      ]
+    },
+    {
+      "nodeVersion": "v22.18.0",
+      "concurrentReads": true,
+      "passed": true,
+      "checks": [
+        "List/info payloads and overlapping agents",
+        "Registry search payload and package name",
+        "Missing package and invalid input remain tool errors",
+        "Local package add/info/remove and restored manifest",
+        "Clean editor and MCP stdout after package changes"
+      ]
+    }
+  ],
+  "liveReleasedServer": {
+    "commit": "826af5c",
+    "runs": [
+      {
+        "nodeVersion": "v18.20.8",
+        "concurrentReads": false,
+        "passed": true,
+        "checks": [
+          "Sequential list/info payloads",
+          "Registry search payload and package name",
+          "Missing package and invalid input remain tool errors",
+          "Local package add/info/remove and restored manifest",
+          "Clean editor and MCP stdout after package changes"
+        ]
+      },
+      {
+        "nodeVersion": "v22.18.0",
+        "concurrentReads": false,
+        "passed": true,
+        "checks": [
+          "Sequential list/info payloads",
+          "Registry search payload and package name",
+          "Missing package and invalid input remain tool errors",
+          "Local package add/info/remove and restored manifest",
+          "Clean editor and MCP stdout after package changes"
+        ]
+      }
+    ],
+    "limitation": "Sequential calls only. An overlapping-call probe fails with missing-ticket polling because the released server still shares mutable routing across requests. The current server has request-local routing."
+  },
+  "minimumApi": {
+    "unityVersion": "2021.3.18f1",
+    "sourceCount": 70,
+    "passed": true,
+    "check": "C# compilation against installed Unity assemblies; no editor execution or package import"
+  },
+  "ordinaryServerSuite": {
+    "nodeVersion": "v22.18.0",
+    "passed": 163,
+    "failed": 0
+  },
+  "notCovered": [
+    "Unity 2021 runtime (deferred by maintainer)",
+    "Registry/Git installation failure and script-bearing package reloads",
+    "Other editor operating systems",
+    "Package Manager operations started outside the MCP scheduler"
+  ],
+  "published": {
+    "pluginCommit": "003757859b50331816ce20f31db4cf599818afc8",
+    "serverValidationCommit": "2286392918cdde9a7082b01c84c038b692a8f7fe",
+    "pluginCi": {
+      "url": "https://github.com/AnkleBreaker-Studio/unity-mcp-plugin/actions/runs/36792327619",
+      "conclusion": "success",
+      "scope": "338-route registry; Unity validation is local"
+    },
+    "serverCi": {
+      "url": "https://github.com/AnkleBreaker-Studio/unity-mcp-server/actions/runs/36792330921",
+      "conclusion": "success",
+      "jobs": 8,
+      "nodeVersions": [
+        18,
+        20,
+        22,
+        24
+      ],
+      "platforms": [
+        "Windows",
+        "Linux"
+      ],
+      "testsPerJob": 163
+    },
+    "releasePublished": false
+  },
+  "cleanup": {
+    "temporaryEditor": "Health66",
+    "temporaryEditorClosed": true,
+    "fixturePackageRemoved": true,
+    "manifestDependenciesRestored": true,
+    "persistentEditors": [
+      {
+        "project": "Queue66",
+        "compilationErrors": 0,
+        "isPlaying": false,
+        "sceneDirty": false
+      },
+      {
+        "project": "Unity66",
+        "compilationErrors": 0,
+        "isPlaying": false,
+        "sceneDirty": false
+      }
+    ]
+  }
+}

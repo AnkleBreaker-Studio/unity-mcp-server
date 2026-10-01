@@ -1,0 +1,191 @@
+{
+  "checkedOn": "2026-10-01",
+  "baselineServer": "57376530b06cf78fd923f1334d7de0a4b8616b1f",
+  "pluginRuntimeChanged": false,
+  "reproduction": {
+    "method": "Actual MCP stdio notifications and mock HTTP bridges, with controlled stalled responses and shared callers",
+    "baselineTests": 16,
+    "baselineFailures": 15,
+    "correctedBehaviorTests": 16,
+    "checks": [
+      {
+        "name": "cancellation stops protocol 1 ticket polling without replay or context reads",
+        "failed": true
+      },
+      {
+        "name": "cancellation stops protocol 2 ticket polling without replay or context reads",
+        "failed": true
+      },
+      {
+        "name": "cancellation closes a stalled acknowledgement body without replaying accepted work",
+        "failed": true
+      },
+      {
+        "name": "cancellation closes a stalled poll body without replaying accepted work",
+        "failed": true
+      },
+      {
+        "name": "cancellation closes a stalled legacy body without replaying accepted work",
+        "failed": true
+      },
+      {
+        "name": "cancellation during protected retry backoff stops further submissions",
+        "failed": true
+      },
+      {
+        "name": "one cancelled observer cannot abort shared capability negotiation",
+        "failed": true
+      },
+      {
+        "name": "the last cancelled capability observer closes shared work and permits a fresh call",
+        "failed": true
+      },
+      {
+        "name": "shared discovery survives one cancellation without submitting the cancelled command",
+        "failed": true
+      },
+      {
+        "name": "cancelled discovery closes its last ping and remains discoverable on the next call",
+        "failed": true
+      },
+      {
+        "name": "cancelled project-context resource reads close the HTTP body",
+        "failed": true
+      },
+      {
+        "name": "cancelling selection validation preserves the selected project",
+        "failed": true
+      },
+      {
+        "name": "cancelled automatic context injection remains available to the next call",
+        "failed": true
+      },
+      {
+        "name": "cancelled direct queue reads release their HTTP request",
+        "failed": true
+      },
+      {
+        "name": "cancellation stops test-job follow-up polling without stopping the Unity job",
+        "failed": true
+      },
+      {
+        "name": "unknown and completed cancellation IDs leave another request intact",
+        "failed": false
+      }
+    ]
+  },
+  "cleanupTests": 3,
+  "localTests": {
+    "node18": {
+      "tests": 137,
+      "passed": 137,
+      "failed": 0
+    },
+    "node22": {
+      "tests": 137,
+      "passed": 137,
+      "failed": 0
+    }
+  },
+  "liveUnity": {
+    "platform": "Windows",
+    "node18": {
+      "nodeVersion": "v18.20.8",
+      "project": "Queue66 (marked disposable validation project)",
+      "passed": true,
+      "port": 7891,
+      "unityVersion": "6000.6.2f1",
+      "ticketId": "690",
+      "pollsAtCancellation": 1,
+      "pollsAfterCompletion": 1,
+      "executions": 1,
+      "responseSuppressed": true,
+      "fixtureRestored": true
+    },
+    "node22": {
+      "nodeVersion": "v22.18.0",
+      "project": "Queue66 (marked disposable validation project)",
+      "passed": true,
+      "port": 7891,
+      "unityVersion": "6000.6.2f1",
+      "ticketId": "680",
+      "pollsAtCancellation": 1,
+      "pollsAfterCompletion": 1,
+      "executions": 1,
+      "responseSuppressed": true,
+      "fixtureRestored": true
+    },
+    "passiveTransportTracing": true,
+    "sceneAssetsAndSettingsChanged": false
+  },
+  "behavior": {
+    "perRequestSignal": true,
+    "httpBodyAndDeadlineCancellation": true,
+    "noSubmissionsAfterCancelledDiscovery": true,
+    "noFurtherRetriesAfterCancellation": true,
+    "sharedWorkContinuesForOtherObservers": true,
+    "lastObserverAbortsSharedWork": true,
+    "selectionSurvivesCancelledValidation": true,
+    "contextAvailableAfterCancelledInjection": true,
+    "acceptedUnityWorkCanContinue": true,
+    "pluginCancelEndpointAdded": false
+  },
+  "sources": [
+    "https://modelcontextprotocol.io/specification/2025-06-18/basic/utilities/cancellation"
+  ],
+  "limitations": [
+    "Uses cancellation supplied by the pinned MCP SDK; does not certify every client implementation.",
+    "Stopping observation is not rollback or cancellation of an accepted Unity operation.",
+    "In-flight submissions can already have been accepted even without an acknowledgement.",
+    "Already-started Hub processes retain their process deadlines; installers are not terminated by client cancellation.",
+    "Synchronous JavaScript cannot be interrupted while it occupies the event loop.",
+    "Live evidence uses Windows and Unity 6000.6.2f1; older-editor runtime validation remains deferred."
+  ],
+  "ci": {
+    "runId": 36787885862,
+    "url": "https://github.com/AnkleBreaker-Studio/unity-mcp-server/actions/runs/36787885862",
+    "commit": "c9060e8387402235acf077c944474b3ddf75f5d2",
+    "jobs": [
+      {
+        "name": "node 20 on ubuntu-latest",
+        "status": "completed",
+        "conclusion": "success"
+      },
+      {
+        "name": "node 18 on ubuntu-latest",
+        "status": "completed",
+        "conclusion": "success"
+      },
+      {
+        "name": "node 18 on windows-latest",
+        "status": "completed",
+        "conclusion": "success"
+      },
+      {
+        "name": "node 20 on windows-latest",
+        "status": "completed",
+        "conclusion": "success"
+      },
+      {
+        "name": "node 24 on windows-latest",
+        "status": "completed",
+        "conclusion": "success"
+      },
+      {
+        "name": "node 22 on windows-latest",
+        "status": "completed",
+        "conclusion": "success"
+      },
+      {
+        "name": "node 24 on ubuntu-latest",
+        "status": "completed",
+        "conclusion": "success"
+      },
+      {
+        "name": "node 22 on ubuntu-latest",
+        "status": "completed",
+        "conclusion": "success"
+      }
+    ]
+  }
+}

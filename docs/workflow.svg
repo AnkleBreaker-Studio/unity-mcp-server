@@ -1,0 +1,52 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="650" viewBox="0 0 1200 650" role="img" aria-labelledby="title desc">
+  <title id="title">AnkleBreaker Unity MCP — built for the whole studio workflow</title>
+  <desc id="desc">AI clients connect through a request-isolated MCP server to independent Unity projects. Each editor plugin schedules agents fairly on Unity's main thread. Multiplayer scenarios and clones extend the workflow.</desc>
+  <defs>
+    <linearGradient id="bg" x2="1" y2="1"><stop stop-color="#081622"/><stop offset="1" stop-color="#15243b"/></linearGradient>
+    <linearGradient id="accent"><stop stop-color="#66eed4"/><stop offset="1" stop-color="#7ba8ff"/></linearGradient>
+    <pattern id="grid" width="32" height="32" patternUnits="userSpaceOnUse"><path d="M32 0H0V32" fill="none" stroke="#84a7cb" stroke-opacity=".06"/></pattern>
+    <marker id="arrow" markerWidth="8" markerHeight="8" refX="6" refY="4" orient="auto"><path d="m0 0 7 4-7 4" fill="none" stroke="#66eed4" stroke-width="1.5"/></marker>
+  </defs>
+  <rect width="1200" height="650" rx="24" fill="url(#bg)"/>
+  <rect width="1200" height="650" rx="24" fill="url(#grid)"/>
+  <g font-family="Segoe UI, Arial, sans-serif">
+    <rect x="48" y="45" width="5" height="21" rx="2" fill="#66eed4"/>
+    <text x="66" y="61" font-size="17" fill="#8ba4c2" letter-spacing="3">ANKLEBREAKER / UNITY MCP</text>
+    <text x="48" y="126" font-size="48" font-weight="700" fill="#f2f7ff">One workflow. Many Unity worlds.</text>
+    <text x="49" y="166" font-size="21" fill="#afc1d8">Build scenes. Coordinate agents. Run multiplayer scenarios.</text>
+    <path d="M48 198H1152" stroke="url(#accent)" stroke-width="2"/>
+
+    <text x="48" y="238" font-size="13" fill="#8ba4c2" letter-spacing="2">01 / YOUR ASSISTANTS</text>
+    <rect x="48" y="260" width="245" height="224" rx="15" fill="#102238" stroke="#28415b"/>
+    <text x="70" y="298" font-size="22" fill="#f2f7ff" font-weight="600">MCP clients</text>
+    <text x="70" y="328" font-size="16" fill="#afc1d8">Codex · Claude · Cursor</text>
+    <path d="M70 350H270" stroke="#28415b"/>
+    <circle cx="78" cy="380" r="5" fill="#66eed4"/><text x="96" y="386" font-size="17" fill="#f2f7ff">Scene agent</text>
+    <circle cx="78" cy="414" r="5" fill="#7ba8ff"/><text x="96" y="420" font-size="17" fill="#f2f7ff">Gameplay agent</text>
+    <circle cx="78" cy="448" r="5" fill="#c4a5ff"/><text x="96" y="454" font-size="17" fill="#f2f7ff">Test agent</text>
+
+    <path d="M298 368H359" stroke="#66eed4" stroke-width="2" marker-end="url(#arrow)"/>
+    <text x="380" y="238" font-size="13" fill="#8ba4c2" letter-spacing="2">02 / ROUTE EACH REQUEST</text>
+    <rect x="380" y="260" width="327" height="224" rx="15" fill="#102b37" stroke="#4da59f"/>
+    <text x="404" y="298" font-size="22" fill="#f2f7ff" font-weight="600">AnkleBreaker MCP</text>
+    <text x="404" y="338" font-size="17" fill="#66eed4">Independent request context</text>
+    <text x="404" y="372" font-size="17" fill="#afc1d8">Agent identity + project target</text>
+    <text x="404" y="406" font-size="17" fill="#afc1d8">Core tools + on-demand discovery</text>
+    <text x="404" y="440" font-size="17" fill="#afc1d8">Queue tickets + result polling</text>
+
+    <path d="M711 368H745V306H780" fill="none" stroke="#66eed4" stroke-width="2" marker-end="url(#arrow)"/>
+    <path d="M745 368V436H780" fill="none" stroke="#66eed4" stroke-width="2" marker-end="url(#arrow)"/>
+    <text x="803" y="238" font-size="13" fill="#8ba4c2" letter-spacing="2">03 / WORK ACROSS PROJECTS</text>
+    <rect x="803" y="260" width="349" height="103" rx="15" fill="#102238" stroke="#28415b"/>
+    <text x="825" y="299" font-size="22" fill="#f2f7ff" font-weight="600">Unity / Project A</text>
+    <text x="825" y="331" font-size="16" fill="#afc1d8">Plugin queue → main-thread actions</text>
+    <rect x="803" y="381" width="349" height="103" rx="15" fill="#102238" stroke="#28415b"/>
+    <text x="825" y="420" font-size="22" fill="#f2f7ff" font-weight="600">Unity / Project B</text>
+    <text x="825" y="452" font-size="16" fill="#afc1d8">Independent editor, queue and results</text>
+
+    <rect x="48" y="532" width="1104" height="70" rx="12" fill="#0a1928" stroke="#28415b"/>
+    <text x="75" y="560" font-size="14" fill="#66eed4" letter-spacing="1.5">DESIGNED FOR GAME DEVELOPMENT</text>
+    <text x="75" y="584" font-size="16" fill="#afc1d8">Fair scheduling · Per-action undo · MPPM scenarios · ParrelSync discovery · Unity Hub control</text>
+    <text x="1150" y="630" font-size="12" text-anchor="end" fill="#8ba4c2">Architecture diagram · optional integrations require their Unity packages</text>
+  </g>
+</svg>

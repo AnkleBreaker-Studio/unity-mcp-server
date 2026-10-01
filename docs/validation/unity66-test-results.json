@@ -1,0 +1,538 @@
+{
+  "recordedAt": "2026-10-01T00:45:28.463Z",
+  "platform": "Windows",
+  "unityVersion": "6000.6.2f1",
+  "testFrameworkVersion": "1.8.0",
+  "baselinePluginCommit": "ad7e8adb009799c43f85034f7b3c6aa415fa1f61",
+  "controlledBefore": {
+    "nativeTestsLaunched": false,
+    "checks": [
+      {
+        "name": "Empty suites are not discovered as tests",
+        "passed": false,
+        "error": "Empty suite returned 1 test(s)"
+      },
+      {
+        "name": "Empty suites contribute no progress or result entries",
+        "passed": false,
+        "error": "{\"jobId\":\"0e1d8d9332ee\",\"status\":\"succeeded\",\"mode\":\"EditMode\",\"startedAt\":\"2026-10-01T00:25:42.7307267Z\",\"progress\":{\"completed\":1,\"total\":1,\"passed\":1,\"failed\":0,\"skipped\":0},\"completedAt\":\"2026-10-01T00:25:42.7392728Z\",\"totalDuration\":0,\"summary\":{\"total\":1,\"passed\":1,\"failed\":0,\"skipped\":0,\"duration\":0},\"tests\":[{\"name\":\"EmptySuite\",\"fullName\":\"EmptySuite\",\"status\":\"Passed\",\"duration\":0,\"message\":\"\",\"stackTrace\":\"\"}]}"
+      },
+      {
+        "name": "Final tree reconciles missed and duplicate callbacks",
+        "passed": false,
+        "error": "{\"jobId\":\"c479ada9ea36\",\"status\":\"failed\",\"mode\":\"EditMode\",\"startedAt\":\"2026-10-01T00:25:42.7432969Z\",\"progress\":{\"completed\":2,\"total\":4,\"passed\":2,\"failed\":0,\"skipped\":0},\"completedAt\":\"2026-10-01T00:25:42.7438028Z\",\"totalDuration\":0,\"summary\":{\"total\":4,\"passed\":2,\"failed\":0,\"skipped\":0,\"duration\":0},\"tests\":[{\"name\":\"Pass\",\"fullName\":\"Pass\",\"status\":\"Passed\",\"duration\":0,\"message\":\"\",\"stackTrace\":\"\"},{\"name\":\"Pass\",\"fullName\":\"Pass\",\"status\":\"Passed\",\"duration\":0,\"message\":\"\",\"stackTrace\":\"\"}]}"
+      },
+      {
+        "name": "Suite-level failure remains failed without leaf failures",
+        "passed": true,
+        "evidence": {
+          "jobId": "7c99250af485",
+          "status": "failed",
+          "mode": "EditMode",
+          "startedAt": "2026-10-01T00:25:42.7438028Z",
+          "progress": {
+            "completed": 0,
+            "total": 1,
+            "passed": 0,
+            "failed": 0,
+            "skipped": 0
+          },
+          "completedAt": "2026-10-01T00:25:42.7449460Z",
+          "totalDuration": 0,
+          "summary": {
+            "total": 1,
+            "passed": 0,
+            "failed": 0,
+            "skipped": 0,
+            "duration": 0
+          }
+        }
+      },
+      {
+        "name": "Normal success retains its counts and result",
+        "passed": true,
+        "evidence": {
+          "jobId": "0a93f3590441",
+          "status": "succeeded",
+          "mode": "EditMode",
+          "startedAt": "2026-10-01T00:25:42.7449460Z",
+          "progress": {
+            "completed": 1,
+            "total": 1,
+            "passed": 1,
+            "failed": 0,
+            "skipped": 0
+          },
+          "completedAt": "2026-10-01T00:25:42.7459645Z",
+          "totalDuration": 0,
+          "summary": {
+            "total": 1,
+            "passed": 1,
+            "failed": 0,
+            "skipped": 0,
+            "duration": 0
+          },
+          "tests": [
+            {
+              "name": "Pass",
+              "fullName": "Pass",
+              "status": "Passed",
+              "duration": 0,
+              "message": "",
+              "stackTrace": ""
+            }
+          ]
+        }
+      }
+    ]
+  },
+  "controlledAfter": {
+    "unityVersion": "6000.6.2f1",
+    "passed": true,
+    "nativeTestsLaunched": false,
+    "checks": [
+      {
+        "name": "Empty suites are not discovered as tests",
+        "passed": true,
+        "evidence": {
+          "count": 0
+        }
+      },
+      {
+        "name": "Empty suites contribute no progress or result entries",
+        "passed": true,
+        "evidence": {
+          "jobId": "037ec1802323",
+          "status": "succeeded",
+          "mode": "EditMode",
+          "startedAt": "2026-10-01T00:42:50.1884928Z",
+          "resultsComplete": true,
+          "progress": {
+            "completed": 0,
+            "total": 0,
+            "passed": 0,
+            "failed": 0,
+            "skipped": 0
+          },
+          "completedAt": "2026-10-01T00:42:50.2000853Z",
+          "totalDuration": 0,
+          "summary": {
+            "total": 0,
+            "passed": 0,
+            "failed": 0,
+            "skipped": 0,
+            "duration": 0
+          },
+          "tests": []
+        }
+      },
+      {
+        "name": "Final tree reconciles missed and duplicate callbacks",
+        "passed": true,
+        "evidence": {
+          "jobId": "032deb07fedd",
+          "status": "failed",
+          "mode": "EditMode",
+          "startedAt": "2026-10-01T00:42:50.2041835Z",
+          "resultsComplete": true,
+          "progress": {
+            "completed": 4,
+            "total": 4,
+            "passed": 1,
+            "failed": 1,
+            "skipped": 2,
+            "failuresSoFar": [
+              {
+                "name": "Fail",
+                "fullName": "Fail",
+                "message": "Controlled result failure"
+              }
+            ]
+          },
+          "completedAt": "2026-10-01T00:42:50.2046867Z",
+          "totalDuration": 0,
+          "summary": {
+            "total": 4,
+            "passed": 1,
+            "failed": 1,
+            "skipped": 2,
+            "duration": 0
+          },
+          "tests": [
+            {
+              "name": "Pass",
+              "fullName": "Pass",
+              "status": "Passed",
+              "duration": 0,
+              "message": "",
+              "stackTrace": ""
+            },
+            {
+              "name": "Fail",
+              "fullName": "Fail",
+              "status": "Failed",
+              "duration": 0,
+              "message": "Controlled result failure",
+              "stackTrace": "Controlled fixture stack"
+            },
+            {
+              "name": "Skip",
+              "fullName": "Skip",
+              "status": "Skipped",
+              "duration": 0,
+              "message": "",
+              "stackTrace": ""
+            },
+            {
+              "name": "Inconclusive",
+              "fullName": "Inconclusive",
+              "status": "Inconclusive",
+              "duration": 0,
+              "message": "",
+              "stackTrace": ""
+            }
+          ]
+        }
+      },
+      {
+        "name": "Suite-level failure remains failed without leaf failures",
+        "passed": true,
+        "evidence": {
+          "jobId": "532fb018742a",
+          "status": "failed",
+          "mode": "EditMode",
+          "startedAt": "2026-10-01T00:42:50.2056897Z",
+          "resultsComplete": true,
+          "progress": {
+            "completed": 0,
+            "total": 0,
+            "passed": 0,
+            "failed": 0,
+            "skipped": 0
+          },
+          "completedAt": "2026-10-01T00:42:50.2056897Z",
+          "totalDuration": 0,
+          "error": "Controlled result failure",
+          "summary": {
+            "total": 0,
+            "passed": 0,
+            "failed": 0,
+            "skipped": 0,
+            "duration": 0
+          }
+        }
+      },
+      {
+        "name": "Normal success retains its counts and result",
+        "passed": true,
+        "evidence": {
+          "jobId": "1cd22704fdaf",
+          "status": "succeeded",
+          "mode": "EditMode",
+          "startedAt": "2026-10-01T00:42:50.2066995Z",
+          "resultsComplete": true,
+          "progress": {
+            "completed": 1,
+            "total": 1,
+            "passed": 1,
+            "failed": 0,
+            "skipped": 0
+          },
+          "completedAt": "2026-10-01T00:42:50.2066995Z",
+          "totalDuration": 0,
+          "summary": {
+            "total": 1,
+            "passed": 1,
+            "failed": 0,
+            "skipped": 0,
+            "duration": 0
+          },
+          "tests": [
+            {
+              "name": "Pass",
+              "fullName": "Pass",
+              "status": "Passed",
+              "duration": 0,
+              "message": "",
+              "stackTrace": ""
+            }
+          ]
+        }
+      },
+      {
+        "name": "Discovery reports truncation only for another matching test",
+        "passed": true,
+        "evidence": {
+          "limits": [
+            1,
+            2,
+            3,
+            4
+          ]
+        }
+      },
+      {
+        "name": "Discovery stops after the first matching overflow",
+        "passed": true,
+        "evidence": {
+          "returned": 2,
+          "examined": 3
+        }
+      },
+      {
+        "name": "Invalid discovery limits fail before native discovery",
+        "passed": true,
+        "evidence": {
+          "rejected": 9
+        }
+      },
+      {
+        "name": "Null discovery mode returns a command error",
+        "passed": true,
+        "evidence": {
+          "error": "Unknown test mode: . Use 'EditMode' or 'PlayMode'."
+        }
+      },
+      {
+        "name": "Missing native result details are explicitly incomplete",
+        "passed": true,
+        "evidence": {
+          "jobId": "8a4574dd3d6b",
+          "status": "succeeded",
+          "mode": "EditMode",
+          "startedAt": "2026-10-01T00:42:50.2102821Z",
+          "resultsComplete": false,
+          "progress": {
+            "completed": 3,
+            "total": 3,
+            "passed": 3,
+            "failed": 0,
+            "skipped": 0
+          },
+          "completedAt": "2026-10-01T00:42:50.2112853Z",
+          "totalDuration": 0,
+          "summary": {
+            "total": 3,
+            "passed": 3,
+            "failed": 0,
+            "skipped": 0,
+            "duration": 0
+          },
+          "tests": []
+        }
+      }
+    ]
+  },
+  "actualDiscovery": {
+    "project": "Queue66",
+    "emptyBefore": {
+      "totalTests": 1,
+      "truncated": true,
+      "returnedName": "Queue66"
+    },
+    "emptyAfter": {
+      "totalTests": 0,
+      "truncated": false,
+      "tests": []
+    },
+    "exactLimitBefore": {
+      "filter": "UnityMcpValidation.EditModeCases.Pass",
+      "maxResults": 1,
+      "totalTests": 1,
+      "truncated": true
+    },
+    "invalidLimitsBefore": [
+      {
+        "maxResults": 0,
+        "accepted": true
+      },
+      {
+        "maxResults": 1.5,
+        "accepted": true
+      }
+    ]
+  },
+  "nativeCache": {
+    "sourceSha256": "5dabf5ea82a570ee13d3fe0b81bbca4f438f3a425088b7daf6df8d337b1eb13f",
+    "source": "Test Framework 1.8.0 UnityEngine.TestRunner/Utils/AssemblyProvider/PlayerTestAssemblyProvider.cs",
+    "observed": "Repeated PlayMode run requested the discovered Pass test but emitted zero test cases and returned zero detailed results. A repeated direct MCP call reproduced it.",
+    "cacheBeforeReset": 0,
+    "afterControlledNullReset": {
+      "passed": 1,
+      "fullName": "UnityMcpValidation.PlayModeCases.Pass",
+      "cacheAssemblyCount": 2
+    },
+    "minimumSourceInspection": "Test Framework 1.1.31 does not contain ResetStaticsOnLoad; the workaround does not invalidate that implementation",
+    "verifiedAfter": "Eight PlayMode pass runs across four complete suites in one editor without script reload; each returned the exact requested test. Every cancellation waited for the selected slow test to start."
+  },
+  "lifecycleRegression": {
+    "passed": true,
+    "checks": 19
+  },
+  "ordinaryServerSuite": {
+    "nodeVersion": "v22.18.0",
+    "passed": 163,
+    "failed": 0
+  },
+  "minimumApi": {
+    "unityVersion": "2021.3.18f1",
+    "sourceCount": 70,
+    "passed": true,
+    "check": "C# compilation against installed Unity assemblies; no editor execution or package import"
+  },
+  "registry": {
+    "registeredRoutes": 338,
+    "passed": true
+  },
+  "notCovered": [
+    "Unity 2021 runtime (deferred by maintainer)",
+    "Other operating systems and player-build tests",
+    "Actual reload during a native test and complete result persistence after completed-job reload",
+    "Five-minute stale-job recovery and unbounded job/detail retention",
+    "Native discovery cost in large projects; collection only is bounded",
+    "Other Test Framework versions and future changes to private cache/reset APIs"
+  ],
+  "liveCurrent": [
+    {
+      "nodeVersion": "v18.20.8",
+      "passed": true,
+      "checks": [
+        "Actual parameterized discovery, exact/over-limit truncation and rejected invalid limits",
+        "Real EditMode pass/failure and detailed results",
+        "Real mixed results and fixture setup failures retain authoritative counts and complete details",
+        "Real prebuild failure releases the job and restores Play Mode options",
+        "Two consecutive real PlayMode successes after a prebuild failure without script reload",
+        "Native EditMode/PlayMode cancellation and rejection during cleanup",
+        "A new job succeeds after cancelled jobs finish cleanup",
+        "Clearing an absent job leaves the latest job unchanged and starts no native run"
+      ],
+      "unityVersion": "6000.6.2f1",
+      "prebuildError": "Multiple unexpected errors happened while running tests.",
+      "originalSettingsRestored": true
+    },
+    {
+      "nodeVersion": "v22.18.0",
+      "passed": true,
+      "checks": [
+        "Actual parameterized discovery, exact/over-limit truncation and rejected invalid limits",
+        "Real EditMode pass/failure and detailed results",
+        "Real mixed results and fixture setup failures retain authoritative counts and complete details",
+        "Real prebuild failure releases the job and restores Play Mode options",
+        "Two consecutive real PlayMode successes after a prebuild failure without script reload",
+        "Native EditMode/PlayMode cancellation and rejection during cleanup",
+        "A new job succeeds after cancelled jobs finish cleanup",
+        "Clearing an absent job leaves the latest job unchanged and starts no native run"
+      ],
+      "unityVersion": "6000.6.2f1",
+      "prebuildError": "Multiple unexpected errors happened while running tests.",
+      "originalSettingsRestored": true
+    }
+  ],
+  "liveReleasedServer": {
+    "commit": "826af5ce61db7e2d2d675fe90d24c941a83f3924",
+    "sequential": true,
+    "runs": [
+      {
+        "nodeVersion": "v18.20.8",
+        "passed": true,
+        "checks": [
+          "Actual parameterized discovery, exact/over-limit truncation and rejected invalid limits",
+          "Real EditMode pass/failure and detailed results",
+          "Real mixed results and fixture setup failures retain authoritative counts and complete details",
+          "Real prebuild failure releases the job and restores Play Mode options",
+          "Two consecutive real PlayMode successes after a prebuild failure without script reload",
+          "Native EditMode/PlayMode cancellation and rejection during cleanup",
+          "A new job succeeds after cancelled jobs finish cleanup",
+          "Clearing an absent job leaves the latest job unchanged and starts no native run"
+        ],
+        "unityVersion": "6000.6.2f1",
+        "prebuildError": "Multiple unexpected errors happened while running tests.",
+        "originalSettingsRestored": true
+      },
+      {
+        "nodeVersion": "v22.18.0",
+        "passed": true,
+        "checks": [
+          "Actual parameterized discovery, exact/over-limit truncation and rejected invalid limits",
+          "Real EditMode pass/failure and detailed results",
+          "Real mixed results and fixture setup failures retain authoritative counts and complete details",
+          "Real prebuild failure releases the job and restores Play Mode options",
+          "Two consecutive real PlayMode successes after a prebuild failure without script reload",
+          "Native EditMode/PlayMode cancellation and rejection during cleanup",
+          "A new job succeeds after cancelled jobs finish cleanup",
+          "Clearing an absent job leaves the latest job unchanged and starts no native run"
+        ],
+        "unityVersion": "6000.6.2f1",
+        "prebuildError": "Multiple unexpected errors happened while running tests.",
+        "originalSettingsRestored": true
+      }
+    ]
+  },
+  "completedJobReload": {
+    "actualScriptReload": true,
+    "jobId": "b3976a3d291f",
+    "summaryRetained": true,
+    "before": {
+      "resultsComplete": true,
+      "detailCount": 1
+    },
+    "after": {
+      "resultsComplete": false,
+      "detailCount": 0
+    },
+    "interpretation": "The new completeness flag exposes the existing summary-only persistence limit; complete details are not yet preserved."
+  },
+  "cleanup": {
+    "temporaryEditor": "Health66",
+    "temporaryEditorClosed": true,
+    "originalSettingsRestored": true,
+    "enterPlayModeOptions": 0,
+    "enterPlayModeOptionsEnabled": false,
+    "fixturesRetainedInMarkedProject": true,
+    "persistentEditors": [
+      {
+        "project": "Queue66",
+        "compilationErrors": 0,
+        "isPlaying": false,
+        "sceneDirty": false
+      },
+      {
+        "project": "Unity66",
+        "compilationErrors": 0,
+        "isPlaying": false,
+        "sceneDirty": false
+      }
+    ]
+  },
+  "implementationPluginCommit": "19be8938a3534ed8b12b4e6aaaf650e33452bb6b",
+  "published": {
+    "pluginCommit": "19be8938a3534ed8b12b4e6aaaf650e33452bb6b",
+    "serverValidationCommit": "41e44e4f72aebd580d4b744b0ad993331d0e8edf",
+    "pluginCi": {
+      "url": "https://github.com/AnkleBreaker-Studio/unity-mcp-plugin/actions/runs/36798225781",
+      "conclusion": "success",
+      "scope": "338-route registry; Unity validation is local"
+    },
+    "serverCi": {
+      "url": "https://github.com/AnkleBreaker-Studio/unity-mcp-server/actions/runs/36798228939",
+      "conclusion": "success",
+      "jobs": 8,
+      "nodeVersions": [
+        18,
+        20,
+        22,
+        24
+      ],
+      "platforms": [
+        "Windows",
+        "Linux"
+      ],
+      "testsPerJob": 163
+    },
+    "releasePublished": false
+  },
+  "persistenceFollowup": {
+    "report": "unity66-test-persistence.json",
+    "note": "Subsequent changes retain available detailed results and running-test state across script reload. The original completed-reload observation above remains baseline evidence."
+  }
+}

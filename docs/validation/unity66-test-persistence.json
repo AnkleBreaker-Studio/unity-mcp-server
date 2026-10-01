@@ -1,0 +1,406 @@
+{
+  "recordedAt": "2026-10-01T01:23:35.006Z",
+  "platform": "Windows",
+  "unityVersion": "6000.6.2f1",
+  "testFrameworkVersion": "1.8.0",
+  "baselinePluginCommit": "19be8938a3534ed8b12b4e6aaaf650e33452bb6b",
+  "controlledBefore": {
+    "unityVersion": "6000.6.2f1",
+    "passed": false,
+    "nativeTestsLaunched": false,
+    "checks": [
+      {
+        "name": "Completed details and failure diagnostics survive reload",
+        "passed": false,
+        "error": "Detailed results were lost or altered"
+      },
+      {
+        "name": "Running test name, timer and filters survive reload",
+        "passed": false,
+        "error": "Running test identity was lost"
+      },
+      {
+        "name": "A long-running native job is not failed by its age",
+        "passed": false,
+        "error": "Live native job was marked failed"
+      },
+      {
+        "name": "An orphaned native job becomes a terminal failure",
+        "passed": false,
+        "error": "Orphaned job remained running"
+      },
+      {
+        "name": "A damaged summary does not hide later valid jobs",
+        "passed": false,
+        "error": "A damaged summary prevented valid restoration"
+      },
+      {
+        "name": "Legacy summaries remain readable",
+        "passed": true,
+        "evidence": {
+          "status": "succeeded",
+          "resultsComplete": false
+        }
+      }
+    ]
+  },
+  "controlledAfter": {
+    "unityVersion": "6000.6.2f1",
+    "passed": true,
+    "nativeTestsLaunched": false,
+    "checks": [
+      {
+        "name": "Completed details and failure diagnostics survive reload",
+        "passed": true,
+        "evidence": {
+          "detailCount": 2,
+          "unicodeAndStackTracePreserved": true
+        }
+      },
+      {
+        "name": "Running test name, timer and filters survive reload",
+        "passed": true,
+        "evidence": {
+          "status": "running",
+          "currentTest": "Fixture.Slow",
+          "elapsed": 20
+        }
+      },
+      {
+        "name": "A long-running native job is not failed by its age",
+        "passed": true,
+        "evidence": {
+          "status": "running"
+        }
+      },
+      {
+        "name": "An orphaned native job becomes a terminal failure",
+        "passed": true,
+        "evidence": {
+          "status": "failed",
+          "error": "Unity Test Runner no longer has the native run after script reload; tests were not restarted"
+        }
+      },
+      {
+        "name": "A damaged summary does not hide later valid jobs",
+        "passed": true,
+        "evidence": {
+          "restored": "dacfa173fcd7"
+        }
+      },
+      {
+        "name": "Legacy summaries remain readable",
+        "passed": true,
+        "evidence": {
+          "status": "succeeded",
+          "resultsComplete": false
+        }
+      },
+      {
+        "name": "A damaged snapshot preserves the summary and reports missing details",
+        "passed": true,
+        "evidence": {
+          "warning": "Detailed results could not be restored: JSON parse error: Missing a name for object member."
+        }
+      },
+      {
+        "name": "A legacy active job with unknown native identity stays explicit",
+        "passed": true,
+        "evidence": {
+          "warning": "Native run recovery is uncertain: The saved job has no native run ID. Inspect Unity Test Runner before using clearStuck."
+        }
+      },
+      {
+        "name": "A resumed RunStarted retains progress and all filters",
+        "passed": true,
+        "evidence": {
+          "completed": 2,
+          "filterFamilies": 4
+        }
+      },
+      {
+        "name": "Count retention evicts old snapshots and preserves the latest job",
+        "passed": true,
+        "evidence": {
+          "retained": 128
+        }
+      },
+      {
+        "name": "Expired history is removed on read without starting another run",
+        "passed": true,
+        "evidence": {
+          "error": "Job '5d4ef8061e9d' not found"
+        }
+      },
+      {
+        "name": "Snapshot byte pressure evicts old jobs but keeps oversized newest results",
+        "passed": true,
+        "evidence": {
+          "retained": 1,
+          "snapshotBytes": 35651937,
+          "overBudget": true
+        }
+      }
+    ]
+  },
+  "regressions": {
+    "lifecycle": {
+      "passed": true,
+      "checks": 19
+    },
+    "discoveryAndResults": {
+      "passed": true,
+      "checks": 10
+    }
+  },
+  "httpWorkerAbort": {
+    "before": {
+      "unityVersion": "6000.6.2f1",
+      "passed": false,
+      "waiterObserved": true,
+      "requestErrorLogs": 1,
+      "failure": null,
+      "clientResult": "The remote server returned an error: (500) Internal Server Error.",
+      "workerFailure": null,
+      "scope": "Owned loopback HTTP worker aborted while waiting for the editor; no domain reload or native tests"
+    },
+    "after": {
+      "unityVersion": "6000.6.2f1",
+      "passed": true,
+      "waiterObserved": true,
+      "requestErrorLogs": 0,
+      "failure": null,
+      "clientResult": "",
+      "workerFailure": null,
+      "scope": "Owned loopback HTTP worker aborted while waiting for the editor; no domain reload or native tests"
+    }
+  },
+  "nativeReloadBeforeBridgeFix": {
+    "jobId": "c946aaff9ee1",
+    "summary": {
+      "total": 3,
+      "passed": 1,
+      "failed": 2
+    },
+    "unexpectedFailure": {
+      "name": "UnityMcpValidation.ReloadCases.ReloadAndPass",
+      "message": "Errors occurred during domain reload."
+    },
+    "observedEditorLog": "[AB-UMCP] Request failed: Thread was being aborted.",
+    "source": "Health66/test-persistence-live.log; HandleRequest catch(Exception) logged the normal worker interruption; job details inspected through MCP"
+  },
+  "live": [
+    {
+      "configuration": "node22",
+      "server": "current branch",
+      "nodeVersion": "v22.18.0",
+      "passed": true,
+      "checks": [
+        {
+          "name": "Completed results and failure diagnostics survive reload",
+          "jobId": "1157ec3fc3d2",
+          "beforeSession": "1b9b9c5e9cd646349a4a4e6e1ba19124",
+          "afterSession": "4c3e1c1215d347e9a9d6ad088dbe571a",
+          "details": 2,
+          "resultsComplete": true
+        },
+        {
+          "name": "Native run resumes with the original MCP job ID and no replay",
+          "jobId": "b3d7b072bd49",
+          "beforeSession": "4c3e1c1215d347e9a9d6ad088dbe571a",
+          "afterSession": "6e61159b9c0d4033b6cc1e801f245174",
+          "completedBeforeReload": 2,
+          "finalSummary": {
+            "total": 3,
+            "passed": 2,
+            "failed": 1,
+            "skipped": 0,
+            "duration": 1.03
+          },
+          "details": 3,
+          "reloadRequests": 1
+        }
+      ],
+      "unityVersion": "6000.6.2f1"
+    },
+    {
+      "configuration": "node18",
+      "server": "current branch",
+      "nodeVersion": "v18.20.8",
+      "passed": true,
+      "checks": [
+        {
+          "name": "Completed results and failure diagnostics survive reload",
+          "jobId": "4396050e823a",
+          "beforeSession": "6e61159b9c0d4033b6cc1e801f245174",
+          "afterSession": "6f95c2c281e04740a5da84858ca6adfa",
+          "details": 2,
+          "resultsComplete": true
+        },
+        {
+          "name": "Native run resumes with the original MCP job ID and no replay",
+          "jobId": "5e9288ac07f0",
+          "beforeSession": "6f95c2c281e04740a5da84858ca6adfa",
+          "afterSession": "0f46033ff5d24118946536c660ae6aa0",
+          "completedBeforeReload": 2,
+          "finalSummary": {
+            "total": 3,
+            "passed": 2,
+            "failed": 1,
+            "skipped": 0,
+            "duration": 0.72
+          },
+          "details": 3,
+          "reloadRequests": 1
+        }
+      ],
+      "unityVersion": "6000.6.2f1"
+    },
+    {
+      "configuration": "released-node22",
+      "server": "826af5ce61db7e2d2d675fe90d24c941a83f3924",
+      "nodeVersion": "v22.18.0",
+      "passed": true,
+      "checks": [
+        {
+          "name": "Completed results and failure diagnostics survive reload",
+          "jobId": "138c26e093d5",
+          "beforeSession": "0f46033ff5d24118946536c660ae6aa0",
+          "afterSession": "51d845bbe26c4064b12e3ad0995048ab",
+          "details": 2,
+          "resultsComplete": true
+        },
+        {
+          "name": "Native run resumes with the original MCP job ID and no replay",
+          "jobId": "0e93a68dbd67",
+          "beforeSession": "51d845bbe26c4064b12e3ad0995048ab",
+          "afterSession": "ef21bffe8896421689ab7a4226fcdbf8",
+          "completedBeforeReload": 2,
+          "finalSummary": {
+            "total": 3,
+            "passed": 2,
+            "failed": 1,
+            "skipped": 0,
+            "duration": 0.85
+          },
+          "details": 3,
+          "reloadRequests": 1
+        }
+      ],
+      "unityVersion": "6000.6.2f1"
+    },
+    {
+      "configuration": "released-node18",
+      "server": "826af5ce61db7e2d2d675fe90d24c941a83f3924",
+      "nodeVersion": "v18.20.8",
+      "passed": true,
+      "checks": [
+        {
+          "name": "Completed results and failure diagnostics survive reload",
+          "jobId": "56e6725af2f8",
+          "beforeSession": "ef21bffe8896421689ab7a4226fcdbf8",
+          "afterSession": "3523af7832e24814ae07403514149bec",
+          "details": 2,
+          "resultsComplete": true
+        },
+        {
+          "name": "Native run resumes with the original MCP job ID and no replay",
+          "jobId": "6b1a8b3e393e",
+          "beforeSession": "3523af7832e24814ae07403514149bec",
+          "afterSession": "7777e3f82fd5457990935dec8916bd30",
+          "completedBeforeReload": 2,
+          "finalSummary": {
+            "total": 3,
+            "passed": 2,
+            "failed": 1,
+            "skipped": 0,
+            "duration": 0.71
+          },
+          "details": 3,
+          "reloadRequests": 1
+        }
+      ],
+      "unityVersion": "6000.6.2f1"
+    }
+  ],
+  "minimumEditorApiCheck": {
+    "passed": true,
+    "unityVersion": "2021.3.18f1",
+    "sourceCount": 71,
+    "referenceCount": 211,
+    "excludedIntegrations": [
+      "UMA",
+      "ProBuilder"
+    ],
+    "scope": "C# compilation against installed Unity assemblies; no editor execution or package import"
+  },
+  "ordinaryServerTests": {
+    "nodeVersion": "v22.18.0",
+    "passed": 163,
+    "failed": 0
+  },
+  "limits": [
+    "Editor SessionState ends at editor exit; no cross-restart persistence.",
+    "128 jobs, 30-minute expiry and 32 MiB UTF-8 saved-snapshot retention target. Active/newest jobs can exceed the byte target and expose overBudget. This is not a hard memory or response-size limit.",
+    "Whole-index corruption cannot reconstruct independent snapshots. Legacy summaries cannot regain lost details.",
+    "Native holder inspected in Test Framework 1.1.31 and 1.8.0; actual execution only on 1.8.0. Unknown private API shape reports recoveryWarning.",
+    "Actual older-editor execution deferred by maintainer direction; API compilation does not replace it.",
+    "Live reload uses a supported EditMode instruction; arbitrary reload failures, other OS/player runs and serialization costs in large projects remain unverified."
+  ],
+  "liveLifecycleRegression": {
+    "nodeVersion": "v22.18.0",
+    "passed": true,
+    "checks": [
+      "Actual parameterized discovery, exact/over-limit truncation and rejected invalid limits",
+      "Real EditMode pass/failure and detailed results",
+      "Real mixed results and fixture setup failures retain authoritative counts and complete details",
+      "Real prebuild failure releases the job and restores Play Mode options",
+      "Two consecutive real PlayMode successes after a prebuild failure without script reload",
+      "Native EditMode/PlayMode cancellation and rejection during cleanup",
+      "A new job succeeds after cancelled jobs finish cleanup",
+      "Clearing an absent job leaves the latest job unchanged and starts no native run"
+    ],
+    "unityVersion": "6000.6.2f1",
+    "prebuildError": "Multiple unexpected errors happened while running tests.",
+    "originalSettingsRestored": true
+  },
+  "pluginCommit": "4182701fad3ce3fecacea7222a320ee01c0de2f2",
+  "cleanup": {
+    "temporaryEditorClosed": true,
+    "originalPlayModeOptionsEnabled": false,
+    "originalPlayModeOptions": 0,
+    "originalSettingsRestored": true,
+    "nativeRunActive": false,
+    "sceneDirty": false,
+    "persistentEditorCompilationErrors": {
+      "Queue66": 0,
+      "Unity66": 0
+    }
+  },
+  "serverValidationCommit": "cf701a6b4ccb412e50599abc65639f9440a1ffeb",
+  "ci": {
+    "plugin": {
+      "url": "https://github.com/AnkleBreaker-Studio/unity-mcp-plugin/actions/runs/36801042172",
+      "conclusion": "success",
+      "routes": 338,
+      "scope": "Route registry drift check; no Unity execution"
+    },
+    "server": {
+      "url": "https://github.com/AnkleBreaker-Studio/unity-mcp-server/actions/runs/36801099832",
+      "conclusion": "success",
+      "jobs": 8,
+      "nodeVersions": [
+        18,
+        20,
+        22,
+        24
+      ],
+      "operatingSystems": [
+        "Windows",
+        "Linux"
+      ],
+      "testsPerJob": 163,
+      "scope": "Ordinary server tests; opt-in Unity execution remains local"
+    }
+  }
+}

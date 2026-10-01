@@ -1,0 +1,2033 @@
+{
+  "recordedAt": "2026-10-01T05:27:39.125Z",
+  "baselinePluginCommit": "d935808ba89865be99431dd64e9a6a0227786085",
+  "baselineServerCommit": "c32214c",
+  "unityVersion": "6000.6.2f1",
+  "platform": "Windows",
+  "sourceSha256": {
+    "MCPBridgeServer.cs": "16427046c07980c46d7212b06687e2332b2b6206943a4c8d35fb744ad4cfacb1",
+    "MCPRequestInput.cs": "c6d3b43ec428c2cd7261f5e7d17a488b586402845283a68335eb1072e43ad7c4",
+    "MCPHttpDiagnostics.cs": "51420cbc6dbb52e184613bdd3d4af7eb3c2ce0aa8f342c3e237bae5cf2617d3f",
+    "MCPDashboardWindow.cs": "b35397b937ef6b1506de6ced973ed833a8a215c4f50a4a7a6eea2b8b5afd0dbd"
+  },
+  "baseline": {
+    "unityVersion": "6000.6.2f1",
+    "passed": false,
+    "checks": [
+      {
+        "name": "Complete UTF-8 content-length requests remain accepted",
+        "passed": true,
+        "evidence": true
+      },
+      {
+        "name": "Complete chunked requests remain accepted",
+        "passed": true,
+        "evidence": true
+      },
+      {
+        "name": "Transport-truncated valid JSON cannot create a ticket",
+        "passed": false,
+        "error": "Truncated entity was accepted with HTTP 202"
+      },
+      {
+        "name": "Body reader concurrency is bounded and bodyless monitoring remains responsive",
+        "passed": false,
+        "error": "Ninth incomplete request was admitted instead of refused"
+      },
+      {
+        "name": "Declared and chunked bodies share a 64 MiB reservation budget",
+        "passed": false,
+        "error": "Third large reservation was admitted"
+      },
+      {
+        "name": "A stalled body has an absolute 30-second deadline",
+        "passed": false,
+        "error": "Body reader remains blocked after its 30-second deadline"
+      },
+      {
+        "name": "Unread origin-refused bodies are not drained",
+        "passed": false,
+        "error": "Origin refusal retained a worker to drain the upload"
+      },
+      {
+        "name": "All body reservations and readers are released",
+        "passed": false,
+        "error": "Body admission state leaked"
+      }
+    ]
+  },
+  "baselineInterpretation": "Two compatibility controls pass; six new requirements fail. The final baseline check reports missing admission gauges, not evidence of a resource leak. Chunked truncation was reproduced separately while developing the expanded fixture.",
+  "controlled": {
+    "unityVersion": "6000.6.2f1",
+    "passed": true,
+    "checks": [
+      {
+        "name": "Complete UTF-8 content-length requests remain accepted",
+        "passed": true,
+        "evidence": true
+      },
+      {
+        "name": "Complete chunked requests remain accepted",
+        "passed": true,
+        "evidence": true
+      },
+      {
+        "name": "Fragmented final chunk and trailers remain valid",
+        "passed": true,
+        "evidence": true
+      },
+      {
+        "name": "Transport-truncated valid JSON cannot create a ticket",
+        "passed": true,
+        "evidence": {
+          "status": 400,
+          "ticketsBefore": 0,
+          "ticketsAfter": 0
+        }
+      },
+      {
+        "name": "A truncated chunked entity cannot create a ticket",
+        "passed": true,
+        "evidence": {
+          "status": 400,
+          "ticketsBefore": 0,
+          "ticketsAfter": 0
+        }
+      },
+      {
+        "name": "Body reader concurrency is bounded and bodyless monitoring remains responsive",
+        "passed": true,
+        "evidence": {
+          "activeBodyReaders": 8,
+          "monitoringMs": 1.623
+        }
+      },
+      {
+        "name": "Declared and chunked bodies share a 64 MiB reservation budget",
+        "passed": true,
+        "evidence": {
+          "activeBodyReaders": 2,
+          "reservedBodyBytes": 67108864
+        }
+      },
+      {
+        "name": "Stalled and trickling chunked bodies share an absolute 30-second deadline",
+        "passed": true,
+        "evidence": {
+          "status": 408,
+          "trickleStatus": 408,
+          "elapsedMs": 30007.0456,
+          "timeoutCount": 2
+        }
+      },
+      {
+        "name": "Unread origin-refused bodies are not drained",
+        "passed": true,
+        "evidence": true
+      },
+      {
+        "name": "All body reservations and readers are released",
+        "passed": true,
+        "evidence": {
+          "startedAtUtc": "2026-10-01T05:24:14.8369530Z",
+          "receivedRequests": 21,
+          "completedRequests": 21,
+          "activeRequests": 0,
+          "peakActiveRequests": 9,
+          "responses2xx": 4,
+          "responses4xx": 12,
+          "responses5xx": 2,
+          "otherResponses": 0,
+          "incompleteRequests": 3,
+          "abortedRequests": 0,
+          "inputRejectedRequests": 16,
+          "inputBytesRead": 69,
+          "outputBytesWritten": 6328,
+          "responseSerializationFailures": 0,
+          "activeBodyReaders": 0,
+          "peakBodyReaders": 8,
+          "reservedBodyBytes": 0,
+          "peakReservedBodyBytes": 67108864,
+          "bodyReadTimeouts": 2,
+          "bodyAdmissionRefusals": 2,
+          "maxBodyReaders": 8,
+          "maxReservedBodyBytes": 67108864,
+          "bodyReadTimeoutMs": 30000,
+          "averageDurationMs": 2876.8563619047613,
+          "maxDurationMs": 30005.4492,
+          "domainReloadCount": 0,
+          "lastDomainReloadMs": 0,
+          "activeRequestsAtLastReload": 0
+        }
+      },
+      {
+        "name": "Body read abort releases admission state",
+        "passed": true,
+        "evidence": true
+      },
+      {
+        "name": "Buffered reader cost comparison preserves decoded content",
+        "passed": true,
+        "evidence": {
+          "scope": "MemoryStream only; excludes HTTP and callback-thread allocations",
+          "allocationCounterSupported": false,
+          "controlBytes": 0,
+          "measurements": [
+            {
+              "bytes": 1024,
+              "updated": false,
+              "iterations": 20,
+              "elapsedMs": 0.2278,
+              "callerThreadBytes": 0
+            },
+            {
+              "bytes": 1024,
+              "updated": true,
+              "iterations": 20,
+              "elapsedMs": 1.2422,
+              "callerThreadBytes": 0
+            },
+            {
+              "bytes": 1048576,
+              "updated": false,
+              "iterations": 20,
+              "elapsedMs": 182.1835,
+              "callerThreadBytes": 0
+            },
+            {
+              "bytes": 1048576,
+              "updated": true,
+              "iterations": 20,
+              "elapsedMs": 219.8299,
+              "callerThreadBytes": 0
+            }
+          ]
+        }
+      }
+    ]
+  },
+  "regressions": {
+    "input": {
+      "unityVersion": "6000.6.2f1",
+      "passed": true,
+      "checks": [
+        {
+          "name": "Existing empty and valid object payloads retain their shapes",
+          "passed": true,
+          "evidence": {
+            "text": "中😀",
+            "int": 4,
+            "long": 2147483648,
+            "real": 1.25,
+            "list": [
+              true,
+              false,
+              null
+            ]
+          }
+        },
+        {
+          "name": "Duplicate names preserve the existing last-value behavior",
+          "passed": true,
+          "evidence": true
+        },
+        {
+          "name": "Reject invalid request {} trailing",
+          "passed": true,
+          "evidence": true
+        },
+        {
+          "name": "Reject invalid request {\"v\":1,}",
+          "passed": true,
+          "evidence": true
+        },
+        {
+          "name": "Reject invalid request {\"v\":1 \"b\":2}",
+          "passed": true,
+          "evidence": true
+        },
+        {
+          "name": "Reject invalid request {\"v\":01}",
+          "passed": true,
+          "evidence": true
+        },
+        {
+          "name": "Reject invalid request {\"v\":1e}",
+          "passed": true,
+          "evidence": true
+        },
+        {
+          "name": "Reject invalid request {\"v\":\"bad\\q\"}",
+          "passed": true,
+          "evidence": true
+        },
+        {
+          "name": "Reject invalid request {\"v\":\"raw\\nline\"}",
+          "passed": true,
+          "evidence": true
+        },
+        {
+          "name": "Reject invalid request []",
+          "passed": true,
+          "evidence": true
+        },
+        {
+          "name": "Reject invalid request null",
+          "passed": true,
+          "evidence": true
+        },
+        {
+          "name": "Reject invalid request {\"v\":[1,2,]}",
+          "passed": true,
+          "evidence": true
+        },
+        {
+          "name": "Deep input stops before exhausting the native thread stack",
+          "passed": true,
+          "evidence": true
+        },
+        {
+          "name": "Exact depth boundary accepts 64 containers and rejects 65",
+          "passed": true,
+          "evidence": true
+        },
+        {
+          "name": "Wide arrays stop at the shared value budget",
+          "passed": true,
+          "evidence": {
+            "maximumValuesAndKeys": 1000000
+          }
+        },
+        {
+          "name": "Malformed delimiters, EOF and escapes terminate with input errors",
+          "passed": true,
+          "evidence": {
+            "count": 15
+          }
+        },
+        {
+          "name": "Escaped Unicode, control characters and finite numbers retain values",
+          "passed": true,
+          "evidence": true
+        },
+        {
+          "name": "ASCII exact byte limit",
+          "passed": true,
+          "evidence": {
+            "bytes": 5,
+            "limit": 5,
+            "read": 5
+          }
+        },
+        {
+          "name": "ASCII over byte limit",
+          "passed": true,
+          "evidence": {
+            "bytes": 5,
+            "limit": 4,
+            "read": 5
+          }
+        },
+        {
+          "name": "UTF-8 exact byte limit across split sequences",
+          "passed": true,
+          "evidence": {
+            "bytes": 7,
+            "limit": 7,
+            "read": 7
+          }
+        },
+        {
+          "name": "UTF-8 over byte limit",
+          "passed": true,
+          "evidence": {
+            "bytes": 7,
+            "limit": 6,
+            "read": 7
+          }
+        },
+        {
+          "name": "UTF-16 BOM counts toward the byte limit",
+          "passed": true,
+          "evidence": {
+            "bytes": 12,
+            "limit": 11,
+            "read": 12
+          }
+        },
+        {
+          "name": "UTF-16 BOM exact limit stays compatible",
+          "passed": true,
+          "evidence": {
+            "bytes": 8,
+            "limit": 8,
+            "read": 8
+          }
+        },
+        {
+          "name": "UTF-8 BOM exact limit stays compatible",
+          "passed": true,
+          "evidence": {
+            "bytes": 8,
+            "limit": 8,
+            "read": 8
+          }
+        },
+        {
+          "name": "Byte reader stops at limit plus one without draining the body",
+          "passed": true,
+          "evidence": {
+            "read": 11
+          }
+        },
+        {
+          "name": "Malformed legacy write is rejected before creating an object",
+          "passed": true,
+          "evidence": {
+            "error": "Unexpected content after JSON value. At character 39.",
+            "code": "invalid_json",
+            "requestAccepted": false
+          }
+        },
+        {
+          "name": "Malformed queue envelope is rejected before issuing a ticket",
+          "passed": true,
+          "evidence": {
+            "error": "Unexpected content after JSON value. At character 39.",
+            "code": "invalid_json",
+            "requestAccepted": false
+          }
+        },
+        {
+          "name": "Malformed inner write is rejected before issuing a ticket",
+          "passed": true,
+          "evidence": {
+            "error": "Unexpected content after JSON value. At character 39.",
+            "code": "invalid_json",
+            "requestAccepted": false
+          }
+        },
+        {
+          "name": "Valid chunked queue request is still accepted",
+          "passed": true,
+          "evidence": {
+            "status": 202
+          }
+        },
+        {
+          "name": "Valid legacy request is still accepted",
+          "passed": true,
+          "evidence": {
+            "status": 200
+          }
+        },
+        {
+          "name": "Invalid deferred input is refused before a native operation starts",
+          "passed": true,
+          "evidence": {
+            "error": "Unexpected content after JSON value. At character 27.",
+            "code": "invalid_json",
+            "requestAccepted": false
+          }
+        },
+        {
+          "name": "Queue envelope field types are checked before dispatch",
+          "passed": true,
+          "evidence": true
+        },
+        {
+          "name": "Guarded submission rejects malformed input before consuming its identity",
+          "passed": true,
+          "evidence": {
+            "rejectedStatus": 400,
+            "acceptedStatus": 202,
+            "duplicateStatus": 202
+          }
+        },
+        {
+          "name": "Actual chunked Unicode body cannot exceed the 32 MiB byte limit",
+          "passed": true,
+          "evidence": {
+            "status": 413,
+            "sentEntityBytes": 33554433,
+            "preparedCharacters": 12582920,
+            "preparedBytes": 37748744
+          }
+        },
+        {
+          "name": "Origin rejection still precedes parsing",
+          "passed": true,
+          "evidence": {
+            "error": "Forbidden: only local, non-browser clients may call the MCP bridge"
+          }
+        }
+      ]
+    },
+    "http": {
+      "unityVersion": "6000.6.2f1",
+      "passed": true,
+      "checks": [
+        {
+          "name": "Queue info exposes domain-scoped HTTP counters",
+          "passed": true,
+          "evidence": {
+            "startedAtUtc": "2026-10-01T05:22:12.3253426Z",
+            "receivedRequests": 0,
+            "completedRequests": 0,
+            "activeRequests": 0,
+            "peakActiveRequests": 0,
+            "responses2xx": 0,
+            "responses4xx": 0,
+            "responses5xx": 0,
+            "otherResponses": 0,
+            "incompleteRequests": 0,
+            "abortedRequests": 0,
+            "inputRejectedRequests": 0,
+            "inputBytesRead": 0,
+            "outputBytesWritten": 0,
+            "responseSerializationFailures": 0,
+            "activeBodyReaders": 0,
+            "peakBodyReaders": 0,
+            "reservedBodyBytes": 0,
+            "peakReservedBodyBytes": 0,
+            "bodyReadTimeouts": 0,
+            "bodyAdmissionRefusals": 0,
+            "maxBodyReaders": 8,
+            "maxReservedBodyBytes": 67108864,
+            "bodyReadTimeoutMs": 30000,
+            "averageDurationMs": 0,
+            "maxDurationMs": 0,
+            "domainReloadCount": 0,
+            "lastDomainReloadMs": 0,
+            "activeRequestsAtLastReload": 0
+          }
+        },
+        {
+          "name": "Successful read counts actual UTF-8 bytes",
+          "passed": true,
+          "evidence": {
+            "status": 200,
+            "inputBytes": 20,
+            "after": {
+              "startedAtUtc": "2026-10-01T05:22:12.3253426Z",
+              "receivedRequests": 1,
+              "completedRequests": 1,
+              "activeRequests": 0,
+              "peakActiveRequests": 1,
+              "responses2xx": 1,
+              "responses4xx": 0,
+              "responses5xx": 0,
+              "otherResponses": 0,
+              "incompleteRequests": 0,
+              "abortedRequests": 0,
+              "inputRejectedRequests": 0,
+              "inputBytesRead": 20,
+              "outputBytesWritten": 1143,
+              "responseSerializationFailures": 0,
+              "activeBodyReaders": 0,
+              "peakBodyReaders": 1,
+              "reservedBodyBytes": 0,
+              "peakReservedBodyBytes": 20,
+              "bodyReadTimeouts": 0,
+              "bodyAdmissionRefusals": 0,
+              "maxBodyReaders": 8,
+              "maxReservedBodyBytes": 67108864,
+              "bodyReadTimeoutMs": 30000,
+              "averageDurationMs": 15.7199,
+              "maxDurationMs": 15.7199,
+              "domainReloadCount": 0,
+              "lastDomainReloadMs": 0,
+              "activeRequestsAtLastReload": 0
+            }
+          }
+        },
+        {
+          "name": "Malformed request is visible before queue acceptance",
+          "passed": true,
+          "evidence": {
+            "status": 400,
+            "inputBytes": 11,
+            "after": {
+              "startedAtUtc": "2026-10-01T05:22:12.3253426Z",
+              "receivedRequests": 2,
+              "completedRequests": 2,
+              "activeRequests": 0,
+              "peakActiveRequests": 1,
+              "responses2xx": 1,
+              "responses4xx": 1,
+              "responses5xx": 0,
+              "otherResponses": 0,
+              "incompleteRequests": 0,
+              "abortedRequests": 0,
+              "inputRejectedRequests": 1,
+              "inputBytesRead": 31,
+              "outputBytesWritten": 1253,
+              "responseSerializationFailures": 0,
+              "activeBodyReaders": 0,
+              "peakBodyReaders": 1,
+              "reservedBodyBytes": 0,
+              "peakReservedBodyBytes": 20,
+              "bodyReadTimeouts": 0,
+              "bodyAdmissionRefusals": 0,
+              "maxBodyReaders": 8,
+              "maxReservedBodyBytes": 67108864,
+              "bodyReadTimeoutMs": 30000,
+              "averageDurationMs": 9.0724,
+              "maxDurationMs": 15.7199,
+              "domainReloadCount": 0,
+              "lastDomainReloadMs": 0,
+              "activeRequestsAtLastReload": 0
+            }
+          }
+        },
+        {
+          "name": "Nested queue body rejection is counted once",
+          "passed": true,
+          "evidence": {
+            "status": 400,
+            "inputBytes": 30,
+            "after": {
+              "startedAtUtc": "2026-10-01T05:22:12.3253426Z",
+              "receivedRequests": 3,
+              "completedRequests": 3,
+              "activeRequests": 0,
+              "peakActiveRequests": 1,
+              "responses2xx": 1,
+              "responses4xx": 2,
+              "responses5xx": 0,
+              "otherResponses": 0,
+              "incompleteRequests": 0,
+              "abortedRequests": 0,
+              "inputRejectedRequests": 2,
+              "inputBytesRead": 61,
+              "outputBytesWritten": 1345,
+              "responseSerializationFailures": 0,
+              "activeBodyReaders": 0,
+              "peakBodyReaders": 1,
+              "reservedBodyBytes": 0,
+              "peakReservedBodyBytes": 30,
+              "bodyReadTimeouts": 0,
+              "bodyAdmissionRefusals": 0,
+              "maxBodyReaders": 8,
+              "maxReservedBodyBytes": 67108864,
+              "bodyReadTimeoutMs": 30000,
+              "averageDurationMs": 6.185566666666666,
+              "maxDurationMs": 15.7199,
+              "domainReloadCount": 0,
+              "lastDomainReloadMs": 0,
+              "activeRequestsAtLastReload": 0
+            }
+          }
+        },
+        {
+          "name": "Deep input uses HTTP 413 and input rejection counters",
+          "passed": true,
+          "evidence": {
+            "status": 413,
+            "inputBytes": 137,
+            "after": {
+              "startedAtUtc": "2026-10-01T05:22:12.3253426Z",
+              "receivedRequests": 4,
+              "completedRequests": 4,
+              "activeRequests": 0,
+              "peakActiveRequests": 1,
+              "responses2xx": 1,
+              "responses4xx": 3,
+              "responses5xx": 0,
+              "otherResponses": 0,
+              "incompleteRequests": 0,
+              "abortedRequests": 0,
+              "inputRejectedRequests": 3,
+              "inputBytesRead": 198,
+              "outputBytesWritten": 1449,
+              "responseSerializationFailures": 0,
+              "activeBodyReaders": 0,
+              "peakBodyReaders": 1,
+              "reservedBodyBytes": 0,
+              "peakReservedBodyBytes": 137,
+              "bodyReadTimeouts": 0,
+              "bodyAdmissionRefusals": 0,
+              "maxBodyReaders": 8,
+              "maxReservedBodyBytes": 67108864,
+              "bodyReadTimeoutMs": 30000,
+              "averageDurationMs": 4.7601249999999995,
+              "maxDurationMs": 15.7199,
+              "domainReloadCount": 0,
+              "lastDomainReloadMs": 0,
+              "activeRequestsAtLastReload": 0
+            }
+          }
+        },
+        {
+          "name": "Origin refusal has no body read or input-parser rejection",
+          "passed": true,
+          "evidence": {
+            "status": 403,
+            "inputBytes": 0,
+            "after": {
+              "startedAtUtc": "2026-10-01T05:22:12.3253426Z",
+              "receivedRequests": 5,
+              "completedRequests": 5,
+              "activeRequests": 0,
+              "peakActiveRequests": 1,
+              "responses2xx": 1,
+              "responses4xx": 4,
+              "responses5xx": 0,
+              "otherResponses": 0,
+              "incompleteRequests": 0,
+              "abortedRequests": 0,
+              "inputRejectedRequests": 3,
+              "inputBytesRead": 198,
+              "outputBytesWritten": 1527,
+              "responseSerializationFailures": 0,
+              "activeBodyReaders": 0,
+              "peakBodyReaders": 1,
+              "reservedBodyBytes": 0,
+              "peakReservedBodyBytes": 137,
+              "bodyReadTimeouts": 0,
+              "bodyAdmissionRefusals": 0,
+              "maxBodyReaders": 8,
+              "maxReservedBodyBytes": 67108864,
+              "bodyReadTimeoutMs": 30000,
+              "averageDurationMs": 3.9102599999999996,
+              "maxDurationMs": 15.7199,
+              "domainReloadCount": 0,
+              "lastDomainReloadMs": 0,
+              "activeRequestsAtLastReload": 0
+            }
+          }
+        },
+        {
+          "name": "Unknown route is visible in HTTP 4xx",
+          "passed": true,
+          "evidence": {
+            "status": 404,
+            "inputBytes": 2,
+            "after": {
+              "startedAtUtc": "2026-10-01T05:22:12.3253426Z",
+              "receivedRequests": 6,
+              "completedRequests": 6,
+              "activeRequests": 0,
+              "peakActiveRequests": 1,
+              "responses2xx": 1,
+              "responses4xx": 5,
+              "responses5xx": 0,
+              "otherResponses": 0,
+              "incompleteRequests": 0,
+              "abortedRequests": 0,
+              "inputRejectedRequests": 3,
+              "inputBytesRead": 200,
+              "outputBytesWritten": 1563,
+              "responseSerializationFailures": 0,
+              "activeBodyReaders": 0,
+              "peakBodyReaders": 1,
+              "reservedBodyBytes": 0,
+              "peakReservedBodyBytes": 137,
+              "bodyReadTimeouts": 0,
+              "bodyAdmissionRefusals": 0,
+              "maxBodyReaders": 8,
+              "maxReservedBodyBytes": 67108864,
+              "bodyReadTimeoutMs": 30000,
+              "averageDurationMs": 3.3068499999999994,
+              "maxDurationMs": 15.7199,
+              "domainReloadCount": 0,
+              "lastDomainReloadMs": 0,
+              "activeRequestsAtLastReload": 0
+            }
+          }
+        },
+        {
+          "name": "Method refusal is visible before dispatch",
+          "passed": true,
+          "evidence": {
+            "status": 405,
+            "inputBytes": 0,
+            "after": {
+              "startedAtUtc": "2026-10-01T05:22:12.3253426Z",
+              "receivedRequests": 7,
+              "completedRequests": 7,
+              "activeRequests": 0,
+              "peakActiveRequests": 1,
+              "responses2xx": 1,
+              "responses4xx": 6,
+              "responses5xx": 0,
+              "otherResponses": 0,
+              "incompleteRequests": 0,
+              "abortedRequests": 0,
+              "inputRejectedRequests": 3,
+              "inputBytesRead": 200,
+              "outputBytesWritten": 1635,
+              "responseSerializationFailures": 0,
+              "activeBodyReaders": 0,
+              "peakBodyReaders": 1,
+              "reservedBodyBytes": 0,
+              "peakReservedBodyBytes": 137,
+              "bodyReadTimeouts": 0,
+              "bodyAdmissionRefusals": 0,
+              "maxBodyReaders": 8,
+              "maxReservedBodyBytes": 67108864,
+              "bodyReadTimeoutMs": 30000,
+              "averageDurationMs": 2.8649142857142853,
+              "maxDurationMs": 15.7199,
+              "domainReloadCount": 0,
+              "lastDomainReloadMs": 0,
+              "activeRequestsAtLastReload": 0
+            }
+          }
+        },
+        {
+          "name": "Missing API prefix is visible before body reading",
+          "passed": true,
+          "evidence": {
+            "status": 404,
+            "inputBytes": 0,
+            "after": {
+              "startedAtUtc": "2026-10-01T05:22:12.3253426Z",
+              "receivedRequests": 8,
+              "completedRequests": 8,
+              "activeRequests": 0,
+              "peakActiveRequests": 1,
+              "responses2xx": 1,
+              "responses4xx": 7,
+              "responses5xx": 0,
+              "otherResponses": 0,
+              "incompleteRequests": 0,
+              "abortedRequests": 0,
+              "inputRejectedRequests": 3,
+              "inputBytesRead": 200,
+              "outputBytesWritten": 1656,
+              "responseSerializationFailures": 0,
+              "activeBodyReaders": 0,
+              "peakBodyReaders": 1,
+              "reservedBodyBytes": 0,
+              "peakReservedBodyBytes": 137,
+              "bodyReadTimeouts": 0,
+              "bodyAdmissionRefusals": 0,
+              "maxBodyReaders": 8,
+              "maxReservedBodyBytes": 67108864,
+              "bodyReadTimeoutMs": 30000,
+              "averageDurationMs": 2.532825,
+              "maxDurationMs": 15.7199,
+              "domainReloadCount": 0,
+              "lastDomainReloadMs": 0,
+              "activeRequestsAtLastReload": 0
+            }
+          }
+        },
+        {
+          "name": "Queue acceptance is a completed HTTP 202",
+          "passed": true,
+          "evidence": {
+            "status": 202,
+            "inputBytes": 18,
+            "after": {
+              "startedAtUtc": "2026-10-01T05:22:12.3253426Z",
+              "receivedRequests": 9,
+              "completedRequests": 9,
+              "activeRequests": 0,
+              "peakActiveRequests": 1,
+              "responses2xx": 2,
+              "responses4xx": 7,
+              "responses5xx": 0,
+              "otherResponses": 0,
+              "incompleteRequests": 0,
+              "abortedRequests": 0,
+              "inputRejectedRequests": 3,
+              "inputBytesRead": 218,
+              "outputBytesWritten": 1780,
+              "responseSerializationFailures": 0,
+              "activeBodyReaders": 0,
+              "peakBodyReaders": 1,
+              "reservedBodyBytes": 0,
+              "peakReservedBodyBytes": 137,
+              "bodyReadTimeouts": 0,
+              "bodyAdmissionRefusals": 0,
+              "maxBodyReaders": 8,
+              "maxReservedBodyBytes": 67108864,
+              "bodyReadTimeoutMs": 30000,
+              "averageDurationMs": 2.6349111111111108,
+              "maxDurationMs": 15.7199,
+              "domainReloadCount": 0,
+              "lastDomainReloadMs": 0,
+              "activeRequestsAtLastReload": 0
+            }
+          }
+        },
+        {
+          "name": "Command error remains HTTP 200",
+          "passed": true,
+          "evidence": {
+            "status": 200,
+            "inputBytes": 0,
+            "after": {
+              "startedAtUtc": "2026-10-01T05:22:12.3253426Z",
+              "receivedRequests": 10,
+              "completedRequests": 10,
+              "activeRequests": 0,
+              "peakActiveRequests": 1,
+              "responses2xx": 3,
+              "responses4xx": 7,
+              "responses5xx": 0,
+              "otherResponses": 0,
+              "incompleteRequests": 0,
+              "abortedRequests": 0,
+              "inputRejectedRequests": 3,
+              "inputBytesRead": 218,
+              "outputBytesWritten": 2210,
+              "responseSerializationFailures": 0,
+              "activeBodyReaders": 0,
+              "peakBodyReaders": 1,
+              "reservedBodyBytes": 0,
+              "peakReservedBodyBytes": 137,
+              "bodyReadTimeouts": 0,
+              "bodyAdmissionRefusals": 0,
+              "maxBodyReaders": 8,
+              "maxReservedBodyBytes": 67108864,
+              "bodyReadTimeoutMs": 30000,
+              "averageDurationMs": 2.51504,
+              "maxDurationMs": 15.7199,
+              "domainReloadCount": 0,
+              "lastDomainReloadMs": 0,
+              "activeRequestsAtLastReload": 0
+            }
+          }
+        },
+        {
+          "name": "Cyclic response is HTTP 500 with serialization failure",
+          "passed": true,
+          "evidence": {
+            "status": 500,
+            "inputBytes": 0,
+            "after": {
+              "startedAtUtc": "2026-10-01T05:22:12.3253426Z",
+              "receivedRequests": 11,
+              "completedRequests": 11,
+              "activeRequests": 0,
+              "peakActiveRequests": 1,
+              "responses2xx": 3,
+              "responses4xx": 7,
+              "responses5xx": 1,
+              "otherResponses": 0,
+              "incompleteRequests": 0,
+              "abortedRequests": 0,
+              "inputRejectedRequests": 3,
+              "inputBytesRead": 218,
+              "outputBytesWritten": 2481,
+              "responseSerializationFailures": 1,
+              "activeBodyReaders": 0,
+              "peakBodyReaders": 1,
+              "reservedBodyBytes": 0,
+              "peakReservedBodyBytes": 137,
+              "bodyReadTimeouts": 0,
+              "bodyAdmissionRefusals": 0,
+              "maxBodyReaders": 8,
+              "maxReservedBodyBytes": 67108864,
+              "bodyReadTimeoutMs": 30000,
+              "averageDurationMs": 2.3345272727272723,
+              "maxDurationMs": 15.7199,
+              "domainReloadCount": 0,
+              "lastDomainReloadMs": 0,
+              "activeRequestsAtLastReload": 0
+            }
+          }
+        },
+        {
+          "name": "Oversized response is distinct from rejected input",
+          "passed": true,
+          "evidence": {
+            "status": 413,
+            "inputBytes": 0,
+            "after": {
+              "startedAtUtc": "2026-10-01T05:22:12.3253426Z",
+              "receivedRequests": 12,
+              "completedRequests": 12,
+              "activeRequests": 0,
+              "peakActiveRequests": 1,
+              "responses2xx": 3,
+              "responses4xx": 8,
+              "responses5xx": 1,
+              "otherResponses": 0,
+              "incompleteRequests": 0,
+              "abortedRequests": 0,
+              "inputRejectedRequests": 3,
+              "inputBytesRead": 218,
+              "outputBytesWritten": 2862,
+              "responseSerializationFailures": 2,
+              "activeBodyReaders": 0,
+              "peakBodyReaders": 1,
+              "reservedBodyBytes": 0,
+              "peakReservedBodyBytes": 137,
+              "bodyReadTimeouts": 0,
+              "bodyAdmissionRefusals": 0,
+              "maxBodyReaders": 8,
+              "maxReservedBodyBytes": 67108864,
+              "bodyReadTimeoutMs": 30000,
+              "averageDurationMs": 41.32429166666667,
+              "maxDurationMs": 470.2117,
+              "domainReloadCount": 0,
+              "lastDomainReloadMs": 0,
+              "activeRequestsAtLastReload": 0
+            }
+          }
+        },
+        {
+          "name": "Completed counts partition into response classes and incomplete requests",
+          "passed": true,
+          "evidence": {
+            "startedAtUtc": "2026-10-01T05:22:12.3253426Z",
+            "receivedRequests": 12,
+            "completedRequests": 12,
+            "activeRequests": 0,
+            "peakActiveRequests": 1,
+            "responses2xx": 3,
+            "responses4xx": 8,
+            "responses5xx": 1,
+            "otherResponses": 0,
+            "incompleteRequests": 0,
+            "abortedRequests": 0,
+            "inputRejectedRequests": 3,
+            "inputBytesRead": 218,
+            "outputBytesWritten": 2862,
+            "responseSerializationFailures": 2,
+            "activeBodyReaders": 0,
+            "peakBodyReaders": 1,
+            "reservedBodyBytes": 0,
+            "peakReservedBodyBytes": 137,
+            "bodyReadTimeouts": 0,
+            "bodyAdmissionRefusals": 0,
+            "maxBodyReaders": 8,
+            "maxReservedBodyBytes": 67108864,
+            "bodyReadTimeoutMs": 30000,
+            "averageDurationMs": 41.32429166666667,
+            "maxDurationMs": 470.2117,
+            "domainReloadCount": 0,
+            "lastDomainReloadMs": 0,
+            "activeRequestsAtLastReload": 0
+          }
+        }
+      ]
+    },
+    "dashboard": {
+      "unityVersion": "6000.6.2f1",
+      "idle": {
+        "iterations": 100,
+        "elapsedMs": 21.7835,
+        "allocations": 30400,
+        "profilerControlAllocations": 1,
+        "rawRecorderValue": 648100,
+        "rawRecorderUnit": "TimeNanoseconds"
+      },
+      "unchangedQueueSection": {
+        "iterations": 100,
+        "elapsedMs": 0.0195,
+        "allocations": 0,
+        "profilerControlAllocations": 1,
+        "rawRecorderValue": 0,
+        "rawRecorderUnit": "TimeNanoseconds"
+      },
+      "unchangedHttpSection": {
+        "iterations": 100,
+        "elapsedMs": 0.0213,
+        "allocations": 0,
+        "profilerControlAllocations": 1,
+        "rawRecorderValue": 0,
+        "rawRecorderUnit": "TimeNanoseconds"
+      },
+      "httpActiveRequestVisible": true,
+      "httpRefusalVisible": true,
+      "httpControlsReused": true,
+      "twentyStableAgents": {
+        "iterations": 100,
+        "elapsedMs": 21.4205,
+        "allocations": 30400,
+        "profilerControlAllocations": 1,
+        "rawRecorderValue": 661400,
+        "rawRecorderUnit": "TimeNanoseconds"
+      },
+      "unshownActivityDoesNotRebuild": true,
+      "visibleMetricsRefresh": true,
+      "changingAgents": {
+        "iterations": 100,
+        "elapsedMs": 26.612000000000002,
+        "allocations": 31800,
+        "profilerControlAllocations": 1,
+        "rawRecorderValue": 723700,
+        "rawRecorderUnit": "TimeNanoseconds"
+      },
+      "changedAndUnchangedCardsReused": true,
+      "oldOutstandingSessionVisible": true,
+      "idleSessionExpiresWithoutRebuildingOthers": true,
+      "returningSessionVisible": true,
+      "emptyStateRestored": true,
+      "newAgentReplacesEmptyState": true,
+      "scrollRootsBefore": 1,
+      "scrollRootsAfter": 1,
+      "recreateGuiDoesNotDuplicateControls": true,
+      "savedFoldoutStateRestored": true,
+      "httpPreferenceAndCountersRestored": true,
+      "failures": [],
+      "passed": true,
+      "fixtureSessionsRemoved": true
+    },
+    "shutdown": {
+      "unityVersion": "6000.6.2f1",
+      "passed": true,
+      "waiterObserved": true,
+      "requestErrorLogs": 0,
+      "failure": null,
+      "clientResult": "",
+      "workerFailure": null,
+      "metricsPassed": true,
+      "before": {
+        "startedAtUtc": "2026-10-01T05:24:53.7075260Z",
+        "receivedRequests": 0,
+        "completedRequests": 0,
+        "activeRequests": 0,
+        "peakActiveRequests": 0,
+        "responses2xx": 0,
+        "responses4xx": 0,
+        "responses5xx": 0,
+        "otherResponses": 0,
+        "incompleteRequests": 0,
+        "abortedRequests": 0,
+        "inputRejectedRequests": 0,
+        "inputBytesRead": 0,
+        "outputBytesWritten": 0,
+        "responseSerializationFailures": 0,
+        "activeBodyReaders": 0,
+        "peakBodyReaders": 0,
+        "reservedBodyBytes": 0,
+        "peakReservedBodyBytes": 0,
+        "bodyReadTimeouts": 0,
+        "bodyAdmissionRefusals": 0,
+        "maxBodyReaders": 8,
+        "maxReservedBodyBytes": 67108864,
+        "bodyReadTimeoutMs": 30000,
+        "averageDurationMs": 0,
+        "maxDurationMs": 0,
+        "domainReloadCount": 0,
+        "lastDomainReloadMs": 0,
+        "activeRequestsAtLastReload": 0
+      },
+      "active": {
+        "startedAtUtc": "2026-10-01T05:24:53.7075260Z",
+        "receivedRequests": 1,
+        "completedRequests": 0,
+        "activeRequests": 1,
+        "peakActiveRequests": 1,
+        "responses2xx": 0,
+        "responses4xx": 0,
+        "responses5xx": 0,
+        "otherResponses": 0,
+        "incompleteRequests": 0,
+        "abortedRequests": 0,
+        "inputRejectedRequests": 0,
+        "inputBytesRead": 0,
+        "outputBytesWritten": 0,
+        "responseSerializationFailures": 0,
+        "activeBodyReaders": 0,
+        "peakBodyReaders": 0,
+        "reservedBodyBytes": 0,
+        "peakReservedBodyBytes": 0,
+        "bodyReadTimeouts": 0,
+        "bodyAdmissionRefusals": 0,
+        "maxBodyReaders": 8,
+        "maxReservedBodyBytes": 67108864,
+        "bodyReadTimeoutMs": 30000,
+        "averageDurationMs": 0,
+        "maxDurationMs": 0,
+        "domainReloadCount": 0,
+        "lastDomainReloadMs": 0,
+        "activeRequestsAtLastReload": 0
+      },
+      "after": {
+        "startedAtUtc": "2026-10-01T05:24:53.7075260Z",
+        "receivedRequests": 1,
+        "completedRequests": 1,
+        "activeRequests": 0,
+        "peakActiveRequests": 1,
+        "responses2xx": 0,
+        "responses4xx": 0,
+        "responses5xx": 0,
+        "otherResponses": 0,
+        "incompleteRequests": 1,
+        "abortedRequests": 1,
+        "inputRejectedRequests": 0,
+        "inputBytesRead": 0,
+        "outputBytesWritten": 0,
+        "responseSerializationFailures": 0,
+        "activeBodyReaders": 0,
+        "peakBodyReaders": 0,
+        "reservedBodyBytes": 0,
+        "peakReservedBodyBytes": 0,
+        "bodyReadTimeouts": 0,
+        "bodyAdmissionRefusals": 0,
+        "maxBodyReaders": 8,
+        "maxReservedBodyBytes": 67108864,
+        "bodyReadTimeoutMs": 30000,
+        "averageDurationMs": 5.3962,
+        "maxDurationMs": 5.3962,
+        "domainReloadCount": 0,
+        "lastDomainReloadMs": 0,
+        "activeRequestsAtLastReload": 0
+      },
+      "scope": "Owned loopback HTTP worker aborted while waiting for the editor; no domain reload or native tests"
+    }
+  },
+  "server": {
+    "baselineFocused": {
+      "tests": 16,
+      "passed": 12,
+      "failed": 4
+    },
+    "finalFocused": {
+      "nodeVersions": [
+        "18.20.8",
+        "22.18.0"
+      ],
+      "tests": 16,
+      "passed": 16,
+      "failed": 0
+    },
+    "ordinary": {
+      "nodeVersion": "22.18.0",
+      "tests": 202,
+      "passed": 202,
+      "failed": 0
+    },
+    "refusalFixtureCorrection": {
+      "initialRun": "https://github.com/AnkleBreaker-Studio/unity-mcp-server/actions/runs/36820589973",
+      "initialPassedJobs": 3,
+      "initialFailedJobs": 5,
+      "inspectedFailure": "Protected refusal test returned an unknown outcome after a request timeout near the shortened 2.1-second negotiated window (1.1-second client budget).",
+      "interpretation": "The fixture assumed exactly two refusals. Timer scheduling can allow a final near-expiry attempt; its lost response must remain uncertain.",
+      "change": "Retain the normal mock retry window and exhaust the five-attempt limit; assert five refusals, or one accepted attempt followed by four refusals. Production retry behavior is unchanged.",
+      "local": {
+        "nodeVersion": "24.21.0",
+        "tests": 16,
+        "passed": 16,
+        "failed": 0
+      }
+    }
+  },
+  "minimumApi": {
+    "version": "2021.3.18f1",
+    "sourceCount": 74,
+    "exitCode": 0,
+    "scope": "Compiler-only; runtime execution remains deferred by maintainer direction"
+  },
+  "live": [
+    {
+      "server": "current",
+      "nodeVersion": "v22.18.0",
+      "passed": true,
+      "checks": [
+        {
+          "name": "Twelve overlapping MCP calls preserve aggregate invariants",
+          "passed": true,
+          "before": {
+            "startedAtUtc": "2026-10-01T05:24:30.0577828Z",
+            "receivedRequests": 25,
+            "completedRequests": 24,
+            "activeRequests": 1,
+            "peakActiveRequests": 2,
+            "responses2xx": 24,
+            "responses4xx": 0,
+            "responses5xx": 0,
+            "otherResponses": 0,
+            "incompleteRequests": 0,
+            "abortedRequests": 0,
+            "inputRejectedRequests": 0,
+            "inputBytesRead": 406,
+            "outputBytesWritten": 11170,
+            "responseSerializationFailures": 0,
+            "activeBodyReaders": 0,
+            "peakBodyReaders": 1,
+            "reservedBodyBytes": 0,
+            "peakReservedBodyBytes": 206,
+            "bodyReadTimeouts": 0,
+            "bodyAdmissionRefusals": 0,
+            "maxBodyReaders": 8,
+            "maxReservedBodyBytes": 67108864,
+            "bodyReadTimeoutMs": 30000,
+            "averageDurationMs": 69.35594583333334,
+            "maxDurationMs": 756.5998,
+            "domainReloadCount": 8,
+            "lastDomainReloadMs": 1665.0877,
+            "activeRequestsAtLastReload": 0
+          },
+          "after": {
+            "startedAtUtc": "2026-10-01T05:24:30.0577828Z",
+            "receivedRequests": 70,
+            "completedRequests": 69,
+            "activeRequests": 1,
+            "peakActiveRequests": 5,
+            "responses2xx": 69,
+            "responses4xx": 0,
+            "responses5xx": 0,
+            "otherResponses": 0,
+            "incompleteRequests": 0,
+            "abortedRequests": 0,
+            "inputRejectedRequests": 0,
+            "inputBytesRead": 2878,
+            "outputBytesWritten": 31577,
+            "responseSerializationFailures": 0,
+            "activeBodyReaders": 0,
+            "peakBodyReaders": 1,
+            "reservedBodyBytes": 0,
+            "peakReservedBodyBytes": 206,
+            "bodyReadTimeouts": 0,
+            "bodyAdmissionRefusals": 0,
+            "maxBodyReaders": 8,
+            "maxReservedBodyBytes": 67108864,
+            "bodyReadTimeoutMs": 30000,
+            "averageDurationMs": 24.289492753623197,
+            "maxDurationMs": 756.5998,
+            "domainReloadCount": 8,
+            "lastDomainReloadMs": 1665.0877,
+            "activeRequestsAtLastReload": 0
+          }
+        },
+        {
+          "name": "Command failure is not mislabeled as an HTTP failure",
+          "passed": true
+        },
+        {
+          "name": "Input refused before ticket creation is visible through MCP",
+          "passed": true,
+          "counters": {
+            "startedAtUtc": "2026-10-01T05:24:30.0577828Z",
+            "receivedRequests": 82,
+            "completedRequests": 81,
+            "activeRequests": 1,
+            "peakActiveRequests": 5,
+            "responses2xx": 80,
+            "responses4xx": 1,
+            "responses5xx": 0,
+            "otherResponses": 0,
+            "incompleteRequests": 0,
+            "abortedRequests": 0,
+            "inputRejectedRequests": 1,
+            "inputBytesRead": 3786,
+            "outputBytesWritten": 54784,
+            "responseSerializationFailures": 0,
+            "activeBodyReaders": 0,
+            "peakBodyReaders": 1,
+            "reservedBodyBytes": 0,
+            "peakReservedBodyBytes": 451,
+            "bodyReadTimeouts": 0,
+            "bodyAdmissionRefusals": 0,
+            "maxBodyReaders": 8,
+            "maxReservedBodyBytes": 67108864,
+            "bodyReadTimeoutMs": 30000,
+            "averageDurationMs": 20.749624691358033,
+            "maxDurationMs": 756.5998,
+            "domainReloadCount": 8,
+            "lastDomainReloadMs": 1665.0877,
+            "activeRequestsAtLastReload": 0
+          }
+        },
+        {
+          "name": "Actual reload persists reload count and resets HTTP totals",
+          "passed": true,
+          "before": {
+            "startedAtUtc": "2026-10-01T05:24:30.0577828Z",
+            "receivedRequests": 82,
+            "completedRequests": 81,
+            "activeRequests": 1,
+            "peakActiveRequests": 5,
+            "responses2xx": 80,
+            "responses4xx": 1,
+            "responses5xx": 0,
+            "otherResponses": 0,
+            "incompleteRequests": 0,
+            "abortedRequests": 0,
+            "inputRejectedRequests": 1,
+            "inputBytesRead": 3786,
+            "outputBytesWritten": 54784,
+            "responseSerializationFailures": 0,
+            "activeBodyReaders": 0,
+            "peakBodyReaders": 1,
+            "reservedBodyBytes": 0,
+            "peakReservedBodyBytes": 451,
+            "bodyReadTimeouts": 0,
+            "bodyAdmissionRefusals": 0,
+            "maxBodyReaders": 8,
+            "maxReservedBodyBytes": 67108864,
+            "bodyReadTimeoutMs": 30000,
+            "averageDurationMs": 20.749624691358033,
+            "maxDurationMs": 756.5998,
+            "domainReloadCount": 8,
+            "lastDomainReloadMs": 1665.0877,
+            "activeRequestsAtLastReload": 0
+          },
+          "after": {
+            "startedAtUtc": "2026-10-01T05:26:32.1157905Z",
+            "receivedRequests": 4,
+            "completedRequests": 3,
+            "activeRequests": 1,
+            "peakActiveRequests": 1,
+            "responses2xx": 3,
+            "responses4xx": 0,
+            "responses5xx": 0,
+            "otherResponses": 0,
+            "incompleteRequests": 0,
+            "abortedRequests": 0,
+            "inputRejectedRequests": 0,
+            "inputBytesRead": 0,
+            "outputBytesWritten": 1386,
+            "responseSerializationFailures": 0,
+            "activeBodyReaders": 0,
+            "peakBodyReaders": 0,
+            "reservedBodyBytes": 0,
+            "peakReservedBodyBytes": 0,
+            "bodyReadTimeouts": 0,
+            "bodyAdmissionRefusals": 0,
+            "maxBodyReaders": 8,
+            "maxReservedBodyBytes": 67108864,
+            "bodyReadTimeoutMs": 30000,
+            "averageDurationMs": 190.18636666666666,
+            "maxDurationMs": 566.3874,
+            "domainReloadCount": 9,
+            "lastDomainReloadMs": 1300.4653,
+            "activeRequestsAtLastReload": 0
+          }
+        }
+      ],
+      "unityVersion": "6000.6.2f1"
+    },
+    {
+      "server": "current",
+      "nodeVersion": "v18.20.8",
+      "passed": true,
+      "checks": [
+        {
+          "name": "Twelve overlapping MCP calls preserve aggregate invariants",
+          "passed": true,
+          "before": {
+            "startedAtUtc": "2026-10-01T05:26:32.1157905Z",
+            "receivedRequests": 22,
+            "completedRequests": 21,
+            "activeRequests": 1,
+            "peakActiveRequests": 1,
+            "responses2xx": 21,
+            "responses4xx": 0,
+            "responses5xx": 0,
+            "otherResponses": 0,
+            "incompleteRequests": 0,
+            "abortedRequests": 0,
+            "inputRejectedRequests": 0,
+            "inputBytesRead": 646,
+            "outputBytesWritten": 11600,
+            "responseSerializationFailures": 0,
+            "activeBodyReaders": 0,
+            "peakBodyReaders": 1,
+            "reservedBodyBytes": 0,
+            "peakReservedBodyBytes": 234,
+            "bodyReadTimeouts": 0,
+            "bodyAdmissionRefusals": 0,
+            "maxBodyReaders": 8,
+            "maxReservedBodyBytes": 67108864,
+            "bodyReadTimeoutMs": 30000,
+            "averageDurationMs": 40.68000476190476,
+            "maxDurationMs": 566.3874,
+            "domainReloadCount": 9,
+            "lastDomainReloadMs": 1300.4653,
+            "activeRequestsAtLastReload": 0
+          },
+          "after": {
+            "startedAtUtc": "2026-10-01T05:26:32.1157905Z",
+            "receivedRequests": 67,
+            "completedRequests": 66,
+            "activeRequests": 1,
+            "peakActiveRequests": 6,
+            "responses2xx": 66,
+            "responses4xx": 0,
+            "responses5xx": 0,
+            "otherResponses": 0,
+            "incompleteRequests": 0,
+            "abortedRequests": 0,
+            "inputRejectedRequests": 0,
+            "inputBytesRead": 3118,
+            "outputBytesWritten": 32011,
+            "responseSerializationFailures": 0,
+            "activeBodyReaders": 0,
+            "peakBodyReaders": 1,
+            "reservedBodyBytes": 0,
+            "peakReservedBodyBytes": 234,
+            "bodyReadTimeouts": 0,
+            "bodyAdmissionRefusals": 0,
+            "maxBodyReaders": 8,
+            "maxReservedBodyBytes": 67108864,
+            "bodyReadTimeoutMs": 30000,
+            "averageDurationMs": 13.120980303030306,
+            "maxDurationMs": 566.3874,
+            "domainReloadCount": 9,
+            "lastDomainReloadMs": 1300.4653,
+            "activeRequestsAtLastReload": 0
+          }
+        },
+        {
+          "name": "Command failure is not mislabeled as an HTTP failure",
+          "passed": true
+        },
+        {
+          "name": "Input refused before ticket creation is visible through MCP",
+          "passed": true,
+          "counters": {
+            "startedAtUtc": "2026-10-01T05:26:32.1157905Z",
+            "receivedRequests": 79,
+            "completedRequests": 78,
+            "activeRequests": 1,
+            "peakActiveRequests": 6,
+            "responses2xx": 77,
+            "responses4xx": 1,
+            "responses5xx": 0,
+            "otherResponses": 0,
+            "incompleteRequests": 0,
+            "abortedRequests": 0,
+            "inputRejectedRequests": 1,
+            "inputBytesRead": 4026,
+            "outputBytesWritten": 55210,
+            "responseSerializationFailures": 0,
+            "activeBodyReaders": 0,
+            "peakBodyReaders": 1,
+            "reservedBodyBytes": 0,
+            "peakReservedBodyBytes": 451,
+            "bodyReadTimeouts": 0,
+            "bodyAdmissionRefusals": 0,
+            "maxBodyReaders": 8,
+            "maxReservedBodyBytes": 67108864,
+            "bodyReadTimeoutMs": 30000,
+            "averageDurationMs": 11.171821794871796,
+            "maxDurationMs": 566.3874,
+            "domainReloadCount": 9,
+            "lastDomainReloadMs": 1300.4653,
+            "activeRequestsAtLastReload": 0
+          }
+        },
+        {
+          "name": "Actual reload persists reload count and resets HTTP totals",
+          "passed": true,
+          "before": {
+            "startedAtUtc": "2026-10-01T05:26:32.1157905Z",
+            "receivedRequests": 79,
+            "completedRequests": 78,
+            "activeRequests": 1,
+            "peakActiveRequests": 6,
+            "responses2xx": 77,
+            "responses4xx": 1,
+            "responses5xx": 0,
+            "otherResponses": 0,
+            "incompleteRequests": 0,
+            "abortedRequests": 0,
+            "inputRejectedRequests": 1,
+            "inputBytesRead": 4026,
+            "outputBytesWritten": 55210,
+            "responseSerializationFailures": 0,
+            "activeBodyReaders": 0,
+            "peakBodyReaders": 1,
+            "reservedBodyBytes": 0,
+            "peakReservedBodyBytes": 451,
+            "bodyReadTimeouts": 0,
+            "bodyAdmissionRefusals": 0,
+            "maxBodyReaders": 8,
+            "maxReservedBodyBytes": 67108864,
+            "bodyReadTimeoutMs": 30000,
+            "averageDurationMs": 11.171821794871796,
+            "maxDurationMs": 566.3874,
+            "domainReloadCount": 9,
+            "lastDomainReloadMs": 1300.4653,
+            "activeRequestsAtLastReload": 0
+          },
+          "after": {
+            "startedAtUtc": "2026-10-01T05:26:43.2763195Z",
+            "receivedRequests": 4,
+            "completedRequests": 3,
+            "activeRequests": 1,
+            "peakActiveRequests": 1,
+            "responses2xx": 3,
+            "responses4xx": 0,
+            "responses5xx": 0,
+            "otherResponses": 0,
+            "incompleteRequests": 0,
+            "abortedRequests": 0,
+            "inputRejectedRequests": 0,
+            "inputBytesRead": 0,
+            "outputBytesWritten": 1386,
+            "responseSerializationFailures": 0,
+            "activeBodyReaders": 0,
+            "peakBodyReaders": 0,
+            "reservedBodyBytes": 0,
+            "peakReservedBodyBytes": 0,
+            "bodyReadTimeouts": 0,
+            "bodyAdmissionRefusals": 0,
+            "maxBodyReaders": 8,
+            "maxReservedBodyBytes": 67108864,
+            "bodyReadTimeoutMs": 30000,
+            "averageDurationMs": 273.4866,
+            "maxDurationMs": 777.7093,
+            "domainReloadCount": 10,
+            "lastDomainReloadMs": 1380.8015,
+            "activeRequestsAtLastReload": 0
+          }
+        }
+      ],
+      "unityVersion": "6000.6.2f1"
+    },
+    {
+      "server": "released",
+      "nodeVersion": "v22.18.0",
+      "passed": true,
+      "checks": [
+        {
+          "name": "Twelve overlapping MCP calls preserve aggregate invariants",
+          "passed": true,
+          "before": {
+            "startedAtUtc": "2026-10-01T05:22:51.3673091Z",
+            "receivedRequests": 7,
+            "completedRequests": 6,
+            "activeRequests": 1,
+            "peakActiveRequests": 1,
+            "responses2xx": 6,
+            "responses4xx": 0,
+            "responses5xx": 0,
+            "otherResponses": 0,
+            "incompleteRequests": 0,
+            "abortedRequests": 0,
+            "inputRejectedRequests": 0,
+            "inputBytesRead": 86,
+            "outputBytesWritten": 2720,
+            "responseSerializationFailures": 0,
+            "activeBodyReaders": 0,
+            "peakBodyReaders": 1,
+            "reservedBodyBytes": 0,
+            "peakReservedBodyBytes": 86,
+            "bodyReadTimeouts": 0,
+            "bodyAdmissionRefusals": 0,
+            "maxBodyReaders": 8,
+            "maxReservedBodyBytes": 67108864,
+            "bodyReadTimeoutMs": 30000,
+            "averageDurationMs": 39.823216666666674,
+            "maxDurationMs": 110.1076,
+            "domainReloadCount": 6,
+            "lastDomainReloadMs": 1934.7461,
+            "activeRequestsAtLastReload": 0
+          },
+          "after": {
+            "startedAtUtc": "2026-10-01T05:22:51.3673091Z",
+            "receivedRequests": 46,
+            "completedRequests": 45,
+            "activeRequests": 1,
+            "peakActiveRequests": 5,
+            "responses2xx": 45,
+            "responses4xx": 0,
+            "responses5xx": 0,
+            "otherResponses": 0,
+            "incompleteRequests": 0,
+            "abortedRequests": 0,
+            "inputRejectedRequests": 0,
+            "inputBytesRead": 1118,
+            "outputBytesWritten": 20521,
+            "responseSerializationFailures": 0,
+            "activeBodyReaders": 0,
+            "peakBodyReaders": 3,
+            "reservedBodyBytes": 0,
+            "peakReservedBodyBytes": 258,
+            "bodyReadTimeouts": 0,
+            "bodyAdmissionRefusals": 0,
+            "maxBodyReaders": 8,
+            "maxReservedBodyBytes": 67108864,
+            "bodyReadTimeoutMs": 30000,
+            "averageDurationMs": 5.621880000000001,
+            "maxDurationMs": 110.1076,
+            "domainReloadCount": 6,
+            "lastDomainReloadMs": 1934.7461,
+            "activeRequestsAtLastReload": 0
+          }
+        },
+        {
+          "name": "Command failure is not mislabeled as an HTTP failure",
+          "passed": true
+        },
+        {
+          "name": "Input refused before ticket creation is visible through MCP",
+          "passed": true,
+          "counters": {
+            "startedAtUtc": "2026-10-01T05:22:51.3673091Z",
+            "receivedRequests": 56,
+            "completedRequests": 55,
+            "activeRequests": 1,
+            "peakActiveRequests": 5,
+            "responses2xx": 53,
+            "responses4xx": 2,
+            "responses5xx": 0,
+            "otherResponses": 0,
+            "incompleteRequests": 0,
+            "abortedRequests": 0,
+            "inputRejectedRequests": 2,
+            "inputBytesRead": 1900,
+            "outputBytesWritten": 40251,
+            "responseSerializationFailures": 0,
+            "activeBodyReaders": 0,
+            "peakBodyReaders": 3,
+            "reservedBodyBytes": 0,
+            "peakReservedBodyBytes": 331,
+            "bodyReadTimeouts": 0,
+            "bodyAdmissionRefusals": 0,
+            "maxBodyReaders": 8,
+            "maxReservedBodyBytes": 67108864,
+            "bodyReadTimeoutMs": 30000,
+            "averageDurationMs": 4.7178272727272725,
+            "maxDurationMs": 110.1076,
+            "domainReloadCount": 6,
+            "lastDomainReloadMs": 1934.7461,
+            "activeRequestsAtLastReload": 0
+          }
+        },
+        {
+          "name": "Actual reload persists reload count and resets HTTP totals",
+          "passed": true,
+          "before": {
+            "startedAtUtc": "2026-10-01T05:22:51.3673091Z",
+            "receivedRequests": 56,
+            "completedRequests": 55,
+            "activeRequests": 1,
+            "peakActiveRequests": 5,
+            "responses2xx": 53,
+            "responses4xx": 2,
+            "responses5xx": 0,
+            "otherResponses": 0,
+            "incompleteRequests": 0,
+            "abortedRequests": 0,
+            "inputRejectedRequests": 2,
+            "inputBytesRead": 1900,
+            "outputBytesWritten": 40251,
+            "responseSerializationFailures": 0,
+            "activeBodyReaders": 0,
+            "peakBodyReaders": 3,
+            "reservedBodyBytes": 0,
+            "peakReservedBodyBytes": 331,
+            "bodyReadTimeouts": 0,
+            "bodyAdmissionRefusals": 0,
+            "maxBodyReaders": 8,
+            "maxReservedBodyBytes": 67108864,
+            "bodyReadTimeoutMs": 30000,
+            "averageDurationMs": 4.7178272727272725,
+            "maxDurationMs": 110.1076,
+            "domainReloadCount": 6,
+            "lastDomainReloadMs": 1934.7461,
+            "activeRequestsAtLastReload": 0
+          },
+          "after": {
+            "startedAtUtc": "2026-10-01T05:24:17.1771220Z",
+            "receivedRequests": 4,
+            "completedRequests": 3,
+            "activeRequests": 1,
+            "peakActiveRequests": 1,
+            "responses2xx": 3,
+            "responses4xx": 0,
+            "responses5xx": 0,
+            "otherResponses": 0,
+            "incompleteRequests": 0,
+            "abortedRequests": 0,
+            "inputRejectedRequests": 0,
+            "inputBytesRead": 0,
+            "outputBytesWritten": 1386,
+            "responseSerializationFailures": 0,
+            "activeBodyReaders": 0,
+            "peakBodyReaders": 0,
+            "reservedBodyBytes": 0,
+            "peakReservedBodyBytes": 0,
+            "bodyReadTimeouts": 0,
+            "bodyAdmissionRefusals": 0,
+            "maxBodyReaders": 8,
+            "maxReservedBodyBytes": 67108864,
+            "bodyReadTimeoutMs": 30000,
+            "averageDurationMs": 612.3769,
+            "maxDurationMs": 1105.0264,
+            "domainReloadCount": 7,
+            "lastDomainReloadMs": 1738.7172,
+            "activeRequestsAtLastReload": 0
+          }
+        }
+      ],
+      "unityVersion": "6000.6.2f1"
+    },
+    {
+      "server": "released",
+      "nodeVersion": "v18.20.8",
+      "passed": true,
+      "checks": [
+        {
+          "name": "Twelve overlapping MCP calls preserve aggregate invariants",
+          "passed": true,
+          "before": {
+            "startedAtUtc": "2026-10-01T05:24:17.1771220Z",
+            "receivedRequests": 17,
+            "completedRequests": 16,
+            "activeRequests": 1,
+            "peakActiveRequests": 1,
+            "responses2xx": 16,
+            "responses4xx": 0,
+            "responses5xx": 0,
+            "otherResponses": 0,
+            "incompleteRequests": 0,
+            "abortedRequests": 0,
+            "inputRejectedRequests": 0,
+            "inputBytesRead": 286,
+            "outputBytesWritten": 7504,
+            "responseSerializationFailures": 0,
+            "activeBodyReaders": 0,
+            "peakBodyReaders": 1,
+            "reservedBodyBytes": 0,
+            "peakReservedBodyBytes": 114,
+            "bodyReadTimeouts": 0,
+            "bodyAdmissionRefusals": 0,
+            "maxBodyReaders": 8,
+            "maxReservedBodyBytes": 67108864,
+            "bodyReadTimeoutMs": 30000,
+            "averageDurationMs": 129.07951250000002,
+            "maxDurationMs": 1105.0264,
+            "domainReloadCount": 7,
+            "lastDomainReloadMs": 1738.7172,
+            "activeRequestsAtLastReload": 0
+          },
+          "after": {
+            "startedAtUtc": "2026-10-01T05:24:17.1771220Z",
+            "receivedRequests": 56,
+            "completedRequests": 55,
+            "activeRequests": 1,
+            "peakActiveRequests": 6,
+            "responses2xx": 55,
+            "responses4xx": 0,
+            "responses5xx": 0,
+            "otherResponses": 0,
+            "incompleteRequests": 0,
+            "abortedRequests": 0,
+            "inputRejectedRequests": 0,
+            "inputBytesRead": 1318,
+            "outputBytesWritten": 25324,
+            "responseSerializationFailures": 0,
+            "activeBodyReaders": 0,
+            "peakBodyReaders": 1,
+            "reservedBodyBytes": 0,
+            "peakReservedBodyBytes": 114,
+            "bodyReadTimeouts": 0,
+            "bodyAdmissionRefusals": 0,
+            "maxBodyReaders": 8,
+            "maxReservedBodyBytes": 67108864,
+            "bodyReadTimeoutMs": 30000,
+            "averageDurationMs": 37.72173636363639,
+            "maxDurationMs": 1105.0264,
+            "domainReloadCount": 7,
+            "lastDomainReloadMs": 1738.7172,
+            "activeRequestsAtLastReload": 0
+          }
+        },
+        {
+          "name": "Command failure is not mislabeled as an HTTP failure",
+          "passed": true
+        },
+        {
+          "name": "Input refused before ticket creation is visible through MCP",
+          "passed": true,
+          "counters": {
+            "startedAtUtc": "2026-10-01T05:24:17.1771220Z",
+            "receivedRequests": 66,
+            "completedRequests": 65,
+            "activeRequests": 1,
+            "peakActiveRequests": 6,
+            "responses2xx": 63,
+            "responses4xx": 2,
+            "responses5xx": 0,
+            "otherResponses": 0,
+            "incompleteRequests": 0,
+            "abortedRequests": 0,
+            "inputRejectedRequests": 2,
+            "inputBytesRead": 2100,
+            "outputBytesWritten": 45055,
+            "responseSerializationFailures": 0,
+            "activeBodyReaders": 0,
+            "peakBodyReaders": 1,
+            "reservedBodyBytes": 0,
+            "peakReservedBodyBytes": 331,
+            "bodyReadTimeouts": 0,
+            "bodyAdmissionRefusals": 0,
+            "maxBodyReaders": 8,
+            "maxReservedBodyBytes": 67108864,
+            "bodyReadTimeoutMs": 30000,
+            "averageDurationMs": 31.990572307692325,
+            "maxDurationMs": 1105.0264,
+            "domainReloadCount": 7,
+            "lastDomainReloadMs": 1738.7172,
+            "activeRequestsAtLastReload": 0
+          }
+        },
+        {
+          "name": "Actual reload persists reload count and resets HTTP totals",
+          "passed": true,
+          "before": {
+            "startedAtUtc": "2026-10-01T05:24:17.1771220Z",
+            "receivedRequests": 66,
+            "completedRequests": 65,
+            "activeRequests": 1,
+            "peakActiveRequests": 6,
+            "responses2xx": 63,
+            "responses4xx": 2,
+            "responses5xx": 0,
+            "otherResponses": 0,
+            "incompleteRequests": 0,
+            "abortedRequests": 0,
+            "inputRejectedRequests": 2,
+            "inputBytesRead": 2100,
+            "outputBytesWritten": 45055,
+            "responseSerializationFailures": 0,
+            "activeBodyReaders": 0,
+            "peakBodyReaders": 1,
+            "reservedBodyBytes": 0,
+            "peakReservedBodyBytes": 331,
+            "bodyReadTimeouts": 0,
+            "bodyAdmissionRefusals": 0,
+            "maxBodyReaders": 8,
+            "maxReservedBodyBytes": 67108864,
+            "bodyReadTimeoutMs": 30000,
+            "averageDurationMs": 31.990572307692325,
+            "maxDurationMs": 1105.0264,
+            "domainReloadCount": 7,
+            "lastDomainReloadMs": 1738.7172,
+            "activeRequestsAtLastReload": 0
+          },
+          "after": {
+            "startedAtUtc": "2026-10-01T05:24:30.0577828Z",
+            "receivedRequests": 6,
+            "completedRequests": 5,
+            "activeRequests": 1,
+            "peakActiveRequests": 2,
+            "responses2xx": 5,
+            "responses4xx": 0,
+            "responses5xx": 0,
+            "otherResponses": 0,
+            "incompleteRequests": 0,
+            "abortedRequests": 0,
+            "inputRejectedRequests": 0,
+            "inputBytesRead": 0,
+            "outputBytesWritten": 2310,
+            "responseSerializationFailures": 0,
+            "activeBodyReaders": 0,
+            "peakBodyReaders": 0,
+            "reservedBodyBytes": 0,
+            "peakReservedBodyBytes": 0,
+            "bodyReadTimeouts": 0,
+            "bodyAdmissionRefusals": 0,
+            "maxBodyReaders": 8,
+            "maxReservedBodyBytes": 67108864,
+            "bodyReadTimeoutMs": 30000,
+            "averageDurationMs": 292.7036,
+            "maxDurationMs": 756.5998,
+            "domainReloadCount": 8,
+            "lastDomainReloadMs": 1665.0877,
+            "activeRequestsAtLastReload": 0
+          }
+        }
+      ],
+      "unityVersion": "6000.6.2f1"
+    }
+  ],
+  "dashboardRender": {
+    "nodeVersion": "22.18.0",
+    "passed": true,
+    "captures": 17,
+    "reviewed": "Actual Windows pixels at 360x500 and 360x800: upload gauges wrap inside the HTTP section; scrolling reaches the bottom controls.",
+    "cleanup": [
+      {
+        "closed": 2,
+        "preferencesRestored": true,
+        "dockRestored": true,
+        "foregroundPreserved": true
+      },
+      {
+        "closed": 1,
+        "preferencesRestored": true,
+        "dockRestored": true,
+        "foregroundPreserved": true
+      },
+      {
+        "closed": 1,
+        "preferencesRestored": true,
+        "dockRestored": true,
+        "foregroundPreserved": true
+      },
+      {
+        "closed": 0,
+        "preferencesRestored": true,
+        "dockRestored": true,
+        "foregroundPreserved": true
+      }
+    ]
+  },
+  "scope": [
+    "Admission bounds active entity readers and encoded-byte reservations only; it does not bound all HTTP workers, pre-header connections, decoded allocations, queued arguments, response writes or total process memory.",
+    "A client still uploading can observe a connection reset instead of a rejection response. Only an actually received explicit refusal proves non-acceptance for that attempt.",
+    "Mono chunk completion uses guarded reflection and a temporary raw-EOF observer restored in finally; unknown runtimes retain their native framing behavior. A changed known-Mono layout refuses chunked input with a Content-Length fallback hint.",
+    "Buffered MemoryStream timings are not network throughput. The allocation API failed its positive control; zero allocated-byte readings are unusable."
+  ],
+  "cleanup": {
+    "renderFixturesRemaining": 0,
+    "renderEditorClosed": true,
+    "copiedRenderFixtureRemoved": true
+  },
+  "fixtureSha256": "0e4f25f8ba51c5c5bd5464a28c4cab61d9b3f7fef47e3be9ccb2203643b8fd8a",
+  "finalEditors": [
+    {
+      "project": "Queue66",
+      "port": 7891,
+      "isPlaying": false,
+      "isCompiling": false,
+      "sceneDirty": false,
+      "activeScenePath": "Assets/__McpValidation/BuildScene.unity"
+    },
+    {
+      "project": "Unity66",
+      "port": 7890,
+      "isPlaying": false,
+      "isCompiling": false,
+      "sceneDirty": false,
+      "activeScenePath": "Assets/__McpValidation/MultiplayerScene.unity"
+    }
+  ],
+  "publication": {
+    "pluginCommit": "0e450a9faeffd98122b873670747ce926b9b2b9a",
+    "serverImplementationCommit": "b75df00ee3b360b58bdbe3ff54ea262e8952ad5e",
+    "serverValidationCommit": "d28f16234db9ae4cb761f718b94a3b01d7424342",
+    "pluginCI": {
+      "url": "https://github.com/AnkleBreaker-Studio/unity-mcp-plugin/actions/runs/36820586759",
+      "conclusion": "success",
+      "routes": 338
+    },
+    "serverCI": {
+      "url": "https://github.com/AnkleBreaker-Studio/unity-mcp-server/actions/runs/36820953662",
+      "conclusion": "success",
+      "jobs": 8,
+      "nodeVersions": [
+        18,
+        20,
+        22,
+        24
+      ],
+      "operatingSystems": [
+        "Windows",
+        "Linux"
+      ],
+      "ordinaryTests": 202
+    },
+    "versionsChanged": false,
+    "releasePublished": false
+  },
+  "measurementCorrection": {
+    "recordedOn": "2026-10-01",
+    "affectedValues": 5,
+    "reason": "GC.Alloc sample Value was incorrectly labeled allocatedBytes. The native Unity 6000.6.2f1 recorder reports TimeNanoseconds; its artificial marker duration is not allocation size or allocation CPU time.",
+    "preserved": "Original numeric values are retained as rawRecorderValue. Previously recorded allocation-event counts and independent Stopwatch timings are unchanged. This annotation is not a rerun of the historical checks."
+  }
+}

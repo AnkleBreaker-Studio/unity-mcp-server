@@ -1,0 +1,1874 @@
+{
+  "recordedOn": "2026-10-01",
+  "baselinePluginCommit": "2fc0f0e3a1919361211a5ea4c72474c8b8b6f164",
+  "environment": {
+    "unity": "6000.6.2f1",
+    "platform": "Windows",
+    "runtime": "Mono"
+  },
+  "scope": {
+    "window": {
+      "width": 720,
+      "height": 520
+    },
+    "sampleEventsPerKind": 24,
+    "discardedWarmupEvents": 4,
+    "measurement": "Production OnGUI during native Layout and Repaint, with profiler overhead; list creation/filter refresh excluded",
+    "timing": "Independent Stopwatch, not GC.Alloc raw Value",
+    "allocationUnit": "GC.Alloc sample Count: events, not bytes",
+    "nativeResources": "Owned selection textures only; fixture destroys leaked baseline textures after recording the result",
+    "aggregation": "Upper median: sorted sample at index floor(count / 2)"
+  },
+  "baseline": {
+    "node": "v22.18.0",
+    "serverEntry": "current",
+    "baseline": true,
+    "passed": false,
+    "measurements": [
+      {
+        "count": 100,
+        "opened": {
+          "count": 100,
+          "allocationControlEvents": 1,
+          "rawRecorderUnit": "TimeNanoseconds",
+          "foregroundPreserved": true,
+          "previousTabPreserved": true
+        },
+        "ready": true,
+        "records": 100,
+        "layouts": 24,
+        "repaints": 24,
+        "layoutMedianAllocations": 5085,
+        "repaintMedianAllocations": 3373,
+        "layoutMedianMs": 3.6149,
+        "repaintMedianMs": 2.9996,
+        "resources": null,
+        "foregroundPreserved": true,
+        "previousTabPreserved": true
+      },
+      {
+        "count": 500,
+        "opened": {
+          "count": 500,
+          "allocationControlEvents": 1,
+          "rawRecorderUnit": "TimeNanoseconds",
+          "foregroundPreserved": true,
+          "previousTabPreserved": true
+        },
+        "ready": true,
+        "records": 500,
+        "layouts": 24,
+        "repaints": 24,
+        "layoutMedianAllocations": 25087,
+        "repaintMedianAllocations": 16173,
+        "layoutMedianMs": 17.9279,
+        "repaintMedianMs": 8.3015,
+        "resources": null,
+        "foregroundPreserved": true,
+        "previousTabPreserved": true
+      },
+      {
+        "count": 5000,
+        "opened": {
+          "count": 5000,
+          "allocationControlEvents": 1,
+          "rawRecorderUnit": "TimeNanoseconds",
+          "foregroundPreserved": true,
+          "previousTabPreserved": true
+        },
+        "ready": true,
+        "records": 5000,
+        "layouts": 24,
+        "repaints": 24,
+        "layoutMedianAllocations": 250094,
+        "repaintMedianAllocations": 160180,
+        "layoutMedianMs": 191.6743,
+        "repaintMedianMs": 72.4523,
+        "resources": null,
+        "foregroundPreserved": true,
+        "previousTabPreserved": true
+      }
+    ],
+    "unity": "6000.6.2f1",
+    "resources": {
+      "windows": 16,
+      "selectionTexturesCreated": 16,
+      "texturesAliveAfterWindowDestruction": 16
+    },
+    "cleanup": {
+      "closed": true,
+      "previouslyRunning": true,
+      "textureSurvived": true,
+      "foregroundPreserved": true,
+      "previousTabPreserved": true
+    }
+  },
+  "liveRuns": [
+    {
+      "name": "current22",
+      "node": "v22.18.0",
+      "serverEntry": "current",
+      "baseline": false,
+      "passed": true,
+      "measurements": [
+        {
+          "count": 100,
+          "opened": {
+            "count": 100,
+            "allocationControlEvents": 1,
+            "rawRecorderUnit": "TimeNanoseconds",
+            "foregroundPreserved": true,
+            "previousTabPreserved": true
+          },
+          "ready": true,
+          "records": 100,
+          "layouts": 24,
+          "repaints": 24,
+          "draws": 24,
+          "guiErrors": [],
+          "layoutMedianAllocations": 318,
+          "repaintMedianAllocations": 413,
+          "layoutMedianMs": 0.2984,
+          "repaintMedianMs": 1.9662,
+          "resources": null,
+          "foregroundPreserved": true,
+          "previousTabPreserved": true
+        },
+        {
+          "count": 500,
+          "opened": {
+            "count": 500,
+            "allocationControlEvents": 1,
+            "rawRecorderUnit": "TimeNanoseconds",
+            "foregroundPreserved": true,
+            "previousTabPreserved": true
+          },
+          "ready": true,
+          "records": 500,
+          "layouts": 24,
+          "repaints": 24,
+          "draws": 24,
+          "guiErrors": [],
+          "layoutMedianAllocations": 318,
+          "repaintMedianAllocations": 413,
+          "layoutMedianMs": 0.2413,
+          "repaintMedianMs": 1.7699,
+          "resources": null,
+          "foregroundPreserved": true,
+          "previousTabPreserved": true
+        },
+        {
+          "count": 5000,
+          "opened": {
+            "count": 5000,
+            "allocationControlEvents": 1,
+            "rawRecorderUnit": "TimeNanoseconds",
+            "foregroundPreserved": true,
+            "previousTabPreserved": true
+          },
+          "ready": true,
+          "records": 5000,
+          "layouts": 24,
+          "repaints": 24,
+          "draws": 24,
+          "guiErrors": [],
+          "layoutMedianAllocations": 318,
+          "repaintMedianAllocations": 413,
+          "layoutMedianMs": 0.2429,
+          "repaintMedianMs": 1.7996,
+          "resources": null,
+          "foregroundPreserved": true,
+          "previousTabPreserved": true
+        }
+      ],
+      "unity": "6000.6.2f1",
+      "resources": {
+        "windows": 16,
+        "selectionTexturesCreated": 0,
+        "texturesAliveAfterWindowDestruction": 0
+      },
+      "interactions": [
+        {
+          "name": "Top row click",
+          "count": 5000,
+          "selectedIndex": 0,
+          "selectedTarget": "Root/Fixture/LongTarget-4999",
+          "scrollY": 0,
+          "height": 520,
+          "width": 720,
+          "nativeTargetSelected": false
+        },
+        {
+          "name": "Target link selects the exact native object",
+          "count": 5000,
+          "selectedIndex": 0,
+          "selectedTarget": "Root/Fixture/LongTarget-4999",
+          "scrollY": 0,
+          "height": 520,
+          "width": 720,
+          "nativeTargetSelected": true
+        },
+        {
+          "name": "Mouse wheel",
+          "count": 5000,
+          "selectedIndex": 0,
+          "selectedTarget": "Root/Fixture/LongTarget-4999",
+          "scrollY": 60,
+          "height": 520,
+          "width": 720,
+          "nativeTargetSelected": true
+        },
+        {
+          "name": "Middle row click",
+          "count": 5000,
+          "selectedIndex": 2500,
+          "selectedTarget": "Root/Fixture/LongTarget-2499",
+          "scrollY": 55000,
+          "height": 520,
+          "width": 720,
+          "nativeTargetSelected": true
+        },
+        {
+          "name": "Bottom row at 500x400",
+          "count": 5000,
+          "selectedIndex": 4999,
+          "selectedTarget": "Root/Fixture/LongTarget-0",
+          "scrollY": 109808,
+          "height": 400,
+          "width": 500,
+          "nativeTargetSelected": true
+        },
+        {
+          "name": "Bottom row at 1200x900",
+          "count": 5000,
+          "selectedIndex": 4999,
+          "selectedTarget": "Root/Fixture/LongTarget-0",
+          "scrollY": 109308,
+          "height": 900,
+          "width": 1200,
+          "nativeTargetSelected": true
+        },
+        {
+          "name": "Filter shrink clamps scroll and preserves selected identity",
+          "count": 1,
+          "selectedIndex": 0,
+          "selectedTarget": "Root/Fixture/LongTarget-0",
+          "scrollY": 0,
+          "height": 520,
+          "width": 720,
+          "nativeTargetSelected": true
+        },
+        {
+          "name": "Empty filter clears selection and scroll",
+          "count": 0,
+          "selectedIndex": -1,
+          "selectedTarget": null,
+          "scrollY": 0,
+          "height": 520,
+          "width": 720,
+          "nativeTargetSelected": true
+        }
+      ],
+      "guiErrors": [],
+      "cleanup": {
+        "closed": true,
+        "previouslyRunning": true,
+        "textureSurvived": false,
+        "foregroundPreserved": true,
+        "previousTabPreserved": true
+      }
+    },
+    {
+      "name": "current18",
+      "node": "v18.20.8",
+      "serverEntry": "current",
+      "baseline": false,
+      "passed": true,
+      "measurements": [
+        {
+          "count": 100,
+          "opened": {
+            "count": 100,
+            "allocationControlEvents": 1,
+            "rawRecorderUnit": "TimeNanoseconds",
+            "foregroundPreserved": true,
+            "previousTabPreserved": true
+          },
+          "ready": true,
+          "records": 100,
+          "layouts": 24,
+          "repaints": 24,
+          "draws": 24,
+          "guiErrors": [],
+          "layoutMedianAllocations": 318,
+          "repaintMedianAllocations": 413,
+          "layoutMedianMs": 0.1886,
+          "repaintMedianMs": 1.6805,
+          "resources": null,
+          "foregroundPreserved": true,
+          "previousTabPreserved": true
+        },
+        {
+          "count": 500,
+          "opened": {
+            "count": 500,
+            "allocationControlEvents": 1,
+            "rawRecorderUnit": "TimeNanoseconds",
+            "foregroundPreserved": true,
+            "previousTabPreserved": true
+          },
+          "ready": true,
+          "records": 500,
+          "layouts": 24,
+          "repaints": 24,
+          "draws": 24,
+          "guiErrors": [],
+          "layoutMedianAllocations": 318,
+          "repaintMedianAllocations": 413,
+          "layoutMedianMs": 0.2175,
+          "repaintMedianMs": 1.6933,
+          "resources": null,
+          "foregroundPreserved": true,
+          "previousTabPreserved": true
+        },
+        {
+          "count": 5000,
+          "opened": {
+            "count": 5000,
+            "allocationControlEvents": 1,
+            "rawRecorderUnit": "TimeNanoseconds",
+            "foregroundPreserved": true,
+            "previousTabPreserved": true
+          },
+          "ready": true,
+          "records": 5000,
+          "layouts": 24,
+          "repaints": 24,
+          "draws": 24,
+          "guiErrors": [],
+          "layoutMedianAllocations": 318,
+          "repaintMedianAllocations": 413,
+          "layoutMedianMs": 0.1927,
+          "repaintMedianMs": 1.6744,
+          "resources": null,
+          "foregroundPreserved": true,
+          "previousTabPreserved": true
+        }
+      ],
+      "unity": "6000.6.2f1",
+      "resources": {
+        "windows": 16,
+        "selectionTexturesCreated": 0,
+        "texturesAliveAfterWindowDestruction": 0
+      },
+      "interactions": [
+        {
+          "name": "Top row click",
+          "count": 5000,
+          "selectedIndex": 0,
+          "selectedTarget": "Root/Fixture/LongTarget-4999",
+          "scrollY": 0,
+          "height": 520,
+          "width": 720,
+          "nativeTargetSelected": false
+        },
+        {
+          "name": "Target link selects the exact native object",
+          "count": 5000,
+          "selectedIndex": 0,
+          "selectedTarget": "Root/Fixture/LongTarget-4999",
+          "scrollY": 0,
+          "height": 520,
+          "width": 720,
+          "nativeTargetSelected": true
+        },
+        {
+          "name": "Mouse wheel",
+          "count": 5000,
+          "selectedIndex": 0,
+          "selectedTarget": "Root/Fixture/LongTarget-4999",
+          "scrollY": 60,
+          "height": 520,
+          "width": 720,
+          "nativeTargetSelected": true
+        },
+        {
+          "name": "Middle row click",
+          "count": 5000,
+          "selectedIndex": 2500,
+          "selectedTarget": "Root/Fixture/LongTarget-2499",
+          "scrollY": 55000,
+          "height": 520,
+          "width": 720,
+          "nativeTargetSelected": true
+        },
+        {
+          "name": "Bottom row at 500x400",
+          "count": 5000,
+          "selectedIndex": 4999,
+          "selectedTarget": "Root/Fixture/LongTarget-0",
+          "scrollY": 109808,
+          "height": 400,
+          "width": 500,
+          "nativeTargetSelected": true
+        },
+        {
+          "name": "Bottom row at 1200x900",
+          "count": 5000,
+          "selectedIndex": 4999,
+          "selectedTarget": "Root/Fixture/LongTarget-0",
+          "scrollY": 109308,
+          "height": 900,
+          "width": 1200,
+          "nativeTargetSelected": true
+        },
+        {
+          "name": "Filter shrink clamps scroll and preserves selected identity",
+          "count": 1,
+          "selectedIndex": 0,
+          "selectedTarget": "Root/Fixture/LongTarget-0",
+          "scrollY": 0,
+          "height": 520,
+          "width": 720,
+          "nativeTargetSelected": true
+        },
+        {
+          "name": "Empty filter clears selection and scroll",
+          "count": 0,
+          "selectedIndex": -1,
+          "selectedTarget": null,
+          "scrollY": 0,
+          "height": 520,
+          "width": 720,
+          "nativeTargetSelected": true
+        }
+      ],
+      "guiErrors": [],
+      "cleanup": {
+        "closed": true,
+        "previouslyRunning": true,
+        "textureSurvived": false,
+        "foregroundPreserved": true,
+        "previousTabPreserved": true
+      }
+    },
+    {
+      "name": "released22",
+      "node": "v22.18.0",
+      "serverEntry": "released 826af5ce61db7e2d2d675fe90d24c941a83f3924",
+      "baseline": false,
+      "passed": true,
+      "measurements": [
+        {
+          "count": 100,
+          "opened": {
+            "count": 100,
+            "allocationControlEvents": 1,
+            "rawRecorderUnit": "TimeNanoseconds",
+            "foregroundPreserved": true,
+            "previousTabPreserved": true
+          },
+          "ready": true,
+          "records": 100,
+          "layouts": 24,
+          "repaints": 24,
+          "draws": 24,
+          "guiErrors": [],
+          "layoutMedianAllocations": 318,
+          "repaintMedianAllocations": 413,
+          "layoutMedianMs": 0.2445,
+          "repaintMedianMs": 1.8321,
+          "resources": null,
+          "foregroundPreserved": true,
+          "previousTabPreserved": true
+        },
+        {
+          "count": 500,
+          "opened": {
+            "count": 500,
+            "allocationControlEvents": 1,
+            "rawRecorderUnit": "TimeNanoseconds",
+            "foregroundPreserved": true,
+            "previousTabPreserved": true
+          },
+          "ready": true,
+          "records": 500,
+          "layouts": 24,
+          "repaints": 24,
+          "draws": 24,
+          "guiErrors": [],
+          "layoutMedianAllocations": 318,
+          "repaintMedianAllocations": 413,
+          "layoutMedianMs": 0.2417,
+          "repaintMedianMs": 1.6799,
+          "resources": null,
+          "foregroundPreserved": true,
+          "previousTabPreserved": true
+        },
+        {
+          "count": 5000,
+          "opened": {
+            "count": 5000,
+            "allocationControlEvents": 1,
+            "rawRecorderUnit": "TimeNanoseconds",
+            "foregroundPreserved": true,
+            "previousTabPreserved": true
+          },
+          "ready": true,
+          "records": 5000,
+          "layouts": 24,
+          "repaints": 24,
+          "draws": 24,
+          "guiErrors": [],
+          "layoutMedianAllocations": 318,
+          "repaintMedianAllocations": 413,
+          "layoutMedianMs": 0.2504,
+          "repaintMedianMs": 1.7327,
+          "resources": null,
+          "foregroundPreserved": true,
+          "previousTabPreserved": true
+        }
+      ],
+      "unity": "6000.6.2f1",
+      "resources": {
+        "windows": 16,
+        "selectionTexturesCreated": 0,
+        "texturesAliveAfterWindowDestruction": 0
+      },
+      "interactions": [
+        {
+          "name": "Top row click",
+          "count": 5000,
+          "selectedIndex": 0,
+          "selectedTarget": "Root/Fixture/LongTarget-4999",
+          "scrollY": 0,
+          "height": 520,
+          "width": 720,
+          "nativeTargetSelected": false
+        },
+        {
+          "name": "Target link selects the exact native object",
+          "count": 5000,
+          "selectedIndex": 0,
+          "selectedTarget": "Root/Fixture/LongTarget-4999",
+          "scrollY": 0,
+          "height": 520,
+          "width": 720,
+          "nativeTargetSelected": true
+        },
+        {
+          "name": "Mouse wheel",
+          "count": 5000,
+          "selectedIndex": 0,
+          "selectedTarget": "Root/Fixture/LongTarget-4999",
+          "scrollY": 60,
+          "height": 520,
+          "width": 720,
+          "nativeTargetSelected": true
+        },
+        {
+          "name": "Middle row click",
+          "count": 5000,
+          "selectedIndex": 2500,
+          "selectedTarget": "Root/Fixture/LongTarget-2499",
+          "scrollY": 55000,
+          "height": 520,
+          "width": 720,
+          "nativeTargetSelected": true
+        },
+        {
+          "name": "Bottom row at 500x400",
+          "count": 5000,
+          "selectedIndex": 4999,
+          "selectedTarget": "Root/Fixture/LongTarget-0",
+          "scrollY": 109808,
+          "height": 400,
+          "width": 500,
+          "nativeTargetSelected": true
+        },
+        {
+          "name": "Bottom row at 1200x900",
+          "count": 5000,
+          "selectedIndex": 4999,
+          "selectedTarget": "Root/Fixture/LongTarget-0",
+          "scrollY": 109308,
+          "height": 900,
+          "width": 1200,
+          "nativeTargetSelected": true
+        },
+        {
+          "name": "Filter shrink clamps scroll and preserves selected identity",
+          "count": 1,
+          "selectedIndex": 0,
+          "selectedTarget": "Root/Fixture/LongTarget-0",
+          "scrollY": 0,
+          "height": 520,
+          "width": 720,
+          "nativeTargetSelected": true
+        },
+        {
+          "name": "Empty filter clears selection and scroll",
+          "count": 0,
+          "selectedIndex": -1,
+          "selectedTarget": null,
+          "scrollY": 0,
+          "height": 520,
+          "width": 720,
+          "nativeTargetSelected": true
+        }
+      ],
+      "guiErrors": [],
+      "cleanup": {
+        "closed": true,
+        "previouslyRunning": true,
+        "textureSurvived": false,
+        "foregroundPreserved": true,
+        "previousTabPreserved": true
+      }
+    },
+    {
+      "name": "released18",
+      "node": "v18.20.8",
+      "serverEntry": "released 826af5ce61db7e2d2d675fe90d24c941a83f3924",
+      "baseline": false,
+      "passed": true,
+      "measurements": [
+        {
+          "count": 100,
+          "opened": {
+            "count": 100,
+            "allocationControlEvents": 1,
+            "rawRecorderUnit": "TimeNanoseconds",
+            "foregroundPreserved": true,
+            "previousTabPreserved": true
+          },
+          "ready": true,
+          "records": 100,
+          "layouts": 24,
+          "repaints": 24,
+          "draws": 24,
+          "guiErrors": [],
+          "layoutMedianAllocations": 318,
+          "repaintMedianAllocations": 413,
+          "layoutMedianMs": 0.274,
+          "repaintMedianMs": 1.8122,
+          "resources": null,
+          "foregroundPreserved": true,
+          "previousTabPreserved": true
+        },
+        {
+          "count": 500,
+          "opened": {
+            "count": 500,
+            "allocationControlEvents": 1,
+            "rawRecorderUnit": "TimeNanoseconds",
+            "foregroundPreserved": true,
+            "previousTabPreserved": true
+          },
+          "ready": true,
+          "records": 500,
+          "layouts": 24,
+          "repaints": 24,
+          "draws": 24,
+          "guiErrors": [],
+          "layoutMedianAllocations": 318,
+          "repaintMedianAllocations": 413,
+          "layoutMedianMs": 0.1865,
+          "repaintMedianMs": 1.6287,
+          "resources": null,
+          "foregroundPreserved": true,
+          "previousTabPreserved": true
+        },
+        {
+          "count": 5000,
+          "opened": {
+            "count": 5000,
+            "allocationControlEvents": 1,
+            "rawRecorderUnit": "TimeNanoseconds",
+            "foregroundPreserved": true,
+            "previousTabPreserved": true
+          },
+          "ready": true,
+          "records": 5000,
+          "layouts": 24,
+          "repaints": 24,
+          "draws": 24,
+          "guiErrors": [],
+          "layoutMedianAllocations": 318,
+          "repaintMedianAllocations": 413,
+          "layoutMedianMs": 0.2453,
+          "repaintMedianMs": 1.8096,
+          "resources": null,
+          "foregroundPreserved": true,
+          "previousTabPreserved": true
+        }
+      ],
+      "unity": "6000.6.2f1",
+      "resources": {
+        "windows": 16,
+        "selectionTexturesCreated": 0,
+        "texturesAliveAfterWindowDestruction": 0
+      },
+      "interactions": [
+        {
+          "name": "Top row click",
+          "count": 5000,
+          "selectedIndex": 0,
+          "selectedTarget": "Root/Fixture/LongTarget-4999",
+          "scrollY": 0,
+          "height": 520,
+          "width": 720,
+          "nativeTargetSelected": false
+        },
+        {
+          "name": "Target link selects the exact native object",
+          "count": 5000,
+          "selectedIndex": 0,
+          "selectedTarget": "Root/Fixture/LongTarget-4999",
+          "scrollY": 0,
+          "height": 520,
+          "width": 720,
+          "nativeTargetSelected": true
+        },
+        {
+          "name": "Mouse wheel",
+          "count": 5000,
+          "selectedIndex": 0,
+          "selectedTarget": "Root/Fixture/LongTarget-4999",
+          "scrollY": 60,
+          "height": 520,
+          "width": 720,
+          "nativeTargetSelected": true
+        },
+        {
+          "name": "Middle row click",
+          "count": 5000,
+          "selectedIndex": 2500,
+          "selectedTarget": "Root/Fixture/LongTarget-2499",
+          "scrollY": 55000,
+          "height": 520,
+          "width": 720,
+          "nativeTargetSelected": true
+        },
+        {
+          "name": "Bottom row at 500x400",
+          "count": 5000,
+          "selectedIndex": 4999,
+          "selectedTarget": "Root/Fixture/LongTarget-0",
+          "scrollY": 109808,
+          "height": 400,
+          "width": 500,
+          "nativeTargetSelected": true
+        },
+        {
+          "name": "Bottom row at 1200x900",
+          "count": 5000,
+          "selectedIndex": 4999,
+          "selectedTarget": "Root/Fixture/LongTarget-0",
+          "scrollY": 109308,
+          "height": 900,
+          "width": 1200,
+          "nativeTargetSelected": true
+        },
+        {
+          "name": "Filter shrink clamps scroll and preserves selected identity",
+          "count": 1,
+          "selectedIndex": 0,
+          "selectedTarget": "Root/Fixture/LongTarget-0",
+          "scrollY": 0,
+          "height": 520,
+          "width": 720,
+          "nativeTargetSelected": true
+        },
+        {
+          "name": "Empty filter clears selection and scroll",
+          "count": 0,
+          "selectedIndex": -1,
+          "selectedTarget": null,
+          "scrollY": 0,
+          "height": 520,
+          "width": 720,
+          "nativeTargetSelected": true
+        }
+      ],
+      "guiErrors": [],
+      "cleanup": {
+        "closed": true,
+        "previouslyRunning": true,
+        "textureSurvived": false,
+        "foregroundPreserved": true,
+        "previousTabPreserved": true
+      }
+    }
+  ],
+  "regressions": {
+    "notifications": {
+      "unityVersion": "6000.6.2f1",
+      "passed": true,
+      "checks": [
+        {
+          "name": "No observers schedule no callbacks through 2000 records",
+          "passed": true,
+          "evidence": {
+            "recorded": 2000,
+            "retained": 8,
+            "scheduled": 0
+          }
+        },
+        {
+          "name": "Clear releases an undispatched large record",
+          "passed": true,
+          "evidence": {
+            "collected": true,
+            "recordTextBytes": 1048576
+          }
+        },
+        {
+          "name": "Observers retain deferred ordered exactly-once delivery",
+          "passed": true,
+          "evidence": {
+            "delivered": 230,
+            "scheduled": 1,
+            "deferred": true
+          }
+        },
+        {
+          "name": "Clear cancels queued observer notifications",
+          "passed": true,
+          "evidence": {
+            "count": 0
+          }
+        },
+        {
+          "name": "Each editor update drains at most 100 notifications",
+          "passed": true,
+          "evidence": {
+            "firstUpdate": 100,
+            "total": 230
+          }
+        },
+        {
+          "name": "Reentrant clear defers new records and cancels the previous batch",
+          "passed": true,
+          "evidence": {
+            "delivered": [
+              "first",
+              "new"
+            ]
+          }
+        },
+        {
+          "name": "Unsubscribing releases pending notifications on the next update",
+          "passed": true,
+          "evidence": {
+            "calls": 0,
+            "pending": 0
+          }
+        },
+        {
+          "name": "One failing observer does not suppress later observers or records",
+          "passed": true,
+          "evidence": {
+            "count": 2
+          }
+        },
+        {
+          "name": "Notification pressure has an explicit bound",
+          "passed": true,
+          "evidence": {
+            "pending": 10000,
+            "dropped": 32,
+            "delivered": 10000
+          }
+        },
+        {
+          "name": "500-record window cost observation",
+          "passed": true,
+          "evidence": {
+            "allocations": 3055,
+            "rawRecorderValue": 67300,
+            "rawRecorderUnit": "TimeNanoseconds",
+            "elapsedMs": 1.3289,
+            "profilerControlAllocations": 1,
+            "coalesced": true,
+            "idleReused": true
+          }
+        },
+        {
+          "name": "Window coalesces bursts and reuses an idle list",
+          "passed": true,
+          "evidence": {
+            "coalesced": true,
+            "idleReused": true,
+            "clearObserved": true
+          }
+        },
+        {
+          "name": "Window filters retain values when earlier options expire",
+          "passed": true,
+          "evidence": {
+            "agent": "B",
+            "category": "editor"
+          }
+        },
+        {
+          "name": "Window selection follows its record and releases an evicted record",
+          "passed": true,
+          "evidence": {
+            "insertionPreservedSelection": true,
+            "evictedSelectionReleased": true
+          }
+        }
+      ]
+    },
+    "dashboard": {
+      "unityVersion": "6000.6.2f1",
+      "idle": {
+        "iterations": 100,
+        "elapsedMs": 23.503,
+        "allocations": 31700,
+        "rawRecorderValue": 693400,
+        "rawRecorderUnit": "TimeNanoseconds",
+        "profilerControlAllocations": 1
+      },
+      "unchangedQueueSection": {
+        "iterations": 100,
+        "elapsedMs": 0.020200000000000003,
+        "allocations": 0,
+        "rawRecorderValue": 0,
+        "rawRecorderUnit": "TimeNanoseconds",
+        "profilerControlAllocations": 1
+      },
+      "unchangedHttpSection": {
+        "iterations": 100,
+        "elapsedMs": 0.0195,
+        "allocations": 0,
+        "rawRecorderValue": 0,
+        "rawRecorderUnit": "TimeNanoseconds",
+        "profilerControlAllocations": 1
+      },
+      "httpActiveRequestVisible": true,
+      "httpRefusalVisible": true,
+      "httpControlsReused": true,
+      "twentyStableAgents": {
+        "iterations": 100,
+        "elapsedMs": 23.8337,
+        "allocations": 31700,
+        "rawRecorderValue": 682600,
+        "rawRecorderUnit": "TimeNanoseconds",
+        "profilerControlAllocations": 1
+      },
+      "unshownActivityDoesNotRebuild": true,
+      "visibleMetricsRefresh": true,
+      "changingAgents": {
+        "iterations": 100,
+        "elapsedMs": 28.230700000000002,
+        "allocations": 33100,
+        "rawRecorderValue": 715000,
+        "rawRecorderUnit": "TimeNanoseconds",
+        "profilerControlAllocations": 1
+      },
+      "changedAndUnchangedCardsReused": true,
+      "oldOutstandingSessionVisible": true,
+      "idleSessionExpiresWithoutRebuildingOthers": true,
+      "returningSessionVisible": true,
+      "emptyStateRestored": true,
+      "newAgentReplacesEmptyState": true,
+      "scrollRootsBefore": 1,
+      "scrollRootsAfter": 1,
+      "recreateGuiDoesNotDuplicateControls": true,
+      "savedFoldoutStateRestored": true,
+      "httpPreferenceAndCountersRestored": true,
+      "failures": [],
+      "passed": true,
+      "fixtureSessionsRemoved": true
+    },
+    "mesh": {
+      "unityVersion": "6000.6.2f1",
+      "passed": true,
+      "checks": [
+        {
+          "name": "Legacy mesh path preserves triangles, attributes and source",
+          "passed": true,
+          "evidence": {
+            "name": "__MeshMetadata_2288f1a9543b4d99864e664265fdef5d_Mesh",
+            "source": "__MeshMetadata_2288f1a9543b4d99864e664265fdef5d_Root (MeshFilter)",
+            "vertexCount": 4,
+            "triangleCount": 1,
+            "subMeshCount": 1,
+            "bounds": {
+              "center": {
+                "x": 0.5,
+                "y": 0.5,
+                "z": 0
+              },
+              "size": {
+                "x": 1,
+                "y": 1,
+                "z": 0
+              },
+              "extents": {
+                "x": 0.5,
+                "y": 0.5,
+                "z": 0
+              },
+              "min": {
+                "x": 0,
+                "y": 0,
+                "z": 0
+              },
+              "max": {
+                "x": 1,
+                "y": 1,
+                "z": 0
+              }
+            },
+            "uvChannelCount": 4,
+            "hasNormals": true,
+            "hasTangents": true,
+            "hasColors": true,
+            "blendShapeCount": 0,
+            "isSkinned": false,
+            "boneCount": 0,
+            "isReadable": true,
+            "indexFormat": "UInt16"
+          }
+        },
+        {
+          "name": "Documented mesh objectPath resolves the scene object",
+          "passed": true,
+          "evidence": {
+            "name": "__MeshMetadata_2288f1a9543b4d99864e664265fdef5d_Mesh",
+            "source": "__MeshMetadata_2288f1a9543b4d99864e664265fdef5d_Root (MeshFilter)",
+            "vertexCount": 4,
+            "triangleCount": 1,
+            "subMeshCount": 1,
+            "bounds": {
+              "center": {
+                "x": 0.5,
+                "y": 0.5,
+                "z": 0
+              },
+              "size": {
+                "x": 1,
+                "y": 1,
+                "z": 0
+              },
+              "extents": {
+                "x": 0.5,
+                "y": 0.5,
+                "z": 0
+              },
+              "min": {
+                "x": 0,
+                "y": 0,
+                "z": 0
+              },
+              "max": {
+                "x": 1,
+                "y": 1,
+                "z": 0
+              }
+            },
+            "uvChannelCount": 4,
+            "hasNormals": true,
+            "hasTangents": true,
+            "hasColors": true,
+            "blendShapeCount": 0,
+            "isSkinned": false,
+            "boneCount": 0,
+            "isReadable": true,
+            "indexFormat": "UInt16"
+          }
+        },
+        {
+          "name": "Documented renderer objectPath resolves the scene object",
+          "passed": true,
+          "evidence": {
+            "gameObjectPath": "__MeshMetadata_2288f1a9543b4d99864e664265fdef5d_Root",
+            "rendererType": "MeshRenderer",
+            "enabled": true,
+            "isVisible": false,
+            "bounds": {
+              "center": {
+                "x": 0.5,
+                "y": 0.5,
+                "z": 0
+              },
+              "size": {
+                "x": 1,
+                "y": 1,
+                "z": 0
+              },
+              "extents": {
+                "x": 0.5,
+                "y": 0.5,
+                "z": 0
+              },
+              "min": {
+                "x": 0,
+                "y": 0,
+                "z": 0
+              },
+              "max": {
+                "x": 1,
+                "y": 1,
+                "z": 0
+              }
+            },
+            "shadowCastingMode": "On",
+            "receiveShadows": true,
+            "lightmapIndex": -1,
+            "sortingLayerName": "Default",
+            "sortingOrder": 0,
+            "lightProbeUsage": "BlendProbes",
+            "reflectionProbeUsage": "BlendProbes",
+            "materials": [
+              {
+                "name": "(null/missing)"
+              },
+              {
+                "name": "(null/missing)"
+              }
+            ],
+            "materialCount": 2,
+            "isSkinned": false,
+            "mesh": {
+              "name": "__MeshMetadata_2288f1a9543b4d99864e664265fdef5d_Mesh",
+              "vertexCount": 4,
+              "triangleCount": 1,
+              "assetPath": ""
+            }
+          }
+        },
+        {
+          "name": "Sparse UV channels include channels four and seven",
+          "passed": true,
+          "evidence": {
+            "name": "__MeshMetadata_2288f1a9543b4d99864e664265fdef5d_Mesh",
+            "source": "__MeshMetadata_2288f1a9543b4d99864e664265fdef5d_Root (MeshFilter)",
+            "vertexCount": 4,
+            "triangleCount": 1,
+            "subMeshCount": 1,
+            "bounds": {
+              "center": {
+                "x": 0.5,
+                "y": 0.5,
+                "z": 0
+              },
+              "size": {
+                "x": 1,
+                "y": 1,
+                "z": 0
+              },
+              "extents": {
+                "x": 0.5,
+                "y": 0.5,
+                "z": 0
+              },
+              "min": {
+                "x": 0,
+                "y": 0,
+                "z": 0
+              },
+              "max": {
+                "x": 1,
+                "y": 1,
+                "z": 0
+              }
+            },
+            "uvChannelCount": 4,
+            "hasNormals": true,
+            "hasTangents": true,
+            "hasColors": true,
+            "blendShapeCount": 0,
+            "isSkinned": false,
+            "boneCount": 0,
+            "isReadable": true,
+            "indexFormat": "UInt16"
+          }
+        },
+        {
+          "name": "Legacy paths take precedence when both aliases are supplied",
+          "passed": true,
+          "evidence": true
+        },
+        {
+          "name": "Missing paths and missing components retain structured errors",
+          "passed": true,
+          "evidence": true
+        },
+        {
+          "name": "Renderer preserves shared mesh and null material slots",
+          "passed": true,
+          "evidence": {
+            "gameObjectPath": "__MeshMetadata_2288f1a9543b4d99864e664265fdef5d_Root",
+            "rendererType": "MeshRenderer",
+            "enabled": true,
+            "isVisible": false,
+            "bounds": {
+              "center": {
+                "x": 0.5,
+                "y": 0.5,
+                "z": 0
+              },
+              "size": {
+                "x": 1,
+                "y": 1,
+                "z": 0
+              },
+              "extents": {
+                "x": 0.5,
+                "y": 0.5,
+                "z": 0
+              },
+              "min": {
+                "x": 0,
+                "y": 0,
+                "z": 0
+              },
+              "max": {
+                "x": 1,
+                "y": 1,
+                "z": 0
+              }
+            },
+            "shadowCastingMode": "On",
+            "receiveShadows": true,
+            "lightmapIndex": -1,
+            "sortingLayerName": "Default",
+            "sortingOrder": 0,
+            "lightProbeUsage": "BlendProbes",
+            "reflectionProbeUsage": "BlendProbes",
+            "materials": [
+              {
+                "name": "(null/missing)"
+              },
+              {
+                "name": "(null/missing)"
+              }
+            ],
+            "materialCount": 2,
+            "isSkinned": false,
+            "mesh": {
+              "name": "__MeshMetadata_2288f1a9543b4d99864e664265fdef5d_Mesh",
+              "vertexCount": 4,
+              "triangleCount": 1,
+              "assetPath": ""
+            }
+          }
+        },
+        {
+          "name": "Non-readable mesh retains metadata outside the game loop",
+          "passed": true,
+          "evidence": {
+            "name": "__MeshMetadata_2288f1a9543b4d99864e664265fdef5d_Mesh",
+            "source": "__MeshMetadata_2288f1a9543b4d99864e664265fdef5d_Root (MeshFilter)",
+            "vertexCount": 4,
+            "triangleCount": 1,
+            "subMeshCount": 1,
+            "bounds": {
+              "center": {
+                "x": 0.5,
+                "y": 0.5,
+                "z": 0
+              },
+              "size": {
+                "x": 1,
+                "y": 1,
+                "z": 0
+              },
+              "extents": {
+                "x": 0.5,
+                "y": 0.5,
+                "z": 0
+              },
+              "min": {
+                "x": 0,
+                "y": 0,
+                "z": 0
+              },
+              "max": {
+                "x": 1,
+                "y": 1,
+                "z": 0
+              }
+            },
+            "uvChannelCount": 4,
+            "hasNormals": true,
+            "hasTangents": true,
+            "hasColors": true,
+            "blendShapeCount": 0,
+            "isSkinned": false,
+            "boneCount": 0,
+            "isReadable": false,
+            "indexFormat": "UInt16"
+          }
+        },
+        {
+          "name": "Asset lookup retains precedence and works without a scene object",
+          "passed": true,
+          "evidence": {
+            "name": "Mesh",
+            "source": "Assets/__MeshMetadata_2288f1a9543b4d99864e664265fdef5d_Assets/Mesh.asset",
+            "vertexCount": 4,
+            "triangleCount": 1,
+            "subMeshCount": 1,
+            "bounds": {
+              "center": {
+                "x": 0.5,
+                "y": 0.5,
+                "z": 0
+              },
+              "size": {
+                "x": 1,
+                "y": 1,
+                "z": 0
+              },
+              "extents": {
+                "x": 0.5,
+                "y": 0.5,
+                "z": 0
+              },
+              "min": {
+                "x": 0,
+                "y": 0,
+                "z": 0
+              },
+              "max": {
+                "x": 1,
+                "y": 1,
+                "z": 0
+              }
+            },
+            "uvChannelCount": 4,
+            "hasNormals": true,
+            "hasTangents": true,
+            "hasColors": true,
+            "blendShapeCount": 0,
+            "isSkinned": false,
+            "boneCount": 0,
+            "isReadable": true,
+            "indexFormat": "UInt16"
+          }
+        },
+        {
+          "name": "Empty mesh reports no geometry or populated attributes",
+          "passed": true,
+          "evidence": {
+            "name": "",
+            "source": "__MeshMetadata_2288f1a9543b4d99864e664265fdef5d_Root (MeshFilter)",
+            "vertexCount": 0,
+            "triangleCount": 0,
+            "subMeshCount": 1,
+            "bounds": {
+              "center": {
+                "x": 0,
+                "y": 0,
+                "z": 0
+              },
+              "size": {
+                "x": 0,
+                "y": 0,
+                "z": 0
+              },
+              "extents": {
+                "x": 0,
+                "y": 0,
+                "z": 0
+              },
+              "min": {
+                "x": 0,
+                "y": 0,
+                "z": 0
+              },
+              "max": {
+                "x": 0,
+                "y": 0,
+                "z": 0
+              }
+            },
+            "uvChannelCount": 0,
+            "hasNormals": false,
+            "hasTangents": false,
+            "hasColors": false,
+            "blendShapeCount": 0,
+            "isSkinned": false,
+            "boneCount": 0,
+            "isReadable": true,
+            "indexFormat": "UInt16"
+          }
+        },
+        {
+          "name": "Mixed topology counts triangles and triangulated quads only",
+          "passed": true,
+          "evidence": {
+            "name": "__MeshMetadata_2288f1a9543b4d99864e664265fdef5d_Mesh",
+            "source": "__MeshMetadata_2288f1a9543b4d99864e664265fdef5d_Root (MeshFilter)",
+            "vertexCount": 4,
+            "triangleCount": 3,
+            "subMeshCount": 4,
+            "bounds": {
+              "center": {
+                "x": 0.5,
+                "y": 0.5,
+                "z": 0
+              },
+              "size": {
+                "x": 1,
+                "y": 1,
+                "z": 0
+              },
+              "extents": {
+                "x": 0.5,
+                "y": 0.5,
+                "z": 0
+              },
+              "min": {
+                "x": 0,
+                "y": 0,
+                "z": 0
+              },
+              "max": {
+                "x": 1,
+                "y": 1,
+                "z": 0
+              }
+            },
+            "uvChannelCount": 4,
+            "hasNormals": true,
+            "hasTangents": true,
+            "hasColors": true,
+            "blendShapeCount": 0,
+            "isSkinned": false,
+            "boneCount": 0,
+            "isReadable": true,
+            "indexFormat": "UInt16"
+          }
+        },
+        {
+          "name": "Skinned mesh retains bone count and shared resources",
+          "passed": true,
+          "evidence": {
+            "name": "__MeshMetadata_2288f1a9543b4d99864e664265fdef5d_Mesh",
+            "source": "__MeshMetadata_2288f1a9543b4d99864e664265fdef5d_Skinned (SkinnedMeshRenderer)",
+            "vertexCount": 4,
+            "triangleCount": 1,
+            "subMeshCount": 1,
+            "bounds": {
+              "center": {
+                "x": 0.5,
+                "y": 0.5,
+                "z": 0
+              },
+              "size": {
+                "x": 1,
+                "y": 1,
+                "z": 0
+              },
+              "extents": {
+                "x": 0.5,
+                "y": 0.5,
+                "z": 0
+              },
+              "min": {
+                "x": 0,
+                "y": 0,
+                "z": 0
+              },
+              "max": {
+                "x": 1,
+                "y": 1,
+                "z": 0
+              }
+            },
+            "uvChannelCount": 4,
+            "hasNormals": true,
+            "hasTangents": true,
+            "hasColors": true,
+            "blendShapeCount": 0,
+            "isSkinned": true,
+            "boneCount": 2,
+            "isReadable": false,
+            "indexFormat": "UInt16"
+          }
+        },
+        {
+          "name": "All eight UV channels and a lone highest channel are counted",
+          "passed": true,
+          "evidence": true
+        },
+        {
+          "name": "Each primitive topology retains the native triangle count",
+          "passed": true,
+          "evidence": {
+            "Triangles": 1,
+            "Quads": 2,
+            "Lines": 0,
+            "LineStrip": 0,
+            "Points": 0
+          }
+        },
+        {
+          "name": "Cleared meshes retain empty attribute semantics despite their layout",
+          "passed": true,
+          "evidence": {
+            "name": "__MeshMetadata_2288f1a9543b4d99864e664265fdef5d_Mesh",
+            "source": "__MeshMetadata_2288f1a9543b4d99864e664265fdef5d_Root (MeshFilter)",
+            "vertexCount": 0,
+            "triangleCount": 0,
+            "subMeshCount": 1,
+            "bounds": {
+              "center": {
+                "x": 0.5,
+                "y": 0.5,
+                "z": 0
+              },
+              "size": {
+                "x": 1,
+                "y": 1,
+                "z": 0
+              },
+              "extents": {
+                "x": 0.5,
+                "y": 0.5,
+                "z": 0
+              },
+              "min": {
+                "x": 0,
+                "y": 0,
+                "z": 0
+              },
+              "max": {
+                "x": 1,
+                "y": 1,
+                "z": 0
+              }
+            },
+            "uvChannelCount": 0,
+            "hasNormals": false,
+            "hasTangents": false,
+            "hasColors": false,
+            "blendShapeCount": 0,
+            "isSkinned": false,
+            "boneCount": 0,
+            "isReadable": true,
+            "indexFormat": "UInt16"
+          }
+        },
+        {
+          "name": "Empty or null legacy aliases fall back to the documented path",
+          "passed": true,
+          "evidence": true
+        },
+        {
+          "name": "Mesh blend shapes are retained without modifying the source",
+          "passed": true,
+          "evidence": {
+            "name": "__MeshMetadata_2288f1a9543b4d99864e664265fdef5d_Mesh",
+            "source": "__MeshMetadata_2288f1a9543b4d99864e664265fdef5d_Root (MeshFilter)",
+            "vertexCount": 4,
+            "triangleCount": 1,
+            "subMeshCount": 1,
+            "bounds": {
+              "center": {
+                "x": 0.5,
+                "y": 0.5,
+                "z": 0
+              },
+              "size": {
+                "x": 1,
+                "y": 1,
+                "z": 0
+              },
+              "extents": {
+                "x": 0.5,
+                "y": 0.5,
+                "z": 0
+              },
+              "min": {
+                "x": 0,
+                "y": 0,
+                "z": 0
+              },
+              "max": {
+                "x": 1,
+                "y": 1,
+                "z": 0
+              }
+            },
+            "uvChannelCount": 4,
+            "hasNormals": true,
+            "hasTangents": true,
+            "hasColors": true,
+            "blendShapeCount": 1,
+            "isSkinned": false,
+            "boneCount": 0,
+            "isReadable": true,
+            "indexFormat": "UInt16"
+          }
+        },
+        {
+          "name": "Prefab asset lookup retains MeshFilter and skinned mesh sources",
+          "passed": true,
+          "evidence": true
+        },
+        {
+          "name": "Large mesh metadata timing and allocation control",
+          "passed": true,
+          "evidence": {
+            "vertices": 120000,
+            "iterationsPerSample": 20,
+            "controlCount": 1,
+            "controlValue": 100,
+            "rawRecorderUnit": "TimeNanoseconds",
+            "byteMeasurementSupported": false,
+            "samples": [
+              {
+                "elapsedMs": 2.7932,
+                "allocations": 1180,
+                "rawRecorderValue": 23300
+              },
+              {
+                "elapsedMs": 0.2785,
+                "allocations": 1180,
+                "rawRecorderValue": 27900
+              },
+              {
+                "elapsedMs": 0.24910000000000002,
+                "allocations": 1180,
+                "rawRecorderValue": 24700
+              },
+              {
+                "elapsedMs": 0.2484,
+                "allocations": 1180,
+                "rawRecorderValue": 23800
+              },
+              {
+                "elapsedMs": 0.24580000000000002,
+                "allocations": 1180,
+                "rawRecorderValue": 23800
+              }
+            ]
+          }
+        },
+        {
+          "name": "Large renderer metadata timing and allocation control",
+          "passed": true,
+          "evidence": {
+            "vertices": 120000,
+            "iterationsPerSample": 20,
+            "controlCount": 1,
+            "controlValue": 0,
+            "rawRecorderUnit": "TimeNanoseconds",
+            "byteMeasurementSupported": false,
+            "samples": [
+              {
+                "elapsedMs": 0.29350000000000004,
+                "allocations": 1480,
+                "rawRecorderValue": 31400
+              },
+              {
+                "elapsedMs": 0.2871,
+                "allocations": 1480,
+                "rawRecorderValue": 33400
+              },
+              {
+                "elapsedMs": 0.29100000000000004,
+                "allocations": 1480,
+                "rawRecorderValue": 32100
+              },
+              {
+                "elapsedMs": 0.2916,
+                "allocations": 1480,
+                "rawRecorderValue": 32800
+              },
+              {
+                "elapsedMs": 1.2711000000000001,
+                "allocations": 1480,
+                "rawRecorderValue": 32200
+              }
+            ]
+          }
+        }
+      ],
+      "cleanup": {
+        "remaining": 0,
+        "sceneCountRestored": true,
+        "originalSceneClean": true
+      },
+      "fixtureAssetsRemoved": true
+    }
+  },
+  "minimumVersion": {
+    "unityVersion": "2021.3.18f1",
+    "passed": true,
+    "referenceCount": 211,
+    "packageAssemblies": [
+      {
+        "sha256": "AF83F70ECAC09EE676571E37C62595B7FF26148B636CE498F9151A2F7A9697A3",
+        "file": "UnityEngine.UI.dll"
+      },
+      {
+        "sha256": "AAAF5BC1E371F6CFA67138DCB6E77634A8075D30E0C1DF27670A5B0028CC5523",
+        "file": "UnityEngine.TestRunner.dll"
+      },
+      {
+        "sha256": "6995901F60508B79F4B648FE2E3B64D8D1BD545B3CB3817134F079842FA82832",
+        "file": "UnityEditor.TestRunner.dll"
+      }
+    ],
+    "excludedIntegrations": [
+      "UMA",
+      "ProBuilder"
+    ],
+    "sourceCount": 77,
+    "check": "C# compilation against installed Unity assemblies; no editor execution or package import",
+    "exitCode": 0
+  },
+  "unitAudit": {
+    "unity": "6000.6.2f1",
+    "controls": [
+      {
+        "requestedArrayBytes": 64,
+        "allocations": 1,
+        "rawRecorderValue": 100,
+        "rawRecorderUnit": "TimeNanoseconds"
+      },
+      {
+        "requestedArrayBytes": 8192,
+        "allocations": 1,
+        "rawRecorderValue": 100,
+        "rawRecorderUnit": "TimeNanoseconds"
+      },
+      {
+        "requestedArrayBytes": 1048576,
+        "allocations": 1,
+        "rawRecorderValue": 100,
+        "rawRecorderUnit": "TimeNanoseconds"
+      }
+    ]
+  },
+  "historicalCorrections": {
+    "reports": [
+      {
+        "file": "unity66-dashboard.json",
+        "affectedValues": 6
+      },
+      {
+        "file": "unity66-editor-render.json",
+        "affectedValues": 5
+      },
+      {
+        "file": "unity66-history-notifications.json",
+        "affectedValues": 9
+      },
+      {
+        "file": "unity66-history-persistence.json",
+        "affectedValues": 1
+      },
+      {
+        "file": "unity66-http-monitoring.json",
+        "affectedValues": 8
+      },
+      {
+        "file": "unity66-parrelsync.json",
+        "affectedValues": 5
+      },
+      {
+        "file": "unity66-request-body.json",
+        "affectedValues": 5
+      }
+    ],
+    "correctedFieldCount": 39,
+    "historicalNumericValuesPreserved": true,
+    "eventCountsAndIndependentTimingsPreserved": true,
+    "byteReductionClaimWithdrawn": true,
+    "sources": [
+      "https://unity.com/how-to/best-practices-for-profiling-game-performance",
+      "https://docs.unity3d.com/2021.3/Documentation/ScriptReference/Unity.Profiling.ProfilerRecorder.html"
+    ],
+    "numericPreservationAudit": {
+      "reports": 7,
+      "metricValuesVerified": 117,
+      "renamedFields": 39,
+      "numericValuesChanged": 0
+    }
+  },
+  "serverTests": [
+    {
+      "node": "22.18.0",
+      "passed": 255,
+      "failed": 0
+    },
+    {
+      "node": "18.20.8",
+      "passed": 255,
+      "failed": 0
+    }
+  ],
+  "limits": [
+    "No allocated-byte claim from GC.Alloc marker Value",
+    "No full editor-frame, GPU completion, network latency or gameplay FPS benchmark",
+    "No competitor performance comparison",
+    "Other OS/DPI configurations and actual Unity 2021 runtime remain unverified"
+  ],
+  "passed": true,
+  "documentation": {
+    "localLinksChecked": 314,
+    "missing": 0
+  },
+  "cleanup": {
+    "ownedEditorsClosed": true,
+    "closedLivePid": 436708,
+    "closedQueuePid": 91996,
+    "fixtureWindowsClosed": true,
+    "ownedTargetDestroyed": true,
+    "copiedFixturesRemoved": true,
+    "cleanScene": true,
+    "userEditorsUntouched": true
+  },
+  "pluginCommit": "bbe6da10b54e9b080a4fdb2496d3595d67cf637f",
+  "serverCommit": "796b5c265564c90dc952edbb9dd0db825d7bce2f",
+  "ci": {
+    "plugin": {
+      "run": 36857586357,
+      "job": 110353680122,
+      "status": "success",
+      "routes": 338
+    },
+    "server": {
+      "run": 36857739932,
+      "status": "success",
+      "matrixJobsPassed": 8,
+      "nodeVersions": [
+        18,
+        20,
+        22,
+        24
+      ],
+      "platforms": [
+        "windows-latest",
+        "ubuntu-latest"
+      ],
+      "inspectedLogs": [
+        {
+          "job": 110354177602,
+          "node": 22,
+          "platform": "ubuntu-latest",
+          "tests": 255,
+          "passed": 255,
+          "failed": 0
+        },
+        {
+          "job": 110354177657,
+          "node": 18,
+          "platform": "windows-latest",
+          "tests": 255,
+          "passed": 255,
+          "failed": 0
+        }
+      ]
+    }
+  }
+}

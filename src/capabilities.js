@@ -14,6 +14,8 @@ export const PLUGIN_FEATURES = {
   // protocolVersion 1: handshake baseline — ping advertises versions,
   // unknown routes return HTTP 404 on the legacy path.
   UNKNOWN_ROUTE_404: 1,
+  IDEMPOTENT_QUEUE: 2,
+  MANAGED_CODE_VARIANT: 3,
 };
 
 /**
@@ -41,6 +43,7 @@ export function pluginSupports(instance, feature) {
  */
 export function isUnknownRouteResult(result) {
   if (!result || typeof result !== "object") return false;
+  if (result.outcomeUnknown === true || result.queueTransportError === true) return false;
   const texts = [];
   if (typeof result.error === "string") texts.push(result.error);
   if (result.data && typeof result.data === "object" && typeof result.data.error === "string") {

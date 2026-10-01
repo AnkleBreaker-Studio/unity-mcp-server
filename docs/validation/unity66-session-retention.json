@@ -1,0 +1,739 @@
+{
+  "recordedOn": "2026-10-01",
+  "baselinePluginCommit": "bbe6da10b54e9b080a4fdb2496d3595d67cf637f",
+  "releasedServerCommit": "826af5ce61db7e2d2d675fe90d24c941a83f3924",
+  "environment": {
+    "unity": "6000.6.2f1",
+    "platform": "Windows",
+    "runtime": "Mono"
+  },
+  "baseline": {
+    "unityVersion": "6000.6.2f1",
+    "passed": false,
+    "checks": [
+      {
+        "name": "Recent completed identities are bounded before periodic cleanup",
+        "passed": false,
+        "error": "Retained 5000 recent completed sessions; expected 1024"
+      },
+      {
+        "name": "Queued and deferred work stays visible under recent identity pressure",
+        "passed": true,
+        "evidence": {
+          "queuedProtected": true,
+          "partialCompletionProtected": true,
+          "deferredProtected": true
+        }
+      },
+      {
+        "name": "A reused session moves behind older completed identities",
+        "passed": false,
+        "error": "Reused session did not refresh eviction order"
+      },
+      {
+        "name": "Eviction releases the old session while pending history survives",
+        "passed": false,
+        "error": "Evicted session remains rooted before history drain"
+      },
+      {
+        "name": "Session eviction preserves ticket results and protected replay",
+        "passed": false,
+        "error": "Protected session was not evicted"
+      },
+      {
+        "name": "Concurrent duplicate terminal callbacks enter idle retention once",
+        "passed": true,
+        "evidence": {
+          "callbacks": 20,
+          "accepted": 1
+        }
+      },
+      {
+        "name": "Timeout completion releases idle retention protection",
+        "passed": false,
+        "error": "Timed-out session remained protected"
+      }
+    ]
+  },
+  "corrected": {
+    "unityVersion": "6000.6.2f1",
+    "passed": true,
+    "checks": [
+      {
+        "name": "Recent completed identities are bounded before periodic cleanup",
+        "passed": true,
+        "evidence": {
+          "submitted": 5000,
+          "retained": 1024,
+          "pressureEvictions": 3976
+        }
+      },
+      {
+        "name": "Queued and deferred work stays visible under recent identity pressure",
+        "passed": true,
+        "evidence": {
+          "queuedProtected": true,
+          "partialCompletionProtected": true,
+          "deferredProtected": true
+        }
+      },
+      {
+        "name": "A reused session moves behind older completed identities",
+        "passed": true,
+        "evidence": true
+      },
+      {
+        "name": "Native callers may keep more than 1024 busy agents without eviction",
+        "passed": true,
+        "evidence": {
+          "busyAgents": 1300,
+          "allPreserved": true,
+          "afterCompletionIdle": 1024
+        }
+      },
+      {
+        "name": "Expired generations do not attach delayed history to a returning identity",
+        "passed": true,
+        "evidence": true
+      },
+      {
+        "name": "Eviction releases the old session while pending history survives",
+        "passed": true,
+        "evidence": {
+          "oldSessionCollected": true,
+          "replacementRecords": 1,
+          "globalRecords": 2
+        }
+      },
+      {
+        "name": "Session eviction preserves ticket results and protected replay",
+        "passed": true,
+        "evidence": true
+      },
+      {
+        "name": "Concurrent duplicate terminal callbacks enter idle retention once",
+        "passed": true,
+        "evidence": {
+          "callbacks": 20,
+          "accepted": 1
+        }
+      },
+      {
+        "name": "Timeout completion releases idle retention protection",
+        "passed": true,
+        "evidence": true
+      }
+    ]
+  },
+  "live": [
+    {
+      "combination": "current22",
+      "nodeVersion": "v22.18.0",
+      "serverEntry": "current",
+      "passed": true,
+      "project": {
+        "port": 7890,
+        "projectName": "Health66",
+        "projectPath": "C:/Users/Francois/orca/workspaces/unity-mcp-server/validation/Health66",
+        "unityVersion": "6000.6.2f1",
+        "isClone": false,
+        "cloneIndex": -1,
+        "isVirtualPlayer": false,
+        "mainProjectPath": "C:/Users/Francois/orca/workspaces/unity-mcp-server/validation/Health66",
+        "pluginVersion": "2.39.7",
+        "source": "registry",
+        "isSelected": false
+      },
+      "native": {
+        "unityVersion": "6000.6.2f1",
+        "passed": true,
+        "checks": [
+          {
+            "name": "Recent completed identities are bounded before periodic cleanup",
+            "passed": true,
+            "evidence": {
+              "submitted": 5000,
+              "retained": 1024,
+              "pressureEvictions": 3977
+            }
+          },
+          {
+            "name": "Queued and deferred work stays visible under recent identity pressure",
+            "passed": true,
+            "evidence": {
+              "queuedProtected": true,
+              "partialCompletionProtected": true,
+              "deferredProtected": true
+            }
+          },
+          {
+            "name": "A reused session moves behind older completed identities",
+            "passed": true,
+            "evidence": true
+          },
+          {
+            "name": "Native callers may keep more than 1024 busy agents without eviction",
+            "passed": true,
+            "evidence": {
+              "busyAgents": 1300,
+              "allPreserved": true,
+              "afterCompletionIdle": 1024
+            }
+          },
+          {
+            "name": "Expired generations do not attach delayed history to a returning identity",
+            "passed": true,
+            "evidence": true
+          },
+          {
+            "name": "Eviction releases the old session while pending history survives",
+            "passed": true,
+            "evidence": {
+              "oldSessionCollected": true,
+              "replacementRecords": 1,
+              "globalRecords": 2
+            }
+          },
+          {
+            "name": "Session eviction preserves ticket results and protected replay",
+            "passed": true,
+            "evidence": true
+          },
+          {
+            "name": "Concurrent duplicate terminal callbacks enter idle retention once",
+            "passed": true,
+            "evidence": {
+              "callbacks": 20,
+              "accepted": 1
+            }
+          },
+          {
+            "name": "Timeout completion releases idle retention protection",
+            "passed": true,
+            "evidence": true
+          }
+        ]
+      },
+      "afterPressure": {
+        "totalSessionsTracked": 1,
+        "idleSessionsTracked": 1,
+        "pressureEvictedSessions": 6936
+      },
+      "reload": {
+        "sessionChanged": true,
+        "pressureCounterReset": true,
+        "idleSessionsTracked": 2
+      }
+    },
+    {
+      "combination": "current18",
+      "nodeVersion": "v18.20.8",
+      "serverEntry": "current",
+      "passed": true,
+      "project": {
+        "port": 7890,
+        "projectName": "Health66",
+        "projectPath": "C:/Users/Francois/orca/workspaces/unity-mcp-server/validation/Health66",
+        "unityVersion": "6000.6.2f1",
+        "isClone": false,
+        "cloneIndex": -1,
+        "isVirtualPlayer": false,
+        "mainProjectPath": "C:/Users/Francois/orca/workspaces/unity-mcp-server/validation/Health66",
+        "pluginVersion": "2.39.7",
+        "source": "registry",
+        "isSelected": false
+      },
+      "native": {
+        "unityVersion": "6000.6.2f1",
+        "passed": true,
+        "checks": [
+          {
+            "name": "Recent completed identities are bounded before periodic cleanup",
+            "passed": true,
+            "evidence": {
+              "submitted": 5000,
+              "retained": 1024,
+              "pressureEvictions": 3978
+            }
+          },
+          {
+            "name": "Queued and deferred work stays visible under recent identity pressure",
+            "passed": true,
+            "evidence": {
+              "queuedProtected": true,
+              "partialCompletionProtected": true,
+              "deferredProtected": true
+            }
+          },
+          {
+            "name": "A reused session moves behind older completed identities",
+            "passed": true,
+            "evidence": true
+          },
+          {
+            "name": "Native callers may keep more than 1024 busy agents without eviction",
+            "passed": true,
+            "evidence": {
+              "busyAgents": 1300,
+              "allPreserved": true,
+              "afterCompletionIdle": 1024
+            }
+          },
+          {
+            "name": "Expired generations do not attach delayed history to a returning identity",
+            "passed": true,
+            "evidence": true
+          },
+          {
+            "name": "Eviction releases the old session while pending history survives",
+            "passed": true,
+            "evidence": {
+              "oldSessionCollected": true,
+              "replacementRecords": 1,
+              "globalRecords": 2
+            }
+          },
+          {
+            "name": "Session eviction preserves ticket results and protected replay",
+            "passed": true,
+            "evidence": true
+          },
+          {
+            "name": "Concurrent duplicate terminal callbacks enter idle retention once",
+            "passed": true,
+            "evidence": {
+              "callbacks": 20,
+              "accepted": 1
+            }
+          },
+          {
+            "name": "Timeout completion releases idle retention protection",
+            "passed": true,
+            "evidence": true
+          }
+        ]
+      },
+      "afterPressure": {
+        "totalSessionsTracked": 1,
+        "idleSessionsTracked": 1,
+        "pressureEvictedSessions": 6937
+      },
+      "reload": {
+        "sessionChanged": true,
+        "pressureCounterReset": true,
+        "idleSessionsTracked": 2
+      }
+    },
+    {
+      "combination": "released22",
+      "nodeVersion": "v22.18.0",
+      "serverEntry": "C:/Users/Francois/orca/workspaces/unity-mcp-server/validation/compat-server-baseline/src/index.js",
+      "passed": true,
+      "project": {
+        "port": 7890,
+        "projectName": "Health66",
+        "projectPath": "C:/Users/Francois/orca/workspaces/unity-mcp-server/validation/Health66",
+        "unityVersion": "6000.6.2f1",
+        "isClone": false,
+        "cloneIndex": -1,
+        "pluginVersion": "2.39.7",
+        "source": "portscan",
+        "isSelected": false
+      },
+      "native": {
+        "unityVersion": "6000.6.2f1",
+        "passed": true,
+        "checks": [
+          {
+            "name": "Recent completed identities are bounded before periodic cleanup",
+            "passed": true,
+            "evidence": {
+              "submitted": 5000,
+              "retained": 1024,
+              "pressureEvictions": 3978
+            }
+          },
+          {
+            "name": "Queued and deferred work stays visible under recent identity pressure",
+            "passed": true,
+            "evidence": {
+              "queuedProtected": true,
+              "partialCompletionProtected": true,
+              "deferredProtected": true
+            }
+          },
+          {
+            "name": "A reused session moves behind older completed identities",
+            "passed": true,
+            "evidence": true
+          },
+          {
+            "name": "Native callers may keep more than 1024 busy agents without eviction",
+            "passed": true,
+            "evidence": {
+              "busyAgents": 1300,
+              "allPreserved": true,
+              "afterCompletionIdle": 1024
+            }
+          },
+          {
+            "name": "Expired generations do not attach delayed history to a returning identity",
+            "passed": true,
+            "evidence": true
+          },
+          {
+            "name": "Eviction releases the old session while pending history survives",
+            "passed": true,
+            "evidence": {
+              "oldSessionCollected": true,
+              "replacementRecords": 1,
+              "globalRecords": 2
+            }
+          },
+          {
+            "name": "Session eviction preserves ticket results and protected replay",
+            "passed": true,
+            "evidence": true
+          },
+          {
+            "name": "Concurrent duplicate terminal callbacks enter idle retention once",
+            "passed": true,
+            "evidence": {
+              "callbacks": 20,
+              "accepted": 1
+            }
+          },
+          {
+            "name": "Timeout completion releases idle retention protection",
+            "passed": true,
+            "evidence": true
+          }
+        ]
+      },
+      "afterPressure": {
+        "totalSessionsTracked": 1,
+        "idleSessionsTracked": 1,
+        "pressureEvictedSessions": 6937
+      },
+      "reload": {
+        "sessionChanged": true,
+        "pressureCounterReset": true,
+        "idleSessionsTracked": 2
+      }
+    },
+    {
+      "combination": "released18",
+      "nodeVersion": "v18.20.8",
+      "serverEntry": "C:/Users/Francois/orca/workspaces/unity-mcp-server/validation/compat-server-baseline/src/index.js",
+      "passed": true,
+      "project": {
+        "port": 7890,
+        "projectName": "Health66",
+        "projectPath": "C:/Users/Francois/orca/workspaces/unity-mcp-server/validation/Health66",
+        "unityVersion": "6000.6.2f1",
+        "isClone": false,
+        "cloneIndex": -1,
+        "pluginVersion": "2.39.7",
+        "source": "registry",
+        "isSelected": false
+      },
+      "native": {
+        "unityVersion": "6000.6.2f1",
+        "passed": true,
+        "checks": [
+          {
+            "name": "Recent completed identities are bounded before periodic cleanup",
+            "passed": true,
+            "evidence": {
+              "submitted": 5000,
+              "retained": 1024,
+              "pressureEvictions": 3978
+            }
+          },
+          {
+            "name": "Queued and deferred work stays visible under recent identity pressure",
+            "passed": true,
+            "evidence": {
+              "queuedProtected": true,
+              "partialCompletionProtected": true,
+              "deferredProtected": true
+            }
+          },
+          {
+            "name": "A reused session moves behind older completed identities",
+            "passed": true,
+            "evidence": true
+          },
+          {
+            "name": "Native callers may keep more than 1024 busy agents without eviction",
+            "passed": true,
+            "evidence": {
+              "busyAgents": 1300,
+              "allPreserved": true,
+              "afterCompletionIdle": 1024
+            }
+          },
+          {
+            "name": "Expired generations do not attach delayed history to a returning identity",
+            "passed": true,
+            "evidence": true
+          },
+          {
+            "name": "Eviction releases the old session while pending history survives",
+            "passed": true,
+            "evidence": {
+              "oldSessionCollected": true,
+              "replacementRecords": 1,
+              "globalRecords": 2
+            }
+          },
+          {
+            "name": "Session eviction preserves ticket results and protected replay",
+            "passed": true,
+            "evidence": true
+          },
+          {
+            "name": "Concurrent duplicate terminal callbacks enter idle retention once",
+            "passed": true,
+            "evidence": {
+              "callbacks": 20,
+              "accepted": 1
+            }
+          },
+          {
+            "name": "Timeout completion releases idle retention protection",
+            "passed": true,
+            "evidence": true
+          }
+        ]
+      },
+      "afterPressure": {
+        "totalSessionsTracked": 1,
+        "idleSessionsTracked": 1,
+        "pressureEvictedSessions": 6937
+      },
+      "reload": {
+        "sessionChanged": true,
+        "pressureCounterReset": true,
+        "idleSessionsTracked": 2
+      }
+    }
+  ],
+  "regressions": {
+    "health": {
+      "unityVersion": "6000.6.2f1",
+      "passed": true,
+      "idleIterations": 100000,
+      "idleAllocatedBytes": 0,
+      "allocationControlBytes": 0,
+      "allocationCounterAvailable": false,
+      "profilerControlAllocations": 1,
+      "profilerIdleAllocations": 0,
+      "idleProfilerRecorderValid": true,
+      "idleMilliseconds": 6.5745000000000005,
+      "staleSessionsBeforeCleanup": 5000,
+      "staleSessionsAfterCleanup": 0,
+      "staleSessionsRetainedBytes": 9105408,
+      "staleSessionsReleasedBytes": 9084928,
+      "inactiveSessionsAfterLimit": 256,
+      "activeSessionRetained": true,
+      "busySessionRetained": true,
+      "busySessionVisible": true,
+      "returningAgentStartsNewSession": true,
+      "newestInactiveSessionRetained": true,
+      "oldestInactiveSessionEvicted": true,
+      "reportedEvictions": 5344,
+      "singleWriteCounts": [
+        "profiler/enable:1",
+        "profiler/memory-snapshot:1",
+        "debugger/enable:1",
+        "debugger/event-details:1",
+        "profiler/future-write:1"
+      ],
+      "compilationReadBatch": 5,
+      "existingReadBatch": 5,
+      "error": ""
+    },
+    "monitoring": {
+      "unityVersion": "6000.6.2f1",
+      "passed": true,
+      "resultCases": 15,
+      "classificationMismatches": 0,
+      "rawResultsPreserved": true,
+      "commandErrors": 7,
+      "exceptions": 1,
+      "duplicateCallbacks": 20,
+      "deferredHistoryRecords": 1,
+      "timedOutHistoryRecords": 1,
+      "lateCallbackIgnored": true,
+      "legacyResultPreserved": true,
+      "dashboardShowsCommandError": true,
+      "dashboardShowsExceptionCount": true,
+      "dashboardErrorRow": true,
+      "historyEndpointError": true,
+      "diagnosticBounded": true,
+      "undoPreserved": true,
+      "undoWithHistoryBacklog": true,
+      "pendingHistorySavedBeforeReload": true,
+      "clearIncludesPendingHistory": true,
+      "historyRoundTrip": true,
+      "oldHistoryLoads": true,
+      "maximumPendingHistory": 10000,
+      "historyRecordsDropped": 1,
+      "backlogDrained": true,
+      "error": ""
+    },
+    "queue": {
+      "unityVersion": "6000.6.2f1",
+      "passed": true,
+      "checks": [
+        "Object identity round-trip without JSON number conversion",
+        "Agent FIFO, round-robin writes, read batching and ticket results",
+        "Deferred completion is atomic, single-shot and stable after timeout",
+        "Concurrent submission retries share one ticket; conflicts, reload sessions and expired results never re-execute",
+        "Actual HTTP dispatcher validates scoped submission/polling, browser rejection, one-object retries and legacy compatibility",
+        "Legacy synchronous callers are signaled without lost wakeups",
+        "Legacy timeout preserves running outcomes and skips expired batched and queued work",
+        "Dashboard shows running-only work and separates failures from finished requests",
+        "Submission retry cache refuses new work at its bounded capacity",
+        "1000 status polls at queue depths 100 and 10000"
+      ],
+      "polling100Ms": 3.0497,
+      "polling10000Ms": 4.2841000000000005,
+      "error": ""
+    },
+    "dashboard": {
+      "unityVersion": "6000.6.2f1",
+      "idle": {
+        "iterations": 100,
+        "elapsedMs": 22.5651,
+        "allocations": 31700,
+        "rawRecorderValue": 678000,
+        "rawRecorderUnit": "TimeNanoseconds",
+        "profilerControlAllocations": 1
+      },
+      "unchangedQueueSection": {
+        "iterations": 100,
+        "elapsedMs": 0.262,
+        "allocations": 0,
+        "rawRecorderValue": 0,
+        "rawRecorderUnit": "TimeNanoseconds",
+        "profilerControlAllocations": 1
+      },
+      "unchangedHttpSection": {
+        "iterations": 100,
+        "elapsedMs": 0.0325,
+        "allocations": 0,
+        "rawRecorderValue": 0,
+        "rawRecorderUnit": "TimeNanoseconds",
+        "profilerControlAllocations": 1
+      },
+      "httpActiveRequestVisible": true,
+      "httpRefusalVisible": true,
+      "httpControlsReused": true,
+      "twentyStableAgents": {
+        "iterations": 100,
+        "elapsedMs": 24.524800000000003,
+        "allocations": 31700,
+        "rawRecorderValue": 676500,
+        "rawRecorderUnit": "TimeNanoseconds",
+        "profilerControlAllocations": 1
+      },
+      "unshownActivityDoesNotRebuild": true,
+      "visibleMetricsRefresh": true,
+      "changingAgents": {
+        "iterations": 100,
+        "elapsedMs": 25.401,
+        "allocations": 33100,
+        "rawRecorderValue": 708700,
+        "rawRecorderUnit": "TimeNanoseconds",
+        "profilerControlAllocations": 1
+      },
+      "changedAndUnchangedCardsReused": true,
+      "oldOutstandingSessionVisible": true,
+      "idleSessionExpiresWithoutRebuildingOthers": true,
+      "returningSessionVisible": true,
+      "emptyStateRestored": true,
+      "newAgentReplacesEmptyState": true,
+      "scrollRootsBefore": 1,
+      "scrollRootsAfter": 1,
+      "recreateGuiDoesNotDuplicateControls": true,
+      "savedFoldoutStateRestored": true,
+      "httpPreferenceAndCountersRestored": true,
+      "failures": [],
+      "passed": true,
+      "fixtureSessionsRemoved": true
+    }
+  },
+  "minimumApi": {
+    "unityVersion": "2021.3.18f1",
+    "passed": true,
+    "referenceCount": 211,
+    "log": "C:\\Users\\Francois\\orca\\workspaces\\unity-mcp-server\\validation\\Unity2021Api\\compiler.log",
+    "packageAssemblies": [
+      {
+        "sha256": "AF83F70ECAC09EE676571E37C62595B7FF26148B636CE498F9151A2F7A9697A3",
+        "file": "C:\\Users\\Francois\\orca\\workspaces\\unity-mcp-server\\validation\\Editors\\2021.3.18f1\\Editor\\Data\\Resources\\PackageManager\\ProjectTemplates\\libcache\\com.unity.template.universal-2d-1.1.4\\ScriptAssemblies\\UnityEngine.UI.dll"
+      },
+      {
+        "sha256": "AAAF5BC1E371F6CFA67138DCB6E77634A8075D30E0C1DF27670A5B0028CC5523",
+        "file": "C:\\Users\\Francois\\orca\\workspaces\\unity-mcp-server\\validation\\Editors\\2021.3.18f1\\Editor\\Data\\Resources\\PackageManager\\ProjectTemplates\\libcache\\com.unity.template.universal-2d-1.1.4\\ScriptAssemblies\\UnityEngine.TestRunner.dll"
+      },
+      {
+        "sha256": "6995901F60508B79F4B648FE2E3B64D8D1BD545B3CB3817134F079842FA82832",
+        "file": "C:\\Users\\Francois\\orca\\workspaces\\unity-mcp-server\\validation\\Editors\\2021.3.18f1\\Editor\\Data\\Resources\\PackageManager\\ProjectTemplates\\libcache\\com.unity.template.universal-2d-1.1.4\\ScriptAssemblies\\UnityEditor.TestRunner.dll"
+      }
+    ],
+    "excludedIntegrations": [
+      "UMA",
+      "ProBuilder"
+    ],
+    "sourceCount": 77,
+    "check": "C# compilation against installed Unity assemblies; no editor execution or package import",
+    "exitCode": 0
+  },
+  "serverTests": {
+    "node": "22.18.0",
+    "passed": 255,
+    "failed": 0
+  },
+  "limits": [
+    "Session count only: no retained-text byte budget or whole-process heap measurement.",
+    "More than 1024 simultaneously busy native agents remain allowed; HTTP admission has a separate budget.",
+    "Baseline contains seven checks, five failures and two controls; the corrected fixture adds native busy-count and expired-generation coverage.",
+    "No Unity 2021 editor execution; compiler-only API compatibility.",
+    "Idle allocation evidence is GC.Alloc sample Count, not bytes. GC.GetAllocatedBytesForCurrentThread remains invalid on the native runtime control.",
+    "No benchmark against other MCP products."
+  ],
+  "implementation": {
+    "pluginCommit": "3f3ac1cf7f5bb42d4fdffd382ea0c2b371121c45",
+    "serverCommit": "3eaa69781e15984622bcbbbc9f1dc5639b362936"
+  },
+  "ci": {
+    "plugin": {
+      "run": 36860098672,
+      "passed": true,
+      "routes": 338
+    },
+    "server": {
+      "run": 36860105397,
+      "passed": true,
+      "jobs": 8,
+      "nodeVersions": [
+        18,
+        20,
+        22,
+        24
+      ],
+      "platforms": [
+        "Windows",
+        "Linux"
+      ],
+      "testsPerJob": 255
+    }
+  },
+  "cleanup": {
+    "ownedEditorsClosed": true,
+    "copiedFixturesRemoved": true
+  }
+}

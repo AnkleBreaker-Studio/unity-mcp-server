@@ -42,70 +42,23 @@ import {
   getSelectedInstance,
   isInstanceSelectionRequired,
   validateSelectedInstance,
-  setCurrentAgent,
   setPortOverride,
-  clearPortOverride,
+  getActiveBridgeUrl,
 } from "./instance-discovery.js";
+import { agentState, validateAgentId } from "./agent-state.js";
 import { debugLog } from "./state-persistence.js";
 import { isErrorText, firstSentence, stripSchemaDescriptions } from "./response-format.js";
-import { CONFIG } from "./config.js";
-
-// ─── Response size protection ───
-// Prevents "Write EOF" errors when tool responses exceed stdio transport limits.
-// Large Unity projects (79K+ objects) can generate multi-MB responses that crash the pipe.
-function truncateResponseIfNeeded(contentBlocks) {
-  // Estimate total size across all text blocks
-  let totalSize = 0;
-  for (const block of contentBlocks) {
-    if (block.type === "text") {
-      totalSize += (block.text || "").length;
-    } else if (block.type === "image") {
-      totalSize += (block.data || "").length;
-    }
-  }
-
-  const softLimit = CONFIG.responseSoftLimitBytes;
-  const hardLimit = CONFIG.responseHardLimitBytes;
-
-  if (totalSize > hardLimit) {
-    const sizeMB = (totalSize / (1024 * 1024)).toFixed(1);
-    const limitMB = (hardLimit / (1024 * 1024)).toFixed(1);
-    console.error(`[MCP] Response truncated: ${sizeMB}MB exceeds hard limit of ${limitMB}MB`);
-    return [
-      {
-        type: "text",
-        text:
-          `⚠️ Response too large (${sizeMB} MB, limit: ${limitMB} MB) — truncated to prevent Write EOF error.\n\n` +
-          `The requested data was too large to return in a single response. ` +
-          `Use pagination parameters to request smaller chunks:\n` +
-          `• unity_scene_hierarchy: use maxNodes (default 5000) and/or lower maxDepth\n` +
-          `• unity_search_by_name/component/tag/layer: use limit parameter\n` +
-          `• unity_asset_list: use maxResults parameter\n` +
-          `• unity_console_log: use count parameter\n\n` +
-          `Tip: For very large scenes, start with unity_scene_stats to get an overview, ` +
-          `then use targeted searches (unity_search_by_name, unity_search_by_tag) instead of loading the full hierarchy.`,
-      },
-    ];
-  }
-
-  if (totalSize > softLimit) {
-    const sizeMB = (totalSize / (1024 * 1024)).toFixed(1);
-    console.error(`[MCP] Large response warning: ${sizeMB}MB exceeds soft limit`);
-    // Still return the data but add a warning
-    contentBlocks.push({
-      type: "text",
-      text: `\n⚠️ Large response (${sizeMB} MB). Consider using pagination parameters for better performance.`,
-    });
-  }
-
-  return contentBlocks;
-}
+import { getRequestContext, getCurrentAgentId, getAgentState, runWithRequestContext } from "./request-context.js";
+import { limitToolResponse, checkResourceResponse } from "./response-limits.js";
+import { shareRequestWork, throwIfRequestCancelled } from "./request-cancellation.js";
 
 // ─── Per-process agent identity ───
 // Each MCP stdio process = one Cowork agent.
 // Generate a unique ID so the Unity plugin can track and schedule fairly.
 const PROCESS_AGENT_ID = `agent-${process.pid}-${randomBytes(3).toString("hex")}`;
 setAgentId(PROCESS_AGENT_ID);
+
+const cloneLabel = instance => `ParrelSync clone${Number.isInteger(instance.cloneIndex) && instance.cloneIndex >= 0 ? ` #${instance.cloneIndex}` : ""}`;
 
 // ─── Combine all tools (two-tier system) ───
 // Split editor tools into core (always exposed) and advanced (on-demand via meta-tool).
@@ -130,21 +83,14 @@ console.error(
 // getting its own context, and Agent A's instance discovery would be skipped for Agent B.
 // We key state by agent ID to prevent cross-agent contamination.
 
-// Context auto-inject: each agent gets project context on their first tool call.
-const _contextInjectedPerAgent = new Map(); // agentId → boolean
-let _contextCache = null; // Shared cache (same project context for all agents)
-
-// Instance auto-discovery: each agent discovers instances on their first tool call.
-const _discoveryDonePerAgent = new Map(); // agentId → boolean
-
 async function getContextSummaryOnce() {
-  if (_contextInjectedPerAgent.get(PROCESS_AGENT_ID)) return null;
-  _contextInjectedPerAgent.set(PROCESS_AGENT_ID, true);
+  const state = getAgentState();
+  const marker = agentState.beginContext(state, [getActiveBridgeUrl(), getSelectedInstance()?.projectPath]);
+  if (!marker) return null;
 
   try {
-    if (!_contextCache) {
-      _contextCache = await getProjectContext();
-    }
+    const _contextCache = await getProjectContext();
+    if (_contextCache?.error) agentState.forgetContext(state, marker);
 
     // Only inject if context is enabled and has content
     if (
@@ -172,6 +118,7 @@ async function getContextSummaryOnce() {
     summary += "=== END PROJECT CONTEXT ===";
     return summary;
   } catch {
+    agentState.forgetContext(state, marker);
     // Context fetch failed (Unity not connected yet, etc.) — silently skip
     return null;
   }
@@ -182,8 +129,28 @@ async function getContextSummaryOnce() {
  * Returns a prompt string if user needs to select an instance, or null.
  */
 async function ensureInstanceDiscovery() {
-  const _instanceDiscoveryDone = _discoveryDonePerAgent.get(PROCESS_AGENT_ID) || false;
+  const state = getAgentState();
+  return shareRequestWork(state.pendingDiscovery, "discovery", async () => {
+    try {
+      return await discoverForCurrentAgent();
+    } catch (error) {
+      state.discoveryDone = false;
+      throw error;
+    }
+  });
+}
+
+async function discoverForCurrentAgent() {
+  const _instanceDiscoveryDone = getAgentState(false)?.discoveryDone || false;
   debugLog(`ensureInstanceDiscovery: _instanceDiscoveryDone=${_instanceDiscoveryDone}, selectedPort=${getSelectedInstance()?.port || 'null'}, selectionRequired=${isInstanceSelectionRequired()}`);
+
+  // A manually selected custom-port editor may be absent from the registry and scan range.
+  if (!_instanceDiscoveryDone && getSelectedInstance()) {
+    getAgentState().discoveryDone = true;
+    await validateSelectedInstance();
+    return null;
+  }
+  if (!getSelectedInstance() && isInstanceSelectionRequired()) return null;
 
   if (_instanceDiscoveryDone) {
     // Discovery already done (likely restored from persistence).
@@ -196,12 +163,12 @@ async function ensureInstanceDiscovery() {
       // Validation cleared the selection (project no longer running).
       // Re-run discovery on next call.
       debugLog(`Persisted selection invalidated — project no longer found. Will re-discover.`);
-      _discoveryDonePerAgent.set(PROCESS_AGENT_ID, false);
+      getAgentState().discoveryDone = false;
     }
     return null;
   }
 
-  _discoveryDonePerAgent.set(PROCESS_AGENT_ID, true);
+  getAgentState().discoveryDone = true;
 
   try {
     const result = await autoSelectInstance();
@@ -209,7 +176,7 @@ async function ensureInstanceDiscovery() {
     if (result.autoSelected) {
       // Single instance found and auto-selected
       const inst = result.instance;
-      const cloneInfo = inst.isClone ? ` (ParrelSync clone #${inst.cloneIndex})` : "";
+      const cloneInfo = inst.isClone ? ` (${cloneLabel(inst)})` : "";
       return (
         `=== UNITY INSTANCE (auto-connected) ===\n` +
         `Project: ${inst.projectName}${cloneInfo}\n` +
@@ -221,6 +188,7 @@ async function ensureInstanceDiscovery() {
     }
 
     if (result.instances.length === 0) {
+      getAgentState().discoveryDone = false;
       return (
         `=== UNITY MCP WARNING ===\n` +
         `No Unity Editor instances were detected.\n` +
@@ -234,7 +202,7 @@ async function ensureInstanceDiscovery() {
     const alreadySelected = getSelectedInstance();
     if (alreadySelected) {
       // User already selected an instance before discovery ran — just confirm
-      const cloneInfo = alreadySelected.isClone ? ` (ParrelSync clone #${alreadySelected.cloneIndex})` : "";
+      const cloneInfo = alreadySelected.isClone ? ` (${cloneLabel(alreadySelected)})` : "";
       return (
         `=== UNITY INSTANCE (user-selected) ===\n` +
         `Project: ${alreadySelected.projectName}${cloneInfo}\n` +
@@ -254,7 +222,7 @@ async function ensureInstanceDiscovery() {
       `Available instances:\n`;
 
     for (const inst of result.instances) {
-      const cloneInfo = inst.isClone ? ` [ParrelSync clone #${inst.cloneIndex}]` : "";
+      const cloneInfo = inst.isClone ? ` [${cloneLabel(inst)}]` : "";
       prompt += `  • Port ${inst.port}: ${inst.projectName}${cloneInfo} (Unity ${inst.unityVersion || "?"})\n`;
       if (inst.projectPath) {
         prompt += `    Path: ${inst.projectPath}\n`;
@@ -267,7 +235,9 @@ async function ensureInstanceDiscovery() {
 
     return prompt;
   } catch (err) {
+    throwIfRequestCancelled();
     console.error(`[MCP] Instance discovery failed: ${err.message}`);
+    if (err.code === "selection_changed" || err.code?.startsWith("agent_state_")) throw err;
     return null;
   }
 }
@@ -354,53 +324,58 @@ server.setRequestHandler(ListToolsRequestSchema, async () => {
   };
 });
 
+function configureRequestRouting(request, requestedPort) {
+  const meta = request.params?._meta || {};
+  const agentId = meta.agentId || meta.agent_id || PROCESS_AGENT_ID;
+  validateAgentId(agentId);
+  setAgentId(agentId);
+
+  const port = requestedPort ?? meta.port ?? null;
+  if (port !== null && (!Number.isInteger(port) || port < 1 || port > 65535)) {
+    throw new Error("port must be an integer between 1 and 65535");
+  }
+  if (port) setPortOverride(port);
+  return port;
+}
+
+async function prepareResourceTarget(port) {
+  getAgentState();
+  if (!port) {
+    await ensureInstanceDiscovery();
+    if (isInstanceSelectionRequired() || !getSelectedInstance()) {
+      throw new Error("Select a Unity instance with unity_select_instance before reading project resources.");
+    }
+  }
+  throwIfRequestCancelled();
+  getRequestContext().bridgeUrl = getActiveBridgeUrl();
+}
+
 // ─── Call Tool Handler ───
-server.setRequestHandler(CallToolRequestSchema, async (request) => {
+server.setRequestHandler(CallToolRequestSchema, async (request, extra) => runWithRequestContext({ agentId: PROCESS_AGENT_ID, signal: extra.signal }, async () => {
   const { name, arguments: args } = request.params;
+  const finish = response => limitToolResponse(response, name);
 
   const tool = ALL_TOOLS.find((t) => t.name === name);
   if (!tool) {
-    return {
+    return finish({
       content: [{ type: "text", text: `Unknown tool: ${name}` }],
       isError: true,
-    };
+    });
   }
 
   try {
-    // Allow per-request agent ID override from MCP metadata, but default to
-    // the process-level ID which is more reliable for multi-agent scheduling.
-    const meta = request.params._meta || {};
-    if (meta.agentId || meta.agent_id) {
-      const overrideId = meta.agentId || meta.agent_id;
-      setAgentId(overrideId);
-      setCurrentAgent(overrideId);
-    } else {
-      // Reset BOTH the bridge agent id and the discovery agent to this process. Without
-      // the setAgentId reset, a prior request's _meta.agentId override leaked into the
-      // X-Agent-Id header of every later request (wrong queue attribution).
-      setAgentId(PROCESS_AGENT_ID);
-      setCurrentAgent(PROCESS_AGENT_ID);
-    }
-
-    // ─── Per-request port override (parallel-agent safe routing) ───
-    // When multiple agents share this MCP process, the per-agent state can get
-    // overwritten between sequential requests. If the caller provides a `port`
-    // parameter (or _meta.port), we bypass the shared state entirely and route
-    // directly to that port for the duration of this request.
-    const portOverride = (args && typeof args.port === "number" && args.port)
-      || (meta && typeof meta.port === "number" && meta.port)
-      || null;
+    const portOverride = configureRequestRouting(request, args?.port);
+    const withoutEditor = name.startsWith("unity_hub_") || name === "unity_list_instances";
+    getAgentState(!withoutEditor);
 
     if (portOverride) {
-      setPortOverride(portOverride);
       debugLog(`Port override active: ${portOverride} for tool ${name}`);
     }
 
-    try {
     // Auto-discover instances on first tool call (unless it's an instance tool itself)
     // Skip auto-discovery when port override is active — the caller already knows where to route.
     let instancePrompt = null;
-    if (!portOverride && name !== "unity_list_instances" && name !== "unity_select_instance") {
+    if (!portOverride && !withoutEditor && !TOOLS_SKIP_PORT_INJECT.has(name)) {
       instancePrompt = await ensureInstanceDiscovery();
     }
 
@@ -408,26 +383,35 @@ server.setRequestHandler(CallToolRequestSchema, async (request) => {
     // Skip this check when port override is active — the caller is explicitly routing.
     const _selReq = !portOverride && isInstanceSelectionRequired();
     const _selInst = getSelectedInstance();
-    debugLog(`Tool=${name}, portOverride=${portOverride || 'null'}, selectionRequired=${_selReq}, selectedPort=${_selInst?.port || 'null'}, instancePrompt=${instancePrompt ? 'SET' : 'null'}, discoveryDone=${_discoveryDonePerAgent.get(PROCESS_AGENT_ID) || false}`);
+    debugLog(`Tool=${name}, portOverride=${portOverride || 'null'}, selectionRequired=${_selReq}, selectedPort=${_selInst?.port || 'null'}, instancePrompt=${instancePrompt ? 'SET' : 'null'}, discoveryDone=${getAgentState(false)?.discoveryDone || false}`);
     if (
       _selReq &&
       !name.startsWith("unity_hub_") &&
       name !== "unity_list_instances" &&
-      name !== "unity_select_instance" &&
-      name !== "unity_get_project_context"
+      name !== "unity_list_advanced_tools" &&
+      name !== "unity_select_instance"
     ) {
       debugLog(`BLOCKING tool ${name} due to selectionRequired=true`);
-      return {
+      return finish({
         content: [
           {
             type: "text",
             text:
               instancePrompt ||
-              "Multiple Unity instances are running. You must call unity_list_instances and then unity_select_instance before using other Unity tools.",
+              "Select a Unity instance with unity_select_instance before using other Unity tools. Use unity_list_instances to see available projects.",
           },
         ],
         isError: true,
-      };
+      });
+    }
+
+    const diagnosticWithoutEditor = name === "unity_list_advanced_tools" || name === "unity_editor_ping";
+    if (!portOverride && !name.startsWith("unity_hub_") && !TOOLS_SKIP_PORT_INJECT.has(name)
+        && !diagnosticWithoutEditor && !getSelectedInstance()) {
+      return finish({
+        content: [{ type: "text", text: "No verified Unity Editor is selected. Start the plugin, then use unity_list_instances and unity_select_instance." }],
+        isError: true,
+      });
     }
 
     // Strip the `port` parameter before passing to the tool handler
@@ -438,7 +422,14 @@ server.setRequestHandler(CallToolRequestSchema, async (request) => {
       delete handlerArgs.port;
     }
 
+    // Freeze this call's target even if another call switches the same agent's selection.
+    if (name !== "unity_select_instance") getRequestContext().bridgeUrl = getActiveBridgeUrl();
+    throwIfRequestCancelled();
     const result = await tool.handler(handlerArgs);
+    throwIfRequestCancelled();
+    const resultHasError = Array.isArray(result)
+      ? result.some(block => block.type === "text" && isErrorText(block.text))
+      : isErrorText(result);
 
     // Build response content blocks
     const contentBlocks = [];
@@ -449,7 +440,9 @@ server.setRequestHandler(CallToolRequestSchema, async (request) => {
     }
 
     // Auto-inject project context on the first successful tool call
-    const contextSummary = await getContextSummaryOnce();
+    const contextSummary = !resultHasError && (portOverride || getSelectedInstance())
+      && !withoutEditor && !TOOLS_SKIP_PORT_INJECT.has(name)
+      ? await getContextSummaryOnce() : null;
     if (contextSummary) {
       contentBlocks.push({ type: "text", text: contextSummary });
     }
@@ -463,20 +456,15 @@ server.setRequestHandler(CallToolRequestSchema, async (request) => {
 
     // Logical failures come back as HTTP 200 payloads ({success:false}, {error}, ...)
     // — surface them through the MCP isError flag so clients don't read them as success.
-    const response = { content: truncateResponseIfNeeded(contentBlocks) };
-    if (!Array.isArray(result) && isErrorText(result)) {
+    const response = { content: contentBlocks };
+    if (resultHasError) {
       response.isError = true;
     }
-    return response;
+    return finish(response);
 
-    } finally {
-      // Always clear port override after request completes, even on error
-      clearPortOverride();
-    }
   } catch (error) {
-    // Safety: ensure port override is always cleared, even on unexpected errors
-    clearPortOverride();
-    return {
+    throwIfRequestCancelled();
+    return finish({
       content: [
         {
           type: "text",
@@ -484,14 +472,16 @@ server.setRequestHandler(CallToolRequestSchema, async (request) => {
         },
       ],
       isError: true,
-    };
+    });
   }
-});
+}));
 
 // ─── MCP Resources: Expose project context files ───
 
-server.setRequestHandler(ListResourcesRequestSchema, async () => {
+server.setRequestHandler(ListResourcesRequestSchema, async (request, extra) => runWithRequestContext({ agentId: PROCESS_AGENT_ID, signal: extra.signal }, async () => {
+  const port = configureRequestRouting(request);
   try {
+    await prepareResourceTarget(port);
     const contextData = await getProjectContext();
 
     if (
@@ -513,9 +503,10 @@ server.setRequestHandler(ListResourcesRequestSchema, async () => {
   } catch {
     return { resources: [] };
   }
-});
+}));
 
-server.setRequestHandler(ReadResourceRequestSchema, async (request) => {
+server.setRequestHandler(ReadResourceRequestSchema, async (request, extra) => runWithRequestContext({ agentId: PROCESS_AGENT_ID, signal: extra.signal }, async () => {
+  const port = configureRequestRouting(request);
   const uri = request.params.uri;
   const match = uri.match(/^unity-context:\/\/(.+)$/);
 
@@ -524,13 +515,14 @@ server.setRequestHandler(ReadResourceRequestSchema, async (request) => {
   }
 
   const category = decodeURIComponent(match[1]);
+  await prepareResourceTarget(port);
   const contextData = await getProjectContext(category);
 
   if (contextData.error) {
     throw new Error(contextData.error);
   }
 
-  return {
+  return checkResourceResponse({
     contents: [
       {
         uri,
@@ -538,14 +530,14 @@ server.setRequestHandler(ReadResourceRequestSchema, async (request) => {
         text: contextData.content || "",
       },
     ],
-  };
-});
+  });
+}));
 
 // ─── Start Server ───
 async function main() {
   const transport = new StdioServerTransport();
   await server.connect(transport);
-  debugLog(`=== SERVER START === v${PACKAGE_VERSION}, agent=${PROCESS_AGENT_ID}, discoveryDone=${_discoveryDonePerAgent.get(PROCESS_AGENT_ID) || false}, selectedPort=${getSelectedInstance()?.port || 'null'}`);
+  debugLog(`=== SERVER START === v${PACKAGE_VERSION}, agent=${PROCESS_AGENT_ID}, discoveryDone=${getAgentState(false)?.discoveryDone || false}, selectedPort=${getSelectedInstance()?.port || 'null'}`);
   console.error(
     `Unity MCP Server running on stdio (agent: ${PROCESS_AGENT_ID})`
   );

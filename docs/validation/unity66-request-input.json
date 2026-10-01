@@ -1,0 +1,1129 @@
+{
+  "recordedAt": "2026-10-01T03:32:04.489Z",
+  "baselinePluginCommit": "b41af31906c12adec502835b8ee453effa204af9",
+  "baselineServerCommit": "727be3b",
+  "baseline": {
+    "unityVersion": "6000.6.2f1",
+    "passed": false,
+    "checks": [
+      {
+        "name": "Existing empty and valid object payloads retain their shapes",
+        "passed": true,
+        "evidence": {
+          "text": "中😀",
+          "int": 4,
+          "long": 2147483648,
+          "real": 1.25,
+          "list": [
+            true,
+            false,
+            null
+          ]
+        }
+      },
+      {
+        "name": "Duplicate names preserve the existing last-value behavior",
+        "passed": true,
+        "evidence": true
+      },
+      {
+        "name": "Reject invalid request {} trailing",
+        "passed": false,
+        "error": "Invalid request was accepted"
+      },
+      {
+        "name": "Reject invalid request {\"v\":1,}",
+        "passed": false,
+        "error": "Invalid request was accepted"
+      },
+      {
+        "name": "Reject invalid request {\"v\":1 \"b\":2}",
+        "passed": false,
+        "error": "Invalid request was accepted"
+      },
+      {
+        "name": "Reject invalid request {\"v\":01}",
+        "passed": false,
+        "error": "Invalid request was accepted"
+      },
+      {
+        "name": "Reject invalid request {\"v\":1e}",
+        "passed": false,
+        "error": "Invalid request was accepted"
+      },
+      {
+        "name": "Reject invalid request {\"v\":\"bad\\q\"}",
+        "passed": false,
+        "error": "Invalid request was accepted"
+      },
+      {
+        "name": "Reject invalid request {\"v\":\"raw\\nline\"}",
+        "passed": false,
+        "error": "Invalid request was accepted"
+      },
+      {
+        "name": "Reject invalid request []",
+        "passed": false,
+        "error": "Invalid request was accepted"
+      },
+      {
+        "name": "Reject invalid request null",
+        "passed": false,
+        "error": "Invalid request was accepted"
+      },
+      {
+        "name": "Reject invalid request {\"v\":[1,2,]}",
+        "passed": false,
+        "error": "Invalid request was accepted"
+      },
+      {
+        "name": "Deep input stops before exhausting the native thread stack",
+        "passed": false,
+        "error": "100-level input was accepted"
+      },
+      {
+        "name": "ASCII exact byte limit",
+        "passed": true,
+        "evidence": {
+          "bytes": 5,
+          "limit": 5,
+          "read": 5
+        }
+      },
+      {
+        "name": "ASCII over byte limit",
+        "passed": true,
+        "evidence": {
+          "bytes": 5,
+          "limit": 4,
+          "read": 5
+        }
+      },
+      {
+        "name": "UTF-8 exact byte limit across split sequences",
+        "passed": true,
+        "evidence": {
+          "bytes": 7,
+          "limit": 7,
+          "read": 7
+        }
+      },
+      {
+        "name": "UTF-8 over byte limit",
+        "passed": false,
+        "error": "Byte boundary was not enforced (7 bytes, limit 6)"
+      },
+      {
+        "name": "UTF-16 BOM counts toward the byte limit",
+        "passed": false,
+        "error": "Byte boundary was not enforced (12 bytes, limit 11)"
+      },
+      {
+        "name": "Byte reader stops at limit plus one without draining the body",
+        "passed": false,
+        "error": "Over-limit reader consumed 8192 bytes"
+      },
+      {
+        "name": "Malformed legacy write is rejected before creating an object",
+        "passed": false,
+        "error": "Malformed write returned 200 or created an object"
+      },
+      {
+        "name": "Malformed queue envelope is rejected before issuing a ticket",
+        "passed": false,
+        "error": "Malformed envelope returned 202"
+      },
+      {
+        "name": "Malformed inner write is rejected before issuing a ticket",
+        "passed": false,
+        "error": "Malformed queued write returned 202"
+      },
+      {
+        "name": "Valid chunked queue request is still accepted",
+        "passed": true,
+        "evidence": {
+          "status": 202
+        }
+      },
+      {
+        "name": "Origin rejection still precedes parsing",
+        "passed": true,
+        "evidence": {
+          "error": "Forbidden: only local, non-browser clients may call the MCP bridge"
+        }
+      }
+    ]
+  },
+  "corrected": {
+    "unityVersion": "6000.6.2f1",
+    "passed": true,
+    "checks": [
+      {
+        "name": "Existing empty and valid object payloads retain their shapes",
+        "passed": true,
+        "evidence": {
+          "text": "中😀",
+          "int": 4,
+          "long": 2147483648,
+          "real": 1.25,
+          "list": [
+            true,
+            false,
+            null
+          ]
+        }
+      },
+      {
+        "name": "Duplicate names preserve the existing last-value behavior",
+        "passed": true,
+        "evidence": true
+      },
+      {
+        "name": "Reject invalid request {} trailing",
+        "passed": true,
+        "evidence": true
+      },
+      {
+        "name": "Reject invalid request {\"v\":1,}",
+        "passed": true,
+        "evidence": true
+      },
+      {
+        "name": "Reject invalid request {\"v\":1 \"b\":2}",
+        "passed": true,
+        "evidence": true
+      },
+      {
+        "name": "Reject invalid request {\"v\":01}",
+        "passed": true,
+        "evidence": true
+      },
+      {
+        "name": "Reject invalid request {\"v\":1e}",
+        "passed": true,
+        "evidence": true
+      },
+      {
+        "name": "Reject invalid request {\"v\":\"bad\\q\"}",
+        "passed": true,
+        "evidence": true
+      },
+      {
+        "name": "Reject invalid request {\"v\":\"raw\\nline\"}",
+        "passed": true,
+        "evidence": true
+      },
+      {
+        "name": "Reject invalid request []",
+        "passed": true,
+        "evidence": true
+      },
+      {
+        "name": "Reject invalid request null",
+        "passed": true,
+        "evidence": true
+      },
+      {
+        "name": "Reject invalid request {\"v\":[1,2,]}",
+        "passed": true,
+        "evidence": true
+      },
+      {
+        "name": "Deep input stops before exhausting the native thread stack",
+        "passed": true,
+        "evidence": true
+      },
+      {
+        "name": "Exact depth boundary accepts 64 containers and rejects 65",
+        "passed": true,
+        "evidence": true
+      },
+      {
+        "name": "Wide arrays stop at the shared value budget",
+        "passed": true,
+        "evidence": {
+          "maximumValuesAndKeys": 1000000
+        }
+      },
+      {
+        "name": "Malformed delimiters, EOF and escapes terminate with input errors",
+        "passed": true,
+        "evidence": {
+          "count": 15
+        }
+      },
+      {
+        "name": "Escaped Unicode, control characters and finite numbers retain values",
+        "passed": true,
+        "evidence": true
+      },
+      {
+        "name": "ASCII exact byte limit",
+        "passed": true,
+        "evidence": {
+          "bytes": 5,
+          "limit": 5,
+          "read": 5
+        }
+      },
+      {
+        "name": "ASCII over byte limit",
+        "passed": true,
+        "evidence": {
+          "bytes": 5,
+          "limit": 4,
+          "read": 5
+        }
+      },
+      {
+        "name": "UTF-8 exact byte limit across split sequences",
+        "passed": true,
+        "evidence": {
+          "bytes": 7,
+          "limit": 7,
+          "read": 7
+        }
+      },
+      {
+        "name": "UTF-8 over byte limit",
+        "passed": true,
+        "evidence": {
+          "bytes": 7,
+          "limit": 6,
+          "read": 7
+        }
+      },
+      {
+        "name": "UTF-16 BOM counts toward the byte limit",
+        "passed": true,
+        "evidence": {
+          "bytes": 12,
+          "limit": 11,
+          "read": 12
+        }
+      },
+      {
+        "name": "UTF-16 BOM exact limit stays compatible",
+        "passed": true,
+        "evidence": {
+          "bytes": 8,
+          "limit": 8,
+          "read": 8
+        }
+      },
+      {
+        "name": "UTF-8 BOM exact limit stays compatible",
+        "passed": true,
+        "evidence": {
+          "bytes": 8,
+          "limit": 8,
+          "read": 8
+        }
+      },
+      {
+        "name": "Byte reader stops at limit plus one without draining the body",
+        "passed": true,
+        "evidence": {
+          "read": 11
+        }
+      },
+      {
+        "name": "Malformed legacy write is rejected before creating an object",
+        "passed": true,
+        "evidence": {
+          "error": "Unexpected content after JSON value. At character 39.",
+          "code": "invalid_json",
+          "requestAccepted": false
+        }
+      },
+      {
+        "name": "Malformed queue envelope is rejected before issuing a ticket",
+        "passed": true,
+        "evidence": {
+          "error": "Unexpected content after JSON value. At character 39.",
+          "code": "invalid_json",
+          "requestAccepted": false
+        }
+      },
+      {
+        "name": "Malformed inner write is rejected before issuing a ticket",
+        "passed": true,
+        "evidence": {
+          "error": "Unexpected content after JSON value. At character 39.",
+          "code": "invalid_json",
+          "requestAccepted": false
+        }
+      },
+      {
+        "name": "Valid chunked queue request is still accepted",
+        "passed": true,
+        "evidence": {
+          "status": 202
+        }
+      },
+      {
+        "name": "Valid legacy request is still accepted",
+        "passed": true,
+        "evidence": {
+          "status": 200
+        }
+      },
+      {
+        "name": "Invalid deferred input is refused before a native operation starts",
+        "passed": true,
+        "evidence": {
+          "error": "Unexpected content after JSON value. At character 27.",
+          "code": "invalid_json",
+          "requestAccepted": false
+        }
+      },
+      {
+        "name": "Queue envelope field types are checked before dispatch",
+        "passed": true,
+        "evidence": true
+      },
+      {
+        "name": "Guarded submission rejects malformed input before consuming its identity",
+        "passed": true,
+        "evidence": {
+          "rejectedStatus": 400,
+          "acceptedStatus": 202,
+          "duplicateStatus": 202
+        }
+      },
+      {
+        "name": "Actual chunked Unicode body cannot exceed the 32 MiB byte limit",
+        "passed": true,
+        "evidence": {
+          "status": 413,
+          "sentEntityBytes": 33554433,
+          "preparedCharacters": 12582920,
+          "preparedBytes": 37748744
+        }
+      },
+      {
+        "name": "Origin rejection still precedes parsing",
+        "passed": true,
+        "evidence": {
+          "error": "Forbidden: only local, non-browser clients may call the MCP bridge"
+        }
+      }
+    ]
+  },
+  "repeat": {
+    "unityVersion": "6000.6.2f1",
+    "passed": true,
+    "checks": [
+      {
+        "name": "Existing empty and valid object payloads retain their shapes",
+        "passed": true,
+        "evidence": {
+          "text": "中😀",
+          "int": 4,
+          "long": 2147483648,
+          "real": 1.25,
+          "list": [
+            true,
+            false,
+            null
+          ]
+        }
+      },
+      {
+        "name": "Duplicate names preserve the existing last-value behavior",
+        "passed": true,
+        "evidence": true
+      },
+      {
+        "name": "Reject invalid request {} trailing",
+        "passed": true,
+        "evidence": true
+      },
+      {
+        "name": "Reject invalid request {\"v\":1,}",
+        "passed": true,
+        "evidence": true
+      },
+      {
+        "name": "Reject invalid request {\"v\":1 \"b\":2}",
+        "passed": true,
+        "evidence": true
+      },
+      {
+        "name": "Reject invalid request {\"v\":01}",
+        "passed": true,
+        "evidence": true
+      },
+      {
+        "name": "Reject invalid request {\"v\":1e}",
+        "passed": true,
+        "evidence": true
+      },
+      {
+        "name": "Reject invalid request {\"v\":\"bad\\q\"}",
+        "passed": true,
+        "evidence": true
+      },
+      {
+        "name": "Reject invalid request {\"v\":\"raw\\nline\"}",
+        "passed": true,
+        "evidence": true
+      },
+      {
+        "name": "Reject invalid request []",
+        "passed": true,
+        "evidence": true
+      },
+      {
+        "name": "Reject invalid request null",
+        "passed": true,
+        "evidence": true
+      },
+      {
+        "name": "Reject invalid request {\"v\":[1,2,]}",
+        "passed": true,
+        "evidence": true
+      },
+      {
+        "name": "Deep input stops before exhausting the native thread stack",
+        "passed": true,
+        "evidence": true
+      },
+      {
+        "name": "Exact depth boundary accepts 64 containers and rejects 65",
+        "passed": true,
+        "evidence": true
+      },
+      {
+        "name": "Wide arrays stop at the shared value budget",
+        "passed": true,
+        "evidence": {
+          "maximumValuesAndKeys": 1000000
+        }
+      },
+      {
+        "name": "Malformed delimiters, EOF and escapes terminate with input errors",
+        "passed": true,
+        "evidence": {
+          "count": 15
+        }
+      },
+      {
+        "name": "Escaped Unicode, control characters and finite numbers retain values",
+        "passed": true,
+        "evidence": true
+      },
+      {
+        "name": "ASCII exact byte limit",
+        "passed": true,
+        "evidence": {
+          "bytes": 5,
+          "limit": 5,
+          "read": 5
+        }
+      },
+      {
+        "name": "ASCII over byte limit",
+        "passed": true,
+        "evidence": {
+          "bytes": 5,
+          "limit": 4,
+          "read": 5
+        }
+      },
+      {
+        "name": "UTF-8 exact byte limit across split sequences",
+        "passed": true,
+        "evidence": {
+          "bytes": 7,
+          "limit": 7,
+          "read": 7
+        }
+      },
+      {
+        "name": "UTF-8 over byte limit",
+        "passed": true,
+        "evidence": {
+          "bytes": 7,
+          "limit": 6,
+          "read": 7
+        }
+      },
+      {
+        "name": "UTF-16 BOM counts toward the byte limit",
+        "passed": true,
+        "evidence": {
+          "bytes": 12,
+          "limit": 11,
+          "read": 12
+        }
+      },
+      {
+        "name": "UTF-16 BOM exact limit stays compatible",
+        "passed": true,
+        "evidence": {
+          "bytes": 8,
+          "limit": 8,
+          "read": 8
+        }
+      },
+      {
+        "name": "UTF-8 BOM exact limit stays compatible",
+        "passed": true,
+        "evidence": {
+          "bytes": 8,
+          "limit": 8,
+          "read": 8
+        }
+      },
+      {
+        "name": "Byte reader stops at limit plus one without draining the body",
+        "passed": true,
+        "evidence": {
+          "read": 11
+        }
+      },
+      {
+        "name": "Malformed legacy write is rejected before creating an object",
+        "passed": true,
+        "evidence": {
+          "error": "Unexpected content after JSON value. At character 39.",
+          "code": "invalid_json",
+          "requestAccepted": false
+        }
+      },
+      {
+        "name": "Malformed queue envelope is rejected before issuing a ticket",
+        "passed": true,
+        "evidence": {
+          "error": "Unexpected content after JSON value. At character 39.",
+          "code": "invalid_json",
+          "requestAccepted": false
+        }
+      },
+      {
+        "name": "Malformed inner write is rejected before issuing a ticket",
+        "passed": true,
+        "evidence": {
+          "error": "Unexpected content after JSON value. At character 39.",
+          "code": "invalid_json",
+          "requestAccepted": false
+        }
+      },
+      {
+        "name": "Valid chunked queue request is still accepted",
+        "passed": true,
+        "evidence": {
+          "status": 202
+        }
+      },
+      {
+        "name": "Valid legacy request is still accepted",
+        "passed": true,
+        "evidence": {
+          "status": 200
+        }
+      },
+      {
+        "name": "Invalid deferred input is refused before a native operation starts",
+        "passed": true,
+        "evidence": {
+          "error": "Unexpected content after JSON value. At character 27.",
+          "code": "invalid_json",
+          "requestAccepted": false
+        }
+      },
+      {
+        "name": "Queue envelope field types are checked before dispatch",
+        "passed": true,
+        "evidence": true
+      },
+      {
+        "name": "Guarded submission rejects malformed input before consuming its identity",
+        "passed": true,
+        "evidence": {
+          "rejectedStatus": 400,
+          "acceptedStatus": 202,
+          "duplicateStatus": 202
+        }
+      },
+      {
+        "name": "Actual chunked Unicode body cannot exceed the 32 MiB byte limit",
+        "passed": true,
+        "evidence": {
+          "status": 413,
+          "characters": 12582920,
+          "bytes": 37748744
+        }
+      },
+      {
+        "name": "Origin rejection still precedes parsing",
+        "passed": true,
+        "evidence": {
+          "error": "Forbidden: only local, non-browser clients may call the MCP bridge"
+        }
+      }
+    ]
+  },
+  "regressions": {
+    "queue": {
+      "unityVersion": "6000.6.2f1",
+      "passed": true,
+      "checks": [
+        "Object identity round-trip without JSON number conversion",
+        "Agent FIFO, round-robin writes, read batching and ticket results",
+        "Deferred completion is atomic, single-shot and stable after timeout",
+        "Concurrent submission retries share one ticket; conflicts, reload sessions and expired results never re-execute",
+        "Actual HTTP dispatcher validates scoped submission/polling, browser rejection, one-object retries and legacy compatibility",
+        "Legacy synchronous callers are signaled without lost wakeups",
+        "Legacy timeout preserves running outcomes and skips expired batched and queued work",
+        "Dashboard shows running-only work and separates failures from finished requests",
+        "Submission retry cache refuses new work at its bounded capacity",
+        "1000 status polls at queue depths 100 and 10000"
+      ],
+      "polling100Ms": 3.056,
+      "polling10000Ms": 4.5343,
+      "error": ""
+    },
+    "serialization": {
+      "unityVersion": "6000.6.2f1",
+      "passed": true,
+      "checks": [
+        {
+          "name": "Finite primitive and getter-failure shapes remain compatible",
+          "passed": true,
+          "evidence": {
+            "json": "{\"Before\":1,\"Broken\":null,\"After\":2}"
+          }
+        },
+        {
+          "name": "Non-finite values produce valid JSON strings",
+          "passed": true,
+          "evidence": {
+            "json": "[\"NaN\",\"Infinity\",\"-Infinity\"]"
+          }
+        },
+        {
+          "name": "Integers ignore the editor culture",
+          "passed": true,
+          "evidence": {
+            "json": "[-1,-2,-3.25]"
+          }
+        },
+        {
+          "name": "Nested enumeration failure cannot leave partial JSON",
+          "passed": true,
+          "evidence": {
+            "errorType": "SerializationException",
+            "message": "Controlled enumeration failure"
+          }
+        },
+        {
+          "name": "Reference cycles stop before recursive enumeration",
+          "passed": true,
+          "evidence": {
+            "enumerations": 1,
+            "message": "Serialization encountered a reference cycle"
+          }
+        },
+        {
+          "name": "Shared references are serialized independently",
+          "passed": true,
+          "evidence": {
+            "json": "[{\"value\":7},{\"value\":7}]"
+          }
+        },
+        {
+          "name": "Deep trees are rejected before stack exhaustion",
+          "passed": true,
+          "evidence": {
+            "message": "Serialization exceeded 64 container levels"
+          }
+        },
+        {
+          "name": "Bounded serialization counts escaped UTF-8 before allocation",
+          "passed": true,
+          "evidence": {
+            "bytes": 26,
+            "json": "\"Quote \\\" 中 😀 \\ud800\"",
+            "message": "Serialized response exceeded its UTF-8 byte limit"
+          }
+        },
+        {
+          "name": "Exhausted output budget does not evaluate the next property getter",
+          "passed": true,
+          "evidence": {
+            "laterGetterReads": 0
+          }
+        },
+        {
+          "name": "Execution result expansion has a global work budget",
+          "passed": true,
+          "evidence": {
+            "values": 100000,
+            "enumerations": 103,
+            "message": null
+          }
+        },
+        {
+          "name": "Reflected execution results cannot swallow global budget exhaustion",
+          "passed": true,
+          "evidence": {
+            "values": 99999,
+            "code": "execution_result_limit",
+            "executionCompleted": true
+          }
+        },
+        {
+          "name": "Execution enumeration failures report that code already ran",
+          "passed": true,
+          "evidence": {
+            "error": "Controlled enumeration failure",
+            "stackTrace": "  at UnityMcpSerializationValidation+EnumerationFailure+<GetEnumerator>d__0.MoveNext () [0x0003c] in C:\\Users\\Francois\\orca\\workspaces\\unity-mcp-server\\validation\\Packages66\\Assets\\Editor\\SerializationValidation.cs:39 \r\n  at UnityMCP.Editor.MCPEditorCommands.SerializeValue (System.Object value, System.Int32 depth, UnityMCP.Editor.MCPEditorCommands+ResultSerializationBudget budget) [0x0033d] in C:\\Users\\Francois\\orca\\workspaces\\unity-mcp-server\\unity-mcp-plugin\\Editor\\MCPEditorCommands.cs:560 \r\n  at UnityMCP.Editor.MCPEditorCommands.SerializeResult (System.Object result) [0x00020] in C:\\Users\\Francois\\orca\\workspaces\\unity-mcp-server\\unity-mcp-plugin\\Editor\\MCPEditorCommands.cs:462 ",
+            "code": "execution_result_serialization_failed",
+            "executionCompleted": true,
+            "serializedValues": 2,
+            "maxSerializedValues": 100000,
+            "hint": "The snippet already executed. Inspect its effects before retrying; return a smaller result."
+          }
+        },
+        {
+          "name": "Legacy list counts and per-container truncation remain compatible",
+          "passed": true,
+          "evidence": {
+            "count": 1001,
+            "last": "... (truncated at 1000 items)"
+          }
+        },
+        {
+          "name": "Wide generic serialization stops at its total value bound",
+          "passed": true,
+          "evidence": {
+            "message": "Serialization exceeded 1000000 values"
+          }
+        },
+        {
+          "name": "HTTP writer stops oversized traversal and returns a bounded 413",
+          "passed": true,
+          "evidence": {
+            "status": 413,
+            "valuesVisited": 4,
+            "result": {
+              "error": "response_too_large",
+              "reason": "byte_limit",
+              "outcomeUnknown": true,
+              "message": "Response exceeded size limit. Use pagination parameters (maxNodes, limit, maxResults) to request smaller chunks.",
+              "hint": "The original operation may already have completed. Inspect its effects or original ticket before repeating a write.",
+              "size": 16777217,
+              "sizeIsLowerBound": true,
+              "limit": 16777216
+            }
+          }
+        },
+        {
+          "name": "HTTP writer returns explicit cycle failure instead of invalid JSON",
+          "passed": true,
+          "evidence": {
+            "status": 500,
+            "result": {
+              "error": "response_serialization_failed",
+              "reason": "reference_cycle",
+              "outcomeUnknown": true,
+              "message": "Serialization encountered a reference cycle",
+              "hint": "The original operation may already have completed. Inspect its effects or original ticket before repeating a write."
+            }
+          }
+        }
+      ]
+    }
+  },
+  "minimumApi": {
+    "unityVersion": "2021.3.18f1",
+    "passed": true,
+    "referenceCount": 211,
+    "log": "C:\\Users\\Francois\\orca\\workspaces\\unity-mcp-server\\validation\\Unity2021\\api-check-input\\compiler.log",
+    "packageAssemblies": [
+      {
+        "sha256": "AF83F70ECAC09EE676571E37C62595B7FF26148B636CE498F9151A2F7A9697A3",
+        "file": "C:\\Users\\Francois\\orca\\workspaces\\unity-mcp-server\\validation\\Editors\\2021.3.18f1\\Editor\\Data\\Resources\\PackageManager\\ProjectTemplates\\libcache\\com.unity.template.universal-2d-1.1.4\\ScriptAssemblies\\UnityEngine.UI.dll"
+      },
+      {
+        "sha256": "AAAF5BC1E371F6CFA67138DCB6E77634A8075D30E0C1DF27670A5B0028CC5523",
+        "file": "C:\\Users\\Francois\\orca\\workspaces\\unity-mcp-server\\validation\\Editors\\2021.3.18f1\\Editor\\Data\\Resources\\PackageManager\\ProjectTemplates\\libcache\\com.unity.template.universal-2d-1.1.4\\ScriptAssemblies\\UnityEngine.TestRunner.dll"
+      },
+      {
+        "sha256": "6995901F60508B79F4B648FE2E3B64D8D1BD545B3CB3817134F079842FA82832",
+        "file": "C:\\Users\\Francois\\orca\\workspaces\\unity-mcp-server\\validation\\Editors\\2021.3.18f1\\Editor\\Data\\Resources\\PackageManager\\ProjectTemplates\\libcache\\com.unity.template.universal-2d-1.1.4\\ScriptAssemblies\\UnityEditor.TestRunner.dll"
+      }
+    ],
+    "excludedIntegrations": [
+      "UMA",
+      "ProBuilder"
+    ],
+    "sourceCount": 73,
+    "check": "C# compilation against installed Unity assemblies; no editor execution or package import",
+    "exitCode": 0
+  },
+  "server": {
+    "baseline": {
+      "checks": 10,
+      "passed": 7,
+      "failed": 3,
+      "failures": [
+        "UTF-8 preflight",
+        "Exact envelope boundary",
+        "Endpoint isolation"
+      ]
+    },
+    "corrected": {
+      "checks": 10,
+      "passed": 10,
+      "nodeVersions": [
+        "18.20.8",
+        "22.18.0"
+      ]
+    },
+    "ordinaryTests": {
+      "count": 195,
+      "nodeVersion": "22.18.0",
+      "passed": true
+    }
+  },
+  "live": [
+    {
+      "server": "current",
+      "serverCommit": "e09f922ef7e44eaf03759bf24b6088fca368133c",
+      "nodeVersion": "v18.20.8",
+      "passed": true,
+      "checks": [
+        {
+          "name": "Valid nested Unicode input keeps its value",
+          "passed": true
+        },
+        {
+          "name": "Validated arguments reach deferred Package Manager operations",
+          "passed": true
+        },
+        {
+          "name": "Deep input is rejected before code executes",
+          "passed": true,
+          "error": {
+            "success": false,
+            "queueTransportError": true,
+            "error": "HTTP 413: Request JSON exceeded 64 container levels."
+          }
+        },
+        {
+          "name": "Oversized input is rejected before code executes",
+          "passed": true,
+          "error": {
+            "success": false,
+            "queueTransportError": true,
+            "requestAccepted": false,
+            "code": "request_too_large",
+            "requestBytes": 37749180,
+            "limitBytes": 33554432,
+            "error": "Request body too large (37749180 bytes; plugin limit 33554432). No command was submitted."
+          },
+          "rejectionResponseReceived": true
+        },
+        {
+          "name": "A valid follow-up write executes once",
+          "passed": true
+        }
+      ],
+      "unityVersion": "6000.6.2f1",
+      "fixtureRemoved": true
+    },
+    {
+      "server": "current",
+      "serverCommit": "e09f922ef7e44eaf03759bf24b6088fca368133c",
+      "nodeVersion": "v22.18.0",
+      "passed": true,
+      "checks": [
+        {
+          "name": "Valid nested Unicode input keeps its value",
+          "passed": true
+        },
+        {
+          "name": "Validated arguments reach deferred Package Manager operations",
+          "passed": true
+        },
+        {
+          "name": "Deep input is rejected before code executes",
+          "passed": true,
+          "error": {
+            "success": false,
+            "queueTransportError": true,
+            "error": "HTTP 413: Request JSON exceeded 64 container levels."
+          }
+        },
+        {
+          "name": "Oversized input is rejected before code executes",
+          "passed": true,
+          "error": {
+            "success": false,
+            "queueTransportError": true,
+            "requestAccepted": false,
+            "code": "request_too_large",
+            "requestBytes": 37749180,
+            "limitBytes": 33554432,
+            "error": "Request body too large (37749180 bytes; plugin limit 33554432). No command was submitted."
+          },
+          "rejectionResponseReceived": true
+        },
+        {
+          "name": "A valid follow-up write executes once",
+          "passed": true
+        }
+      ],
+      "unityVersion": "6000.6.2f1",
+      "fixtureRemoved": true
+    },
+    {
+      "server": "released",
+      "serverCommit": "826af5ce61db7e2d2d675fe90d24c941a83f3924",
+      "nodeVersion": "v18.20.8",
+      "passed": true,
+      "checks": [
+        {
+          "name": "Valid nested Unicode input keeps its value",
+          "passed": true
+        },
+        {
+          "name": "Validated arguments reach deferred Package Manager operations",
+          "passed": true
+        },
+        {
+          "name": "Deep input is rejected before code executes",
+          "passed": true,
+          "error": {
+            "success": false,
+            "error": "HTTP 413: {\"error\":\"Request JSON exceeded 64 container levels.\",\"code\":\"json_depth_limit\",\"requestAccepted\":false}"
+          }
+        },
+        {
+          "name": "Oversized input is rejected before code executes",
+          "passed": true,
+          "error": {
+            "success": false,
+            "error": "Connection failed after 4 retries: fetch failed. Unity Editor may be reloading or not running."
+          },
+          "rejectionResponseReceived": false
+        },
+        {
+          "name": "A valid follow-up write executes once",
+          "passed": true
+        }
+      ],
+      "unityVersion": "6000.6.2f1",
+      "fixtureRemoved": true
+    },
+    {
+      "server": "released",
+      "serverCommit": "826af5ce61db7e2d2d675fe90d24c941a83f3924",
+      "nodeVersion": "v22.18.0",
+      "passed": true,
+      "checks": [
+        {
+          "name": "Valid nested Unicode input keeps its value",
+          "passed": true
+        },
+        {
+          "name": "Validated arguments reach deferred Package Manager operations",
+          "passed": true
+        },
+        {
+          "name": "Deep input is rejected before code executes",
+          "passed": true,
+          "error": {
+            "success": false,
+            "error": "HTTP 413: {\"error\":\"Request JSON exceeded 64 container levels.\",\"code\":\"json_depth_limit\",\"requestAccepted\":false}"
+          }
+        },
+        {
+          "name": "Oversized input is rejected before code executes",
+          "passed": true,
+          "error": {
+            "success": false,
+            "error": "HTTP 413: {\"error\":\"Request body too large (37748953 bytes; limit 33554432).\",\"code\":\"request_too_large\",\"requestAccepted\":false}"
+          },
+          "rejectionResponseReceived": true
+        },
+        {
+          "name": "A valid follow-up write executes once",
+          "passed": true
+        }
+      ],
+      "unityVersion": "6000.6.2f1",
+      "fixtureRemoved": true
+    }
+  ],
+  "limitations": [
+    "Unity behavior is executed on Windows in 6000.6.2f1. The Unity 2021 result is compiler-only; actual older-editor execution remains deferred by maintainer instruction.",
+    "Bounds apply per body and parsed document, not total process memory, retained queue arguments, concurrent uploads or slow senders. Original MCP/JSON string allocations and native buffering remain separate.",
+    "Asset and integration file readers retain the existing MiniJson.Deserialize implementation; only HTTP request argument parsing changes.",
+    "Initial guarded-submission fixture used wall-clock time and was corrected to the existing monotonic session clock; this was not a product defect.",
+    "The chunked fixture now receives the rejection while uploading. Waiting until every write finishes can lose the response during early socket closure. It sends 33554433 entity bytes from a larger prepared Unicode buffer.",
+    "Released-server oversized uploads can surface a connection failure instead of HTTP 413 and may use their existing retry policy. The current server preflight avoids uploading the rejected envelope; all four runs verify zero snippet executions for rejected input.",
+    "The initial 100-level baseline safely reproduced missing depth validation; no deliberate stack-overflow or editor-crash payload was executed."
+  ],
+  "references": [
+    "https://www.rfc-editor.org/rfc/rfc8259",
+    "https://learn.microsoft.com/en-us/dotnet/api/system.net.httplistenerrequest.contentlength64",
+    "https://raw.githubusercontent.com/mono/mono/main/mcs/class/System/System.Net/HttpConnection.cs"
+  ],
+  "pluginCommit": "579168527df12c4ebe02797f3f5f955953af8a1c",
+  "cleanup": {
+    "temporaryEditorClosed": true,
+    "originalPersistence": false,
+    "temporaryCountersRemoved": true,
+    "persistentEditors": [
+      {
+        "project": "Unity66",
+        "compilationErrors": 0,
+        "isCompiling": false,
+        "isPlaying": false,
+        "sceneDirty": false,
+        "maxRequestBodyBytes": 33554432
+      },
+      {
+        "project": "Queue66",
+        "compilationErrors": 0,
+        "isCompiling": false,
+        "isPlaying": false,
+        "sceneDirty": false,
+        "maxRequestBodyBytes": 33554432
+      }
+    ]
+  },
+  "serverCommit": "e09f922ef7e44eaf03759bf24b6088fca368133c",
+  "ci": {
+    "server": {
+      "runId": 36811120738,
+      "url": "https://github.com/AnkleBreaker-Studio/unity-mcp-server/actions/runs/36811120738",
+      "commit": "e09f922ef7e44eaf03759bf24b6088fca368133c",
+      "result": "success",
+      "jobs": 8,
+      "nodeVersions": [
+        18,
+        20,
+        22,
+        24
+      ],
+      "operatingSystems": [
+        "Windows",
+        "Linux"
+      ],
+      "ordinaryTests": 195
+    },
+    "plugin": {
+      "runId": 36811080527,
+      "url": "https://github.com/AnkleBreaker-Studio/unity-mcp-plugin/actions/runs/36811080527",
+      "commit": "579168527df12c4ebe02797f3f5f955953af8a1c",
+      "result": "success",
+      "check": "338-route registry drift check"
+    },
+    "unityExecution": false
+  }
+}

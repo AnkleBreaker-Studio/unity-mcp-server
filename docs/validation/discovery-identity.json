@@ -1,0 +1,279 @@
+{
+  "checkedOn": "2026-10-01",
+  "baselineServer": "8b7c05982906354f7ae149d3bac132440c2ae720",
+  "pluginRuntimeChanged": false,
+  "communityReport": "https://github.com/AnkleBreaker-Studio/unity-mcp-server/pull/39",
+  "reproduction": {
+    "method": "Actual MCP stdio against controlled isolated responders; final suite repeated against an unmodified baseline checkout",
+    "baselineTests": 26,
+    "baselineFailures": 22,
+    "baselinePassingControls": 4,
+    "correctedTests": 26,
+    "checks": [
+      {
+        "name": "unrecognized ping (empty JSON object) is neither listed nor used for implicit commands",
+        "baselinePassed": false
+      },
+      {
+        "name": "unrecognized ping (generic service version) is neither listed nor used for implicit commands",
+        "baselinePassed": false
+      },
+      {
+        "name": "unrecognized ping (malformed identity fields) is neither listed nor used for implicit commands",
+        "baselinePassed": false
+      },
+      {
+        "name": "unrecognized ping (array body) is neither listed nor used for implicit commands",
+        "baselinePassed": false
+      },
+      {
+        "name": "unrecognized ping (string body) is neither listed nor used for implicit commands",
+        "baselinePassed": false
+      },
+      {
+        "name": "unrecognized ping (HTML success page) is neither listed nor used for implicit commands",
+        "baselinePassed": false
+      },
+      {
+        "name": "unrecognized ping (failed identity payload) is neither listed nor used for implicit commands",
+        "baselinePassed": false
+      },
+      {
+        "name": "registry metadata cannot legitimize an unrelated responder (fresh: false)",
+        "baselinePassed": false
+      },
+      {
+        "name": "registry metadata cannot legitimize an unrelated responder (fresh: true)",
+        "baselinePassed": false
+      },
+      {
+        "name": "the configured default port cannot bypass identity validation outside the scan range",
+        "baselinePassed": false
+      },
+      {
+        "name": "offline schemas remain available without fetching a foreign service's route catalog or context",
+        "baselinePassed": false
+      },
+      {
+        "name": "explicit ping reports a foreign endpoint as disconnected",
+        "baselinePassed": false
+      },
+      {
+        "name": "a failed editor result leaves automatic context for the next successful call",
+        "baselinePassed": false
+      },
+      {
+        "name": "an editor that appears after a failed discovery can be found by the next call",
+        "baselinePassed": false
+      },
+      {
+        "name": "foreign service on a selected port overrides a fresh registry entry (warm: false)",
+        "baselinePassed": false
+      },
+      {
+        "name": "foreign service on a selected port overrides a fresh registry entry (warm: true)",
+        "baselinePassed": false
+      },
+      {
+        "name": "selection rejects replacement during verification: foreign",
+        "baselinePassed": false
+      },
+      {
+        "name": "selection rejects replacement during verification: Other",
+        "baselinePassed": false
+      },
+      {
+        "name": "registry fallback checks the new port's identity (foreign: false)",
+        "baselinePassed": true
+      },
+      {
+        "name": "registry fallback checks the new port's identity (foreign: true)",
+        "baselinePassed": false
+      },
+      {
+        "name": "an unreachable selected editor keeps fresh registry recovery behavior",
+        "baselinePassed": true
+      },
+      {
+        "name": "recognized identity retains compatibility: original plugin contract without capability fields",
+        "baselinePassed": true
+      },
+      {
+        "name": "recognized identity retains compatibility: pre-path bridge",
+        "baselinePassed": false
+      },
+      {
+        "name": "recognized identity retains compatibility: existing project/version aliases",
+        "baselinePassed": false
+      },
+      {
+        "name": "recognized identity retains compatibility: empty product name with a project path",
+        "baselinePassed": true
+      },
+      {
+        "name": "a live pathless identity does not inherit another project's stale path",
+        "baselinePassed": false
+      }
+    ]
+  },
+  "localTests": {
+    "node18": {
+      "tests": 163,
+      "passed": 163,
+      "failed": 0
+    },
+    "node22": {
+      "tests": 163,
+      "passed": 163,
+      "failed": 0
+    }
+  },
+  "liveUnity": {
+    "platform": "Windows",
+    "node18": {
+      "nodeVersion": "v18.20.8",
+      "passed": true,
+      "projects": [
+        {
+          "projectPath": "Queue66 (marked validation project)",
+          "port": 7891,
+          "unityVersion": "6000.6.2f1",
+          "pluginVersion": "2.39.7",
+          "protocolVersion": 3,
+          "pingRecognized": true,
+          "repeatedImplicitReads": 2,
+          "compilationErrors": 0,
+          "sceneDirty": false
+        },
+        {
+          "projectPath": "LegacyCompat66 (marked validation project)",
+          "port": 7894,
+          "unityVersion": "6000.6.2f1",
+          "pluginVersion": "2.39.7",
+          "protocolVersion": 1,
+          "pingRecognized": true,
+          "repeatedImplicitReads": 2,
+          "compilationErrors": 0,
+          "sceneDirty": false
+        }
+      ]
+    },
+    "node22": {
+      "nodeVersion": "v22.18.0",
+      "passed": true,
+      "projects": [
+        {
+          "projectPath": "Queue66 (marked validation project)",
+          "port": 7891,
+          "unityVersion": "6000.6.2f1",
+          "pluginVersion": "2.39.7",
+          "protocolVersion": 3,
+          "pingRecognized": true,
+          "repeatedImplicitReads": 2,
+          "compilationErrors": 0,
+          "sceneDirty": false
+        },
+        {
+          "projectPath": "LegacyCompat66 (marked validation project)",
+          "port": 7894,
+          "unityVersion": "6000.6.2f1",
+          "pluginVersion": "2.39.7",
+          "protocolVersion": 1,
+          "pingRecognized": true,
+          "repeatedImplicitReads": 2,
+          "compilationErrors": 0,
+          "sceneDirty": false
+        }
+      ]
+    },
+    "currentPluginRuntime": "631b5d264b11f5e9af7b3cc1c15a0f6c4ae4956b",
+    "releasedPlugin": "0b8e76f7c50ed8c0bd5f359d893653211d0f2abe",
+    "sceneAssetsAndSettingsChanged": false,
+    "temporaryReleasedPluginEditorClosed": true
+  },
+  "historicalSourceInspection": {
+    "repository": "AnkleBreaker-Studio/unity-mcp-plugin",
+    "refs": [
+      "d8bf0bb",
+      "v2.14.5",
+      "v2.15.0",
+      "v2.21.1",
+      "v2.39.7"
+    ],
+    "fieldsPresent": [
+      "status",
+      "unityVersion",
+      "projectName",
+      "projectPath"
+    ],
+    "requiresCapabilityFields": false,
+    "sourceReviewNotHistoricalRuntimeCoverage": true
+  },
+  "behavior": {
+    "successfulHttpWithoutBridgeIdentityRejected": true,
+    "registryCannotOverrideUnrecognizedIdentity": true,
+    "defaultPortValidated": true,
+    "implicitCommandsRequireVerifiedEditor": true,
+    "offlineCachedSchemasPreserved": true,
+    "failedResultsDoNotFetchAutomaticContext": true,
+    "legacyAliasesRetained": true,
+    "pathlessResponsesDoNotInheritRegistryPaths": true,
+    "unavailableSelectedEditorsRetainFreshRegistryFallback": true,
+    "perAttemptProbeReuse": true,
+    "explicitPortContractUnchanged": true
+  },
+  "limitations": [
+    "Identity-shape validation is not authentication; a service can deliberately imitate a valid bridge response.",
+    "Explicit port routing bypasses selection discovery for that call. Ports may change owners after validation.",
+    "Pathless legacy identity matching relies on project names and cannot distinguish identical names.",
+    "Fresh-registry recovery for unavailable or non-successful HTTP responses preserves existing behavior but cannot prove current endpoint ownership.",
+    "Live checks use Windows and Unity 6000.6.2f1; older Unity runtime remains deferred."
+  ],
+  "ci": {
+    "runId": 36789841044,
+    "url": "https://github.com/AnkleBreaker-Studio/unity-mcp-server/actions/runs/36789841044",
+    "commit": "04a3686280b76ab3c4c22a8b082b2fd619016c35",
+    "jobs": [
+      {
+        "name": "node 24 on ubuntu-latest",
+        "status": "completed",
+        "conclusion": "success"
+      },
+      {
+        "name": "node 22 on ubuntu-latest",
+        "status": "completed",
+        "conclusion": "success"
+      },
+      {
+        "name": "node 20 on ubuntu-latest",
+        "status": "completed",
+        "conclusion": "success"
+      },
+      {
+        "name": "node 24 on windows-latest",
+        "status": "completed",
+        "conclusion": "success"
+      },
+      {
+        "name": "node 22 on windows-latest",
+        "status": "completed",
+        "conclusion": "success"
+      },
+      {
+        "name": "node 18 on ubuntu-latest",
+        "status": "completed",
+        "conclusion": "success"
+      },
+      {
+        "name": "node 20 on windows-latest",
+        "status": "completed",
+        "conclusion": "success"
+      },
+      {
+        "name": "node 18 on windows-latest",
+        "status": "completed",
+        "conclusion": "success"
+      }
+    ]
+  }
+}

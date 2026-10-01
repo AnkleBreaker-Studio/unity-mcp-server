@@ -1,0 +1,1112 @@
+{
+  "recordedAt": "2026-10-01T02:57:26.315Z",
+  "baselinePluginCommit": "726b63e",
+  "baselineServerCommit": "d793c90",
+  "baseline": {
+    "unityVersion": "6000.6.2f1",
+    "passed": false,
+    "checks": [
+      {
+        "name": "Native stack probe",
+        "passed": true,
+        "evidence": {
+          "name": "After native redo",
+          "currentGroup": 5,
+          "undos": [
+            "gameobject/create",
+            "Create ProbeA",
+            "Create ProbeA",
+            "gameobject/create",
+            "Create ProbeB",
+            "Create ProbeB",
+            "gameobject/create",
+            "Create ProbeC",
+            "Create ProbeC"
+          ],
+          "redos": [],
+          "groups": [
+            1,
+            1,
+            1,
+            2,
+            2,
+            2,
+            3,
+            3,
+            3
+          ],
+          "recorded": [
+            {
+              "ActionName": "gameobject/create",
+              "AgentId": "a",
+              "UndoGroup": 1
+            },
+            {
+              "ActionName": "gameobject/create",
+              "AgentId": "b",
+              "UndoGroup": 2
+            },
+            {
+              "ActionName": "gameobject/create",
+              "AgentId": "c",
+              "UndoGroup": 3
+            }
+          ]
+        }
+      },
+      {
+        "name": "Latest MCP creation can be reverted",
+        "passed": true,
+        "evidence": {
+          "success": true,
+          "message": "Reverted 'gameobject/create'.",
+          "revertedCount": 1,
+          "reverted": [
+            {
+              "id": 4,
+              "agentId": "a",
+              "action": "gameobject/create",
+              "category": "gameobject",
+              "target": "__McpUndoValidation_Latest",
+              "status": "Completed",
+              "commandFailed": false,
+              "errorMessage": "",
+              "undoable": false,
+              "timestamp": "2026-10-01T02:21:00.6678703Z"
+            }
+          ]
+        }
+      },
+      {
+        "name": "Transform edits are registered before the queue reports completion",
+        "passed": true,
+        "evidence": {
+          "success": true,
+          "message": "Reverted 'gameobject/set-transform'.",
+          "revertedCount": 1,
+          "reverted": [
+            {
+              "id": 5,
+              "agentId": "a",
+              "action": "gameobject/set-transform",
+              "category": "gameobject",
+              "target": "__McpUndoValidation_Transform",
+              "status": "Completed",
+              "commandFailed": false,
+              "errorMessage": "",
+              "undoable": false,
+              "timestamp": "2026-10-01T02:21:00.6754093Z"
+            }
+          ]
+        }
+      },
+      {
+        "name": "Native undo removes the undone record from undo eligibility",
+        "passed": false,
+        "error": "Native undo left stale MCP undo eligibility"
+      },
+      {
+        "name": "Native redo restores MCP undo eligibility",
+        "passed": false,
+        "error": "Native undo left stale eligibility before redo"
+      },
+      {
+        "name": "Clearing Unity Undo clears MCP undo eligibility",
+        "passed": false,
+        "error": "Cleared stack still advertises undoable actions"
+      },
+      {
+        "name": "A newer native edit requires cascade opt-in",
+        "passed": false,
+        "error": "UndoLast silently reverted a newer native edit"
+      },
+      {
+        "name": "A newer agent requires cascade opt-in and force reverts both",
+        "passed": true,
+        "evidence": {
+          "success": true,
+          "message": "Reverted 'gameobject/create' and 1 newer action(s).",
+          "revertedCount": 2,
+          "reverted": [
+            {
+              "id": 11,
+              "agentId": "a",
+              "action": "gameobject/create",
+              "category": "gameobject",
+              "target": "__McpUndoValidation_AgentA",
+              "status": "Completed",
+              "commandFailed": false,
+              "errorMessage": "",
+              "undoable": false,
+              "timestamp": "2026-10-01T02:21:00.6830064Z"
+            },
+            {
+              "id": 12,
+              "agentId": "b",
+              "action": "gameobject/create",
+              "category": "gameobject",
+              "target": "__McpUndoValidation_AgentB",
+              "status": "Completed",
+              "commandFailed": false,
+              "errorMessage": "",
+              "undoable": false,
+              "timestamp": "2026-10-01T02:21:00.6841114Z"
+            }
+          ]
+        }
+      }
+    ],
+    "snapshots": [
+      {
+        "name": "Three creations",
+        "currentGroup": 3,
+        "undos": [
+          "gameobject/create",
+          "Create ProbeA",
+          "Create ProbeA",
+          "gameobject/create",
+          "Create ProbeB",
+          "Create ProbeB",
+          "gameobject/create",
+          "Create ProbeC",
+          "Create ProbeC"
+        ],
+        "redos": [],
+        "groups": [
+          1,
+          1,
+          1,
+          2,
+          2,
+          2,
+          3,
+          3,
+          3
+        ],
+        "recorded": [
+          {
+            "ActionName": "gameobject/create",
+            "AgentId": "a",
+            "UndoGroup": 1
+          },
+          {
+            "ActionName": "gameobject/create",
+            "AgentId": "b",
+            "UndoGroup": 2
+          },
+          {
+            "ActionName": "gameobject/create",
+            "AgentId": "c",
+            "UndoGroup": 3
+          }
+        ]
+      },
+      {
+        "name": "After one native undo",
+        "currentGroup": 4,
+        "undos": [
+          "gameobject/create",
+          "Create ProbeA",
+          "Create ProbeA",
+          "gameobject/create",
+          "Create ProbeB",
+          "Create ProbeB"
+        ],
+        "redos": [
+          "gameobject/create",
+          "Create ProbeC",
+          "Create ProbeC"
+        ],
+        "groups": [
+          1,
+          1,
+          1,
+          2,
+          2,
+          2
+        ],
+        "recorded": [
+          {
+            "ActionName": "gameobject/create",
+            "AgentId": "a",
+            "UndoGroup": 1
+          },
+          {
+            "ActionName": "gameobject/create",
+            "AgentId": "b",
+            "UndoGroup": 2
+          },
+          {
+            "ActionName": "gameobject/create",
+            "AgentId": "c",
+            "UndoGroup": 3
+          }
+        ]
+      },
+      {
+        "name": "After native redo",
+        "currentGroup": 5,
+        "undos": [
+          "gameobject/create",
+          "Create ProbeA",
+          "Create ProbeA",
+          "gameobject/create",
+          "Create ProbeB",
+          "Create ProbeB",
+          "gameobject/create",
+          "Create ProbeC",
+          "Create ProbeC"
+        ],
+        "redos": [],
+        "groups": [
+          1,
+          1,
+          1,
+          2,
+          2,
+          2,
+          3,
+          3,
+          3
+        ],
+        "recorded": [
+          {
+            "ActionName": "gameobject/create",
+            "AgentId": "a",
+            "UndoGroup": 1
+          },
+          {
+            "ActionName": "gameobject/create",
+            "AgentId": "b",
+            "UndoGroup": 2
+          },
+          {
+            "ActionName": "gameobject/create",
+            "AgentId": "c",
+            "UndoGroup": 3
+          }
+        ]
+      }
+    ]
+  },
+  "additionalReproduction": {
+    "scope": "After native membership checks, before native entry signatures",
+    "checks": 14,
+    "failed": 1,
+    "observation": "The controlled externally merged-group check reported: A merged native group concealed another agent's edit. The terminal result was inspected; its intermediate JSON file was subsequently overwritten by the next suite.",
+    "finalCoverage": [
+      "An externally merged group cannot conceal another agent's edit",
+      "Merged changes on the same Transform cannot conceal another agent"
+    ]
+  },
+  "corrected": {
+    "unityVersion": "6000.6.2f1",
+    "passed": true,
+    "checks": [
+      {
+        "name": "Native stack probe",
+        "passed": true,
+        "evidence": {
+          "name": "After native redo",
+          "currentGroup": 8,
+          "undos": [
+            "gameobject/create",
+            "Create ProbeA",
+            "Create ProbeA",
+            "gameobject/create",
+            "Create ProbeB",
+            "Create ProbeB",
+            "gameobject/create",
+            "Create ProbeC",
+            "Create ProbeC"
+          ],
+          "redos": [],
+          "groups": [
+            1,
+            1,
+            1,
+            3,
+            3,
+            3,
+            5,
+            5,
+            5
+          ],
+          "recorded": [
+            {
+              "ActionName": "gameobject/create",
+              "AgentId": "a",
+              "UndoGroup": 1
+            },
+            {
+              "ActionName": "gameobject/create",
+              "AgentId": "b",
+              "UndoGroup": 3
+            },
+            {
+              "ActionName": "gameobject/create",
+              "AgentId": "c",
+              "UndoGroup": 5
+            }
+          ]
+        }
+      },
+      {
+        "name": "Latest MCP creation can be reverted",
+        "passed": true,
+        "evidence": {
+          "success": true,
+          "message": "Reverted 'gameobject/create'.",
+          "revertedCount": 1,
+          "reverted": [
+            {
+              "id": 4,
+              "agentId": "a",
+              "action": "gameobject/create",
+              "category": "gameobject",
+              "target": "__McpUndoValidation_Latest",
+              "status": "Completed",
+              "commandFailed": false,
+              "errorMessage": "",
+              "undoable": false,
+              "undoState": "unavailable",
+              "timestamp": "2026-10-01T02:52:42.8039429Z"
+            }
+          ],
+          "revertedGroupCount": 1,
+          "revertedUnityGroups": []
+        }
+      },
+      {
+        "name": "Transform edits are registered before the queue reports completion",
+        "passed": true,
+        "evidence": {
+          "success": true,
+          "message": "Reverted 'gameobject/set-transform'.",
+          "revertedCount": 1,
+          "reverted": [
+            {
+              "id": 5,
+              "agentId": "a",
+              "action": "gameobject/set-transform",
+              "category": "gameobject",
+              "target": "__McpUndoValidation_Transform",
+              "status": "Completed",
+              "commandFailed": false,
+              "errorMessage": "",
+              "undoable": false,
+              "undoState": "unavailable",
+              "timestamp": "2026-10-01T02:52:42.8149301Z"
+            }
+          ],
+          "revertedGroupCount": 1,
+          "revertedUnityGroups": []
+        }
+      },
+      {
+        "name": "Native undo removes the undone record from undo eligibility",
+        "passed": true,
+        "evidence": {
+          "success": true,
+          "message": "Reverted 'gameobject/create'.",
+          "revertedCount": 1,
+          "reverted": [
+            {
+              "id": 6,
+              "agentId": "a",
+              "action": "gameobject/create",
+              "category": "gameobject",
+              "target": "__McpUndoValidation_NativeA",
+              "status": "Completed",
+              "commandFailed": false,
+              "errorMessage": "",
+              "undoable": false,
+              "undoState": "unavailable",
+              "timestamp": "2026-10-01T02:52:42.8159448Z"
+            }
+          ],
+          "revertedGroupCount": 1,
+          "revertedUnityGroups": []
+        }
+      },
+      {
+        "name": "Native redo restores MCP undo eligibility",
+        "passed": true,
+        "evidence": {
+          "restored": true
+        }
+      },
+      {
+        "name": "Clearing Unity Undo clears MCP undo eligibility",
+        "passed": true,
+        "evidence": {
+          "error": "No verified undoable MCP action remains on Unity's current stack."
+        }
+      },
+      {
+        "name": "A newer native edit requires cascade opt-in",
+        "passed": true,
+        "evidence": {
+          "error": "Unity's undo is linear: reverting 'gameobject/create' would also revert 1 newer Unity Undo group(s). Pass force:true only to revert them all.",
+          "target": {
+            "id": 10,
+            "agentId": "a",
+            "action": "gameobject/create",
+            "category": "gameobject",
+            "target": "__McpUndoValidation_McpBeforeNative",
+            "status": "Completed",
+            "commandFailed": false,
+            "errorMessage": "",
+            "undoable": true,
+            "undoState": "available",
+            "timestamp": "2026-10-01T02:52:42.8205905Z"
+          },
+          "wouldAlsoRevert": [],
+          "wouldAlsoRevertUnity": [
+            {
+              "undoGroup": 26,
+              "name": "Native user creation",
+              "operations": 2
+            }
+          ]
+        }
+      },
+      {
+        "name": "A newer agent requires cascade opt-in and force reverts both",
+        "passed": true,
+        "evidence": {
+          "success": true,
+          "message": "Reverted 'gameobject/create' and 1 newer Unity Undo group(s).",
+          "revertedCount": 2,
+          "reverted": [
+            {
+              "id": 11,
+              "agentId": "a",
+              "action": "gameobject/create",
+              "category": "gameobject",
+              "target": "__McpUndoValidation_AgentA",
+              "status": "Completed",
+              "commandFailed": false,
+              "errorMessage": "",
+              "undoable": false,
+              "undoState": "unavailable",
+              "timestamp": "2026-10-01T02:52:42.8225942Z"
+            },
+            {
+              "id": 12,
+              "agentId": "b",
+              "action": "gameobject/create",
+              "category": "gameobject",
+              "target": "__McpUndoValidation_AgentB",
+              "status": "Completed",
+              "commandFailed": false,
+              "errorMessage": "",
+              "undoable": false,
+              "undoState": "unavailable",
+              "timestamp": "2026-10-01T02:52:42.8225942Z"
+            }
+          ],
+          "revertedGroupCount": 2,
+          "revertedUnityGroups": []
+        }
+      },
+      {
+        "name": "Later native work cannot join the MCP group's boundary",
+        "passed": true,
+        "evidence": {
+          "success": true,
+          "message": "Reverted 'gameobject/create' and 1 newer Unity Undo group(s).",
+          "revertedCount": 1,
+          "reverted": [
+            {
+              "id": 13,
+              "agentId": "a",
+              "action": "gameobject/create",
+              "category": "gameobject",
+              "target": "__McpUndoValidation_SealedMcp",
+              "status": "Completed",
+              "commandFailed": false,
+              "errorMessage": "",
+              "undoable": false,
+              "undoState": "unavailable",
+              "timestamp": "2026-10-01T02:52:42.8242835Z"
+            }
+          ],
+          "revertedGroupCount": 2,
+          "revertedUnityGroups": [
+            {
+              "undoGroup": 33,
+              "name": "Later native work",
+              "operations": 2
+            }
+          ]
+        }
+      },
+      {
+        "name": "A no-op transform does not hide the previous real edit",
+        "passed": true,
+        "evidence": {
+          "success": true,
+          "message": "Reverted 'gameobject/create'.",
+          "revertedCount": 1,
+          "reverted": [
+            {
+              "id": 14,
+              "agentId": "a",
+              "action": "gameobject/create",
+              "category": "gameobject",
+              "target": "__McpUndoValidation_NoOp",
+              "status": "Completed",
+              "commandFailed": false,
+              "errorMessage": "",
+              "undoable": false,
+              "undoState": "unavailable",
+              "timestamp": "2026-10-01T02:52:42.8257917Z"
+            }
+          ],
+          "revertedGroupCount": 1,
+          "revertedUnityGroups": []
+        }
+      },
+      {
+        "name": "History persistence retains identity only within the same editor session",
+        "passed": true,
+        "evidence": {
+          "error": "No verified undoable MCP action remains on Unity's current stack."
+        }
+      },
+      {
+        "name": "Legacy history without session identity remains readable without claiming Undo",
+        "passed": true,
+        "evidence": [
+          {
+            "id": 17,
+            "agentId": "a",
+            "action": "gameobject/create",
+            "category": "gameobject",
+            "target": "__McpUndoValidation_LegacyHistory",
+            "status": "Completed",
+            "commandFailed": false,
+            "errorMessage": "",
+            "undoable": false,
+            "undoState": "unverified",
+            "timestamp": "2026-10-01T04:52:42.8438556+02:00"
+          }
+        ]
+      },
+      {
+        "name": "History-window confirmation is invalidated when the native stack changes",
+        "passed": true,
+        "evidence": {
+          "success": true,
+          "message": "Reverted 'gameobject/create' and 1 newer Unity Undo group(s).",
+          "revertedCount": 1,
+          "reverted": [
+            {
+              "id": 18,
+              "agentId": "a",
+              "action": "gameobject/create",
+              "category": "gameobject",
+              "target": "__McpUndoValidation_Preview",
+              "status": "Completed",
+              "commandFailed": false,
+              "errorMessage": "",
+              "undoable": false,
+              "undoState": "unavailable",
+              "timestamp": "2026-10-01T02:52:42.8502693Z"
+            }
+          ],
+          "revertedGroupCount": 2,
+          "revertedUnityGroups": [
+            {
+              "undoGroup": 43,
+              "name": "Native edit after preview",
+              "operations": 2
+            }
+          ]
+        }
+      },
+      {
+        "name": "An externally merged group cannot conceal another agent's edit",
+        "passed": true,
+        "evidence": {
+          "error": "No verified undoable action remains for agent 'a'."
+        }
+      },
+      {
+        "name": "Merged changes on the same Transform cannot conceal another agent",
+        "passed": true,
+        "evidence": {
+          "error": "No verified undoable action remains for agent 'a'."
+        }
+      },
+      {
+        "name": "Object-specific Undo clearing cannot leave a trusted partial group",
+        "passed": true,
+        "evidence": {
+          "error": "No verified undoable action remains for agent 'a'."
+        }
+      },
+      {
+        "name": "Scene replacement does not make stale history match new native groups",
+        "passed": true,
+        "evidence": {
+          "error": "No verified undoable action remains for agent 'a'."
+        }
+      },
+      {
+        "name": "Unavailable native Undo inspection refuses targeted rollback",
+        "passed": true,
+        "evidence": {
+          "error": "Unity's Undo stack could not be inspected. Use native Undo or review the editor before retrying."
+        }
+      }
+    ],
+    "snapshots": [
+      {
+        "name": "Three creations",
+        "currentGroup": 6,
+        "undos": [
+          "gameobject/create",
+          "Create ProbeA",
+          "Create ProbeA",
+          "gameobject/create",
+          "Create ProbeB",
+          "Create ProbeB",
+          "gameobject/create",
+          "Create ProbeC",
+          "Create ProbeC"
+        ],
+        "redos": [],
+        "groups": [
+          1,
+          1,
+          1,
+          3,
+          3,
+          3,
+          5,
+          5,
+          5
+        ],
+        "recorded": [
+          {
+            "ActionName": "gameobject/create",
+            "AgentId": "a",
+            "UndoGroup": 1
+          },
+          {
+            "ActionName": "gameobject/create",
+            "AgentId": "b",
+            "UndoGroup": 3
+          },
+          {
+            "ActionName": "gameobject/create",
+            "AgentId": "c",
+            "UndoGroup": 5
+          }
+        ]
+      },
+      {
+        "name": "After one native undo",
+        "currentGroup": 7,
+        "undos": [
+          "gameobject/create",
+          "Create ProbeA",
+          "Create ProbeA",
+          "gameobject/create",
+          "Create ProbeB",
+          "Create ProbeB"
+        ],
+        "redos": [
+          "gameobject/create",
+          "Create ProbeC",
+          "Create ProbeC"
+        ],
+        "groups": [
+          1,
+          1,
+          1,
+          3,
+          3,
+          3
+        ],
+        "recorded": [
+          {
+            "ActionName": "gameobject/create",
+            "AgentId": "a",
+            "UndoGroup": 1
+          },
+          {
+            "ActionName": "gameobject/create",
+            "AgentId": "b",
+            "UndoGroup": 3
+          },
+          {
+            "ActionName": "gameobject/create",
+            "AgentId": "c",
+            "UndoGroup": 5
+          }
+        ]
+      },
+      {
+        "name": "After native redo",
+        "currentGroup": 8,
+        "undos": [
+          "gameobject/create",
+          "Create ProbeA",
+          "Create ProbeA",
+          "gameobject/create",
+          "Create ProbeB",
+          "Create ProbeB",
+          "gameobject/create",
+          "Create ProbeC",
+          "Create ProbeC"
+        ],
+        "redos": [],
+        "groups": [
+          1,
+          1,
+          1,
+          3,
+          3,
+          3,
+          5,
+          5,
+          5
+        ],
+        "recorded": [
+          {
+            "ActionName": "gameobject/create",
+            "AgentId": "a",
+            "UndoGroup": 1
+          },
+          {
+            "ActionName": "gameobject/create",
+            "AgentId": "b",
+            "UndoGroup": 3
+          },
+          {
+            "ActionName": "gameobject/create",
+            "AgentId": "c",
+            "UndoGroup": 5
+          }
+        ]
+      },
+      {
+        "name": "Merged transforms",
+        "currentGroup": 51,
+        "undos": [
+          "gameobject/set-transform",
+          "Set Transform",
+          "gameobject/set-transform",
+          "Set Transform"
+        ],
+        "redos": [],
+        "groups": [
+          48,
+          48,
+          48,
+          48
+        ],
+        "recorded": [
+          {
+            "ActionName": "gameobject/set-transform",
+            "AgentId": "a",
+            "UndoGroup": 48
+          },
+          {
+            "ActionName": "gameobject/set-transform",
+            "AgentId": "b",
+            "UndoGroup": 50
+          }
+        ]
+      }
+    ]
+  },
+  "regressions": {
+    "monitoring": {
+      "unityVersion": "6000.6.2f1",
+      "passed": true,
+      "resultCases": 15,
+      "classificationMismatches": 0,
+      "rawResultsPreserved": true,
+      "commandErrors": 7,
+      "exceptions": 1,
+      "duplicateCallbacks": 20,
+      "deferredHistoryRecords": 1,
+      "timedOutHistoryRecords": 1,
+      "lateCallbackIgnored": true,
+      "legacyResultPreserved": true,
+      "dashboardShowsCommandError": true,
+      "dashboardShowsExceptionCount": true,
+      "dashboardErrorRow": true,
+      "historyEndpointError": true,
+      "diagnosticBounded": true,
+      "undoPreserved": true,
+      "undoWithHistoryBacklog": true,
+      "pendingHistorySavedBeforeReload": true,
+      "clearIncludesPendingHistory": true,
+      "historyRoundTrip": true,
+      "oldHistoryLoads": true,
+      "maximumPendingHistory": 10000,
+      "historyRecordsDropped": 1,
+      "backlogDrained": true,
+      "error": ""
+    },
+    "queue": {
+      "unityVersion": "6000.6.2f1",
+      "passed": true,
+      "checks": [
+        "Object identity round-trip without JSON number conversion",
+        "Agent FIFO, round-robin writes, read batching and ticket results",
+        "Deferred completion is atomic, single-shot and stable after timeout",
+        "Concurrent submission retries share one ticket; conflicts, reload sessions and expired results never re-execute",
+        "Actual HTTP dispatcher validates scoped submission/polling, browser rejection, one-object retries and legacy compatibility",
+        "Legacy synchronous callers are signaled without lost wakeups",
+        "Legacy timeout preserves running outcomes and skips expired batched and queued work",
+        "Dashboard shows running-only work and separates failures from finished requests",
+        "Submission retry cache refuses new work at its bounded capacity",
+        "1000 status polls at queue depths 100 and 10000"
+      ],
+      "polling100Ms": 4.5901000000000005,
+      "polling10000Ms": 4.623200000000001,
+      "error": ""
+    }
+  },
+  "minimumApi": {
+    "unityVersion": "2021.3.18f1",
+    "passed": true,
+    "referenceCount": 211,
+    "log": "C:\\Users\\Francois\\orca\\workspaces\\unity-mcp-server\\validation\\Unity2021\\api-check-undo\\compiler.log",
+    "packageAssemblies": [
+      {
+        "sha256": "AF83F70ECAC09EE676571E37C62595B7FF26148B636CE498F9151A2F7A9697A3",
+        "file": "C:\\Users\\Francois\\orca\\workspaces\\unity-mcp-server\\validation\\Editors\\2021.3.18f1\\Editor\\Data\\Resources\\PackageManager\\ProjectTemplates\\libcache\\com.unity.template.universal-2d-1.1.4\\ScriptAssemblies\\UnityEngine.UI.dll"
+      },
+      {
+        "sha256": "AAAF5BC1E371F6CFA67138DCB6E77634A8075D30E0C1DF27670A5B0028CC5523",
+        "file": "C:\\Users\\Francois\\orca\\workspaces\\unity-mcp-server\\validation\\Editors\\2021.3.18f1\\Editor\\Data\\Resources\\PackageManager\\ProjectTemplates\\libcache\\com.unity.template.universal-2d-1.1.4\\ScriptAssemblies\\UnityEngine.TestRunner.dll"
+      },
+      {
+        "sha256": "6995901F60508B79F4B648FE2E3B64D8D1BD545B3CB3817134F079842FA82832",
+        "file": "C:\\Users\\Francois\\orca\\workspaces\\unity-mcp-server\\validation\\Editors\\2021.3.18f1\\Editor\\Data\\Resources\\PackageManager\\ProjectTemplates\\libcache\\com.unity.template.universal-2d-1.1.4\\ScriptAssemblies\\UnityEditor.TestRunner.dll"
+      }
+    ],
+    "excludedIntegrations": [
+      "UMA",
+      "ProBuilder"
+    ],
+    "sourceCount": 72,
+    "check": "C# compilation against installed Unity assemblies; no editor execution or package import",
+    "exitCode": 0
+  },
+  "server": {
+    "ordinaryTests": 185,
+    "nodeVersion": "22.18.0",
+    "passed": true
+  },
+  "live": [
+    {
+      "server": "current",
+      "serverCommit": "212a43e77effdea82938c112b359e610825a73c0",
+      "nodeVersion": "v18.20.8",
+      "passed": true,
+      "checks": [
+        {
+          "name": "Transform rollback and cross-agent cascade guard",
+          "passed": true
+        },
+        {
+          "name": "Native Undo and Redo update recorded eligibility",
+          "passed": true
+        },
+        {
+          "name": "Untracked native work requires explicit cascade and is reported",
+          "passed": true
+        },
+        {
+          "name": "Clearing native Undo cannot claim a successful targeted revert",
+          "passed": true
+        },
+        {
+          "name": "Actual script reload preserves same-session native Undo identity",
+          "beforeSession": "8c0bc35b0c5c4344bb7ed67a7fd2b3fe",
+          "afterSession": "0340be13d91c49fc8ece9ffd6c53814d",
+          "actionId": 181,
+          "passed": true
+        }
+      ],
+      "unityVersion": "6000.6.2f1",
+      "fixtureRemoved": true,
+      "persistenceRestored": false
+    },
+    {
+      "server": "current",
+      "serverCommit": "212a43e77effdea82938c112b359e610825a73c0",
+      "nodeVersion": "v22.18.0",
+      "passed": true,
+      "checks": [
+        {
+          "name": "Transform rollback and cross-agent cascade guard",
+          "passed": true
+        },
+        {
+          "name": "Native Undo and Redo update recorded eligibility",
+          "passed": true
+        },
+        {
+          "name": "Untracked native work requires explicit cascade and is reported",
+          "passed": true
+        },
+        {
+          "name": "Clearing native Undo cannot claim a successful targeted revert",
+          "passed": true
+        },
+        {
+          "name": "Actual script reload preserves same-session native Undo identity",
+          "beforeSession": "3be06fb9404d4bfbb2507caa8bd7ce3e",
+          "afterSession": "8c0bc35b0c5c4344bb7ed67a7fd2b3fe",
+          "actionId": 123,
+          "passed": true
+        }
+      ],
+      "unityVersion": "6000.6.2f1",
+      "fixtureRemoved": true,
+      "persistenceRestored": false
+    },
+    {
+      "server": "released",
+      "serverCommit": "826af5ce61db7e2d2d675fe90d24c941a83f3924",
+      "nodeVersion": "v18.20.8",
+      "passed": true,
+      "checks": [
+        {
+          "name": "Transform rollback and cross-agent cascade guard",
+          "passed": true
+        },
+        {
+          "name": "Native Undo and Redo update recorded eligibility",
+          "passed": true
+        },
+        {
+          "name": "Untracked native work requires explicit cascade and is reported",
+          "passed": true
+        },
+        {
+          "name": "Clearing native Undo cannot claim a successful targeted revert",
+          "passed": true
+        },
+        {
+          "name": "Actual script reload preserves same-session native Undo identity",
+          "beforeSession": "b32f1628c2f947d28dde60f7e4ac8624",
+          "afterSession": "c52bf331596548009f45353700e88bc5",
+          "actionId": 298,
+          "passed": true
+        }
+      ],
+      "unityVersion": "6000.6.2f1",
+      "fixtureRemoved": true,
+      "persistenceRestored": false
+    },
+    {
+      "server": "released",
+      "serverCommit": "826af5ce61db7e2d2d675fe90d24c941a83f3924",
+      "nodeVersion": "v22.18.0",
+      "passed": true,
+      "checks": [
+        {
+          "name": "Transform rollback and cross-agent cascade guard",
+          "passed": true
+        },
+        {
+          "name": "Native Undo and Redo update recorded eligibility",
+          "passed": true
+        },
+        {
+          "name": "Untracked native work requires explicit cascade and is reported",
+          "passed": true
+        },
+        {
+          "name": "Clearing native Undo cannot claim a successful targeted revert",
+          "passed": true
+        },
+        {
+          "name": "Actual script reload preserves same-session native Undo identity",
+          "beforeSession": "0340be13d91c49fc8ece9ffd6c53814d",
+          "afterSession": "b32f1628c2f947d28dde60f7e4ac8624",
+          "actionId": 239,
+          "passed": true
+        }
+      ],
+      "unityVersion": "6000.6.2f1",
+      "fixtureRemoved": true,
+      "persistenceRestored": false
+    }
+  ],
+  "limitations": [
+    "Actual editor behavior is checked in Unity 6000.6.2f1 on Windows; the Unity 2021 result is an API compiler check only, with actual older-editor execution deferred by maintainer direction.",
+    "The internal native APIs are isolated and failures refuse targeted rollback. Their behavior on other Unity versions is not certified by declarations alone.",
+    "Signatures describe native entry names/counts, not all object state or arbitrary third-party Undo manipulation. Only Unity-registered changes can be reverted.",
+    "The history window uses the tested preview/revert path; this is not a pixel or interactive dialog review.",
+    "Cross-session identity is tested by a persisted record with another session token. Actual script reload is tested live; this suite does not perform a cold editor restart.",
+    "Current/released server checks use the modified plugin. The released plugin does not gain these fixes without an update.",
+    "The live suite requires an empty unsaved scene and empty native stack. Initial fixture attempts were corrected to account for the active execute-code group header and to inspect existence through read tools without discarding Redo."
+  ],
+  "references": [
+    "https://docs.unity3d.com/ScriptReference/Undo.RevertAllDownToGroup.html",
+    "https://docs.unity3d.com/2021.3/Documentation/ScriptReference/SessionState.html",
+    "https://github.com/Unity-Technologies/UnityCsReference/blob/2021.3/Editor/Mono/Undo/Undo.bindings.cs"
+  ],
+  "pluginCommit": "b41af31906c12adec502835b8ee453effa204af9",
+  "cleanup": {
+    "temporaryEditorClosed": true,
+    "persistentEditors": [
+      {
+        "project": "Unity66",
+        "compilationErrors": 0,
+        "isCompiling": false,
+        "isPlaying": false,
+        "sceneDirty": false,
+        "undoSignatureLoaded": true
+      },
+      {
+        "project": "Queue66",
+        "compilationErrors": 0,
+        "isCompiling": false,
+        "isPlaying": false,
+        "sceneDirty": false,
+        "undoSignatureLoaded": true
+      }
+    ]
+  },
+  "serverCommit": "212a43e77effdea82938c112b359e610825a73c0",
+  "ci": {
+    "server": {
+      "runId": 36808336270,
+      "url": "https://github.com/AnkleBreaker-Studio/unity-mcp-server/actions/runs/36808336270",
+      "commit": "212a43e77effdea82938c112b359e610825a73c0",
+      "result": "success",
+      "jobs": 8,
+      "nodeVersions": [
+        18,
+        20,
+        22,
+        24
+      ],
+      "operatingSystems": [
+        "Windows",
+        "Linux"
+      ],
+      "ordinaryTests": 185
+    },
+    "plugin": {
+      "runId": 36808306705,
+      "url": "https://github.com/AnkleBreaker-Studio/unity-mcp-plugin/actions/runs/36808306705",
+      "commit": "b41af31906c12adec502835b8ee453effa204af9",
+      "result": "success",
+      "check": "338-route registry drift check"
+    },
+    "unityExecution": false
+  }
+}

@@ -1,0 +1,391 @@
+{
+  "recordedAt": "2026-10-01T02:12:11.060Z",
+  "baselineServerCommit": "c96e83938761b57fdc0e75aba4ad121f3e5a2669",
+  "defaultHttpLimitBytes": 33554432,
+  "count": "HTTP body bytes after decompression, before UTF-8 decoding; independent of plugin serialization and MCP result budgets",
+  "baseline": {
+    "tests": 19,
+    "passed": 4,
+    "failed": 15,
+    "cancelled": 0,
+    "checks": [
+      {
+        "name": "HTTP overflow after legacy execution reports uncertainty without replay",
+        "passed": false
+      },
+      {
+        "name": "HTTP overflow after protocol 1 execution reports uncertainty without replay",
+        "passed": false
+      },
+      {
+        "name": "HTTP overflow after protocol 2 execution reports uncertainty without replay",
+        "passed": false
+      },
+      {
+        "name": "oversized protocol 1 acknowledgement is not resubmitted",
+        "passed": false
+      },
+      {
+        "name": "oversized protocol 2 acknowledgement is not resubmitted",
+        "passed": false
+      },
+      {
+        "name": "oversized negotiation stops before submitting a Unity command",
+        "passed": false
+      },
+      {
+        "name": "oversized ping identities are excluded from instance discovery",
+        "passed": false
+      },
+      {
+        "name": "oversized project-context resources fail explicitly and smaller follow-up reads succeed",
+        "passed": false
+      },
+      {
+        "name": "HTTP body exactly at the byte limit preserves split UTF-8, BOM and replacement decoding",
+        "passed": true
+      },
+      {
+        "name": "HTTP 200 body exceeding the limit by one byte is rejected",
+        "passed": false
+      },
+      {
+        "name": "HTTP 500 body exceeding the limit by one byte is rejected",
+        "passed": false
+      },
+      {
+        "name": "HTTP limit counts decompressed gzip bytes, not Content-Length",
+        "passed": false
+      },
+      {
+        "name": "HTTP limit counts decompressed deflate bytes, not Content-Length",
+        "passed": false
+      },
+      {
+        "name": "HTTP limit counts decompressed br bytes, not Content-Length",
+        "passed": false
+      },
+      {
+        "name": "an oversized unfinished HTTP stream closes before its deadline and releases the request listener",
+        "passed": false
+      },
+      {
+        "name": "empty responses and HTTP status flags keep their existing shape",
+        "passed": true
+      },
+      {
+        "name": "HTTP cancel still interrupts a stalled body below the limit",
+        "passed": true
+      },
+      {
+        "name": "HTTP deadline still interrupts a stalled body below the limit",
+        "passed": true
+      },
+      {
+        "name": "HTTP response limit configuration accepts byte integers and rejects invalid values",
+        "passed": false
+      }
+    ]
+  },
+  "focused": {
+    "tests": 22,
+    "passed": 22,
+    "failed": 0,
+    "cancelled": 0,
+    "checks": [
+      {
+        "name": "HTTP overflow after legacy execution reports uncertainty without replay",
+        "passed": true
+      },
+      {
+        "name": "HTTP overflow after protocol 1 execution reports uncertainty without replay",
+        "passed": true
+      },
+      {
+        "name": "HTTP overflow after protocol 2 execution reports uncertainty without replay",
+        "passed": true
+      },
+      {
+        "name": "oversized protocol 1 acknowledgement is not resubmitted",
+        "passed": true
+      },
+      {
+        "name": "oversized protocol 2 acknowledgement is not resubmitted",
+        "passed": true
+      },
+      {
+        "name": "oversized negotiation stops before submitting a Unity command",
+        "passed": true
+      },
+      {
+        "name": "oversized ping identities are excluded from instance discovery",
+        "passed": true
+      },
+      {
+        "name": "oversized project-context resources fail explicitly and smaller follow-up reads succeed",
+        "passed": true
+      },
+      {
+        "name": "oversized automatic context leaves the command intact and allows a later context injection",
+        "passed": true
+      },
+      {
+        "name": "oversized HTTP 500 during acknowledgement stops observation without retrying",
+        "passed": true
+      },
+      {
+        "name": "oversized HTTP 500 during poll stops observation without retrying",
+        "passed": true
+      },
+      {
+        "name": "HTTP body exactly at the byte limit preserves split UTF-8, BOM and replacement decoding",
+        "passed": true
+      },
+      {
+        "name": "HTTP 200 body exceeding the limit by one byte is rejected",
+        "passed": true
+      },
+      {
+        "name": "HTTP 500 body exceeding the limit by one byte is rejected",
+        "passed": true
+      },
+      {
+        "name": "HTTP limit counts decompressed gzip bytes, not Content-Length",
+        "passed": true
+      },
+      {
+        "name": "HTTP limit counts decompressed deflate bytes, not Content-Length",
+        "passed": true
+      },
+      {
+        "name": "HTTP limit counts decompressed br bytes, not Content-Length",
+        "passed": true
+      },
+      {
+        "name": "an oversized unfinished HTTP stream closes before its deadline and releases the request listener",
+        "passed": true
+      },
+      {
+        "name": "empty responses and HTTP status flags keep their existing shape",
+        "passed": true
+      },
+      {
+        "name": "HTTP cancel still interrupts a stalled body below the limit",
+        "passed": true
+      },
+      {
+        "name": "HTTP deadline still interrupts a stalled body below the limit",
+        "passed": true
+      },
+      {
+        "name": "HTTP response limit configuration accepts byte integers and rejects invalid values",
+        "passed": true
+      }
+    ]
+  },
+  "ordinary": [
+    {
+      "nodeMajor": 18,
+      "tests": 185,
+      "passed": 185,
+      "failed": 0,
+      "cancelled": 0
+    },
+    {
+      "nodeMajor": 22,
+      "tests": 185,
+      "passed": 185,
+      "failed": 0,
+      "cancelled": 0
+    }
+  ],
+  "live": [
+    {
+      "pluginRevision": "current",
+      "pluginCommit": "dd7bc5e0b4e2cfd382c5d7369a5f19809449d871",
+      "nodeVersion": "v18.20.8",
+      "project": "Queue66",
+      "passed": true,
+      "limitBytes": 16384,
+      "unityVersion": "6000.6.2f1",
+      "pluginVersion": "2.39.7",
+      "port": 7891,
+      "smallUnicodePreserved": true,
+      "oversized": {
+        "response": {
+          "success": false,
+          "outcomeUnknown": true,
+          "error": "Outcome unknown for editor/execute-code: http_response_too_large: received at least 65957 decoded HTTP body bytes; limit is 16384 bytes (UNITY_HTTP_RESPONSE_LIMIT). The original request may have executed. Inspect Unity before retrying.",
+          "ticketId": 111,
+          "requestId": "4d11018c16ff467fb38078ec6f3f2d3a",
+          "queueSessionId": "9582d5a640e64a68a802a89a05b06bcf"
+        },
+        "executions": 1
+      },
+      "followUpSucceeded": true,
+      "fixtureRemoved": true
+    },
+    {
+      "pluginRevision": "current",
+      "pluginCommit": "dd7bc5e0b4e2cfd382c5d7369a5f19809449d871",
+      "nodeVersion": "v22.18.0",
+      "project": "Queue66",
+      "passed": true,
+      "limitBytes": 16384,
+      "unityVersion": "6000.6.2f1",
+      "pluginVersion": "2.39.7",
+      "port": 7891,
+      "smallUnicodePreserved": true,
+      "oversized": {
+        "response": {
+          "success": false,
+          "outcomeUnknown": true,
+          "error": "Outcome unknown for editor/execute-code: http_response_too_large: received at least 65956 decoded HTTP body bytes; limit is 16384 bytes (UNITY_HTTP_RESPONSE_LIMIT). The original request may have executed. Inspect Unity before retrying.",
+          "ticketId": 97,
+          "requestId": "b00905bcbe8c4bb4800428792a77ed26",
+          "queueSessionId": "9582d5a640e64a68a802a89a05b06bcf"
+        },
+        "executions": 1
+      },
+      "followUpSucceeded": true,
+      "fixtureRemoved": true
+    },
+    {
+      "pluginRevision": "released",
+      "pluginCommit": "0b8e76f7c50ed8c0bd5f359d893653211d0f2abe",
+      "nodeVersion": "v18.20.8",
+      "project": "LegacyCompat66",
+      "passed": true,
+      "limitBytes": 16384,
+      "unityVersion": "6000.6.2f1",
+      "pluginVersion": "2.39.7",
+      "port": 7894,
+      "smallUnicodePreserved": true,
+      "oversized": {
+        "response": {
+          "success": false,
+          "outcomeUnknown": true,
+          "error": "Outcome unknown for editor/execute-code: http_response_too_large: received at least 65368 decoded HTTP body bytes; limit is 16384 bytes (UNITY_HTTP_RESPONSE_LIMIT). The original request may have executed. Inspect Unity before retrying.",
+          "ticketId": 27
+        },
+        "executions": 1
+      },
+      "followUpSucceeded": true,
+      "fixtureRemoved": true
+    },
+    {
+      "pluginRevision": "released",
+      "pluginCommit": "0b8e76f7c50ed8c0bd5f359d893653211d0f2abe",
+      "nodeVersion": "v22.18.0",
+      "project": "LegacyCompat66",
+      "passed": true,
+      "limitBytes": 16384,
+      "unityVersion": "6000.6.2f1",
+      "pluginVersion": "2.39.7",
+      "port": 7894,
+      "smallUnicodePreserved": true,
+      "oversized": {
+        "response": {
+          "success": false,
+          "outcomeUnknown": true,
+          "error": "Outcome unknown for editor/execute-code: http_response_too_large: received at least 65368 decoded HTTP body bytes; limit is 16384 bytes (UNITY_HTTP_RESPONSE_LIMIT). The original request may have executed. Inspect Unity before retrying.",
+          "ticketId": 13
+        },
+        "executions": 1
+      },
+      "followUpSucceeded": true,
+      "fixtureRemoved": true
+    }
+  ],
+  "semantics": [
+    "Overflow aborts the fetch and releases its reader, timeout and cancellation observer.",
+    "No partial body reaches JSON parsing. Exact-limit bodies retain UTF-8/BOM/replacement behavior.",
+    "Gzip, deflate and Brotli expansion counts toward the limit regardless of compressed Content-Length.",
+    "Negotiation overflow submits no Unity command. Overflow after submission reports unknown outcome and retains known ticket/request/session identifiers.",
+    "No overflow response is retried, including protected acknowledgements and HTTP 500 bodies.",
+    "Discovery rejects oversized identities. Resource reads fail explicitly. Automatic context can be injected on a later call after an oversized read."
+  ],
+  "limitations": [
+    "The initial baseline contains 19 tests (15 failures, four controls); three additional recovery/error tests were added after correction.",
+    "Per-response bound; fetch buffering, decompression, strings, JSON allocation and simultaneous responses can consume additional process memory.",
+    "The default does not bound incoming requests, original Unity objects, arbitrary getters or command execution.",
+    "Actual Unity validation uses 6000.6.2f1 on Windows. Older-editor runtime tests remain deferred by maintainer direction.",
+    "This checkpoint tests the current server against current/released plugins; it does not rerun every server-plugin pairing or every tool."
+  ],
+  "references": [
+    "https://nodejs.org/api/globals.html#fetch",
+    "https://nodejs.org/api/webstreams.html#readablestreamdefaultreaderread",
+    "https://nodejs.org/api/webstreams.html#readablestreamdefaultreaderreleaselock"
+  ],
+  "serializationRegression": {
+    "nodeVersion": "v22.18.0",
+    "passed": true,
+    "fixtureRemoved": true,
+    "checks": [
+      {
+        "name": "Finite numbers, non-finite representations, vectors and Unicode survive actual JSON transport",
+        "values": {
+          "finite": -7,
+          "notANumber": "NaN",
+          "infinity": "Infinity",
+          "vector": {
+            "x": "NaN",
+            "y": "-Infinity",
+            "z": 3
+          },
+          "text": "Quote \" 中 😀 \ud800"
+        }
+      },
+      {
+        "name": "Legacy list count and truncation shape remain intact",
+        "listCount": 3,
+        "truncatedCount": 1001
+      },
+      {
+        "name": "Global result expansion",
+        "code": "execution_result_limit",
+        "executionCompleted": true,
+        "executions": 1
+      },
+      {
+        "name": "Deferred iterator exception",
+        "code": "execution_result_serialization_failed",
+        "executionCompleted": true,
+        "executions": 1
+      },
+      {
+        "name": "Plugin HTTP serialization limit returns an error without replay",
+        "executions": 1,
+        "response": {
+          "success": false,
+          "outcomeUnknown": true,
+          "error": "Outcome unknown for editor/execute-code: HTTP 413: response_too_large. The original request may have executed. Inspect Unity before retrying.",
+          "ticketId": 138,
+          "requestId": "8a640f408e8849b098311588c830506a",
+          "queueSessionId": "9582d5a640e64a68a802a89a05b06bcf"
+        }
+      }
+    ]
+  },
+  "publication": {
+    "serverCommit": "23eac28a472af836c3f4049c26386142e65e30d3",
+    "pluginDocumentationCommit": "726b63e",
+    "branch": "Development-Unity66-Modernization",
+    "ci": {
+      "url": "https://github.com/AnkleBreaker-Studio/unity-mcp-server/actions/runs/36804839915",
+      "conclusion": "success",
+      "passedJobs": 8,
+      "nodeVersions": [
+        18,
+        20,
+        22,
+        24
+      ],
+      "platforms": [
+        "ubuntu-latest",
+        "windows-latest"
+      ]
+    },
+    "cleanup": "Temporary LegacyCompat66 editor closed after clean-scene checks; persistent Queue66 selected again, outside Play Mode and compilation with a saved scene."
+  }
+}
