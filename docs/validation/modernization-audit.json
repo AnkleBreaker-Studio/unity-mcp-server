@@ -278,6 +278,12 @@
       "remaining": "Decoded queued arguments, transport workers/output retention and broader multiplayer coverage",
       "serverCommit": "eae1ec10257541d11c000ef39e96f977a1ffd250",
       "ci": "https://github.com/AnkleBreaker-Studio/unity-mcp-server/actions/runs/36836934911"
+    },
+    "commandAdmission": {
+      "status": "corrected",
+      "report": "unity66-command-admission.json",
+      "scope": "HTTP ticket count and weighted decoded-argument accounting",
+      "remaining": "Parsing before admission, completed results/history, transport workers/output and native buffers"
     }
   }
 }

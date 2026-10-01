@@ -28,6 +28,10 @@ Callbacks can arrive on worker threads, so target inspection and history inserti
 
 `unity_queue_info` adds `pendingHistoryRecords`, `maxPendingHistoryRecords` and `droppedHistoryRecords`. The drop counter also includes history insertion failures and resets with the queue session. Pending history is drained before the existing domain-reload/quit save hooks; disk persistence remains optional. Old saved entries without `commandFailed` load as before. Queue tickets and session counters still reset on domain reload.
 
+## HTTP command admission
+
+HTTP commands also have a count and argument-cost admission budget, exposed as `unity_queue_info.data.httpCommands`. It counts queued/executing tickets until terminal completion and refuses new work explicitly at capacity. See [admission, retries and validation](command-admission.md).
+
 ## Read policy
 
 `Editor/MCPCommandPolicy.cs` in the plugin lists the 92 routes eligible for read batching. Unknown routes use the write path. The registry checker verifies that the list contains no duplicates or nonexistent routes; authors must review side effects before adding a new entry.

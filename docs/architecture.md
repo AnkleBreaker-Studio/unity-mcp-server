@@ -19,6 +19,8 @@ Legacy waiters expire after 30 seconds. Unstarted work is removed or skipped; an
 
 ## State ownership
 
+HTTP command dispatch now admits at most 256 nonterminal tickets within a 256 MiB argument-accounting budget. Queued, legacy and deferred routes share the guard; protected replay and polling remain available at capacity. Trusted in-process C# submissions keep their existing API behavior. See [command admission and accounting scope](command-admission.md).
+
 | State | Owner and lifetime |
 |---|---|
 | Agent ID, explicit port, pinned bridge URL, cancellation signal | One asynchronous MCP call |

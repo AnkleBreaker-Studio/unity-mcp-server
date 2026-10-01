@@ -29,6 +29,8 @@ Unity's Mono listener needs an explicit read deadline because its [entity-body t
 
 ## Compatibility and errors
 
+Decoded arguments retained by HTTP command tickets have a separate count/cost budget after parsing. A full budget returns `command_queue_busy` with `requestAccepted: false`; this differs from an incomplete body or invalid JSON. See [command admission](command-admission.md) for its scope and recovery behavior.
+
 Valid existing request shapes remain: empty command bodies, objects, nested arrays, strings, booleans, null member values and finite numbers. Integer values retain their `int`/`long` representation where possible, with `double` used for other supported numbers. Duplicate object names retain the existing last-value behavior. The existing encoding selection and BOM detection are retained; UTF-8 is the companion server's normal encoding.
 
 Invalid separators, incomplete strings/escapes, extra trailing content, invalid numbers and non-object roots are rejected. Numbers outside the supported finite range are rejected rather than passed to Unity as a default value or infinity. Property/argument schema checks inside individual commands remain separate. The JSON grammar and permission to limit size, nesting and numeric range are described in [RFC 8259](https://www.rfc-editor.org/rfc/rfc8259).

@@ -4,6 +4,10 @@ All notable changes to this package will be documented in this file.
 
 ## [Unreleased]
 
+### Plugin command admission
+- Expose command count/argument-cost limits and refusals through `unity_queue_info.data.httpCommands` on updated plugins.
+- Add five refusal/retry checks and live current/released-server saturation checks on Node 18/22. Preserve the existing retry and unknown-outcome contracts; see [admission limits](docs/command-admission.md).
+
 ### Agent state during long sessions
 - Bound retained agent selections, discovery state and context markers while preserving active requests and shared work through cancellation.
 - Require explicit targeting for unknown agents after eviction; keep normal single-editor discovery and current/released plugin routing compatible.
