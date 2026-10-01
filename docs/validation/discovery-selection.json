@@ -1,47 +1,56 @@
 {
   "recordedAt": "2026-10-01T05:55:58.233Z",
-  "baselineServerCommit": "19170d5",
+  "baselineServerCommit": "19170d597ba79f8909ae3550c950a799a91fa1aa",
   "pluginChanged": false,
   "baseline": {
-    "tests": 11,
-    "passed": 2,
-    "failed": 9,
+    "tests": 15,
+    "passed": 3,
+    "failed": 12,
     "checks": [
       {
         "name": "selection by name rejects identity replacement after resolution (same name: false)",
-        "passed": false
+        "passed": false,
+        "error": "error: |-\r\n    {\"success\":true,\"message\":\"Selected Unity instance: Replacement (port 12055)\",\"instance\":{\"port\":12055,\"status\":\"ok\",\"projectName\":\"Replacement\",\"projectPath\":\"C:/Replacement\",\"unityVersion\":\"6000.0.0f1\",\"isClone\":false,\"cloneIndex\":-1,\"protocolVersion\":1,\"pluginVersion\":\"9.9.9-mock\",\"alive\":true,\"source\":\"registry\"},\"routing\":{\"port\":12055,\"instruction\":\"IMPORTANT — PARALLEL SAFETY: To guarantee your commands reach \\\"Replacement\\\" (port 12055), you MUST include  port: 12055  as a parameter in ALL subsequent unity_* tool calls. This prevents cross-agent routing issues when multiple tasks run in parallel. Example: unity_execute_code({ code: \\\"...\\\", port: 12055 })\"}}\r\n    + actual - expected\r\n    \r\n    + undefined\r\n    - true"
       },
       {
         "name": "selection by name rejects identity replacement after resolution (same name: true)",
-        "passed": false
+        "passed": false,
+        "error": "error: |-\r\n    {\"success\":true,\"message\":\"Selected Unity instance: Alpha (port 12613)\",\"instance\":{\"port\":12613,\"status\":\"ok\",\"projectName\":\"Alpha\",\"projectPath\":\"C:/Replacement\",\"unityVersion\":\"6000.0.0f1\",\"isClone\":false,\"cloneIndex\":-1,\"protocolVersion\":1,\"pluginVersion\":\"9.9.9-mock\",\"alive\":true,\"source\":\"registry\"},\"routing\":{\"port\":12613,\"instruction\":\"IMPORTANT — PARALLEL SAFETY: To guarantee your commands reach \\\"Alpha\\\" (port 12613), you MUST include  port: 12613  as a parameter in ALL subsequent unity_* tool calls. This prevents cross-agent routing issues when multiple tasks run in parallel. Example: unity_execute_code({ code: \\\"...\\\", port: 12613 })\"}}\r\n    + actual - expected\r\n    \r\n    + undefined\r\n    - true"
       },
       {
         "name": "selection by name uses one discovery and a fresh identity recheck",
-        "passed": false
+        "passed": false,
+        "error": "error: |-\r\n    Expected values to be strictly deep-equal:\r\n    + actual - expected\r\n    \r\n      [\r\n    +   3,\r\n        2,\r\n    -   1\r\n      ]"
       },
       {
         "name": "older explicit selection cannot overwrite a newer completed choice (by name: false)",
-        "passed": false
+        "passed": false,
+        "error": "error: |-\r\n    {\"selected\":{\"instances\":[{\"port\":34284,\"projectName\":\"Alpha\",\"projectPath\":\"C:/Alpha\",\"unityVersion\":\"6000.0.0f1\",\"isClone\":false,\"cloneIndex\":-1,\"pluginVersion\":\"9.9.9-mock\",\"source\":\"registry\",\"isSelected\":true},{\"port\":34285,\"projectName\":\"Beta\",\"projectPath\":\"C:/Beta\",\"unityVersion\":\"6000.0.0f1\",\"isClone\":false,\"cloneIndex\":-1,\"pluginVersion\":\"9.9.9-mock\",\"source\":\"registry\",\"isSelected\":false}],\"totalCount\":2,\"selectedPort\":34284,\"selectedProject\":\"Alpha\",\"message\":\"Found 2 Unity instance(s). Currently targeting: Alpha (port 34284)\"},\"oldResult\":{\"content\":[{\"type\":\"text\",\"text\":\"{\\\"success\\\":true,\\\"message\\\":\\\"Selected Unity instance: Alpha (port 34284)\\\",\\\"instance\\\":{\\\"port\\\":34284,\\\"status\\\":\\\"ok\\\",\\\"projectName\\\":\\\"Alpha\\\",\\\"projectPath\\\":\\\"C:/Alpha\\\",\\\"unityVersion\\\":\\\"6000.0.0f1\\\",\\\"isClone\\\":false,\\\"cloneIndex\\\":-1,\\\"protocolVersion\\\":1,\\\"pluginVersion\\\":\\\"9.9.9-mock\\\",\\\"alive\\\":true,\\\"source\\\":\\\"registry\\\"},\\\"routing\\\":{\\\"port\\\":34284,\\\"instruction\\\":\\\"IMPORTANT — PARALLEL SAFETY: To guarantee your commands reach \\\\\\\"Alpha\\\\\\\" (port 34284), you MUST include  port: 34284  as a parameter in ALL subsequent unity_* tool calls. This prevents cross-agent routing issues when multiple tasks run in parallel. Example: unity_execute_code({ code: \\\\\\\"...\\\\\\\", port: 34284 })\\\"}}\"}],\"payload\":{\"success\":true,\"message\":\"Selected Unity instance: Alpha (port 34284)\",\"instance\":{\"port\":34284,\"status\":\"ok\",\"projectName\":\"Alpha\",\"projectPath\":\"C:/Alpha\",\"unityVersion\":\"6000.0.0f1\",\"isClone\":false,\"cloneIndex\":-1,\"protocolVersion\":1,\"pluginVersion\":\"9.9.9-mock\",\"alive\":true,\"source\":\"registry\"},\"routing\":{\"port\":34284,\"instruction\":\"IMPORTANT — PARALLEL SAFETY: To guarantee your commands reach \\\"Alpha\\\" (port 34284), you MUST include  port: 34284  as a parameter in ALL subsequent unity_* tool calls. This prevents cross-agent routing issues when multiple tasks run in parallel. Example: unity_execute_code({ code: \\\"...\\\", port: 34284 })\"}}}}\r\n    \r\n    34284 !== 34285"
       },
       {
         "name": "older explicit selection cannot overwrite a newer completed choice (by name: true)",
-        "passed": false
+        "passed": false,
+        "error": "error: |-\r\n    {\"selected\":{\"instances\":[{\"port\":18452,\"projectName\":\"Alpha\",\"projectPath\":\"C:/Alpha\",\"unityVersion\":\"6000.0.0f1\",\"isClone\":false,\"cloneIndex\":-1,\"pluginVersion\":\"9.9.9-mock\",\"source\":\"registry\",\"isSelected\":true},{\"port\":18453,\"projectName\":\"Beta\",\"projectPath\":\"C:/Beta\",\"unityVersion\":\"6000.0.0f1\",\"isClone\":false,\"cloneIndex\":-1,\"pluginVersion\":\"9.9.9-mock\",\"source\":\"registry\",\"isSelected\":false}],\"totalCount\":2,\"selectedPort\":18452,\"selectedProject\":\"Alpha\",\"message\":\"Found 2 Unity instance(s). Currently targeting: Alpha (port 18452)\"},\"oldResult\":{\"content\":[{\"type\":\"text\",\"text\":\"{\\\"success\\\":true,\\\"message\\\":\\\"Selected Unity instance: Alpha (port 18452)\\\",\\\"instance\\\":{\\\"port\\\":18452,\\\"status\\\":\\\"ok\\\",\\\"projectName\\\":\\\"Alpha\\\",\\\"projectPath\\\":\\\"C:/Alpha\\\",\\\"unityVersion\\\":\\\"6000.0.0f1\\\",\\\"isClone\\\":false,\\\"cloneIndex\\\":-1,\\\"protocolVersion\\\":1,\\\"pluginVersion\\\":\\\"9.9.9-mock\\\",\\\"alive\\\":true,\\\"source\\\":\\\"registry\\\"},\\\"routing\\\":{\\\"port\\\":18452,\\\"instruction\\\":\\\"IMPORTANT — PARALLEL SAFETY: To guarantee your commands reach \\\\\\\"Alpha\\\\\\\" (port 18452), you MUST include  port: 18452  as a parameter in ALL subsequent unity_* tool calls. This prevents cross-agent routing issues when multiple tasks run in parallel. Example: unity_execute_code({ code: \\\\\\\"...\\\\\\\", port: 18452 })\\\"}}\"}],\"payload\":{\"success\":true,\"message\":\"Selected Unity instance: Alpha (port 18452)\",\"instance\":{\"port\":18452,\"status\":\"ok\",\"projectName\":\"Alpha\",\"projectPath\":\"C:/Alpha\",\"unityVersion\":\"6000.0.0f1\",\"isClone\":false,\"cloneIndex\":-1,\"protocolVersion\":1,\"pluginVersion\":\"9.9.9-mock\",\"alive\":true,\"source\":\"registry\"},\"routing\":{\"port\":18452,\"instruction\":\"IMPORTANT — PARALLEL SAFETY: To guarantee your commands reach \\\"Alpha\\\" (port 18452), you MUST include  port: 18452  as a parameter in ALL subsequent unity_* tool calls. This prevents cross-agent routing issues when multiple tasks run in parallel. Example: unity_execute_code({ code: \\\"...\\\", port: 18452 })\"}}}}\r\n    \r\n    18452 !== 18453"
       },
       {
         "name": "old validation cannot clear a newer selection (lost)",
-        "passed": false
+        "passed": false,
+        "error": "error: |-\r\n    {\"selected\":{\"instances\":[{\"port\":18459,\"projectName\":\"Beta\",\"projectPath\":\"C:/Beta\",\"unityVersion\":\"6000.0.0f1\",\"isClone\":false,\"cloneIndex\":-1,\"pluginVersion\":\"9.9.9-mock\",\"source\":\"registry\",\"isSelected\":false}],\"totalCount\":1,\"selectedPort\":null,\"selectedProject\":null,\"message\":\"Found 1 Unity instance(s). Use unity_select_instance to choose which project to work with.\"},\"oldResult\":{\"content\":[{\"type\":\"text\",\"text\":\"Select a Unity instance with unity_select_instance before using other Unity tools. Use unity_list_instances to see available projects.\"}],\"isError\":true,\"payload\":{\"error\":\"Select a Unity instance with unity_select_instance before using other Unity tools. Use unity_list_instances to see available projects.\"}}}\r\n    \r\n    null !== 18459"
       },
       {
         "name": "old validation cannot replace a newer selection (relocated)",
-        "passed": false
+        "passed": false,
+        "error": "error: |-\r\n    {\"selected\":{\"instances\":[{\"port\":20144,\"projectName\":\"Beta\",\"projectPath\":\"C:/Beta\",\"unityVersion\":\"6000.0.0f1\",\"isClone\":false,\"cloneIndex\":-1,\"pluginVersion\":\"9.9.9-mock\",\"source\":\"registry\",\"isSelected\":false},{\"port\":20145,\"projectName\":\"Alpha\",\"projectPath\":\"C:/Alpha\",\"unityVersion\":\"6000.0.0f1\",\"isClone\":false,\"cloneIndex\":-1,\"pluginVersion\":\"9.9.9-mock\",\"source\":\"registry\",\"isSelected\":true}],\"totalCount\":2,\"selectedPort\":20145,\"selectedProject\":\"Alpha\",\"message\":\"Found 2 Unity instance(s). Currently targeting: Alpha (port 20145)\"},\"oldResult\":{\"content\":[{\"type\":\"text\",\"text\":\"{\\\"success\\\":true,\\\"data\\\":{\\\"mock\\\":true,\\\"route\\\":\\\"gameobject/create\\\",\\\"echo\\\":{\\\"name\\\":\\\"MustNotRetarget\\\"}}}\"}],\"payload\":{\"success\":true,\"data\":{\"mock\":true,\"route\":\"gameobject/create\",\"echo\":{\"name\":\"MustNotRetarget\"}}}}}\r\n    \r\n    20145 !== 20144"
       },
       {
         "name": "old validation cannot replace a newer selection (registry)",
-        "passed": false
+        "passed": false,
+        "error": "error: |-\r\n    {\"selected\":{\"instances\":[{\"port\":20157,\"projectName\":\"Beta\",\"projectPath\":\"C:/Beta\",\"unityVersion\":\"6000.0.0f1\",\"isClone\":false,\"cloneIndex\":-1,\"pluginVersion\":\"9.9.9-mock\",\"source\":\"registry\",\"isSelected\":false}],\"totalCount\":1,\"selectedPort\":20158,\"selectedProject\":\"Alpha\",\"message\":\"Found 1 Unity instance(s). Currently targeting: Alpha (port 20158)\"},\"oldResult\":{\"content\":[{\"type\":\"text\",\"text\":\"{\\\"success\\\":true,\\\"data\\\":{\\\"mock\\\":true,\\\"route\\\":\\\"gameobject/create\\\",\\\"echo\\\":{\\\"name\\\":\\\"MustNotRetarget\\\"}}}\"}],\"payload\":{\"success\":true,\"data\":{\"mock\":true,\"route\":\"gameobject/create\",\"echo\":{\"name\":\"MustNotRetarget\"}}}}}\r\n    \r\n    20158 !== 20157"
       },
       {
         "name": "first automatic discovery cannot overwrite a concurrent explicit choice",
-        "passed": false
+        "passed": false,
+        "error": "error: |-\r\n    {\"selected\":{\"instances\":[{\"port\":51406,\"projectName\":\"Beta\",\"projectPath\":\"C:/Beta\",\"unityVersion\":\"6000.0.0f1\",\"isClone\":false,\"cloneIndex\":-1,\"pluginVersion\":\"9.9.9-mock\",\"source\":\"registry\",\"isSelected\":false},{\"port\":51405,\"projectName\":\"Alpha\",\"projectPath\":\"C:/Alpha\",\"unityVersion\":\"6000.0.0f1\",\"isClone\":false,\"cloneIndex\":-1,\"pluginVersion\":\"9.9.9-mock\",\"source\":\"portscan\",\"isSelected\":true}],\"totalCount\":2,\"selectedPort\":51405,\"selectedProject\":\"Alpha\",\"message\":\"Found 2 Unity instance(s). Currently targeting: Alpha (port 51405)\"},\"oldResult\":{\"content\":[{\"type\":\"text\",\"text\":\"=== UNITY INSTANCE (auto-connected) ===\\nProject: Alpha\\nPort: 51405\\nUnity: 6000.0.0f1\\nPath: C:/Alpha\\n=== END INSTANCE INFO ===\"},{\"type\":\"text\",\"text\":\"{\\\"success\\\":true,\\\"data\\\":{\\\"mock\\\":true,\\\"route\\\":\\\"gameobject/create\\\",\\\"echo\\\":{\\\"name\\\":\\\"MustNotRetarget\\\"}}}\"}],\"payload\":{\"success\":true,\"data\":{\"mock\":true,\"route\":\"gameobject/create\",\"echo\":{\"name\":\"MustNotRetarget\"}}}}}\r\n    \r\n    51405 !== 51406"
       },
       {
         "name": "concurrent selections by different agents remain independent",
@@ -49,6 +58,25 @@
       },
       {
         "name": "ambiguous names and failed explicit selection preserve the existing choice",
+        "passed": true
+      },
+      {
+        "name": "an implicit call does not switch projects while explicit selection is still pending",
+        "passed": false,
+        "error": "error: |-\r\n    Expected values to be strictly equal:\r\n    + actual - expected\r\n    \r\n    + undefined\r\n    - true"
+      },
+      {
+        "name": "a failed newer selection does not let an older selection silently take over",
+        "passed": false,
+        "error": "error: |-\r\n    Expected values to be strictly equal:\r\n    + actual - expected\r\n    \r\n    + undefined\r\n    - true"
+      },
+      {
+        "name": "selection change during recovery discovery cannot restore the old project",
+        "passed": false,
+        "error": "error: |-\r\n    Expected values to be strictly equal:\r\n    + actual - expected\r\n    \r\n    + undefined\r\n    - true"
+      },
+      {
+        "name": "cancelled selection releases its pending guard and preserves the prior project",
         "passed": true
       }
     ]
@@ -323,5 +351,30 @@
         "compilationErrors": 0
       }
     ]
+  },
+  "baselineNote": "The final fifteen-check suite was rerun against an isolated checkout of the exact preceding server. It supersedes the initial eleven-check run, whose lost-selection case encountered a fixture JSON parse error before its final assertions; the final helper accepts plain MCP errors and directly verifies that the selection was cleared.",
+  "publication": {
+    "serverCommit": "59bb4e339366a4a9e0f700de0856233a31b53aa3",
+    "pluginDocumentationCommit": "5cd25e8",
+    "serverCI": {
+      "url": "https://github.com/AnkleBreaker-Studio/unity-mcp-server/actions/runs/36822519574",
+      "jobs": 8,
+      "conclusion": "success",
+      "nodeVersions": [
+        18,
+        20,
+        22,
+        24
+      ],
+      "operatingSystems": [
+        "Windows",
+        "Linux"
+      ],
+      "ordinaryTests": 217
+    },
+    "pluginRuntimeUnchanged": true,
+    "pluginDocumentationCISkipped": "The workflow only triggers for Editor, tools~ or workflow changes.",
+    "versionsChanged": false,
+    "releasePublished": false
   }
 }

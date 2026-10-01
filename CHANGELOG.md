@@ -7,7 +7,7 @@ All notable changes to this package will be documented in this file.
 ### Concurrent editor selection
 - Keep the identity resolved by a project name through verification. Remove the second discovery that could silently adopt a replacement project; two-editor selection drops from five ping requests to three.
 - Supersede older explicit choices per agent and reject stale automatic discovery/validation before it can clear or restore a project over a newer selection. Preserve independent agents, explicit-port calls, ambiguity handling and cancellation cleanup.
-- Add fifteen controlled checks, including nine reproduced baseline failures, and opt-in `test:selection` for two real editors. All 217 ordinary tests pass locally; 71 focused checks also pass on Node 18.
+- Add fifteen controlled checks, with twelve failures reproduced against the preceding server using the final fixture, and opt-in `test:selection` for two real editors. All 217 ordinary tests pass locally and in eight CI jobs; 71 focused checks also pass on Node 18.
 
 ### Upload refusal and body monitoring
 - Preserve explicit input non-acceptance across legacy, ordinary and guarded submission errors, including busy HTTP 503 responses. Keep a prior lost acknowledgement uncertain and retain existing retry identity/policy.
