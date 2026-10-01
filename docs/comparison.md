@@ -16,7 +16,7 @@ Compare the workflows you will actually use: several editors, several agents, mu
 
 ## Current alternatives
 
-Checked on 2026-09-30. This is a documentation comparison, not a benchmark of competing products.
+Routing, transport and Assistant gateway sources rechecked on 2026-10-01. This is a documentation comparison, not a benchmark of competing products.
 
 - **Coplay Unity MCP** documents multiple instances, per-call instance selection and transport choices for multiple clients. Those are shared capabilities, not exclusive AnkleBreaker features. See its [multi-instance guide](https://coplaydev.github.io/unity-mcp/guides/multi-instance) and [transport documentation](https://coplaydev.github.io/unity-mcp/architecture/transports).
 - **Unity's own AI tooling** documents external-agent access and MCP integration. Availability and packaging vary with the Unity AI version; inspect the current [AI overview](https://unity.com/blog/unity-ai-how-to-get-started) and [Assistant gateway documentation](https://docs.unity.cn/Packages/com.unity.ai.assistant%402.9/manual/integration/ai-gateway-intro.html).

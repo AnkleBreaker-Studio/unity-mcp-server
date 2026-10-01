@@ -1,5 +1,5 @@
 {
-  "recordedAt": "2026-09-30T21:11:03.336Z",
+  "recordedAt": "2026-10-01T07:44:42.172Z",
   "platform": "Windows",
   "unityVersion": "6000.6.2f1",
   "baseline": {
@@ -11,8 +11,8 @@
     "workingTreesUnmodified": true
   },
   "current": {
-    "serverRuntimeCommit": "279990d4577fafe7eb934262d59408e5c16f19b5",
-    "pluginCommit": "631b5d264b11f5e9af7b3cc1c15a0f6c4ae4956b",
+    "serverRuntimeCommit": "e9e76747c12bc7336d42a7f4281ef2a2e6e41bd4",
+    "pluginCommit": "f67c16c40881a4fede48dd1692b7bd49e9597744",
     "serverVersion": "2.35.6",
     "pluginVersion": "2.39.7",
     "sdkVersion": "1.27.1"
@@ -202,5 +202,18 @@
     "conclusion": "success",
     "jobs": 8,
     "ordinaryTests": 83
+  },
+  "previousCheckpoint": {
+    "recordedAt": "2026-09-30T21:11:03.336Z",
+    "serverRuntimeCommit": "279990d4577fafe7eb934262d59408e5c16f19b5",
+    "pluginCommit": "631b5d264b11f5e9af7b3cc1c15a0f6c4ae4956b",
+    "serverVersion": "2.35.6",
+    "pluginVersion": "2.39.7",
+    "sdkVersion": "1.27.1"
+  },
+  "cleanup": {
+    "currentTemporarySceneRemoved": true,
+    "baselineOriginalSavedScenePreserved": true,
+    "ownedEditorsClosed": true
   }
 }

@@ -4,6 +4,11 @@ All notable changes to this package will be documented in this file.
 
 ## [Unreleased]
 
+### Whole-product review
+- Refresh all four released/current server-plugin pairs on Node 18/22 after the mesh changes, including mixed-project agent isolation and unchanged published tool names.
+- Recheck both current READMEs locally and on GitHub, 92 links and primary comparison sources.
+- Add an isolated state-lifetime diagnostic that reproduces retained agent selections and debug logging beyond its advertised threshold; record these as open implementation work.
+
 ### Mesh and renderer metadata
 - Describe all eight UV channels and triangulated quad counts while retaining tool names and input schemas.
 - Add opt-in `test:meshes` for current/released servers on Node 18/22, checking both path names, errors and non-readable metadata through the editor queue.

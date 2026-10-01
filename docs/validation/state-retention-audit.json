@@ -1,0 +1,101 @@
+{
+  "nodeVersion": "v22.18.0",
+  "scope": "Instrumented module copies and an isolated mock bridge; no real Unity connection",
+  "samples": [
+    {
+      "completedAgents": 1024,
+      "selections": 1024,
+      "selectionRequirements": 1024,
+      "pendingSelections": 0
+    },
+    {
+      "completedAgents": 2048,
+      "selections": 2048,
+      "selectionRequirements": 2048,
+      "pendingSelections": 0
+    },
+    {
+      "completedAgents": 3072,
+      "selections": 3072,
+      "selectionRequirements": 3072,
+      "pendingSelections": 0
+    },
+    {
+      "completedAgents": 4096,
+      "selections": 4096,
+      "selectionRequirements": 4096,
+      "pendingSelections": 0
+    }
+  ],
+  "discoverySha256": "d846d3e2b15a323f8e8d80201ac44767d0e7d818ef926a84d02f5b1818f287f4",
+  "reusingAnAgentDoesNotGrowMaps": true,
+  "completedWorkStillRetained": {
+    "selections": 4096,
+    "selectionRequirements": 4096,
+    "pendingSelections": 0
+  },
+  "loggerSha256": "72bbc6724f6a305e2d9182f841eed4b3c08ea7f09298143c2b4d1cf8062b49f1",
+  "logging": {
+    "entries": 96,
+    "messageCharacters": 65536,
+    "advertisedRotationBytes": 5242880,
+    "files": [
+      {
+        "name": "mcp-debug.log",
+        "bytes": 6295296
+      }
+    ]
+  },
+  "observations": {
+    "allCompletedAgentsStillSelected": true,
+    "allSelectionRequirementsStillRetained": true,
+    "pendingSelectionsReleased": true,
+    "debugLogExceedsAdvertisedThreshold": true
+  },
+  "node18Confirmation": {
+    "nodeVersion": "v18.20.8",
+    "observations": {
+      "allCompletedAgentsStillSelected": true,
+      "allSelectionRequirementsStillRetained": true,
+      "pendingSelectionsReleased": true,
+      "debugLogExceedsAdvertisedThreshold": true
+    },
+    "samples": [
+      {
+        "completedAgents": 1024,
+        "selections": 1024,
+        "selectionRequirements": 1024,
+        "pendingSelections": 0
+      },
+      {
+        "completedAgents": 2048,
+        "selections": 2048,
+        "selectionRequirements": 2048,
+        "pendingSelections": 0
+      },
+      {
+        "completedAgents": 3072,
+        "selections": 3072,
+        "selectionRequirements": 3072,
+        "pendingSelections": 0
+      },
+      {
+        "completedAgents": 4096,
+        "selections": 4096,
+        "selectionRequirements": 4096,
+        "pendingSelections": 0
+      }
+    ],
+    "logging": {
+      "entries": 96,
+      "messageCharacters": 65536,
+      "advertisedRotationBytes": 5242880,
+      "files": [
+        {
+          "name": "mcp-debug.log",
+          "bytes": 6295296
+        }
+      ]
+    }
+  }
+}

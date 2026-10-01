@@ -6,14 +6,14 @@ Release numbers are still unchanged on the modernization branch, so this validat
 
 | Component | Released baseline | Modernization implementation tested |
 |---|---|---|
-| Node server | `826af5c`, version 2.35.6 | Runtime through `279990d`, version 2.35.6 |
-| Unity plugin | `0b8e76f`, version 2.39.7 | `631b5d2`, version 2.39.7 |
+| Node server | `826af5c`, version 2.35.6 | `e9e7674`, version 2.35.6 |
+| Unity plugin | `0b8e76f`, version 2.39.7 | `f67c16c`, version 2.39.7 |
 
 The baseline repositories were checked out separately and remained unmodified. Both server installations used their own lockfiles, resolving MCP SDK 1.27.1. The old plugin was imported into a separate Unity 6000.6.2f1 project with uGUI 2.6.0 and Test Framework 1.8.0 supplied by the project; it predates the plugin's explicit dependency declarations.
 
 ## Verified matrix
 
-The [raw report](validation/unity66-version-compatibility.json) records all four combinations on Windows, using Node 18.20.8 and 22.18.0:
+Refreshed on 2026-10-01 after the mesh metadata changes. The [raw report](validation/unity66-version-compatibility.json) records all four combinations on Windows, using Node 18.20.8 and 22.18.0:
 
 | Server | Plugin | Result |
 |---|---|---|
