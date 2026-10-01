@@ -376,5 +376,31 @@
       "Queue66": 0,
       "Unity66": 0
     }
+  },
+  "serverValidationCommit": "cf701a6b4ccb412e50599abc65639f9440a1ffeb",
+  "ci": {
+    "plugin": {
+      "url": "https://github.com/AnkleBreaker-Studio/unity-mcp-plugin/actions/runs/36801042172",
+      "conclusion": "success",
+      "routes": 338,
+      "scope": "Route registry drift check; no Unity execution"
+    },
+    "server": {
+      "url": "https://github.com/AnkleBreaker-Studio/unity-mcp-server/actions/runs/36801099832",
+      "conclusion": "success",
+      "jobs": 8,
+      "nodeVersions": [
+        18,
+        20,
+        22,
+        24
+      ],
+      "operatingSystems": [
+        "Windows",
+        "Linux"
+      ],
+      "testsPerJob": 163,
+      "scope": "Ordinary server tests; opt-in Unity execution remains local"
+    }
   }
 }
