@@ -129,6 +129,7 @@ The plugin declares **Unity 2021.3.18f1+** support. Server and plugin versions a
 | Scene and asset editing | Enums, references, prefabs, rejected-write preservation and Scene capture cleanup. [Editor workflows](docs/editor-workflows.md) |
 | Package Manager | Requests yield between editor updates and remain sequential; list/search/info and local add/remove pass with current and released servers. [Package guide](docs/packages.md) |
 | Code results | Valid JSON for non-finite/Unicode values, bounded conversion and HTTP output, and no replay after response failure. [Execution guide](docs/code-execution.md) |
+| HTTP downloads | Bounded response reads, including compressed bodies and older plugins; overflow never repeats a command. [Response limits](docs/response-limits.md) |
 | Test Runner | Failure cleanup, native cancellation, accurate results and retained job details through script reload. [Testing guide](docs/testing.md) |
 | Unity 6.6 builds | Five Windows Mono builds verify managed diagnostics and restoration of project settings. Other platforms and IL2CPP remain untested. [Build guide](docs/builds.md) |
 | UMA V3.1f1 | Asset creation, race changes and recipe renames, with the integration isolated from the core bridge. [UMA guide](docs/uma.md) |

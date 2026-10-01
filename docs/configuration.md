@@ -8,6 +8,7 @@
 | `UNITY_BRIDGE_HOST` | `127.0.0.1` | Editor bridge host |
 | `UNITY_BRIDGE_PORT` | `7890` | Editor bridge port (auto-discovered when using multi-instance) |
 | `UNITY_BRIDGE_TIMEOUT` | `60000` | Request timeout in ms |
+| `UNITY_HTTP_RESPONSE_LIMIT` | `33554432` | Maximum decompressed HTTP response body per editor request; minimum 1024 bytes; abort reading on overflow |
 | `UNITY_PORT_RANGE_START` | `7890` | Start of port scan range for multi-instance discovery |
 | `UNITY_PORT_RANGE_END` | `7899` | End of port scan range |
 | `UNITY_INSTANCE_REGISTRY` | OS-specific UnityMCP directory | Override the shared registry file path |
@@ -26,6 +27,8 @@ The Unity plugin also has its own settings accessible via the Dashboard (`Window
 Project-context resources follow the selected editor and optional agent/port request metadata. Their existing category URIs remain relative to that selection. See [resource routing and multi-project behavior](resources.md).
 
 Response budgets include JSON escaping and metadata. Invalid values fall back to defaults; the soft limit is clamped to the hard limit. See [response limits, image results and recovery](response-limits.md).
+
+The separate HTTP limit bounds each incoming editor response before JSON parsing, including older plugins, discovery and context reads. It does not raise the MCP result limits or cap total process memory. A limit failure after submission does not undo the Unity operation.
 
 Discovery validates successful ping bodies before adopting editor ports; a registry entry cannot turn an unrelated service into a Unity instance. See [identity checks and routing limits](discovery.md).
 
@@ -54,6 +57,8 @@ Features for uninstalled packages return helpful messages explaining what to ins
 ## Troubleshooting
 
 **"response_too_large"** - The result could not be delivered within the configured byte limit. Inspect the effects before repeating a write; request smaller results for reads. See [response handling](response-limits.md).
+
+**"http_response_too_large"** - The server stopped reading an editor HTTP response above `UNITY_HTTP_RESPONSE_LIMIT`. It does not retry that response or resubmit the command. Inspect the original ticket/project before repeating a write; reduce the scope of reads.
 
 **"Outcome unknown"** - An Editor command may already have executed: inspect the project or original ticket before issuing it again. Updating both components enables protected submission retries; see the [retry and session contract](queue-protocol.md). For a Hub command, inspect Hub installations/settings before retrying; Hub operations run once and have [separate process diagnostics](hub.md).
 

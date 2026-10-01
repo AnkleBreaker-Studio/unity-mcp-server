@@ -4,6 +4,11 @@ All notable changes to this package will be documented in this file.
 
 ## [Unreleased]
 
+### HTTP response downloads
+- Bound incoming decompressed editor HTTP bodies before JSON parsing with `UNITY_HTTP_RESPONSE_LIMIT` (32 MiB by default). Preserve exact-limit UTF-8 decoding, cancellation and body deadlines.
+- Stop retries after overflow; report unknown outcomes after submission with known recovery identifiers. Cover queue, legacy, discovery, diagnostics and context paths without changing tool schemas.
+- Add 22 focused checks and live current/released-plugin validation on Node 18/22. All 185 ordinary tests pass locally; document the distinction between a per-response limit and total process memory.
+
 ### Unity result serialization
 - Add live current/released-server checks for non-finite values, Unicode, preserved list contracts, bounded result expansion and oversized HTTP responses. Verify failed result delivery never repeats the executed snippet.
 - Document the companion plugin's early byte limits and explicit serialization errors; clarify execution completion and recovery in the code tool description.

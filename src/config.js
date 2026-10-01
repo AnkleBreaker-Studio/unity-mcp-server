@@ -35,6 +35,7 @@ export const CONFIG = {
   editorBridgeHost: process.env.UNITY_BRIDGE_HOST || "127.0.0.1",
   editorBridgePort: parseInt(process.env.UNITY_BRIDGE_PORT || "7890"),
   editorBridgeTimeout: parseInt(process.env.UNITY_BRIDGE_TIMEOUT || "60000"),
+  httpResponseLimitBytes: byteLimit("UNITY_HTTP_RESPONSE_LIMIT", 32 * 1024 * 1024, 1024),
 
   // Multi-instance support
   portRangeStart: parseInt(process.env.UNITY_PORT_RANGE_START || "7890"),

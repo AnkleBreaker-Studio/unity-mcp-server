@@ -1,4 +1,5 @@
 import { getRequestContext, runWithRequestContext } from "./request-context.js";
+import { CONFIG } from "./config.js";
 
 const abortObservers = new WeakMap();
 const cancelled = () => new DOMException("MCP request cancelled", "AbortError");
@@ -58,12 +59,34 @@ export async function requestFetch(url, options, timeoutMs) {
   const controller = new AbortController();
   const timer = setTimeout(() => controller.abort(new DOMException("Request timed out", "TimeoutError")), Math.max(1, Math.ceil(timeoutMs)));
   const unsubscribe = onAbort(getRequestContext().signal, () => controller.abort(cancelled()));
+  let reader;
   try {
     const response = await fetch(url, { ...options, signal: controller.signal });
-    const text = await response.text();
+    reader = response.body?.getReader();
+    const decoder = new TextDecoder();
+    const limitBytes = CONFIG.httpResponseLimitBytes;
+    let receivedBytes = 0;
+    let text = "";
+    while (reader) {
+      const { done, value } = await reader.read();
+      if (done) break;
+      receivedBytes += value.byteLength;
+      // Fetch decodes compressed bodies; Content-Length can describe different wire bytes.
+      if (receivedBytes > limitBytes) {
+        throw Object.assign(new Error(`http_response_too_large: received at least ${receivedBytes} decoded HTTP body bytes; limit is ${limitBytes} bytes (UNITY_HTTP_RESPONSE_LIMIT)`), {
+          code: "http_response_too_large", receivedBytes, limitBytes,
+        });
+      }
+      text += decoder.decode(value, { stream: true });
+    }
+    text += decoder.decode();
     throwIfRequestCancelled();
     return { ok: response.ok, status: response.status, text };
+  } catch (error) {
+    controller.abort(error);
+    throw error;
   } finally {
+    reader?.releaseLock();
     clearTimeout(timer);
     unsubscribe();
   }

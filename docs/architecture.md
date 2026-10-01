@@ -36,6 +36,8 @@ Project-context resources use the same routing isolation while retaining their c
 
 Per-request cancellation reaches editor HTTP reads and observation loops. Shared discovery/negotiation remains active for other observers and is aborted when none remain. See [cancellation and accepted-operation semantics](cancellation.md).
 
+The shared HTTP reader bounds incoming decompressed bodies before UTF-8 decoding/JSON parsing. Oversize stops transport retries and reports unknown outcomes after submission, preserving known recovery identifiers. The default 32 MiB download cap is independent of plugin serialization and MCP output budgets. See [response limits](response-limits.md#node-http-downloads).
+
 Discovery distinguishes recognized identities, unavailable endpoints and unrecognized successful responses. Only unavailable endpoints retain fresh-registry recovery; per-attempt probe reuse avoids duplicate checks. [Identity and compatibility contract](discovery.md).
 
 ## Plugin subsystems

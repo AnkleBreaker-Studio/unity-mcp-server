@@ -17,7 +17,21 @@ An oversized result becomes `isError: true` with a JSON text block containing `s
 
 **Omitting a response does not undo its operation.** This error does not establish whether a Unity write succeeded. Inspect its effects or the original ticket before repeating it. The size limiter never repeats the command. For reads, request smaller results: reduce hierarchy `maxNodes`/`maxDepth`, asset `maxResults`, image dimensions or the scope of the query. Discover each tool's schema for the parameters it supports.
 
-The same budget covers normal results, unknown-tool errors, selection errors and exceptions. It includes injected project-context blocks. The limiter runs after the tool has returned and the result has been assembled; it does not itself bound Unity allocations, the upstream HTTP response, or peak memory used while serializing that result. Current plugins now apply a separate bounded HTTP serializer below.
+The same budget covers normal results, unknown-tool errors, selection errors and exceptions. It includes injected project-context blocks. The limiter runs after the tool has returned and the result has been assembled; it does not itself bound Unity allocations, the upstream HTTP response, or peak memory used while serializing that result. The server's download limit and the plugin's bounded HTTP serializer are separate protections below.
+
+## Node HTTP downloads
+
+`UNITY_HTTP_RESPONSE_LIMIT` defaults to **33,554,432 bytes (32 MiB)** per incoming editor HTTP response, with a minimum of 1,024 bytes. It accepts decimal safe integers using the same validation/fallback rule as the MCP limits. The default is above the plugin's existing 16 MiB output limit, retaining normal mixed-version traffic. It is independent of the 4 MiB MCP result limit.
+
+The shared HTTP reader counts body bytes **after HTTP decompression and before UTF-8 decoding**. It aborts when the first chunk crosses the budget, without appending that chunk or parsing a partial body. An exact-limit body fits. The count does not trust `Content-Length`: compressed and chunked responses follow the same bound. UTF-8 characters split across chunks, BOM removal and invalid-byte replacement retain the previous `Response.text()` behavior.
+
+This covers success and error bodies in discovery, queue negotiation/submission/polling, legacy synchronous requests, queue diagnostics and project context. The failure message includes `http_response_too_large`, the configured limit and a lower bound on received bytes. Oversize is not a transient transport error: negotiation stops before submission; an oversized acknowledgement/result reports `outcomeUnknown` and retains any already-known ticket/request/session identifiers. Neither the HTTP response nor the Unity command is retried. Oversized resource reads fail explicitly; failed automatic-context reads leave the successful command intact and allow a later context injection.
+
+Cancellation and timeouts remain active throughout the body read. Failure aborts the fetch, releases its reader and removes the timer/request observer. This is a **per-response body bound**, not a cap on total process memory: fetch/decompression may buffer ahead, a received chunk may exceed the remaining budget, text/JSON decoding has additional costs, and concurrent requests retain independent budgets. Incoming requests and original Unity result allocations remain separate.
+
+The [HTTP download report](validation/http-response-limits.json) records 15 failures against server `c96e839`, four passing controls and three additional recovery/error checks. All 22 focused checks and 185 ordinary tests pass on Node 18.20.8 and 22.18.0. Real Unity 6.6 checks use both the current plugin and released `0b8e76f`: a 64 KiB result exceeds a deliberately reduced 16 KiB download cap, executes once, retains recovery information and leaves follow-up calls usable.
+
+Run `npm test` for isolated HTTP/stdio regressions. For the live check, set `UNITY_MCP_HTTP_PROJECT` to an open disposable project with a `.unity-mcp-validation` marker, then run `npm run test:http-responses`. It uses MCP discovery, verifies the canonical project path, passes the selected port explicitly and removes its temporary SessionState counter. Evidence is written to `Library/UnityMcpHttpResponseLimit.json`; no scene/assets/settings are changed.
 
 ## Unity HTTP serialization
 
@@ -29,7 +43,7 @@ The shared writer rejects reference cycles, more than 64 container levels and mo
 
 Other serialization failures return HTTP 500 with `error: "response_serialization_failed"`, a bounded message, `reason`, `outcomeUnknown: true` and the recovery hint. The command may already have completed. Current server queue polling retains the original ticket/request/session identifiers and reports an unknown outcome; it does not resubmit the operation. Released-server execution-count checks pass too, without claiming it exposes all newer diagnostic fields.
 
-These are serialized-output and traversal limits. They do not cap the original result graph, total managed/native memory, peak intermediate allocations, incoming request parsing or arbitrary property/iterator code. Node-side HTTP download limits for older/other plugins remain separate work.
+These are serialized-output and traversal limits. They do not cap the original result graph, total managed/native memory, peak intermediate allocations, incoming request parsing or arbitrary property/iterator code. The Node download bound above also applies to older/other plugins.
 
 The [serialization report](validation/unity66-serialization.json) includes strict JSON parsing, culture/non-finite cases, cycles, shared references, deep/wide trees, UTF-8 boundaries, global execution-result expansion, legacy list shapes and actual HTTP 413/500 responses. A repeated 4 MiB-string fixture stops while visiting its fourth of eight entries. Real current/released-server checks on Node 18/22 confirm valid Unicode/non-finite results and no replay after 17 MiB output is refused.
 

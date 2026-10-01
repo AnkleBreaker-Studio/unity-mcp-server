@@ -13,7 +13,8 @@ function notSent(error) {
 }
 
 function transient(error) {
-  return !error.status || error.status === 500 || error.status === 502 || error.status === 503 || error.status === 504;
+  return error.code !== "http_response_too_large"
+    && (!error.status || error.status === 500 || error.status === 502 || error.status === 503 || error.status === 504);
 }
 
 function unknownOutcome(command, detail, identifiers = {}) {
