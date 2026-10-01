@@ -125,7 +125,8 @@ The plugin declares **Unity 2021.3.18f1+** support. Server and plugin versions a
 |---|---|
 | Released/current components | All four server-plugin pairs on Node 18 and 22, plus concurrent agents across mixed plugin versions. [Version matrix](docs/compatibility.md) |
 | Multiple editors and reloads | Overlapping calls to two editors, four Play Mode reload configurations and lost-result handling after script reload. [Validation record](docs/modernization.md) |
-| Multiplayer Play Mode 3.0 | Host/Client launch, separate agent routing and shared script recompilation. Game networking and ParrelSync lifecycle need separate validation. [Multiplayer guide](docs/multiplayer.md) |
+| Multiplayer Play Mode 3.0 | Host/Client launch, separate agent routing and shared script recompilation. [Multiplayer guide](docs/multiplayer.md) |
+| ParrelSync 1.5.2 | Native clone identity, independent agents, Play Mode, shared recompilation, settings persistence and clone restart. Gameplay connections need separate validation. [Clone guide](docs/parrelsync.md) |
 | Scene and asset editing | Enums, references, prefabs, rejected-write preservation and Scene capture cleanup. [Editor workflows](docs/editor-workflows.md) |
 | Inline camera images | Explicit camera selection, bounded dimensions, restored render targets and decoded PNG checks with current/released servers. [Capture guide](docs/graphics-capture.md) |
 | Asset previews | Loading yields to editor updates and other agents; requested sizes and metadata-only options are honored. [Preview guide](docs/asset-previews.md) |

@@ -4,6 +4,11 @@ All notable changes to this package will be documented in this file.
 
 ## [Unreleased]
 
+### ParrelSync identity and lifecycle
+- Keep unknown clone indices readable in discovery banners; preserve clone metadata and existing tool schemas.
+- Document native marker-based plugin identity and original-project resolution, including ordinary projects whose names resemble clones.
+- Add four stdio checks and opt-in `test:parrelsync` for real parent/clone routing, Play Mode, shared recompilation, settings persistence and restart on Node 18/22. Record the limits of cross-process preference propagation.
+
 ### Completed result retention
 - Describe plugin polling-cache count/cost limits and history snapshots through `unity_queue_info.data.completedResults`.
 - Add missing-result and lost-acknowledgement checks plus real current/published-server pressure workflows on Node 18/22. Preserve unknown outcomes and prevent protected re-execution; see [retention and recovery](docs/result-retention.md).

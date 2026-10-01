@@ -1,0 +1,493 @@
+{
+  "recordedOn": "2026-10-01",
+  "serverCommit": "2bb4db6824ee73520ea6a3935f5f05518f746269",
+  "pluginCommit": "becd39557fed9802e650e019be696bd11a0052cf",
+  "releasedServerCommit": "826af5ce61db7e2d2d675fe90d24c941a83f3924",
+  "environment": {
+    "unity": "6000.6.2f1",
+    "runtime": "Mono",
+    "platform": "Windows",
+    "parrelSync": "1.5.2",
+    "parrelSyncCommit": "a122dc90cbe2d4cc2669ddad00b12b3917ef934b"
+  },
+  "nativeCloneCreation": {
+    "method": "ParrelSync.ClonesManager.CreateCloneFromCurrent",
+    "marker": ".clone",
+    "sharedJunctions": [
+      "Assets",
+      "ProjectSettings"
+    ],
+    "copiedDirectories": [
+      "Packages",
+      "Library"
+    ],
+    "mainIntentionallyNamedLikeClone": true
+  },
+  "reproducedIdentity": {
+    "pluginCommit": "63afda528bc0158b40acdb09f91cf9c7dde6eae9",
+    "parent": {
+      "nativeClone": false,
+      "mcpClone": true,
+      "cloneIndex": 7,
+      "nativeOriginal": "C:/Users/Francois/orca/workspaces/unity-mcp-server/validation/Parrel66_clone_7",
+      "mcpMain": "C:/Users/Francois/orca/workspaces/unity-mcp-server/validation/Parrel66_clone_7",
+      "optionalLinks": [
+        ""
+      ],
+      "settingsGuid": "ea85fbbb6074419a88318bbaaf57e9bf"
+    },
+    "clone": {
+      "nativeClone": true,
+      "mcpClone": true,
+      "cloneIndex": 0,
+      "nativeOriginal": "C:/Users/Francois/orca/workspaces/unity-mcp-server/validation/Parrel66_clone_7",
+      "mcpMain": "C:/Users/Francois/orca/workspaces/unity-mcp-server/validation/Parrel66_clone_7_clone_0",
+      "settingsGuid": "ea85fbbb6074419a88318bbaaf57e9bf",
+      "scenePath": "",
+      "port": 7891
+    }
+  },
+  "controlledIdentity": {
+    "unityVersion": "6000.6.2f1",
+    "passed": true,
+    "checks": [
+      {
+        "name": "An ordinary project remains its own main project",
+        "passed": true
+      },
+      {
+        "name": "A clone-shaped folder without the native marker remains a main project",
+        "passed": true
+      },
+      {
+        "name": "A native marked numeric clone reports its original project",
+        "passed": true
+      },
+      {
+        "name": "The final suffix resolves a parent whose own name contains clone text",
+        "passed": true
+      },
+      {
+        "name": "A renamed marked clone keeps identity with unknown index and parent",
+        "passed": true
+      },
+      {
+        "name": "An orphaned marked clone does not invent a missing source project",
+        "passed": true
+      },
+      {
+        "name": "An overflowing suffix keeps clone identity without an invalid index",
+        "passed": true
+      },
+      {
+        "name": "A nonnumeric native suffix can retain a known original project",
+        "passed": true
+      },
+      {
+        "name": "Trailing directory separators preserve identity",
+        "passed": true
+      },
+      {
+        "name": "A marker directory is not the native marker file",
+        "passed": true
+      },
+      {
+        "name": "A plain directory cannot be inferred as a Unity source project",
+        "passed": true
+      },
+      {
+        "name": "Marker creation and removal are observed without stale identity",
+        "passed": true
+      }
+    ]
+  },
+  "currentServerLifecycle": [
+    {
+      "nodeVersion": "v22.18.0",
+      "passed": true,
+      "checks": {
+        "mainIdentity": {
+          "nativeClone": false,
+          "mcpClone": false,
+          "index": -1,
+          "nativeOriginal": "C:/Users/Francois/orca/workspaces/unity-mcp-server/validation/Parrel66_clone_7",
+          "mainPath": "C:/Users/Francois/orca/workspaces/unity-mcp-server/validation/Parrel66_clone_7",
+          "guid": "ea85fbbb6074419a88318bbaaf57e9bf",
+          "pid": 411020
+        },
+        "cloneIdentity": {
+          "nativeClone": true,
+          "mcpClone": true,
+          "index": 0,
+          "nativeOriginal": "C:/Users/Francois/orca/workspaces/unity-mcp-server/validation/Parrel66_clone_7",
+          "mainPath": "C:/Users/Francois/orca/workspaces/unity-mcp-server/validation/Parrel66_clone_7",
+          "guid": "ea85fbbb6074419a88318bbaaf57e9bf",
+          "pid": 433196
+        },
+        "ambiguousNameRejected": true,
+        "settings": {
+          "separateInstancePort": true,
+          "sameProjectPrefix": true,
+          "immediatePolicyPropagationObserved": false,
+          "persistedPolicyInheritedAfterRestart": true,
+          "instancePortPreservedAfterRestart": true
+        },
+        "editMode": {
+          "overlappingCalls": 12,
+          "perEditor": 6,
+          "implicitAgentRouting": true,
+          "exactCounts": true
+        },
+        "playMode": {
+          "overlappingCalls": 12,
+          "perEditor": 6,
+          "implicitAgentRouting": true,
+          "exactCounts": true
+        },
+        "sharedReload": {
+          "sameCompiledMarker": true,
+          "bothQueueSessionsChanged": true
+        },
+        "afterReload": {
+          "overlappingCalls": 12,
+          "perEditor": 6,
+          "implicitAgentRouting": true,
+          "exactCounts": true
+        },
+        "restart": {
+          "oldPid": 433196,
+          "newPid": 432924,
+          "rediscoveredPort": 7891
+        },
+        "afterRestart": {
+          "overlappingCalls": 12,
+          "perEditor": 6,
+          "implicitAgentRouting": true,
+          "exactCounts": true
+        }
+      },
+      "project": "C:/Users/Francois/orca/workspaces/unity-mcp-server/validation/Parrel66_clone_7",
+      "clonePath": "C:/Users/Francois/orca/workspaces/unity-mcp-server/validation/Parrel66_clone_7_clone_0",
+      "cleanup": {
+        "settingsRestored": true,
+        "playStopped": true,
+        "scriptRemoved": true
+      }
+    },
+    {
+      "nodeVersion": "v18.20.8",
+      "passed": true,
+      "checks": {
+        "mainIdentity": {
+          "nativeClone": false,
+          "mcpClone": false,
+          "index": -1,
+          "nativeOriginal": "C:/Users/Francois/orca/workspaces/unity-mcp-server/validation/Parrel66_clone_7",
+          "mainPath": "C:/Users/Francois/orca/workspaces/unity-mcp-server/validation/Parrel66_clone_7",
+          "guid": "ea85fbbb6074419a88318bbaaf57e9bf",
+          "pid": 411020
+        },
+        "cloneIdentity": {
+          "nativeClone": true,
+          "mcpClone": true,
+          "index": 0,
+          "nativeOriginal": "C:/Users/Francois/orca/workspaces/unity-mcp-server/validation/Parrel66_clone_7",
+          "mainPath": "C:/Users/Francois/orca/workspaces/unity-mcp-server/validation/Parrel66_clone_7",
+          "guid": "ea85fbbb6074419a88318bbaaf57e9bf",
+          "pid": 432924
+        },
+        "ambiguousNameRejected": true,
+        "settings": {
+          "separateInstancePort": true,
+          "sameProjectPrefix": true,
+          "immediatePolicyPropagationObserved": false,
+          "persistedPolicyInheritedAfterRestart": true,
+          "instancePortPreservedAfterRestart": true
+        },
+        "editMode": {
+          "overlappingCalls": 12,
+          "perEditor": 6,
+          "implicitAgentRouting": true,
+          "exactCounts": true
+        },
+        "playMode": {
+          "overlappingCalls": 12,
+          "perEditor": 6,
+          "implicitAgentRouting": true,
+          "exactCounts": true
+        },
+        "sharedReload": {
+          "sameCompiledMarker": true,
+          "bothQueueSessionsChanged": true
+        },
+        "afterReload": {
+          "overlappingCalls": 12,
+          "perEditor": 6,
+          "implicitAgentRouting": true,
+          "exactCounts": true
+        },
+        "restart": {
+          "oldPid": 432924,
+          "newPid": 418624,
+          "rediscoveredPort": 7891
+        },
+        "afterRestart": {
+          "overlappingCalls": 12,
+          "perEditor": 6,
+          "implicitAgentRouting": true,
+          "exactCounts": true
+        }
+      },
+      "project": "C:/Users/Francois/orca/workspaces/unity-mcp-server/validation/Parrel66_clone_7",
+      "clonePath": "C:/Users/Francois/orca/workspaces/unity-mcp-server/validation/Parrel66_clone_7_clone_0",
+      "cleanup": {
+        "settingsRestored": true,
+        "playStopped": true,
+        "scriptRemoved": true
+      }
+    }
+  ],
+  "releasedServerReadCompatibility": [
+    {
+      "nodeVersion": "v22.18.0",
+      "serverEntry": "C:/Users/Francois/orca/workspaces/unity-mcp-server/validation/compat-server-baseline/src/index.js",
+      "passed": true,
+      "editors": [
+        {
+          "path": "C:/Users/Francois/orca/workspaces/unity-mcp-server/validation/Parrel66_clone_7",
+          "port": 7890,
+          "isClone": false,
+          "cloneIndex": -1,
+          "identityAndReadCommandsPassed": true
+        },
+        {
+          "path": "C:/Users/Francois/orca/workspaces/unity-mcp-server/validation/Parrel66_clone_7_clone_0",
+          "port": 7891,
+          "isClone": true,
+          "cloneIndex": 0,
+          "identityAndReadCommandsPassed": true
+        }
+      ]
+    },
+    {
+      "nodeVersion": "v18.20.8",
+      "serverEntry": "C:/Users/Francois/orca/workspaces/unity-mcp-server/validation/compat-server-baseline/src/index.js",
+      "passed": true,
+      "editors": [
+        {
+          "path": "C:/Users/Francois/orca/workspaces/unity-mcp-server/validation/Parrel66_clone_7",
+          "port": 7890,
+          "isClone": false,
+          "cloneIndex": -1,
+          "identityAndReadCommandsPassed": true
+        },
+        {
+          "path": "C:/Users/Francois/orca/workspaces/unity-mcp-server/validation/Parrel66_clone_7_clone_0",
+          "port": 7891,
+          "isClone": true,
+          "cloneIndex": 0,
+          "identityAndReadCommandsPassed": true
+        }
+      ]
+    }
+  ],
+  "settingsObservation": {
+    "sameProjectGuidAndPrefix": true,
+    "parentEditorPrefsWritePersistedInWindowsRegistry": true,
+    "otherRunningEditorRetainedCachedValue": true,
+    "cloneRestartInheritsParentPolicy": true,
+    "productionSynchronizationChanges": false,
+    "privateUnitySyncApiUsed": false
+  },
+  "dashboardRegression": {
+    "unityVersion": "6000.6.2f1",
+    "idle": {
+      "iterations": 100,
+      "elapsedMs": 22.3367,
+      "allocations": 31700,
+      "allocatedBytes": 677500,
+      "profilerControlAllocations": 1
+    },
+    "unchangedQueueSection": {
+      "iterations": 100,
+      "elapsedMs": 0.0196,
+      "allocations": 0,
+      "allocatedBytes": 0,
+      "profilerControlAllocations": 1
+    },
+    "unchangedHttpSection": {
+      "iterations": 100,
+      "elapsedMs": 0.030000000000000002,
+      "allocations": 0,
+      "allocatedBytes": 0,
+      "profilerControlAllocations": 1
+    },
+    "httpActiveRequestVisible": true,
+    "httpRefusalVisible": true,
+    "httpControlsReused": true,
+    "twentyStableAgents": {
+      "iterations": 100,
+      "elapsedMs": 25.6594,
+      "allocations": 31700,
+      "allocatedBytes": 693700,
+      "profilerControlAllocations": 1
+    },
+    "unshownActivityDoesNotRebuild": true,
+    "visibleMetricsRefresh": true,
+    "changingAgents": {
+      "iterations": 100,
+      "elapsedMs": 25.1183,
+      "allocations": 33100,
+      "allocatedBytes": 717500,
+      "profilerControlAllocations": 1
+    },
+    "changedAndUnchangedCardsReused": true,
+    "oldOutstandingSessionVisible": true,
+    "idleSessionExpiresWithoutRebuildingOthers": true,
+    "returningSessionVisible": true,
+    "emptyStateRestored": true,
+    "newAgentReplacesEmptyState": true,
+    "scrollRootsBefore": 1,
+    "scrollRootsAfter": 1,
+    "recreateGuiDoesNotDuplicateControls": true,
+    "savedFoldoutStateRestored": true,
+    "httpPreferenceAndCountersRestored": true,
+    "failures": [],
+    "passed": true,
+    "fixtureSessionsRemoved": true
+  },
+  "minimumApiCompilation": {
+    "unityVersion": "2021.3.18f1",
+    "passed": true,
+    "referenceCount": 211,
+    "log": "C:\\Users\\Francois\\orca\\workspaces\\unity-mcp-server\\validation\\Unity2021Api\\compiler.log",
+    "packageAssemblies": [
+      {
+        "sha256": "AF83F70ECAC09EE676571E37C62595B7FF26148B636CE498F9151A2F7A9697A3",
+        "file": "C:\\Users\\Francois\\orca\\workspaces\\unity-mcp-server\\validation\\Editors\\2021.3.18f1\\Editor\\Data\\Resources\\PackageManager\\ProjectTemplates\\libcache\\com.unity.template.universal-2d-1.1.4\\ScriptAssemblies\\UnityEngine.UI.dll"
+      },
+      {
+        "sha256": "AAAF5BC1E371F6CFA67138DCB6E77634A8075D30E0C1DF27670A5B0028CC5523",
+        "file": "C:\\Users\\Francois\\orca\\workspaces\\unity-mcp-server\\validation\\Editors\\2021.3.18f1\\Editor\\Data\\Resources\\PackageManager\\ProjectTemplates\\libcache\\com.unity.template.universal-2d-1.1.4\\ScriptAssemblies\\UnityEngine.TestRunner.dll"
+      },
+      {
+        "sha256": "6995901F60508B79F4B648FE2E3B64D8D1BD545B3CB3817134F079842FA82832",
+        "file": "C:\\Users\\Francois\\orca\\workspaces\\unity-mcp-server\\validation\\Editors\\2021.3.18f1\\Editor\\Data\\Resources\\PackageManager\\ProjectTemplates\\libcache\\com.unity.template.universal-2d-1.1.4\\ScriptAssemblies\\UnityEditor.TestRunner.dll"
+      }
+    ],
+    "excludedIntegrations": [
+      "UMA",
+      "ProBuilder"
+    ],
+    "sourceCount": 76,
+    "check": "C# compilation against installed Unity assemblies; no editor execution or package import",
+    "exitCode": 0
+  },
+  "ordinaryServerTests": [
+    {
+      "node": "22.18.0",
+      "passed": 255,
+      "failed": 0
+    },
+    {
+      "node": "18.20.8",
+      "passed": 255,
+      "failed": 0
+    }
+  ],
+  "routeRegistry": {
+    "passed": true,
+    "routes": 338
+  },
+  "finalEditors": [
+    {
+      "path": "C:/Users/Francois/orca/workspaces/unity-mcp-server/validation/Parrel66_clone_7",
+      "pid": 411020,
+      "playing": false,
+      "compiling": false,
+      "dirty": false,
+      "scene": "Assets/ParrelValidation.unity",
+      "context": true,
+      "portPreference": 7890,
+      "remainingScripts": [],
+      "isClone": false,
+      "compilationErrors": 0
+    },
+    {
+      "path": "C:/Users/Francois/orca/workspaces/unity-mcp-server/validation/Parrel66_clone_7_clone_0",
+      "pid": 418624,
+      "playing": false,
+      "compiling": false,
+      "dirty": false,
+      "scene": "Assets/ParrelValidation.unity",
+      "context": true,
+      "portPreference": 7891,
+      "remainingScripts": [],
+      "isClone": true,
+      "compilationErrors": 0
+    }
+  ],
+  "cleanup": {
+    "temporarySharedScriptRemoved": true,
+    "preferencesRestored": true,
+    "playStopped": true,
+    "cleanSavedScenes": true,
+    "ownedEditorsClosed": true,
+    "copiedBatchFixtureRemoved": true,
+    "userEditorsUntouched": true,
+    "markedValidationProjectsRetained": true
+  },
+  "limits": [
+    "Editor orchestration, not gameplay networking",
+    "Native clone deletion not exercised",
+    "Other ParrelSync versions and editor platforms not exercised",
+    "Unity 2021.3 compiler-only; real editor execution deferred by maintainer",
+    "Already-running editors do not have guaranteed realtime preference propagation"
+  ],
+  "ci": {
+    "server": {
+      "run": 36848375528,
+      "status": "success",
+      "matrixJobsPassed": 8,
+      "nodeVersions": [
+        18,
+        20,
+        22,
+        24
+      ],
+      "platforms": [
+        "windows-latest",
+        "ubuntu-latest"
+      ],
+      "inspectedLogs": [
+        {
+          "job": 110323908602,
+          "platform": "ubuntu-latest",
+          "node": 22,
+          "tests": 255,
+          "passed": 255,
+          "failed": 0
+        },
+        {
+          "job": 110323908620,
+          "platform": "windows-latest",
+          "node": 18,
+          "tests": 255,
+          "passed": 255,
+          "failed": 0
+        }
+      ]
+    },
+    "plugin": {
+      "run": 36848369344,
+      "job": 110323886972,
+      "status": "success",
+      "routes": 338
+    }
+  },
+  "passed": true,
+  "documentation": {
+    "localLinksChecked": 170,
+    "missing": 0
+  }
+}

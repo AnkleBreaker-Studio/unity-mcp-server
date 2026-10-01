@@ -9,9 +9,9 @@ MPPM gives each virtual player a separate Unity process. The MCP server discover
 | Field | Meaning |
 |---|---|
 | `isVirtualPlayer` | Whether Unity identifies this editor as an MPPM virtual player. |
-| `mainProjectPath` | Parent project for Unity's `Library/VP/<id>` layout; the current project for a normal editor. Empty if the virtual layout cannot be identified. |
+| `mainProjectPath` | Parent project for Unity's `Library/VP/<id>` layout or a verified ParrelSync source; the current project for a normal editor. Empty if the parent cannot be identified. |
 | `virtualPlayerId` | Virtual project directory ID, matched to the player's ID from `unity_mppm_list_players`. Empty for the main editor. |
-| `isClone`, `cloneIndex` | Existing ParrelSync fields, with their original meaning. |
+| `isClone`, `cloneIndex` | ParrelSync's `.clone` marker and numeric suffix; `-1` for an unknown/absent index. See [native clone identity and lifecycle](parrelsync.md). |
 
 Older plugins may omit the new fields. Omission means unknown. MPPM children can share their parent's project name: match the project path and virtual ID, then select the freshly discovered port. Selection by an ambiguous name fails. Explicit command ports remain useful when multiple agents share one MCP connection; independent agent identities also retain separate selections.
 
@@ -47,4 +47,4 @@ npm run test:multiplayer
 
 The suite creates a unique owned scenario, verifies native instance settings, rejects overwrites and invalid inputs, launches Host/Client roles, and sends 12 overlapping commands through two agent selections without command ports. It then recompiles a shared script and repeats the routing check in Edit Mode. It restores the role setting and previous scenario, removes its assets and deactivates its virtual player. Evidence is written to `Library/UnityMcpMultiplayer.json`.
 
-This opt-in suite operates actual editors and is separate from ordinary CI. It targets Unity 6.6 with MPPM 3.0. It does not certify older MPPM versions, ParrelSync lifecycle, remote players, or any game's networking implementation. See the [validation report](validation/unity66-multiplayer.json) for the recorded run and the [remaining modernization work](modernization.md#remaining-work-before-completion).
+This opt-in suite operates actual editors and is separate from ordinary CI. It targets Unity 6.6 with MPPM 3.0. It does not certify older MPPM versions, remote players, or any game's networking implementation. ParrelSync has a [separate lifecycle suite and report](parrelsync.md). See the [MPPM validation report](validation/unity66-multiplayer.json) for the recorded run and the [remaining modernization work](modernization.md#remaining-work-before-completion).
