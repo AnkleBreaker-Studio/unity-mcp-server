@@ -366,5 +366,26 @@
         }
       }
     ]
+  },
+  "publication": {
+    "serverCommit": "23eac28a472af836c3f4049c26386142e65e30d3",
+    "pluginDocumentationCommit": "726b63e",
+    "branch": "Development-Unity66-Modernization",
+    "ci": {
+      "url": "https://github.com/AnkleBreaker-Studio/unity-mcp-server/actions/runs/36804839915",
+      "conclusion": "success",
+      "passedJobs": 8,
+      "nodeVersions": [
+        18,
+        20,
+        22,
+        24
+      ],
+      "platforms": [
+        "ubuntu-latest",
+        "windows-latest"
+      ]
+    },
+    "cleanup": "Temporary LegacyCompat66 editor closed after clean-scene checks; persistent Queue66 selected again, outside Play Mode and compilation with a saved scene."
   }
 }
