@@ -176,3 +176,63 @@ test("a stalled poll body honors the total polling deadline without resubmission
     assert.equal(bridge.submissions.length, 1);
   }, { UNITY_QUEUE_POLL_TIMEOUT: "300" });
 });
+
+function refuseInput(bridge, { status = 503, accepted = false, after = 0 } = {}) {
+  const handle = bridge._handle.bind(bridge), reply = bridge._json.bind(bridge);
+  bridge.refusedInputs = 0;
+  bridge._json = (res, code, data) => reply(res, code, Object.hasOwn(data, "queueRetryWindowMs")
+    ? { ...data, queueRetryWindowMs: 2100 } : data);
+  bridge._handle = (req, res) => {
+    const target = bridge.mode === "legacy" ? req.url === "/api/gameobject/create" : /\/api\/queue\/submit(?:-once)?$/.test(req.url);
+    if (req.method === "POST" && target
+        && bridge.submissions.length >= after) {
+      bridge.refusedInputs++;
+      return reply(res, status, { error: "Body rejected before dispatch", code: status === 408 ? "request_body_timeout" : "request_body_busy", requestAccepted: accepted });
+    }
+    return handle(req, res);
+  };
+}
+
+for (const mode of ["legacy", "queue", "protected"]) {
+  test(`explicit pre-dispatch refusal remains definite in ${mode} mode`, async () => {
+    const bridge = mode === "protected" ? modernBridge() : new MockBridge({ mode: mode === "legacy" ? "legacy" : "queue" });
+    refuseInput(bridge);
+    await exercise(bridge, result => {
+      assert.equal(result.isError, true);
+      assert.equal(result.payload.requestAccepted, false, result.payloadText);
+      assert.equal(result.payload.code, "request_body_busy");
+      assert.equal(result.payload.outcomeUnknown, undefined);
+      assert.equal(bridge.seen.length, 0);
+      assert.equal(bridge.refusedInputs, mode === "protected" ? 2 : 1);
+    });
+  });
+}
+
+for (const accepted of ["false", true]) {
+  test(`non-false admission metadata cannot turn an ambiguous failure into a refusal (${accepted})`, async () => {
+    const bridge = new MockBridge({ mode: "legacy" }); refuseInput(bridge, { accepted });
+    await exercise(bridge, result => {
+      assert.equal(result.isError, true); assert.equal(result.payload.outcomeUnknown, true);
+      assert.equal(result.payload.requestAccepted, undefined); assert.equal(bridge.refusedInputs, 1);
+    });
+  });
+}
+
+test("a later body refusal cannot erase an earlier lost acknowledgement", async () => {
+  const bridge = modernBridge(); loseFirstAck(bridge); refuseInput(bridge, { after: 1 });
+  await exercise(bridge, result => {
+    assert.equal(result.isError, true); assert.equal(result.payload.outcomeUnknown, true);
+    assert.equal(result.payload.requestAccepted, undefined); assert.equal(bridge.writes, 1);
+    assert.equal(bridge.submissions.length, 1); assert.equal(bridge.refusedInputs, 1);
+    assert.equal(typeof result.payload.requestId, "string");
+  });
+});
+
+test("an input deadline reports non-acceptance without resubmitting", async () => {
+  const bridge = modernBridge(); refuseInput(bridge, { status: 408 });
+  await exercise(bridge, result => {
+    assert.equal(result.isError, true); assert.equal(result.payload.requestAccepted, false);
+    assert.equal(result.payload.code, "request_body_timeout"); assert.equal(result.payload.outcomeUnknown, undefined);
+    assert.equal(bridge.refusedInputs, 1); assert.equal(bridge.writes, 0);
+  });
+});

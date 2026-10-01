@@ -34,6 +34,10 @@ test("HTTP monitoring covers concurrent commands, input rejection and actual dom
     assert.equal(http.completedRequests, http.responses2xx + http.responses4xx + http.responses5xx + http.otherResponses + http.incompleteRequests);
     assert.ok(http.peakActiveRequests >= http.activeRequests);
     assert.ok(http.maxDurationMs >= http.averageDurationMs);
+    assert.equal(http.maxBodyReaders, 8); assert.equal(http.maxReservedBodyBytes, 64 * 1024 * 1024);
+    assert.equal(http.bodyReadTimeoutMs, 30_000);
+    assert.ok(http.activeBodyReaders >= 0 && http.activeBodyReaders <= http.maxBodyReaders);
+    assert.ok(http.reservedBodyBytes >= 0 && http.reservedBodyBytes <= http.maxReservedBodyBytes);
   };
   try {
     await client.initialize(); await discover();
@@ -45,6 +49,8 @@ test("HTTP monitoring covers concurrent commands, input rejection and actual dom
     assert.ok(concurrent.every(result => !result.isPlaying && !result.isCompiling));
     const afterConcurrent = await call("unity_queue_info"); invariant(afterConcurrent.http);
     assert.ok(afterConcurrent.http.completedRequests >= initial.http.completedRequests + 12);
+    assert.equal(afterConcurrent.http.bodyAdmissionRefusals, initial.http.bodyAdmissionRefusals);
+    assert.equal(afterConcurrent.http.bodyReadTimeouts, initial.http.bodyReadTimeouts);
     report.checks.push({ name: "Twelve overlapping MCP calls preserve aggregate invariants", passed: true, before: initial.http, after: afterConcurrent.http });
 
     const missing = await client.callTool("unity_gameobject_info", { port, path: "__HttpMonitoringMissingObject" });
@@ -77,6 +83,7 @@ test("HTTP monitoring covers concurrent commands, input rejection and actual dom
     assert.equal(afterReload.http.domainReloadCount, beforeReload.http.domainReloadCount + 1);
     assert.notEqual(afterReload.http.startedAtUtc, beforeReload.http.startedAtUtc);
     assert.equal(afterReload.http.inputRejectedRequests, 0);
+    assert.equal(afterReload.http.bodyReadTimeouts, 0); assert.equal(afterReload.http.bodyAdmissionRefusals, 0);
     assert.ok(afterReload.http.lastDomainReloadMs > 0);
     report.checks.push({ name: "Actual reload persists reload count and resets HTTP totals", passed: true, before: beforeReload.http, after: afterReload.http });
     const compilation = await call("unity_get_compilation_errors", { severity: "error" });

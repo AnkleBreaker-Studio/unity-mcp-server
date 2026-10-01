@@ -35,6 +35,7 @@ async function fetchJson(url, options, timeoutMs = CONFIG.editorBridgeTimeout) {
     const error = new Error(`HTTP ${response.status}: ${body?.error || text}`);
     error.status = response.status;
     error.bridgeCode = body?.code;
+    error.requestAccepted = body?.requestAccepted === false ? false : undefined;
     throw error;
   }
   return JSON.parse(text);
@@ -71,6 +72,8 @@ async function legacy(command, body, bridgeUrl, agentId) {
     } catch (error) {
       throwIfRequestCancelled();
       if (notSent(error) && attempt < MAX_RETRIES) { await sleep(backoff(attempt)); continue; }
+      if (error.requestAccepted === false)
+        return { success: false, requestAccepted: false, code: error.bridgeCode, error: error.message };
       if (notSent(error) || (error.status >= 400 && error.status < 500))
         return { success: false, error: error.message };
       return unknownOutcome(command, error.message);
@@ -163,7 +166,7 @@ export async function sendQueuedCommand(command, params, bridgeUrl, agentId) {
         queueModes.set(bridgeUrl, false);
         return legacy(command, body, bridgeUrl, agentId);
       }
-      if (!notSent(error) && !(error.status >= 400 && error.status < 500)) uncertain = true;
+      if (!notSent(error) && error.requestAccepted !== false && !(error.status >= 400 && error.status < 500)) uncertain = true;
       const canRetry = notSent(error) || (guard && transient(error));
       if (!canRetry || attempt >= MAX_RETRIES) break;
       console.error(`[MCP Bridge] Retrying ${command} with its original request identity (${attempt + 1}/${MAX_RETRIES})`);
@@ -176,5 +179,9 @@ export async function sendQueuedCommand(command, params, bridgeUrl, agentId) {
   }
   if (uncertain || lastError?.status === 410 || lastError?.bridgeCode === "request_conflict")
     return unknownOutcome(command, lastError?.message || "Submission retry deadline expired", guard ? { requestId: guard.requestId, queueSessionId: guard.queueSessionId } : {});
-  return { success: false, queueTransportError: true, error: lastError?.message || "Submission retry deadline expired before acceptance" };
+  return {
+    success: false, queueTransportError: true,
+    ...(lastError?.requestAccepted === false ? { requestAccepted: false, code: lastError.bridgeCode } : {}),
+    error: lastError?.message || "Submission retry deadline expired before acceptance",
+  };
 }

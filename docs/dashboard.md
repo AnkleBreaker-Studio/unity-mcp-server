@@ -2,6 +2,8 @@
 
 The [HTTP monitoring update](http-monitoring.md) adds a collapsed **HTTP Activity** section and typed queue snapshots. Its newer report measures the complete idle refresh at 30,400 allocation events per 100 iterations, with zero events in the unchanged queue and HTTP sections. The earlier measurements below remain the baseline evidence for agent-card reuse.
 
+The uploads line shows active body readers, reserved input MiB, busy refusals and expired deadlines. Its tooltip explains the [input limits](request-input.md), including the distinction between reservations and queued/native memory. The [body report](validation/unity66-request-body.json) verifies wrapping in actual 360 px views and retains the existing refresh-allocation results.
+
 The [attached rendering report](validation/unity66-editor-render.json) adds real Windows pixel review at 360 × 500, 360 × 800 and 640 × 800. Long agent/request text, wrapped HTTP counters, scrolling, context actions, category controls and settings remain readable in the reviewed views. It also exposed context help measuring 294 px inside a 282 px label: the explanatory messages now wrap, with the empty-state label growing from 13 to 25 px high. These captures measure no rendering performance and do not cover other OS/DPI settings. See [reproduction](editor-capture.md#attached-unity-rendering).
 
 Open **Window → AB Unity MCP → Dashboard** in the editor you want to inspect. The header identifies the project directory and Unity version. Bridge controls, the request queue, agent sessions and recent actions come before project context, feature categories, news and settings. News starts collapsed; each section remembers its open/closed state for that project path on the current machine.

@@ -4,6 +4,11 @@ All notable changes to this package will be documented in this file.
 
 ## [Unreleased]
 
+### Upload refusal and body monitoring
+- Preserve explicit input non-acceptance across legacy, ordinary and guarded submission errors, including busy HTTP 503 responses. Keep a prior lost acknowledgement uncertain and retain existing retry identity/policy.
+- Add seven retry regressions and extend live HTTP monitoring to body readers, reservations, refusal/deadline counters and reload reset. All 202 ordinary tests pass locally; focused retry checks pass on Node 18 and 22.
+- Document the plugin's admission, framing and deadline fixes with 12 controlled checks, four real current/released-server runs and Dashboard pixel review.
+
 ### Rendered editor validation
 - Add opt-in `test:editor-render` for real floating/docked UI Toolkit and IMGUI pixels, focus/tab preservation and Dashboard layouts on Node 18/22.
 - Record the plugin's corrected dock crop and context-help wrapping with before/after evidence, local pixel review and restored fixture state.
