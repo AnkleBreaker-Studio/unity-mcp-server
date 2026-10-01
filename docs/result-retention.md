@@ -44,6 +44,8 @@ The [validation report](validation/unity66-result-retention.json) records three 
 
 Queue, admission, serialization and monitoring regressions pass. All 76 included editor sources compile against Unity 2021 APIs; actual old-editor execution remains deferred by maintainer direction. Three Node checks cover eviction during polling and protected replay after a lost acknowledgement. Four real-editor runs cover current/published servers on Node 18/22. Those runs invoke native queue pressure inside an actual MCP command and then perform successful MCP reads; they do not force a real network acknowledgement loss. No scene assets are created.
 
+Implementation checkpoints: plugin `63afda5`, server validation `565f4af`. All eight [Node 18/20/22/24 Windows/Linux CI jobs](https://github.com/AnkleBreaker-Studio/unity-mcp-server/actions/runs/36844619880) pass 251 tests; the [plugin CI](https://github.com/AnkleBreaker-Studio/unity-mcp-plugin/actions/runs/36844555925) verifies 338 routes. Owned validation editors are closed cleanly and copied fixtures are removed. Versions remain unchanged and no release is published.
+
 ```powershell
 ./tools~/validate-unity.ps1 -EditorPath PATH_TO_UNITY -ProjectPath DISPOSABLE_PROJECT -Suite ResultRetention
 ```

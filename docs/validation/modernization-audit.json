@@ -293,7 +293,11 @@
       "status": "corrected",
       "report": "unity66-result-retention.json",
       "scope": "Completed polling-cache count/cost and pending-history result references",
-      "remaining": "Native/caller-owned references, mutable results, history metadata, transport workers/output and buffers"
+      "remaining": "Native/caller-owned references, mutable results, history metadata, transport workers/output and buffers",
+      "pluginCommit": "63afda528bc0158b40acdb09f91cf9c7dde6eae9",
+      "serverCommit": "565f4af94377e2c04db885b25b447ede4b4b0f4d",
+      "serverCi": "https://github.com/AnkleBreaker-Studio/unity-mcp-server/actions/runs/36844619880",
+      "pluginCi": "https://github.com/AnkleBreaker-Studio/unity-mcp-plugin/actions/runs/36844555925"
     }
   }
 }
