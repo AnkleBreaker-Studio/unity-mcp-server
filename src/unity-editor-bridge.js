@@ -4,6 +4,7 @@ import { CONFIG } from "./config.js";
 import { getActiveBridgeUrl, bridgeIdentity } from "./instance-discovery.js";
 import { sendQueuedCommand } from "./queue-transport.js";
 import { pluginSupports } from "./capabilities.js";
+import { looksLikeErrorObject } from "./response-format.js";
 import { requestFetch, throwIfRequestCancelled } from "./request-cancellation.js";
 
 function getBridgeUrl() { return getActiveBridgeUrl(); }
@@ -14,6 +15,18 @@ export function setAgentId(agentId) {
 
 export async function sendCommand(command, params = {}) {
   return sendQueuedCommand(command, params, getBridgeUrl(), getCurrentAgentId());
+}
+
+// Several plugin routes read other argument names than the published schemas, which stay
+// unchanged (docs/compatibility.md). Each schema key, read from `source`, is copied to the
+// key the plugin reads so every released plugin receives it; a key the caller set wins.
+function withPluginKeys(params, aliases, source = params) {
+  const request = { ...(params ?? {}) };
+  if (!source || typeof source !== "object") return request;
+  for (const [schemaKey, pluginKey] of Object.entries(aliases)) {
+    if (source[schemaKey] !== undefined && request[pluginKey] === undefined) request[pluginKey] = source[schemaKey];
+  }
+  return request;
 }
 
 /**
@@ -301,20 +314,24 @@ export async function assignAnimatorController(params) {
   return sendCommand("animation/assign-controller", params);
 }
 
+// Released plugins read the curve's component type from `type` and otherwise bound a new
+// curve to Transform, which animates nothing for any other component.
+const CURVE_TYPE_KEYS = { typeName: "type" };
+
 export async function getCurveKeyframes(params) {
-  return sendCommand("animation/get-curve-keyframes", params);
+  return sendCommand("animation/get-curve-keyframes", withPluginKeys(params, CURVE_TYPE_KEYS));
 }
 
 export async function removeCurve(params) {
-  return sendCommand("animation/remove-curve", params);
+  return sendCommand("animation/remove-curve", withPluginKeys(params, CURVE_TYPE_KEYS));
 }
 
 export async function addKeyframe(params) {
-  return sendCommand("animation/add-keyframe", params);
+  return sendCommand("animation/add-keyframe", withPluginKeys(params, CURVE_TYPE_KEYS));
 }
 
 export async function removeKeyframe(params) {
-  return sendCommand("animation/remove-keyframe", params);
+  return sendCommand("animation/remove-keyframe", withPluginKeys(params, CURVE_TYPE_KEYS));
 }
 
 export async function addAnimationEvent(params) {
@@ -342,7 +359,8 @@ export async function removeAnimationLayer(params) {
 }
 
 export async function createBlendTree(params) {
-  return sendCommand("animation/create-blend-tree", params);
+  // Released plugins name the state from stateName, otherwise "Blend Tree".
+  return sendCommand("animation/create-blend-tree", withPluginKeys(params, { blendTreeName: "stateName" }));
 }
 
 export async function getBlendTreeInfo(params) {
@@ -414,7 +432,8 @@ export async function setPrefabAssetReference(params) {
 }
 
 export async function addPrefabAssetGameObject(params) {
-  return sendCommand("prefab-asset/add-gameobject", params);
+  // Released plugins read the parent from parentPrefabPath and otherwise use the prefab root.
+  return sendCommand("prefab-asset/add-gameobject", withPluginKeys(params, { prefabPath: "parentPrefabPath" }));
 }
 
 export async function removePrefabAssetGameObject(params) {
@@ -616,7 +635,8 @@ export async function createAssemblyRef(params) {
 // â"€â"€â"€ Profiler â"€â"€â"€
 
 export async function enableProfiler(params) {
-  return sendCommand("profiler/enable", params);
+  // Released plugins only switch deep profiling from deepProfiling.
+  return sendCommand("profiler/enable", withPluginKeys(params, { deepProfile: "deepProfiling" }));
 }
 
 export async function getRenderingStats(params) {
@@ -646,7 +666,8 @@ export async function getFrameDebuggerEvents(params) {
 }
 
 export async function getFrameDebuggerEventDetails(params) {
-  return sendCommand("debugger/event-details", params);
+  // Released plugins read `index` and otherwise inspect the currently selected event.
+  return sendCommand("debugger/event-details", withPluginKeys(params, { eventIndex: "index" }));
 }
 
 // â"€â"€â"€ Memory Profiler â"€â"€â"€
@@ -1041,12 +1062,24 @@ export async function setTerrainNoise(params) {
   return sendCommand("terrain/noise", params);
 }
 
+// Released plugins read a region origin from startX/startZ and otherwise used (0, 0).
+const TERRAIN_REGION_KEYS = { xBase: "startX", yBase: "startZ" };
+
 export async function setTerrainHeightsRegion(params) {
-  return sendCommand("terrain/set-heights-region", params);
+  const request = withPluginKeys(params, TERRAIN_REGION_KEYS);
+  const rows = request.heights;
+  if (!Array.isArray(rows) || !rows.some(Array.isArray)) return sendCommand("terrain/set-heights-region", request);
+  // The schema takes heights[row][col]; the plugin reads a flat row-major list sized by
+  // width and heightSize, and failed on every nested row.
+  const width = Array.isArray(rows[0]) ? rows[0].length : 0;
+  if (width === 0 || !rows.every(row => Array.isArray(row) && row.length === width)) {
+    return { success: false, code: "invalid_heights_region", error: "heights must be a 2D array [row][col] whose rows are non-empty and of equal length." };
+  }
+  return sendCommand("terrain/set-heights-region", { ...request, heights: rows.flat(), width, heightSize: rows.length });
 }
 
 export async function getTerrainHeightsRegion(params) {
-  return sendCommand("terrain/get-heights-region", params);
+  return sendCommand("terrain/get-heights-region", withPluginKeys(params, TERRAIN_REGION_KEYS));
 }
 
 export async function removeTerrainLayer(params) {
@@ -1054,7 +1087,7 @@ export async function removeTerrainLayer(params) {
 }
 
 export async function paintTerrainLayer(params) {
-  return sendCommand("terrain/paint-layer", params);
+  return sendCommand("terrain/paint-layer", withPluginKeys(params, { opacity: "strength" }));
 }
 
 export async function fillTerrainLayer(params) {
@@ -1069,8 +1102,14 @@ export async function removeTerrainTreePrototype(params) {
   return sendCommand("terrain/remove-tree-prototype", params);
 }
 
+// The plugin's scatter mode reads a flat area and *Scale ranges; its own minAltitude and
+// maxAltitude keys already match the schema.
+const TREE_SCALE_KEYS = { minHeight: "minHeightScale", maxHeight: "maxHeightScale", minWidth: "minWidthScale", maxWidth: "maxWidthScale" };
+const TREE_AREA_KEYS = { xMin: "minX", xMax: "maxX", zMin: "minZ", zMax: "maxZ" };
+
 export async function placeTerrainTrees(params) {
-  return sendCommand("terrain/place-trees", params);
+  const request = withPluginKeys(params, TREE_SCALE_KEYS);
+  return sendCommand("terrain/place-trees", withPluginKeys(request, TREE_AREA_KEYS, request.area));
 }
 
 export async function clearTerrainTrees(params) {
@@ -1085,24 +1124,39 @@ export async function addTerrainDetailPrototype(params) {
   return sendCommand("terrain/add-detail-prototype", params);
 }
 
+// Released plugins read prototypeIndex: paint and scatter failed without it, and clear
+// erased every detail layer.
+const DETAIL_KEYS = { detailIndex: "prototypeIndex" };
+
 export async function paintTerrainDetail(params) {
-  return sendCommand("terrain/paint-detail", params);
+  return sendCommand("terrain/paint-detail", withPluginKeys(params, DETAIL_KEYS));
 }
 
 export async function scatterTerrainDetail(params) {
-  return sendCommand("terrain/scatter-detail", params);
+  return sendCommand("terrain/scatter-detail", withPluginKeys(params, DETAIL_KEYS));
 }
 
 export async function clearTerrainDetail(params) {
-  return sendCommand("terrain/clear-detail", params);
+  return sendCommand("terrain/clear-detail", withPluginKeys(params, DETAIL_KEYS));
 }
 
 export async function setTerrainHoles(params) {
-  return sendCommand("terrain/set-holes", params);
+  const request = params ?? {};
+  // Released plugins only cut a circle (x, z, radius, fill). They ignore the schema's
+  // xBase/yBase/holes region and cut a hole at the terrain centre, reporting success.
+  if (request.holes === undefined && request.x !== undefined && request.z !== undefined) {
+    return sendCommand("terrain/set-holes", request);
+  }
+  return {
+    success: false,
+    code: "terrain_holes_region_unsupported",
+    error: "The Unity plugin cannot apply an xBase/yBase/holes region: it would ignore it and cut a hole at the terrain centre. " +
+      "No change was made. To cut or fill a circle instead, pass x and z (normalized 0-1), radius (holes-map pixels) and fill (true restores the surface), without holes.",
+  };
 }
 
 export async function setTerrainSettings(params) {
-  return sendCommand("terrain/set-settings", params);
+  return sendCommand("terrain/set-settings", withPluginKeys(params, { baseMapDist: "basemapDistance" }));
 }
 
 export async function resizeTerrain(params) {
@@ -1110,23 +1164,69 @@ export async function resizeTerrain(params) {
 }
 
 export async function createTerrainGrid(params) {
-  return sendCommand("terrain/create-grid", params);
+  return sendCommand("terrain/create-grid", withPluginKeys(params, { cols: "columns", startPosition: "position" }));
 }
 
 export async function setTerrainNeighbors(params) {
-  return sendCommand("terrain/set-neighbors", params);
+  // The plugin finds the target terrain by name, otherwise it rewired the active terrain.
+  return sendCommand("terrain/set-neighbors", withPluginKeys(params, { terrain: "name" }));
+}
+
+// The plugin reads `path` and a RAW `depth` ("16" or "8"), little-endian only. Import
+// defaulted to 8-bit, while the schema documents 16-bit RAW as the default.
+const HEIGHTMAP_DEPTHS = { raw16: "16", raw8: "8" };
+
+// Returns { request } for the plugin, or { refusal } when the plugin cannot honour the format.
+function heightmapRequest(params, otherFormats) {
+  const request = withPluginKeys(params, { filePath: "path" });
+  const format = request.format ?? "raw16";
+  const refuse = error => ({ refusal: { success: false, code: "heightmap_format_unsupported", error } });
+  if (request.byteOrder !== undefined && request.byteOrder !== "little") {
+    return refuse(`byteOrder '${request.byteOrder}' is not supported: the Unity plugin reads and writes little-endian RAW only.`);
+  }
+  if (otherFormats.includes(format)) return { request };
+  const depth = HEIGHTMAP_DEPTHS[format];
+  if (!depth) {
+    return refuse(`format '${format}' is not supported by the Unity plugin. Use ${["raw16", "raw8", ...otherFormats].map(name => `'${name}'`).join(", ")}.`);
+  }
+  return { request: request.depth === undefined ? { ...request, depth } : request };
 }
 
 export async function importTerrainHeightmap(params) {
-  return sendCommand("terrain/import-heightmap", params);
+  const { request, refusal } = heightmapRequest(params, ["texture"]);
+  return refusal ?? sendCommand("terrain/import-heightmap", request);
 }
 
 export async function exportTerrainHeightmap(params) {
-  return sendCommand("terrain/export-heightmap", params);
+  const { request, refusal } = heightmapRequest(params, []);
+  return refusal ?? sendCommand("terrain/export-heightmap", request);
 }
 
+// The schema takes a world position; the plugin samples normalized coordinates and used
+// the terrain centre for every call. The terrain's own frame converts one to the other.
 export async function getTerrainSteepness(params) {
-  return sendCommand("terrain/get-steepness", params);
+  const request = params ?? {};
+  if (request.x !== undefined || request.z !== undefined || (request.worldX === undefined && request.worldZ === undefined)) {
+    return sendCommand("terrain/get-steepness", request);
+  }
+  const selector = Object.fromEntries(["name", "instanceId"].filter(key => request[key] !== undefined).map(key => [key, request[key]]));
+  const info = await sendCommand("terrain/info", selector);
+  if (info?.success !== true || looksLikeErrorObject(info.data)) return info;
+  const { name, position, size } = info.data ?? {};
+  const worldX = Number(request.worldX), worldZ = Number(request.worldZ);
+  const x = (worldX - position?.x) / size?.x;
+  const z = (worldZ - position?.z) / size?.z;
+  if (!Number.isFinite(x) || !Number.isFinite(z)) {
+    return { success: false, code: "invalid_terrain_position", error: "worldX and worldZ must be numbers, and the terrain must report a position and a non-zero size." };
+  }
+  if (x < 0 || x > 1 || z < 0 || z > 1) {
+    return {
+      success: false,
+      code: "position_outside_terrain",
+      error: `World position (${worldX}, ${worldZ}) is outside terrain '${name}', which covers x ${position.x} to ${position.x + size.x} and z ${position.z} to ${position.z + size.z}.`,
+    };
+  }
+  return sendCommand("terrain/get-steepness", { ...request, x, z });
 }
 
 // â"€â"€â"€ Particle System â"€â"€â"€

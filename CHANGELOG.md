@@ -4,6 +4,27 @@ All notable changes to this package will be documented in this file.
 
 ## [Unreleased]
 
+### Advanced-tool proxy hardening
+- `unity_advanced_tool` forwards only read-only core tools (captures, screenshots, package queries, searches, scene statistics). Every other core route, including execute-code, execute-menu-item, script create/update, material creation, package installation, builds and Undo, is refused with `isError` and the core tool to call directly, whatever tool name derives it, so per-tool client approval applies.
+- Proxied tool names must be lowercase `unity_<category>_<action>`; malformed names no longer derive arbitrary loopback paths.
+- The catalog no longer advertises `_meta/*`, `ping`, prefab-asset aliases that cannot be dispatched or plugin aliases of core routes. Plugin-only names rank after cached and core names, repeated catalog calls keep plugin-only tools, and `tool=` lookups of known tools skip the route fetch.
+
+### Discovery and queue polling
+- Require explicit selection when another registered editor is busy (unresponsive but not stale) instead of auto-selecting the only responsive editor.
+- Lower the default queue status poll ceiling (`UNITY_QUEUE_POLL_MAX`) from 1,500 to 500 ms.
+
+### Test runner tools
+- `unity_testing_run_tests` keeps the started job ID when its follow-up read fails and reports the failure as `followUpError`. The `filter` alias is forwarded as `groupNames` instead of being dropped.
+- `unity_testing_get_job` waits with lightweight status polls and requests the caller's detail page once the job is terminal.
+
+### Argument contracts with the plugin
+- Translate terrain, animation curve, blend-tree, Frame Debugger, Profiler, prefab-asset and UMA wardrobe arguments to the keys released plugins read, without renaming published schema properties. Refuse terrain operations that a released plugin would silently apply to the wrong region. The [compatibility guide](docs/compatibility.md) lists every mapping.
+- Remove optional properties no plugin reads (`maxDepth`, noise `seed`, paint-layer `falloff`, UMA `keepAllBones`) and document the plugin's real `maxItems` and defaults.
+- Add optional `overwrite` to `unity_scene_save` and `unity_prefab_create_variant`, and optional `limit` to `unity_selection_find_by_type`, matching the plugin's new guards and result cap.
+
+### Packaging
+- Publish only `src/` and the manifest to npm, add the repository field, run `npm ci` and `npm test` before publishing, and exclude `docs/` from the MCPB bundle.
+
 ### Test result pagination and polling
 - Expose optional detail-page parameters and report an explicit compatibility error when an older plugin returns an unpaged job.
 - Stop server-side job polling on command errors or unsupported pagination while preserving the original diagnostic.

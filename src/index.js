@@ -215,9 +215,11 @@ async function discoverForCurrentAgent() {
     }
 
     // No instance selected yet — prompt user to select
+    const busy = result.busyInstances || [];
+    const busyNote = busy.length > 0 ? ` and ${busy.length} registered editor(s) that are busy or compiling` : "";
     let prompt =
       `=== MULTIPLE UNITY INSTANCES DETECTED ===\n` +
-      `Found ${result.instances.length} running Unity Editor instances.\n` +
+      `Found ${result.instances.length} running Unity Editor instance(s)${busyNote}.\n` +
       `You MUST ask the user which instance to work with before proceeding.\n\n` +
       `Available instances:\n`;
 
@@ -227,6 +229,18 @@ async function discoverForCurrentAgent() {
       if (inst.projectPath) {
         prompt += `    Path: ${inst.projectPath}\n`;
       }
+    }
+
+    // Registered but not answering: listed so the user can choose, not selectable until a ping verifies them.
+    if (busy.length > 0) {
+      prompt += `\nBusy or compiling (registered, not responding yet):\n`;
+      for (const entry of busy) {
+        prompt += `  • Port ${entry.port}: ${entry.projectName || "Unknown project"} (busy or compiling)\n`;
+        if (entry.projectPath) {
+          prompt += `    Path: ${entry.projectPath}\n`;
+        }
+      }
+      prompt += `If the user chooses a busy editor, retry unity_select_instance once it responds.\n`;
     }
 
     prompt +=

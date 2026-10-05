@@ -12,7 +12,7 @@
 // isn't in the cached map, the route is derived from the tool name
 // (unity_terrain_list → terrain/list) and called directly via sendCommand.
 // This means new tools added to the C# plugin work immediately without
-// restarting the MCP server.
+// restarting the MCP server. Core routes are only proxied for read-only core tools.
 
 import { sendCommand } from "./unity-editor-bridge.js";
 import { formatResult, firstSentence } from "./response-format.js";
@@ -36,11 +36,14 @@ const ROUTE_OVERRIDES = {
   unity_mppm_activate_player: "mppm/activate-player",
   unity_mppm_deactivate_player: "mppm/deactivate-player",
   // Core tools whose name → route derivation doesn't match their real endpoint.
-  // unity_advanced_tool doubles as a pass-through proxy for core tools (useful when a
-  // client's cached schema predates a new parameter), and that lazy path derives the
-  // route from the name — every mismatch below made such calls fail with unknown-route.
+  // unity_advanced_tool still proxies READ-ONLY core tools (useful when a client's cached
+  // schema predates a new parameter), and these entries also let it recognise every
+  // other core route, which it refuses (see READ_ONLY_CORE_TOOLS).
   // (unity_queue_info stays out: /api/queue/info is a special non-queue endpoint.)
   unity_editor_ping: "ping",
+  unity_build: "build/start",
+  unity_undo: "undo/perform",
+  unity_redo: "undo/redo",
   unity_scene_stats: "search/scene-stats",
   unity_gameobject_duplicate: "prefab/duplicate",
   unity_gameobject_set_active: "prefab/set-active",
@@ -55,13 +58,21 @@ const ROUTE_OVERRIDES = {
 };
 
 /**
+ * Lowercase segments joined by "_". Any other name ("unity_../../admin/x", "?", "#",
+ * uppercase) derives no route: the legacy fallback builds /api/<route>, and an explicit
+ * port can point at any local service.
+ */
+const TOOL_NAME_PATTERN = /^unity_[a-z0-9]+(_[a-z0-9]+)+$/;
+
+/**
  * Derive an HTTP route from a tool name.
  * unity_terrain_raise_lower → terrain/raise-lower
  * unity_animation_create_clip → animation/create-clip
  */
 function toolNameToRoute(toolName) {
   // Check explicit overrides first (for tools whose API routes don't match their name)
-  if (ROUTE_OVERRIDES[toolName]) return ROUTE_OVERRIDES[toolName];
+  if (Object.hasOwn(ROUTE_OVERRIDES, toolName)) return ROUTE_OVERRIDES[toolName];
+  if (typeof toolName !== "string" || !TOOL_NAME_PATTERN.test(toolName)) return null;
 
   // Remove unity_ prefix
   const withoutPrefix = toolName.replace(/^unity_/, "");
@@ -174,6 +185,35 @@ const CORE_TOOLS = new Set([
   "unity_agents_list",
   "unity_agent_log",
 ]);
+
+// Core tools that only read editor or project state. unity_advanced_tool keeps proxying
+// these (stale-schema escape hatch: captures, packages_list, …) and refuses every other
+// core route: clients approve tools by name, so an always-allowed proxy must not run a
+// core write the user gates (unity_execute_code, unity_script_create, …).
+const READ_ONLY_CORE_TOOLS = new Set([
+  "unity_editor_ping", "unity_editor_state", "unity_project_info",
+  "unity_scene_info", "unity_scene_hierarchy", "unity_scene_stats",
+  "unity_gameobject_info",
+  "unity_component_get_properties", "unity_component_get_referenceable",
+  "unity_asset_list", "unity_script_read",
+  "unity_console_log", "unity_get_compilation_errors", "unity_undo_history",
+  "unity_selection_get", "unity_selection_find_by_type",
+  "unity_search_by_component", "unity_search_by_tag", "unity_search_by_layer",
+  "unity_search_by_name", "unity_search_assets", "unity_search_missing_references",
+  "unity_screenshot_game", "unity_screenshot_scene", "unity_screenshot_editor_window",
+  "unity_graphics_scene_capture", "unity_graphics_game_capture",
+  "unity_prefab_info",
+  "unity_packages_list", "unity_packages_search", "unity_packages_info",
+  "unity_queue_info", "unity_agents_list", "unity_agent_log",
+]);
+
+// Plugin route → core tool. Routes, not names, are compared: unity_editor_execute_code
+// derives the same route as unity_execute_code.
+const CORE_ROUTES = new Map();
+for (const name of CORE_TOOLS) {
+  const route = toolNameToRoute(name);
+  if (route) CORE_ROUTES.set(route, name);
+}
 
 /**
  * Levenshtein distance (iterative two-row) — powers "did you mean" suggestions
@@ -292,43 +332,9 @@ export function splitToolTiers(allEditorTools) {
         }
       }
 
-      // Cached schemas remain available offline without querying an unverified default endpoint.
-      let dynamicRoutes = null;
-      if (getSelectedInstance() || getRequestContext().portOverride !== null) {
-        try {
-          dynamicRoutes = await sendCommand("_meta/routes", {});
-        } catch (_) {
-          // Older plugins can omit dynamic route discovery.
-        }
-      }
-
-      // Dynamic-only tool names (not cached, not core), grouped and flat.
-      const mergedCategories = { ...categories };
-      const dynamicNames = new Set();
-
-      // The bridge wraps results as { success, data } — the route list lives in data.routes.
-      // (Top-level .routes kept as a fallback for legacy sync payload shapes.)
-      const dynamicRouteList = dynamicRoutes?.data?.routes || dynamicRoutes?.routes;
-      if (Array.isArray(dynamicRouteList)) {
-        for (const route of dynamicRouteList) {
-          // Convert route to tool name: terrain/list → unity_terrain_list
-          const toolName = "unity_" + route.replace(/\//g, "_").replace(/-/g, "_");
-          const cat = route.split("/")[0];
-
-          // Skip if already in our cached map
-          if (advancedMap.has(toolName) || CORE_TOOLS.has(toolName)) continue;
-
-          if (!mergedCategories[cat]) mergedCategories[cat] = [];
-          if (!mergedCategories[cat].includes(toolName)) {
-            mergedCategories[cat].push(toolName);
-            dynamicNames.add(toolName);
-          }
-        }
-      }
-
       const categoryOf = (name) => name.replace(/^unity_/, "").split("_")[0];
 
-      // ── Level 3: one tool's full definition ──
+      // ── Level 3, cached or core: answered here, without fetching the plugin's route list ──
       if (tool) {
         const cached = advancedMap.get(tool);
         if (cached) {
@@ -349,6 +355,51 @@ export function splitToolTiers(allEditorTools) {
             note: "Core tool — call it directly, not via unity_advanced_tool.",
           });
         }
+      }
+
+      // Cached schemas remain available offline without querying an unverified default endpoint.
+      let dynamicRoutes = null;
+      if (getSelectedInstance() || getRequestContext().portOverride !== null) {
+        try {
+          dynamicRoutes = await sendCommand("_meta/routes", {});
+        } catch (_) {
+          // Older plugins can omit dynamic route discovery.
+        }
+      }
+
+      // Dynamic-only tool names (not cached, not core), grouped and flat. The arrays are
+      // copied per call: pushing into the shared ones hid these names from later calls.
+      const mergedCategories = Object.fromEntries(Object.entries(categories).map(([k, v]) => [k, [...v]]));
+      const dynamicNames = new Set();
+
+      // The bridge wraps results as { success, data } — the route list lives in data.routes.
+      // (Top-level .routes kept as a fallback for legacy sync payload shapes.)
+      const dynamicRouteList = dynamicRoutes?.data?.routes || dynamicRoutes?.routes;
+      if (Array.isArray(dynamicRouteList)) {
+        for (const route of dynamicRouteList) {
+          // Internal plugin routes are not tools.
+          if (route === "ping" || route.startsWith("_meta/")) continue;
+          // Convert route to tool name: terrain/list → unity_terrain_list
+          const toolName = "unity_" + route.replace(/\//g, "_").replace(/-/g, "_");
+          const cat = route.split("/")[0];
+
+          // Skip if already in our cached map
+          if (advancedMap.has(toolName) || CORE_TOOLS.has(toolName)) continue;
+          // Advertise only names unity_advanced_tool dispatches back to this exact route
+          // (prefab-asset/hierarchy would come back as prefab/asset-hierarchy), and never a
+          // core route under another name (editor/execute-code → unity_editor_execute_code).
+          if (toolNameToRoute(toolName) !== route || CORE_ROUTES.has(route)) continue;
+
+          if (!mergedCategories[cat]) mergedCategories[cat] = [];
+          if (!mergedCategories[cat].includes(toolName)) {
+            mergedCategories[cat].push(toolName);
+            dynamicNames.add(toolName);
+          }
+        }
+      }
+
+      // ── Level 3, plugin-only: lazy tool, or a miss with suggestions ──
+      if (tool) {
         if (dynamicNames.has(tool)) {
           return formatResult({
             name: tool,
@@ -383,7 +434,12 @@ export function splitToolTiers(allEditorTools) {
           const rank = tokens.every((tok) => nameText.includes(tok)) ? 0 : 1;
           matches.push({ rank, c });
         }
-        matches.sort((a, b) => a.rank - b.rank || a.c.name.localeCompare(b.c.name));
+        // Within a rank, cached and core tools come before plugin-only names, which carry no
+        // brief and must not crowd them out of the capped results.
+        matches.sort((a, b) =>
+          a.rank - b.rank ||
+          Number(a.c.dynamic === true) - Number(b.c.dynamic === true) ||
+          a.c.name.localeCompare(b.c.name));
 
         const results = matches.slice(0, 20).map(({ c }) => {
           const entry = { name: c.name, category: c.category };
@@ -492,6 +548,15 @@ export function splitToolTiers(allEditorTools) {
       // Tool not in cached map — derive the route from the name and call Unity directly.
       // This allows new tools added to the C# plugin to work without restarting the MCP server.
       const route = toolNameToRoute(tool);
+      // Core routes other than read-only ones are refused whatever name derives them, so
+      // the client's per-tool approval of the core tool applies.
+      const gatedCoreTool = route ? CORE_ROUTES.get(route) : undefined;
+      if (gatedCoreTool && !READ_ONLY_CORE_TOOLS.has(gatedCoreTool)) {
+        return formatResult({
+          error: `"${tool}" targets ${route}, the route of core tool ${gatedCoreTool}. Call ${gatedCoreTool} directly: unity_advanced_tool only proxies read-only core tools.`,
+          coreTool: gatedCoreTool,
+        });
+      }
       if (route) {
         try {
           // Log to stderr, not stdout — stdout carries the MCP JSON-RPC transport.

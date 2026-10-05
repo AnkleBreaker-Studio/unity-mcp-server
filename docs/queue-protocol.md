@@ -27,7 +27,7 @@ MCP client cancellation ends server-owned observation, pending retry delays and 
 | `GET /api/queue/status-scoped` | Requires `ticketId` and `queueSessionId`; refuses a different session before looking up the ticket. |
 | Existing `queue/submit`, `queue/status` | Remain compatible with callers that do not provide the new fields. |
 
-Separate endpoint names matter: an older plugin ignores unknown JSON fields and query parameters. Reusing only the old paths would let a protected retry execute after a downgrade, or return an unrelated ticket with a reused number.
+Separate endpoint names matter: an older plugin ignores unknown JSON fields and query parameters. Reusing only the old paths would let a protected retry execute after a downgrade, or return an unrelated ticket with a reused number. Current plugins also seed ticket numbers from the wall clock (milliseconds × 1000, still a JavaScript safe integer), so numbers are not reused after a domain reload.
 
 Each logical command gets a fresh GUID in `N` format (32 hexadecimal characters). All retries keep that identity, agent, payload and deadline. The deadline is an absolute time in the queue session's monotonic clock, never a UTC timestamp. The server allows a one-second margin within the advertised retry window.
 
