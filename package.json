@@ -3,15 +3,23 @@
   "version": "2.35.6",
   "description": "Unity MCP Server — Multi-agent MCP server for Unity Editor, designed for Claude Cowork. By AnkleBreaker Studio.",
   "license": "SEE LICENSE IN LICENSE",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/AnkleBreaker-Studio/unity-mcp-server.git"
+  },
   "type": "module",
   "main": "src/index.js",
   "bin": {
     "unity-mcp": "./src/index.js"
   },
+  "files": [
+    "src/",
+    "manifest.json"
+  ],
   "scripts": {
     "start": "node src/index.js",
     "dev": "node --watch src/index.js",
-    "test": "node --test tests/protocol.test.mjs tests/hub.test.mjs tests/response-limits.test.mjs tests/http-response-limit.test.mjs tests/request-input-limit.test.mjs tests/unit/http-response-limit.test.mjs tests/cancellation.test.mjs tests/unit/request-cancellation.test.mjs tests/concurrency.test.mjs tests/discovery-identity.test.mjs tests/parrelsync-identity.test.mjs tests/discovery-concurrency.test.mjs tests/debug-logging.test.mjs tests/agent-state.test.mjs tests/queue-admission.test.mjs tests/result-retention.test.mjs tests/test-pagination.test.mjs tests/unit/agent-state.test.mjs tests/retry-safety.test.mjs tests/build-variants.test.mjs tests/play-mode-recovery.test.mjs tests/unit/tool-tiers.test.mjs tests/unit/capabilities.test.mjs",
+    "test": "node --test tests/protocol.test.mjs tests/hub.test.mjs tests/response-limits.test.mjs tests/http-response-limit.test.mjs tests/request-input-limit.test.mjs tests/unit/http-response-limit.test.mjs tests/cancellation.test.mjs tests/unit/request-cancellation.test.mjs tests/concurrency.test.mjs tests/discovery-identity.test.mjs tests/parrelsync-identity.test.mjs tests/discovery-concurrency.test.mjs tests/debug-logging.test.mjs tests/agent-state.test.mjs tests/queue-admission.test.mjs tests/result-retention.test.mjs tests/test-pagination.test.mjs tests/unit/agent-state.test.mjs tests/retry-safety.test.mjs tests/build-variants.test.mjs tests/play-mode-recovery.test.mjs tests/unit/tool-tiers.test.mjs tests/unit/capabilities.test.mjs tests/queue-poll-default.test.mjs tests/argument-translation.test.mjs",
     "test:stress": "node tests/multi-agent-stress-test.mjs --mock",
     "pack": "npx @anthropic-ai/mcpb pack . unity-mcp.mcpb && npx @anthropic-ai/mcpb clean unity-mcp.mcpb",
     "test:live": "node --test tests/live-smoke.test.mjs tests/live-probuilder-level.test.mjs",

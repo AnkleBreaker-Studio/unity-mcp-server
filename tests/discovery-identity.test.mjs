@@ -1,6 +1,7 @@
 import { test } from "node:test";
 import assert from "node:assert/strict";
 import { writeFileSync } from "node:fs";
+import { createServer } from "node:net";
 import { MockBridge } from "./helpers/mock-bridge.mjs";
 import { McpTestClient } from "./helpers/mcp-client.mjs";
 
@@ -221,3 +222,60 @@ test("a live pathless identity does not inherit another project's stale path", a
     assert.equal(list.payload.instances[0].projectPath, "");
   }, { registry: true });
 });
+
+const busy = { projectName: "Busy", projectPath: "C:/Busy", unityVersion: "6000.6.2f1" };
+
+// Accepts connections and never answers, like an editor whose main thread is blocked.
+async function silentEndpoint() {
+  const sockets = new Set();
+  const server = createServer(socket => { sockets.add(socket); socket.on("close", () => sockets.delete(socket)); });
+  await new Promise(resolve => server.listen(0, "127.0.0.1", resolve));
+  return {
+    port: server.address().port,
+    stop: () => new Promise(resolve => { for (const socket of sockets) socket.destroy(); server.close(() => resolve()); }),
+  };
+}
+
+test("a fresh registered editor that does not answer blocks automatic selection of the other editor", async () => {
+  const silent = await silentEndpoint();
+  try {
+    await exercise(async (bridge, client, register) => {
+      const lastSeen = new Date().toISOString();
+      register([{ port: silent.port, ...busy, lastSeen }, { port: bridge.port, ...original, lastSeen }]);
+      const first = await client.callTool("unity_gameobject_create", { name: "MustNotDispatch" });
+      assert.equal(first.isError, true, first.payloadText);
+      assert.doesNotMatch(first.payloadText, /auto-connected/);
+      assert.match(first.payloadText, new RegExp(`Port ${silent.port}: Busy.*(busy|compiling)`, "i"));
+      assert.equal((await client.callTool("unity_gameobject_create", { name: "MustNotDispatch" })).isError, true);
+      assert.equal(bridge.seen.length, 0, "A write reached the only responsive editor");
+      assert.equal((await client.callTool("unity_select_instance", { port: bridge.port })).isError, false);
+      assert.equal((await client.callTool("unity_gameobject_create", { name: "Chosen" })).isError, false);
+      assert.deepEqual(bridge.seen.map(item => item.params.name), ["Chosen"]);
+    });
+  } finally {
+    await silent.stop();
+  }
+});
+
+for (const [label, entry, reply] of [
+  ["a stale registry entry", { ...busy, lastSeen: "2020-01-01T00:00:00Z" }, [{ error: "Editor closed" }, 503]],
+  ["the same project's previous port", { ...original }, [{ error: "Editor closed" }, 503]],
+  ["a fresh entry answered by an unrelated service", { ...busy }, [{ status: "ok", service: "foreign" }]],
+]) {
+  test(`${label} does not block automatic selection of the only editor`, async () => {
+    const other = await new MockBridge({ instance: busy }).start();
+    try {
+      await exercise(async (bridge, client, register) => {
+        pingAs(other, ...reply);
+        const lastSeen = new Date().toISOString();
+        register([{ port: other.port, lastSeen, ...entry }, { port: bridge.port, ...original, lastSeen }]);
+        const call = await client.callTool("unity_gameobject_create", { name: "AutoSelected" });
+        assert.equal(call.isError, false, call.payloadText);
+        assert.deepEqual(bridge.seen.map(item => item.params.name), ["AutoSelected"]);
+        assert.equal(other.seen.length, 0);
+      });
+    } finally {
+      await other.stop();
+    }
+  });
+}

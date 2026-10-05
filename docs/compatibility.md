@@ -28,6 +28,29 @@ Registry comparison checks **384 tool names**, including 80 directly exposed too
 
 A separate mixed-plugin run uses one current server with four agents targeting two actual editors. Twelve overlapping C# calls, with no explicit command ports, return six distinct counter values per project. Each agent receives exactly three completed requests in its own project's session list. The fixture removes its temporary counters afterwards.
 
+## Argument translation
+
+Some plugin routes read other argument names than the published schemas. The schemas keep their names and required lists; the server copies each schema value to the key the plugin reads, so released plugins act on it. A plugin key supplied by the caller is never replaced.
+
+| Tools | Schema arguments | Plugin keys |
+|---|---|---|
+| Animation curve tools | `typeName` | `type` |
+| `unity_animation_create_blend_tree` | `blendTreeName` | `stateName` |
+| `unity_profiler_enable` | `deepProfile` | `deepProfiling` |
+| `unity_debugger_event_details` | `eventIndex` | `index` |
+| `unity_prefab_add_gameobject` | `prefabPath` | `parentPrefabPath` |
+| `unity_uma_create_wardrobe_recipe` | `displayValue` | `displayName` |
+| Terrain height regions | `xBase`, `yBase`, `heights[row][col]` | `startX`, `startZ`, flat `heights` with `width` and `heightSize` |
+| Terrain detail paint, scatter and clear | `detailIndex` | `prototypeIndex` |
+| `unity_terrain_set_neighbors` | `terrain` | `name` |
+| Heightmap import and export | `filePath`, `format` | `path`, `depth` |
+| `unity_terrain_create_grid` | `cols`, `startPosition` | `columns`, `position` |
+| `unity_terrain_set_settings` | `baseMapDist` | `basemapDistance` |
+| `unity_terrain_paint_layer` | `opacity` | `strength` |
+| `unity_terrain_place_trees` | `area`, `minHeight`/`maxHeight`, `minWidth`/`maxWidth` | `minX`/`maxX`/`minZ`/`maxZ`, `*HeightScale`, `*WidthScale` |
+
+`unity_terrain_get_steepness` first reads the terrain's position and size, then sends the normalized coordinates the plugin samples. Requests no plugin can honour are refused before anything changes: an `xBase`/`yBase`/`holes` region for `unity_terrain_set_holes`, PNG heightmap export and big-endian RAW. Optional properties that no plugin reads were removed: profiler `maxDepth` (the plugin's `maxItems` is published instead), noise `seed`, paint-layer `falloff` and UMA `keepAllBones`. Removing an optional property adds no mandatory argument.
+
 ## Limits
 
 The matrix covers routine successful commands and a missing-object error, not every command family or failure path. It does not establish safety for an old server's ambiguous write retries. Fault-injection tests and [actual reload tests](modernization.md) provide separate evidence for the new transport.

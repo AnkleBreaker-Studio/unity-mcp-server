@@ -4,13 +4,13 @@ import { MockBridge } from "./helpers/mock-bridge.mjs";
 import { McpTestClient } from "./helpers/mcp-client.mjs";
 import { randomUUID } from "node:crypto";
 
-async function exercise(bridge, check, env = {}) {
+async function exercise(bridge, check, env = {}, [tool, args] = ["unity_gameobject_create", { name: "OneObject" }]) {
   let client;
   try {
     await bridge.start();
     client = new McpTestClient({ env: { ...bridge.env(), ...env } }).start();
     await client.initialize();
-    const result = await client.callTool("unity_gameobject_create", { name: "OneObject", port: bridge.port });
+    const result = await client.callTool(tool, { ...args, port: bridge.port });
     await check(result, client);
   } finally {
     if (client) await client.close();
@@ -226,6 +226,22 @@ test("a later body refusal cannot erase an earlier lost acknowledgement", async 
     assert.equal(typeof result.payload.requestId, "string");
   });
 });
+
+const failedReads = { failed: { __fail: true, error: "Editor is reloading scripts" },
+  unknown: { __timeout: true, error: "Editor is reloading scripts" }, rejected: { error: "Editor is reloading scripts" } };
+for (const [kind, read] of Object.entries(failedReads)) {
+  test(`run-tests keeps the started job when its follow-up read is ${kind}`, async () => {
+    const bridge = new MockBridge();
+    let starts = 0;
+    bridge.on("testing/run-tests", () => ({ jobId: "job-42", status: "running", start: ++starts }));
+    bridge.on("testing/get-job", () => read);
+    await exercise(bridge, result => {
+      assert.equal(result.isError, false, result.payloadText); assert.equal(starts, 1);
+      assert.equal(result.payload.data.jobId, "job-42"); assert.equal(result.payload.data.status, "running");
+      assert.match(result.payload.followUpError, /reloading scripts/);
+    }, {}, ["unity_advanced_tool", { tool: "unity_testing_run_tests", params: { mode: "PlayMode" } }]);
+  });
+}
 
 test("an input deadline reports non-acceptance without resubmitting", async () => {
   const bridge = modernBridge(); refuseInput(bridge, { status: 408 });

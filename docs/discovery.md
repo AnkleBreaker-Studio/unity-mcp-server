@@ -18,12 +18,15 @@ When comparing an existing selection with a live identity, matching project path
 | Successful HTTP response with unrecognized identity | Exclude the port; registry metadata cannot make it a valid editor |
 | Existing selection now answers with an unrecognized identity | Find the original project on another port, or require explicit reselection |
 | Ping is temporarily unavailable or returns a non-success HTTP status | Retain existing fresh-registry recovery for a previously selected editor |
+| No selection yet; one editor answers while another editor's fresh registry entry is unavailable | Require explicit selection; list that editor as busy or compiling instead of auto-selecting |
 | Registry proposes a different recovery port | Check that port before using the registry fallback |
 | Identity changes during explicit selection | Reject the selection and request fresh discovery |
 | A newer explicit selection starts for the same agent | Supersede the older pending selection; its eventual result cannot replace the newer choice |
 | Selection changes while validation or automatic discovery is pending | Refuse that stale implicit call before dispatch; preserve the newer selection |
 
 Observations are reused within one discovery/validation attempt, including rejected ports, so registry validation and the fallback scan do not repeat the same probe. Later discovery calls probe again; this is not a long-lived identity cache. Cancellation still aborts an unused shared discovery without treating it as proof that a selected project disappeared.
+
+Automatic selection binds an agent only when exactly one editor answers and no other registered editor is busy. A registry entry counts as busy when its heartbeat is fresh, its ping in the same discovery attempt was unavailable (timeout, connection failure or non-success status), and neither its port nor its project path matches a responsive editor. Stale entries, unrelated services and the same project on a new port are not counted. An import, Play Mode switch, domain reload or long command in one editor therefore no longer binds a new agent to the other editor. Busy editors appear in the selection prompt, but explicit selection still requires a verified ping, so retry it once the editor responds. If no editor answers, discovery is unchanged and the next call discovers again.
 
 The configured default port passes the same identity check even when it is outside the scan range. If no editor is verified, an implicit editor command fails before dispatch. A subsequent call can discover an editor that has just started. Explicit instance selection still rechecks its chosen port after discovery.
 
@@ -52,6 +55,8 @@ Server checkpoint `59bb4e3` passes all eight [Node 18/20/22/24 Windows/Linux CI 
 The [validation report](validation/discovery-identity.json) records **22 failing checks out of 26** against server `8b7c05982906354f7ae149d3bac132440c2ae720`. Four controls already pass. The corrected suite covers scans, default-port fallback, old/fresh registries, selected-port reuse, a changed recovery port, selection races, historical/alias formats, pathless metadata and offline diagnostics. The full ordinary suite has **163 passing tests** on Node 18.20.8 and 22.18.0.
 
 Live read-only checks pass on Windows/Unity 6000.6.2f1 with the released plugin `0b8e76f` and current runtime `631b5d2`: both are discovered and selected, their pings are recognized, and two overlapping rounds of implicit reads keep each agent on its selected project. Both editors have clean scenes and zero project compilation errors. The temporary released-plugin editor is closed afterward. Unity 2021 runtime execution remains deferred.
+
+The busy-editor regression in `tests/discovery-identity.test.mjs` registers a socket that accepts connections but never answers next to a mock editor. Before the change, the first implicit write auto-connected to the mock editor; it is now blocked until the user selects an editor. Controls keep automatic selection for a stale entry, the same project's previous port and an unrelated service.
 
 Run ordinary regressions with `npm test`. To reproduce the live check, open two disposable projects with `.unity-mcp-validation` markers, one with each plugin, outside Play Mode and compilation:
 

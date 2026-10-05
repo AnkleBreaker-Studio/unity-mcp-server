@@ -61,9 +61,10 @@ test("HTTP monitoring covers concurrent commands, input rejection and actual dom
     assert.ok(afterError.http.responses2xx > afterConcurrent.http.responses2xx);
     report.checks.push({ name: "Command failure is not mislabeled as an HTTP failure", passed: true });
 
-    await call("unity_list_advanced_tools", { tool: "unity_execute_code" });
+    // unity_advanced_tool refuses core write routes, so the deep body rides on a read-only advanced route.
+    await call("unity_list_advanced_tools", { tool: "unity_editorprefs_get" });
     let nested = 0; for (let i = 0; i < 100; i++) nested = [nested];
-    const rejection = await client.callTool("unity_advanced_tool", { port, tool: "unity_execute_code", params: { code: "return true;", unused: nested } });
+    const rejection = await client.callTool("unity_advanced_tool", { port, tool: "unity_editorprefs_get", params: { key: "UnityMcpValidation.HttpMonitoring.Unused", unused: nested } });
     assert.equal(rejection.isError, true); assert.match(rejection.payloadText, /413|container levels/);
     const beforeReload = await call("unity_queue_info"); invariant(beforeReload.http);
     assert.ok(beforeReload.http.inputRejectedRequests > afterError.http.inputRejectedRequests);

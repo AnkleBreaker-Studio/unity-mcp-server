@@ -344,8 +344,8 @@ export async function discoverInstances(probes = new Map()) {
 }
 
 /**
- * Auto-select an instance if exactly one is available.
- * If multiple are found, marks selection as required.
+ * Auto-select an instance if exactly one is available and no other registered editor is busy.
+ * If multiple are found, or one plus a busy editor, marks selection as required.
  * If none are found, tries the default port.
  * @returns {object} Result with auto-selected instance or selection requirement.
  */
@@ -397,7 +397,11 @@ export async function autoSelectInstance() {
     };
   }
 
-  if (instances.length === 1) {
+  // A fresh registry entry that did not answer is likely another editor that is compiling, reloading or busy.
+  const busyInstances = await findBusyRegistryEntries(instances, probes);
+  assertSelectionUnchanged(selected);
+
+  if (instances.length === 1 && busyInstances.length === 0) {
     // Exactly one instance — auto-select it
     agentState.select(state, instances[0]);
     getAgentState().selectionRequired = false;
@@ -410,20 +414,42 @@ export async function autoSelectInstance() {
     };
   }
 
-  // Multiple instances — require user selection (but only if none already selected for this agent)
+  // Multiple instances, or one plus a busy editor — require user selection (but only if none already selected for this agent)
   const agentSelected = getAgentState(false)?.selectedInstance;
   if (!agentSelected) {
     getAgentState().selectionRequired = true;
-    debugLog(`autoSelect: agent ${getCurrentAgentId()} → ${instances.length} instances found, selection required`);
+    debugLog(`autoSelect: agent ${getCurrentAgentId()} → ${instances.length} instances found, ${busyInstances.length} busy, selection required`);
   }
+  const busyNote = busyInstances.length > 0
+    ? ` and ${busyInstances.length} registered editor(s) that are busy or compiling`
+    : "";
   return {
     autoSelected: false,
     instances,
-    message: `Found ${instances.length} Unity Editor instances. Please use unity_select_instance to choose which one to work with.`,
+    busyInstances,
+    message: `Found ${instances.length} Unity Editor instance(s)${busyNote}. Please use unity_select_instance to choose which one to work with.`,
   };
 }
 
 // ─── Internal helpers ───
+
+/**
+ * Registry entries for editors that did not answer this discovery attempt's ping but are still fresh.
+ * Same project on a new port, stale entries and unrelated services are not counted.
+ * They are listed for the user but stay unselectable until a ping verifies them.
+ * @param {Array<object>} instances - Responsive instances from the same attempt.
+ * @param {Map} probes - That attempt's probes, reused so no port is pinged twice.
+ * @returns {Promise<Array<object>>} Busy registry entries.
+ */
+async function findBusyRegistryEntries(instances, probes) {
+  const candidates = readRegistryFile().filter((entry) =>
+    entry.port &&
+    !instances.some((inst) => inst.port === entry.port || (entry.projectPath && inst.projectPath === entry.projectPath)) &&
+    !isRegistryEntryStale(entry)
+  );
+  const probed = await Promise.all(candidates.map((entry) => probeInstance(entry.port, probes)));
+  return candidates.filter((entry, index) => probed[index].status === "unavailable");
+}
 
 /**
  * Check if a registry entry is stale (Unity likely crashed).

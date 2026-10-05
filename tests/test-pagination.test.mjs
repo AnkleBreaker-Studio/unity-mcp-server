@@ -67,3 +67,44 @@ for (const kind of ["unsupported", "invalid"]) test(`server polling stops on the
   assert.equal(result.isError, true); assert.equal(calls, 1);
   assert.match(result.payloadText, kind === "unsupported" ? /pagination_unsupported/ : /Invalid resultLimit/);
 }));
+
+test("server polling reads only status until the pinned job finishes, then returns the requested detail", () => exercise(async (bridge, _client, call) => {
+  const reads = [{ jobId: "job-7", status: "running", tests: [{ name: "partial" }] }, { jobId: "job-7", status: "succeeded" },
+    { jobId: "job-7", status: "succeeded", tests: [{ name: "one" }, { name: "two" }] }];
+  bridge.on("testing/get-job", () => reads.shift());
+  const result = await call({ includeDetails: true, waitTimeout: 30 });
+  assert.notEqual(result.isError, true, result.payloadText); assert.equal(result.payload.data.tests?.length, 2);
+  assert.deepEqual(bridge.seen.filter(x => x.route === "testing/get-job").map(x => x.params), [
+    { includeDetails: true, waitTimeout: 30 }, { jobId: "job-7", includeDetails: false, includeFailedOnly: false },
+    { includeDetails: true, waitTimeout: 30, jobId: "job-7" }]);
+}));
+
+test("server polling keeps waiting through a transient status-read failure", () => exercise(async (bridge, _client, call) => {
+  const reads = [{ jobId: "job", status: "running" }, { __timeout: true, error: "Editor is reloading scripts" },
+    { jobId: "job", status: "succeeded" }, { jobId: "job", status: "succeeded", tests: [{ name: "done" }] }];
+  bridge.on("testing/get-job", () => reads.shift());
+  const result = await call({ jobId: "job", waitTimeout: 30 });
+  assert.notEqual(result.isError, true, result.payloadText); assert.equal(result.payload.data.tests?.[0]?.name, "done");
+  assert.equal(bridge.seen.filter(x => x.route === "testing/get-job").length, 4);
+}));
+
+test("server polling returns a full read with the caller's params at the deadline", () => exercise(async (bridge, _client, call) => {
+  const reads = [{ jobId: "job", status: "running" }, { jobId: "job", status: "running", tests: [{ name: "partial" }] }];
+  bridge.on("testing/get-job", () => reads.shift());
+  const result = await call({ jobId: "job", includeDetails: true, waitTimeout: 1 });
+  assert.notEqual(result.isError, true, result.payloadText); assert.equal(result.payload.data.tests?.[0]?.name, "partial");
+  assert.deepEqual(bridge.seen.filter(x => x.route === "testing/get-job").map(x => x.params), [
+    { jobId: "job", includeDetails: true, waitTimeout: 1 }, { jobId: "job", includeDetails: true, waitTimeout: 1 }]);
+}));
+
+test("run-tests forwards the filter alias as de-duplicated groupNames", () => exercise(async (bridge, client) => {
+  bridge.on("testing/run-tests", () => ({ jobId: "job", status: "succeeded" }));
+  const run = params => client.callTool("unity_advanced_tool", { tool: "unity_testing_run_tests", params, port: bridge.port });
+  const started = await run({ mode: "PlayMode", filter: "A, B", groupNames: ["C", "B"] });
+  assert.notEqual(started.isError, true, started.payloadText);
+  assert.notEqual((await run({ mode: "EditMode", filter: " , " })).isError, true);
+  const invalid = await run({ filter: ["A"] });
+  assert.equal(invalid.isError, true); assert.match(invalid.payloadText, /filter must be a string/);
+  assert.deepEqual(bridge.seen.filter(x => x.route === "testing/run-tests").map(x => x.params), [
+    { mode: "PlayMode", groupNames: ["C", "B", "A"] }, { mode: "EditMode" }]);
+}));

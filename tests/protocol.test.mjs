@@ -8,6 +8,7 @@ import { fileURLToPath } from "node:url";
 import { dirname, join } from "node:path";
 import { writeFileSync, mkdtempSync } from "node:fs";
 import { tmpdir } from "node:os";
+import http from "node:http";
 import { MockBridge } from "./helpers/mock-bridge.mjs";
 import { McpTestClient } from "./helpers/mcp-client.mjs";
 
@@ -73,8 +74,8 @@ describe("queue-mode session (single instance)", () => {
     // Plugin route advertisement: terrain/list is already cached server-side (skipped),
     // experimental/new-thing is dynamic-only — exercises the lazy-discovery merge.
     bridge.on("_meta/routes", () => ({ routes: ["terrain/list", "experimental/new-thing"] }));
-    // Core-tool proxy fixtures: unity_advanced_tool falls back to name→route derivation
-    // for core tools too (stale-schema escape hatch); these routes need overrides.
+    // Core-tool proxy fixtures: unity_advanced_tool must REFUSE these core write routes
+    // (the tests assert nothing reaches them); a regression would come back as success.
     bridge.on("asset/create-material", (p) => ({ success: true, path: p.path, overwrite: p.overwrite === true }));
     bridge.on("editor/execute-code", (p) => ({ success: true, result: `ran:${(p.code || "").slice(0, 20)}` }));
     // A finished test job — status lives under the bridge's data envelope.
@@ -225,23 +226,54 @@ describe("queue-mode session (single instance)", () => {
     assert.ok(seen, "derived route reached the bridge");
   });
 
-  test("unity_advanced_tool proxies CORE tools via route overrides (stale-schema escape hatch)", async () => {
-    // unity_material_create's real route is asset/create-material — the naive derivation
-    // (material/create) used to fail with unknown-route. Same class: editor/execute-code.
-    const mat = await client.callTool("unity_advanced_tool", {
-      tool: "unity_material_create",
-      params: { path: "Assets/T.mat", overwrite: true },
+  test("unity_advanced_tool proxies READ-ONLY core tools via route overrides (stale-schema escape hatch)", async () => {
+    // unity_scene_stats' real route is search/scene-stats — the naive derivation
+    // (scene/stats) used to fail with unknown-route.
+    const stats = await client.callTool("unity_advanced_tool", {
+      tool: "unity_scene_stats",
+      params: { newerParam: true },
     });
-    assert.equal(mat.payload.success, true);
-    assert.equal(mat.payload.data.overwrite, true, "params (incl. overwrite) pass through opaquely");
-    assert.ok(bridge.seen.some((r) => r.route === "asset/create-material"), "override route reached the bridge");
+    assert.equal(stats.isError, false, stats.payloadText);
+    const seen = bridge.seen.find((r) => r.route === "search/scene-stats");
+    assert.ok(seen, "override route reached the bridge");
+    assert.equal(seen.params.newerParam, true, "params pass through opaquely");
+  });
 
-    const code = await client.callTool("unity_advanced_tool", {
-      tool: "unity_execute_code",
-      params: { code: "return 1;" },
-    });
-    assert.equal(code.payload.success, true);
-    assert.ok(bridge.seen.some((r) => r.route === "editor/execute-code"));
+  // Clients approve tools by name. An always-allowed unity_advanced_tool must not reach a
+  // core write route (arbitrary C#, menu items, scripts…) whose core tool the user gates —
+  // whether it is asked for by the core name or by a name that derives the same route.
+  test("unity_advanced_tool refuses core write routes by name or alias, without reaching the bridge", async () => {
+    const before = bridge.seen.length;
+    for (const [tool, coreTool] of [
+      ["unity_execute_code", "unity_execute_code"],
+      ["unity_editor_execute_code", "unity_execute_code"],
+      ["unity_execute_menu_item", "unity_execute_menu_item"],
+      ["unity_editor_execute_menu_item", "unity_execute_menu_item"],
+      ["unity_script_create", "unity_script_create"],
+      ["unity_script_update", "unity_script_update"],
+      ["unity_material_create", "unity_material_create"],
+      ["unity_asset_create_material", "unity_material_create"],
+      ["unity_build", "unity_build"],
+      ["unity_build_start", "unity_build"],
+      ["unity_undo_perform", "unity_undo"],
+    ]) {
+      const { payload, payloadText, isError } = await client.callTool("unity_advanced_tool", {
+        tool,
+        params: { code: "return 1;", path: "Assets/T.mat" },
+      });
+      assert.equal(isError, true, `${tool} is refused (got ${payloadText})`);
+      assert.equal(payload?.coreTool, coreTool, `${tool} names the core tool to call directly`);
+      assert.match(payload.error, new RegExp(`Call ${coreTool} directly`));
+    }
+    const refusedRoutes = new Set([
+      "editor/execute-code", "editor/execute-menu-item", "script/create", "script/update",
+      "asset/create-material", "build/start", "undo/perform",
+    ]);
+    assert.deepEqual(
+      bridge.seen.slice(before).filter((r) => refusedRoutes.has(r.route)).map((r) => r.route),
+      [],
+      "no refused call reached the bridge"
+    );
   });
 
   test("advanced-tool catalog rejects non-string filters with a clean error, not a crash", async () => {
@@ -509,6 +541,129 @@ describe("queue-mode session (single instance)", () => {
 
   test("stdout carried only clean JSON-RPC for the entire session", () => {
     assert.deepEqual(client.stdoutViolations, [], `stdout violations: ${client.stdoutViolations.slice(0, 3).join(" | ")}`);
+  });
+});
+
+describe("advanced-tool catalog: plugin route merge and proxy hardening", () => {
+  /** @type {MockBridge} */ let bridge;
+  /** @type {McpTestClient} */ let client;
+
+  // Shaped like a real plugin's _meta/routes: internal routes, prefab-asset/* (whose
+  // synthesized names derive prefab/asset-*), aliases of core routes, one cached route,
+  // and plugin-only tools in EXISTING categories (terrain, probuilder) and a new one.
+  const PLUGIN_ROUTES = [
+    "ping", "_meta/routes",
+    "prefab-asset/hierarchy", "prefab-asset/set-property",
+    "editor/execute-code", "editor/execute-menu-item", "search/scene-stats",
+    "terrain/list",
+    "terrain/brand-new-op",
+    "probuilder/aaa-dynamic-op",
+    "experimental/new-thing",
+  ];
+  const routeFetches = () => bridge.seen.filter((r) => r.route === "_meta/routes").length;
+
+  before(async () => {
+    bridge = new MockBridge();
+    bridge.on("_meta/routes", () => ({ routes: PLUGIN_ROUTES }));
+    await bridge.start();
+    client = new McpTestClient({ env: bridge.env() }).start();
+    await client.initialize();
+    // Select the single instance so the catalog consults the plugin's route list.
+    await client.callTool("unity_editor_state");
+  });
+
+  after(async () => {
+    await client.close();
+    await bridge.stop();
+  });
+
+  test("a plugin-only tool in an EXISTING category stays discoverable on every call", async () => {
+    for (const call of [1, 2]) {
+      const one = await client.callTool("unity_list_advanced_tools", { tool: "unity_terrain_brand_new_op" });
+      assert.equal(one.isError, false, `call ${call}: ${one.payloadText}`);
+      assert.equal(one.payload.dynamic, true);
+      assert.equal(one.payload.route, "terrain/brand-new-op");
+
+      const found = await client.callTool("unity_list_advanced_tools", { search: "brand new op" });
+      assert.ok(found.payload.results.some((r) => r.name === "unity_terrain_brand_new_op" && r.dynamic), `call ${call}: search`);
+
+      const cat = await client.callTool("unity_list_advanced_tools", { category: "terrain" });
+      assert.ok(cat.payload.tools.some((t) => t.name === "unity_terrain_brand_new_op" && t.dynamic), `call ${call}: category`);
+
+      const summary = await client.callTool("unity_list_advanced_tools");
+      assert.equal(summary.payload.categories.terrain, cat.payload.count, `call ${call}: summary count matches the listing`);
+    }
+  });
+
+  test("only plugin routes the proxy can dispatch, outside core routes, are advertised as dynamic", async () => {
+    const summary = await client.callTool("unity_list_advanced_tools");
+    assert.equal(summary.payload.dynamicTools, 3, `terrain, probuilder and experimental only: ${summary.payloadText}`);
+    assert.equal(summary.payload.categories["prefab-asset"], undefined);
+    assert.equal(summary.payload.categories._meta, undefined);
+    assert.equal(summary.payload.categories.ping, undefined);
+    for (const name of [
+      "unity_ping", "unity__meta_routes", "unity_prefab_asset_hierarchy", "unity_prefab_asset_set_property",
+      "unity_editor_execute_code", "unity_editor_execute_menu_item", "unity_search_scene_stats",
+    ]) {
+      const one = await client.callTool("unity_list_advanced_tools", { tool: name });
+      assert.equal(one.isError, true, `${name} is not advertised (got ${one.payloadText})`);
+    }
+    const execute = await client.callTool("unity_list_advanced_tools", { search: "execute" });
+    assert.deepEqual(execute.payload.results.filter((r) => r.dynamic), [], "no dynamic alias of a core execute route");
+  });
+
+  test("search ranks cached tools ahead of plugin-only names of the same rank", async () => {
+    const { payload } = await client.callTool("unity_list_advanced_tools", { search: "probuilder" });
+    const names = payload.results.map((r) => r.name);
+    const dynamicAt = names.indexOf("unity_probuilder_aaa_dynamic_op");
+    assert.ok(dynamicAt >= 0, `plugin-only tool still listed: ${names.join(", ")}`);
+    const lastCachedNameHit = payload.results.reduce((last, r, i) => (!r.dynamic && r.name.includes("probuilder") ? i : last), -1);
+    assert.ok(dynamicAt > lastCachedNameHit, `dynamic entry ranks after cached name hits: ${names.join(", ")}`);
+  });
+
+  test("tool= lookups this server can answer never fetch the plugin route list", async () => {
+    const before = routeFetches();
+    const cached = await client.callTool("unity_list_advanced_tools", { tool: "unity_terrain_raise_lower" });
+    assert.equal(cached.payload.category, "terrain");
+    const core = await client.callTool("unity_list_advanced_tools", { tool: "unity_execute_code" });
+    assert.equal(core.payload.core, true);
+    assert.equal(routeFetches(), before, "cached and core schema lookups stay local");
+
+    const dynamic = await client.callTool("unity_list_advanced_tools", { tool: "unity_experimental_new_thing" });
+    assert.equal(dynamic.payload.dynamic, true);
+    assert.equal(routeFetches(), before + 1, "plugin-only lookups still consult the plugin");
+  });
+
+  // An explicit port skips discovery, and the legacy fallback builds /api/<route>: a name
+  // such as "unity_../../admin/x" must never become a request path on a foreign listener.
+  test("malformed tool names never derive a route, so an explicit port cannot reach arbitrary paths", async () => {
+    const requests = [];
+    const foreign = http.createServer((req, res) => {
+      requests.push(`${req.method} ${req.url}`);
+      req.resume();
+      req.on("end", () => {
+        const known = !req.url.startsWith("/api/queue/");
+        res.writeHead(known ? 200 : 404, { "Content-Type": "application/json" });
+        res.end(JSON.stringify(known ? { secret: "loopback-only-data" } : { error: "Unknown route" }));
+      });
+    });
+    await new Promise((resolve) => foreign.listen(0, "127.0.0.1", resolve));
+    try {
+      for (const tool of ["unity_../../admin/anything?_x", "unity_admin_x#frag", "unity_Editor_Execute_Code"]) {
+        const { payloadText, isError } = await client.callTool("unity_advanced_tool", {
+          tool,
+          params: { model: "x" },
+          port: foreign.address().port,
+        });
+        assert.equal(isError, true, `${tool} is refused`);
+        assert.match(payloadText, /Unknown tool/);
+        assert.doesNotMatch(payloadText, /loopback-only-data/);
+      }
+      assert.deepEqual(requests.filter((r) => !/^[A-Z]+ \/api\/queue\//.test(r)), [], "nothing outside /api/queue/* was requested");
+    } finally {
+      foreign.closeAllConnections?.();
+      await new Promise((resolve) => foreign.close(resolve));
+    }
   });
 });
 

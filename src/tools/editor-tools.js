@@ -103,12 +103,13 @@ export const editorTools = [
   {
     name: "unity_scene_save",
     description:
-      "Save the current scene. A never-saved scene requires `path` (saving without one would " +
-      "open Unity's interactive Save dialog).",
+      "Save the current scene. A never-saved scene requires `path`, else Unity opens its " +
+      "interactive Save dialog.",
     inputSchema: {
       type: "object",
       properties: {
-        path: { type: "string", description: "Asset path to save to, e.g. 'Assets/Scenes/MyScene.unity'. Required for a scene that has never been saved; also acts as Save-As." },
+        path: { type: "string", description: "Save-As asset path, e.g. 'Assets/Scenes/MyScene.unity'." },
+        overwrite: { type: "boolean", description: "Replace another existing scene at path (default false)" },
       },
     },
     handler: async (params) => formatResult(await bridge.saveScene(params)),
@@ -1152,6 +1153,7 @@ export const editorTools = [
       properties: {
         basePrefabPath: { type: "string", description: "Asset path of the base prefab" },
         variantPath: { type: "string", description: "Asset path for the new variant" },
+        overwrite: { type: "boolean", description: "Replace an existing prefab at variantPath (default false: refuse, because every reference to it would re-bind to the new variant)." },
       },
       required: ["basePrefabPath", "variantPath"],
     },
@@ -1739,11 +1741,12 @@ export const editorTools = [
   },
   {
     name: "unity_selection_find_by_type",
-    description: "Find all GameObjects in the scene that have a specific component type (e.g. 'Rigidbody', 'Camera', 'Light', 'AudioSource', or custom scripts).",
+    description: "Find all GameObjects in the scene that have a specific component type.",
     inputSchema: {
       type: "object",
       properties: {
         typeName: { type: "string", description: "Component type name (e.g. 'Rigidbody', 'Camera', 'MyScript')" },
+        limit: { type: "integer", description: "Max results (default 500); see truncated and totalFound." },
       },
       required: ["typeName"],
     },
@@ -2056,12 +2059,12 @@ export const editorTools = [
   // â”€â”€â”€ Profiler â”€â”€â”€
   {
     name: "unity_profiler_enable",
-    description: "Enable or disable the Unity Profiler. Optionally enable deep profiling for detailed call stacks (has significant performance overhead).",
+    description: "Enable or disable the Unity Profiler. Optionally enable deep profiling for detailed call stacks (has significant performance overhead, and switching it can trigger a script reload in the editor).",
     inputSchema: {
       type: "object",
       properties: {
         enabled: { type: "boolean", description: "true to start profiling, false to stop" },
-        deepProfile: { type: "boolean", description: "Enable deep profiling for full call stacks (high overhead, default: false)" },
+        deepProfile: { type: "boolean", description: "Turn deep profiling on or off for full call stacks (high overhead; omitted: unchanged)" },
       },
       required: ["enabled"],
     },
@@ -2087,8 +2090,8 @@ export const editorTools = [
       properties: {
         frameIndex: { type: "number", description: "Frame index to read (-1 for latest, default: -1)" },
         threadIndex: { type: "number", description: "Thread index (0 = main thread, default: 0)" },
-        maxDepth: { type: "number", description: "Maximum hierarchy depth to traverse (default: 5)" },
-        minTimeMs: { type: "number", description: "Minimum total time in ms to include an item (default: 0.1)" },
+        maxItems: { type: "integer", minimum: 1, description: "Maximum items returned across the hierarchy, which is read four levels deep (default: 30)" },
+        minTimeMs: { type: "number", description: "Minimum total time in ms to include a nested item; top-level items are always included (default: 0)" },
       },
     },
     handler: async (params) => formatResult(await bridge.getProfilerFrameData(params)),
@@ -3336,10 +3339,10 @@ export const editorTools = [
     inputSchema: {
       type: "object",
       properties: {
-        scale: { type: "number", description: "Noise scale / frequency (default: 20)" },
+        scale: { type: "number", description: "Noise frequency per heightmap sample (default: 0.02; smaller values give broader hills)" },
         amplitude: { type: "number", description: "Noise amplitude 0-1 (default: 0.1)" },
         octaves: { type: "number", description: "Number of noise octaves for detail (default: 4)" },
-        seed: { type: "number", description: "Random seed (default: 0)" },
+        // No seed option: the plugin's Perlin noise has none, so a seed was silently ignored.
         additive: { type: "boolean", description: "If true, adds noise to existing heights. If false, replaces (default: false)" },
         name: { type: "string", description: "Terrain name (optional)" },
       },
@@ -3392,7 +3395,7 @@ export const editorTools = [
   },
   {
     name: "unity_terrain_paint_layer",
-    description: "Paint a terrain texture layer at a normalized position with brush radius, opacity and falloff.",
+    description: "Paint a terrain texture layer at a normalized position with brush radius and opacity. The brush fades linearly from its centre.",
     inputSchema: {
       type: "object",
       properties: {
@@ -3401,7 +3404,7 @@ export const editorTools = [
         layerIndex: { type: "number", description: "Index of the terrain layer to paint" },
         radius: { type: "number", description: "Brush radius in alphamap pixels (default: 10)" },
         opacity: { type: "number", description: "Paint opacity 0-1 (default: 1.0)" },
-        falloff: { type: "string", description: "Falloff type: 'linear', 'smooth', or 'constant' (default: 'smooth')" },
+        // No falloff option: the plugin always paints with a linear falloff.
         name: { type: "string", description: "Terrain name (optional)" },
       },
       required: ["x", "z", "layerIndex"],
@@ -3464,8 +3467,8 @@ export const editorTools = [
         maxWidth: { type: "number", description: "Max tree width scale (default: 1.2)" },
         minSteepness: { type: "number", description: "Min terrain steepness in degrees for placement (default: 0)" },
         maxSteepness: { type: "number", description: "Max terrain steepness in degrees for placement (default: 90)" },
-        minAltitude: { type: "number", description: "Min terrain altitude (world units) for placement" },
-        maxAltitude: { type: "number", description: "Max terrain altitude (world units) for placement" },
+        minAltitude: { type: "number", description: "Min terrain altitude for placement, normalized 0-1 of the terrain height (default: 0)" },
+        maxAltitude: { type: "number", description: "Max terrain altitude for placement, normalized 0-1 of the terrain height (default: 1)" },
         name: { type: "string", description: "Terrain name (optional)" },
       },
       required: ["prototypeIndex"],
@@ -3562,7 +3565,8 @@ export const editorTools = [
   },
   {
     name: "unity_terrain_set_holes",
-    description: "Create or fill holes in the terrain at a region. Holes make the terrain transparent and non-collidable.",
+    description: "Create or fill holes in the terrain at a region. Holes make the terrain transparent and non-collidable. " +
+      "The current Unity plugin cannot apply a region yet: the call is refused without changing the terrain, and the error describes the circular brush it supports.",
     inputSchema: {
       type: "object",
       properties: {
@@ -3655,7 +3659,7 @@ export const editorTools = [
       properties: {
         filePath: { type: "string", description: "Path to .raw file (absolute) or asset path to a Texture2D" },
         format: { type: "string", description: "'raw16' (16-bit RAW, default), 'raw8' (8-bit RAW), or 'texture'" },
-        byteOrder: { type: "string", description: "Byte order for RAW: 'little' (default) or 'big'" },
+        byteOrder: { type: "string", description: "Byte order for RAW: 'little' (default and only supported value)" },
         name: { type: "string", description: "Terrain name (optional)" },
       },
       required: ["filePath"],
@@ -3664,12 +3668,12 @@ export const editorTools = [
   },
   {
     name: "unity_terrain_export_heightmap",
-    description: "Export terrain heightmap to a RAW file or PNG texture.",
+    description: "Export terrain heightmap to a little-endian RAW file.",
     inputSchema: {
       type: "object",
       properties: {
         filePath: { type: "string", description: "Output file path (e.g. 'Assets/Heightmaps/terrain.raw')" },
-        format: { type: "string", description: "'raw16' (16-bit RAW, default) or 'png'" },
+        format: { type: "string", description: "'raw16' (16-bit RAW, default) or 'raw8' (8-bit RAW)" },
         name: { type: "string", description: "Terrain name (optional)" },
       },
       required: ["filePath"],
@@ -4506,17 +4510,29 @@ export const editorTools = [
       },
     },
     handler: async (params) => {
-      const result = await bridge.runTests(params);
+      const { filter, ...request } = params ?? {};
+      if (filter != null && typeof filter !== "string") {
+        return formatResult({ error: "filter must be a string of comma-separated groupNames patterns.", code: "invalid_test_filter" });
+      }
+      // The plugin only reads groupNames, so the filter alias is translated here; forwarding
+      // it unchanged silently ran the whole suite for the mode.
+      const patterns = (filter ?? "").split(",").map(part => part.trim()).filter(Boolean);
+      const explicit = Array.isArray(request.groupNames) ? request.groupNames : [];
+      const result = await bridge.runTests(patterns.length > 0
+        ? { ...request, groupNames: [...new Set([...explicit, ...patterns])] } : request);
       // Bridge wraps handler payloads as { success, data:{...} }, so the jobId/status
       // live under .data. Reading the top level made this early-feedback branch dead.
       const started = result.data ?? result;
       if (started.jobId && started.status === "running") {
         await requestSleep(2000);
-        try {
-          return formatResult(await bridge.getTestJob({ jobId: started.jobId }));
-        } catch (_) {
-          return formatResult(result);
+        const job = await bridge.getTestJob({ jobId: started.jobId });
+        // The run has already started: a failed follow-up read must not replace the start
+        // result, or the jobId is lost and a retry starts a duplicate run.
+        if (job?.queueTransportError === true || job?.outcomeUnknown === true
+          || looksLikeErrorObject(job) || looksLikeErrorObject(job?.data)) {
+          return formatResult({ ...result, followUpError: job?.error ?? job?.data?.error ?? "Test-job read failed" });
         }
+        return formatResult(job);
       }
       return formatResult(result);
     },
@@ -4578,19 +4594,31 @@ export const editorTools = [
         // full timeout even when the run finished in seconds.
         const TERMINAL = new Set(["succeeded", "failed", "error", "cancelled", "canceled", "completed", "timedout"]);
         const deadline = Date.now() + waitTimeout * 1000;
-        let lastResult;
+        const isTerminal = result => TERMINAL.has(((result?.data ?? result)?.status ?? "").toLowerCase());
+        const isFailure = result => looksLikeErrorObject(result) || looksLikeErrorObject(result?.data ?? result);
+        // The first read keeps the caller's params, so a finished job, an error or an
+        // unsupported page is answered by a single call.
+        const first = await bridge.getTestJob(params);
+        const firstJob = first?.data ?? first;
+        if (isTerminal(first) || isFailure(first) || (paged && firstJob?.jobId && !firstJob.resultPage)) {
+          return formatJob(first);
+        }
+        // Later reads only ask for status: with includeDetails, every poll made the plugin
+        // re-serialize all accumulated results. The job is pinned so a newer run cannot
+        // replace the one being awaited.
+        const jobId = params?.jobId ?? firstJob?.jobId;
+        const statusRequest = { jobId, includeDetails: false, includeFailedOnly: false };
+        await requestSleep(2000);
         while (Date.now() < deadline) {
-          lastResult = await bridge.getTestJob(params);
-          const job = lastResult?.data ?? lastResult;
-          const status = (job?.status ?? "").toLowerCase();
-          if (TERMINAL.has(status) || looksLikeErrorObject(lastResult) || looksLikeErrorObject(job)
-            || (paged && job?.jobId && !job.resultPage)) {
-            return formatJob(lastResult);
-          }
+          const status = await bridge.getTestJob(statusRequest);
+          // get-job is a read, so a transport failure (domain reload, lost reply) is retried until the deadline.
+          const transient = status?.queueTransportError === true || status?.outcomeUnknown === true;
+          if (!transient && isFailure(status)) return formatResult(status);
+          if (!transient && isTerminal(status)) break;
           await requestSleep(2000);
         }
-        // Timeout — return last known state
-        return formatJob(lastResult || (await bridge.getTestJob(params)));
+        // Terminal or timed out: one final read with the caller's detail and paging options.
+        return formatJob(await bridge.getTestJob({ ...params, jobId }));
       }
       return formatJob(await bridge.getTestJob(params));
     },

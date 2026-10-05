@@ -15,7 +15,7 @@
 | `UNITY_MCP_AGENT_STATE_LIMIT` | `1024` | Maximum remembered agents per MCP process; 1..65536; active requests are preserved |
 | `UNITY_MCP_AGENT_STATE_BYTES` | `8388608` | Accounted UTF-8 agent IDs and selected-instance metadata; minimum 1024; not a heap limit |
 | `UNITY_QUEUE_POLL_INTERVAL` | `150` | Initial ticket polling interval in ms |
-| `UNITY_QUEUE_POLL_MAX` | `1500` | Maximum polling interval in ms |
+| `UNITY_QUEUE_POLL_MAX` | `500` | Maximum polling interval in ms |
 | `UNITY_QUEUE_POLL_TIMEOUT` | `120000` | Total ticket observation timeout in ms; expiration does not undo a command |
 | `UNITY_REGISTRY_STALENESS_TIMEOUT` | `300000` | Registry entry staleness timeout in ms (crash detection) |
 | `UNITY_RESPONSE_SOFT_LIMIT` | `2097152` | Serialized UTF-8 tool-result warning threshold; minimum 1 byte |

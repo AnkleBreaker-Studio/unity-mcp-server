@@ -52,10 +52,8 @@ export const umaTools = [
           type: "string",
           description: "FULL asset path (NOT just the name) to the UMAMaterial. Must start with 'Assets/' and end with '.asset'. Example: 'Assets/UMA/Content/UMA_Core/MaterialSamples/UMA_ClothesBase.asset'",
         },
-        keepAllBones: {
-          type: "boolean",
-          description: "If true, keep all bones instead of only weighted ones (default: false — auto-extracts keepList)",
-        },
+        // No keepAllBones option: the plugin deliberately always builds keepList from the
+        // weighted bones (keepAllBones = false, as the UMA Slot Builder does).
       },
       required: ["fbxPath", "smrName", "slotName", "outputFolder", "umaMaterialPath"],
     },
@@ -174,8 +172,11 @@ export const umaTools = [
       },
       required: ["recipeName", "outputFolder", "wardrobeSlot", "compatibleRaces", "slots"],
     },
+    // Released plugins read the display name from displayName and otherwise use recipeName.
     handler: async (params) =>
-      formatResult(await bridge.umaCreateWardrobeRecipe(params)),
+      formatResult(await bridge.umaCreateWardrobeRecipe(
+        params?.displayValue !== undefined && params.displayName === undefined
+          ? { ...params, displayName: params.displayValue } : params)),
   },
   {
     name: "unity_uma_register_assets",
