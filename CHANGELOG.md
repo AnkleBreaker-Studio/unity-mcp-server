@@ -2,7 +2,9 @@
 
 All notable changes to this package will be documented in this file.
 
-## [Unreleased]
+## [2.36.0] - 2026-10-06
+
+Companion to plugin **2.41.0**. Released plugins keep working: features are negotiated through capabilities, and published tool schemas keep their required arguments.
 
 ### Advanced-tool proxy hardening
 - `unity_advanced_tool` forwards only read-only core tools (captures, screenshots, package queries, searches, scene statistics). Every other core route, including execute-code, execute-menu-item, script create/update, material creation, package installation, builds and Undo, is refused with `isError` and the core tool to call directly, whatever tool name derives it, so per-tool client approval applies.
