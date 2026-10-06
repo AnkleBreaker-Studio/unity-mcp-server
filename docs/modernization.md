@@ -1,6 +1,6 @@
 # Modernization: delivery evidence and follow-up work
 
-Working branch: `Development-Unity66-Modernization` in both repositories. Baselines: server `826af5c` (2.35.6), plugin `0b8e76f` (2.39.7). The improvement pass closed for handoff on 2026-10-01 and is integrated into `main` in both repositories. This integration does not create a version tag or npm release. See the [delivery summary and validation limits](modernization-audit.md#delivery-checkpoint).
+Working branch: `Development-Unity66-Modernization` in both repositories. Baselines: server `826af5c` (2.35.6), plugin `0b8e76f` (2.39.7). The improvement pass closed for handoff on 2026-10-01 and is integrated into `main` in both repositories. It was released as server 2.36.0 and plugin 2.41.0. See the [delivery summary and validation limits](modernization-audit.md#delivery-checkpoint).
 
 The objective remains a broad improvement of the existing MCP and plugin: backwards compatibility, Unity 6.6, performance, monitoring, multiplayer/multiple projects and documentation with stronger visuals. The current architecture is retained. Improvements must follow understanding and evidence, not assumptions that existing behavior is broken.
 
