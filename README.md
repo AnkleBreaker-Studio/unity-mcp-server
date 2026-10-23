@@ -252,6 +252,10 @@ Code execution reuses bounded compiler metadata and reports cache activity in `u
 
 **How does it compare?** Start with the [sourced comparison](docs/comparison.md): routing, fair scheduling, retry recovery, multiplayer controls, monitoring and tool discovery. The measured gains above compare AnkleBreaker revisions under specific workloads.
 
+## From the same studio: Nodary
+
+Your game's design lives in documents too. [Nodary](https://nodary.ai) is the linked-document workspace AnkleBreaker Studio builds and uses on its own games: design documents, balance sheets with drop-rate simulation, string tables for Unity, Unreal and Godot, branching dialogue, moodboards and art review, on one map. Its remote MCP server lets the same assistant that drives your Unity editor read and update the design: connect `https://nodary.ai/api/mcp` ([setup per client](https://github.com/AnkleBreaker-Studio/nodary-mcp)). Included in every Nodary plan, Free included within its limits.
+
 ## Support and license
 
 Support development through [GitHub Sponsors](https://github.com/sponsors/AnkleBreaker-Studio) or [Patreon](https://www.patreon.com/AnkleBreakerStudio). Report reproducible issues with the server version, plugin version, Unity version and the affected tool.
